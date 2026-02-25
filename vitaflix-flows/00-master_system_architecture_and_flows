@@ -1,0 +1,112 @@
+This document provides a comprehensive high-level architecture of the **Vitaflix Ecosystem**, integrating all previously defined flows into a single unified development guide for both AI Agents and Human Developers.
+
+# Vitaflix: Master System Architecture & Flows
+
+## 1. System Overview
+Vitaflix is a "Netflix for Recipes" platform. The architecture is divided into three core environments:
+1.  **Content Administration**: Managing products, recipes, and caloric variations.
+2.  **User Experience (Mobile/Web)**: Onboarding, meal planning, and shopping lists.
+3.  **Business Intelligence**: The Admin Dashboard for financial and engagement monitoring.
+
+***
+
+## 2. Integrated System Map (Mermaid)
+This diagram illustrates how a single "Product" flows from administration into a user's "Shopping List" and "Meal Plan."
+
+```mermaid
+graph TD
+    subgraph Administration_Flows
+        A[Register Product] -->|building block| B[Register Base Recipe]
+        B -->|defines| C[Create Caloric Variations]
+        C -->|contains| A
+    end
+
+    subgraph User_Flows
+        U[Onboarding/Registration] -->|calculates| TMB[BMR & Kcal Target]
+        TMB -->|filters| P[Meal Plan Creation]
+        P -->|selects| C
+        C -->|exports| L[Shopping List]
+    end
+
+    subgraph Financial_Flows
+        S[Subscription System] -->|gates| U
+        S -->|gates| P
+    end
+
+    subgraph Business_Intelligence
+        D[Admin Dashboard] -->|monitors| Administration_Flows
+        D -->|monitors| User_Flows
+        D -->|monitors| Financial_Flows
+    end
+
+    style D fill:#f9f,stroke:#333,stroke-width:4px
+    style S fill:#ff9,stroke:#333
+    style Administration_Flows fill:#e1f5fe
+    style User_Flows fill:#c8e6c9
+```
+
+***
+
+## 3. Detailed Flow Inventory
+
+### Flow 1: Register Products (Ingredients)
+*   **Goal**: Create the nutritional database.
+*   **Key Table**: `Products`.
+*   **Logic**: Mandatory Kcal/Tag. JSON multilingual names.
+
+### Flow 2: Register Recipes (Meals)
+*   **Goal**: Define "What" the meal is (steps/mode/type).
+*   **Key Table**: `Meals`.
+*   **Logic**: No calories here; only preparation steps and dietary restrictions.
+
+### Flow 3: Create Caloric Variations (MealOptions)
+*   **Goal**: Define "How much" of each ingredient for a specific calorie target.
+*   **Key Table**: `MealOptions`.
+*   **Logic**: Links `Meals` to multiple `Products`. Real-time macro calculation.
+
+### Flow 4: User Onboarding & Registration
+*   **Goal**: Profile creation + BMR Calculation.
+*   **Key Table**: `Users`.
+*   **Logic**: Integrated into the React Native signup. Calculates `RecommendedKcalIntake`.
+
+### Flow 5: Meal Plan Creation
+*   **Goal**: Weekly organization.
+*   **Key Table**: `MealPlans`.
+*   **Logic**: JSON matrix of `MealId` and `MealOptionId` per day/slot.
+
+### Flow 6: Shopping List Management
+*   **Goal**: Facilitate ingredient acquisition.
+*   **Key Tables**: `ShoppingLists`, `ShoppingItems`.
+*   **Logic**: Manual entry or automatic import from `MealOptions.Ingredients`.
+
+### Flow 7: Subscription & Payment System (Stripe/PayPal)
+*   **Goal**: Monetization and access control.
+*   **Key Tables**: `Subscriptions`, `Transactions`.
+*   **Logic**: Webhook-driven status updates. Gated content.
+
+### Flow 8: Admin Dashboard (BI)
+*   **Goal**: High-level management.
+*   **Logic**: User list (A-Z), MRR charts, engagement tracking (Web/iOS/Android activity).
+
+***
+
+## 4. Technical Constraints for AI Agents
+*   **Stack**: Next.js (Admin/Web), Supabase (DB/Auth), React Native (Mobile).
+*   **Database**: PostgreSQL (provided via `vitaflix.sql`).
+*   **Validation**: Zod (Shared schemas between Web and Mobile).
+*   **Internationalization**: All content names and preparation modes **must** use JSON format `{ "pt": "...", "en": "..." }`.
+*   **Architecture**: Logic for macro calculations should reside in a shared utility library to ensure the Admin Panel and Mobile App show identical nutritional values.
+
+***
+
+## 5. Global Database Relationships (Summary)
+| From Table | Relation | To Table | Purpose |
+| :--- | :--- | :--- | :--- |
+| `MealOptions` | N:1 | `Meals` | Different calorie versions of the same dish |
+| `MealOptions` | N:N (JSON) | `Products` | Ingredients list for that specific version |
+| `MealPlans` | 1:N (JSON) | `MealOptions` | Specific meals selected for a user's week |
+| `Subscriptions` | N:1 | `Users` | Verifying if the user can see recipes |
+| `ShoppingItems` | N:1 | `Products` | Syncing grocery items with the DB |
+
+***
+**End of Document**
