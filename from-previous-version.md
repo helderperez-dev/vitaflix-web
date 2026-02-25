@@ -30,7 +30,7 @@ Vitaflix is a fitness and nutrition platform differentiated by its **"Content-Fi
 The database is PostgreSQL hosted on Supabase.
 
 ### Core Entities & Attributes
-- **User**: `Email`, `Genre` (Male/Female/Other), `Height`, `Weight`, `Birthday`, `Objective` (Lose, Maintain, Gain), `Tmb` (BMR), `RecommendedKcalIntake`, `VitaCoins` (Currency), `VitaPoints` (XP), `Steps`, `ExerciseCount`.
+- **User**: `Email`, `Genre` (Male/Female/Other), `Height`, `Weight`, `Birthday`, `Objective` (Lose, Maintain, Gain), `Tmb` (BMR), `RecommendedKcalIntake`.
 - **Product (Ingredient)**: `Name (JSON)`, `Kcal`, `Protein`, `Carbs`, `Fat`, `Tag`, `IsPublic`, `Brand`.
 - **Meal (Recipe Base)**: `Name (JSON)`, `MealTypes`, `CookTime`, `PreparationMode (JSON)`, `Satiety`, `Restrictions`, `PublishOn`.
 - **MealOption (Caloric Variation)**: `AssociatedMealId`, `Ingredients (JSON Matrix)`, `Kcal`, `IsDefault`, `Macros (Protein, Fat, Carbs)`.
@@ -38,12 +38,7 @@ The database is PostgreSQL hosted on Supabase.
 - **ShoppingList**: `UserId`, `ShoppingCategory`, `ShoppingItem` (Quantity, Checked, Unit).
 - **Subscription**: `StripeSubscriptionId`, `PayPalSubscriptionId`, `Status`, `TransactionHistory`.
 
-### Secondary Systems (Gamification & Social)
-- **Gamification**:
-  - `Achievements`: Earnable badges with point values.
-  - `Habits`: Tracking for "Visit App", "Meal", "Exercise", "Steps", "Water", "Sleep", "Meditation", "Weight".
-  - `Store & Skins`: `StoreItems` (bought with `VitaCoins`) and `SkinPacks` for app customization.
-- **Chat & Notifications**: Real-time communication between users/admin and unread notification tracking.
+### Secondary Systems
 - **Meal Suggestions**: `SuggestionMappings` for auto-generating plans based on target calories.
 
 > [!IMPORTANT]
@@ -88,8 +83,6 @@ Architecture must decouple business logic from provider-specific code using a **
 A dedicated Next.js area strictly for administrative operations:
 - **Dashboard**: BI monitoring (MRR, Churn, Active Users).
 - **Core Management**: CRUD for `Products`, `Meals`, and `MealOptions`.
-- **System Config**: Managing `StoreItems`, `SkinPacks`, and `Achievements`.
-- **Social**: Monitoring `Chat` logs and sending global notifications.
 
 ---
 

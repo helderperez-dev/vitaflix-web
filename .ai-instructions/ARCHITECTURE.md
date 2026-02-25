@@ -27,4 +27,8 @@ This document defines the structural boundaries and dependency rules for the Vit
 
 ## 5. Architectural Integrity
 - **One Source of Truth**: All multilingual strings (names, preparation steps) must be stored as JSON objects in the database.
+- **Payment Factory Pattern**: You **must** implement a Factory/Provider pattern for payment integrations. 
+    - Use a `PaymentProvider` interface.
+    - Implement `StripeProvider` as the primary gateway now.
+    - The architecture **must** allow adding `PayPalProvider` in the future without changing business logic.
 - **Decoupling**: Modules must communicate via clearly defined interfaces. Circular dependencies between layers are strictly forbidden.

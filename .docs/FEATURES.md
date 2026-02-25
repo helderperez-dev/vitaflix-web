@@ -50,7 +50,8 @@ This document details the primary features of the Vitaflix platform, providing f
 ## 7. Subscription & Paywall System
 - **Description**: Secure management of premium access and recurring payments.
 - **Key Capabilities**:
-    - **Multi-Gateway Support**: Integrated with Stripe and PayPal.
+    - **Multi-Gateway Support**: Integrated with Stripe (primary) and PayPal (future).
+- **Payment Pattern**: Mandatory use of a Factory/Provider architecture to ensure future PayPal integration.
     - **Plan Tiers**: Management of Monthly, Quarterly, and Annual subscriptions.
     - **Access Control**: Gated content (Recipes, Plans) based on active subscription status.
 

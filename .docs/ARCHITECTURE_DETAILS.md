@@ -85,6 +85,7 @@ Even when using Supabase directly on the client, the architecture provides a **d
 - Apply sensitive business rules (e.g., only 1 `IsDefault` per `Meal`).
 - Encapsulate complex logic (e.g., macro calculations, variant generation).
 - Standardize usage across Web and Mobile.
+- **Payment Pattern**: Mandatory use of a **Factory/Provider pattern** for payment integrations. We will use **Stripe** as the primary provider now, with **PayPal** planned for the future.
 
 ---
 
