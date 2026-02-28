@@ -121,13 +121,6 @@ export function ImageUploader({ folder, value = [], onChange, maxImages = 10 }: 
 
     return (
         <div className="space-y-4">
-            <div className="flex items-center justify-between gap-4">
-                <div className="flex items-center gap-2 flex-1">
-                    <h3 className="font-bold text-[10px] text-muted-foreground uppercase tracking-widest whitespace-nowrap">Media Gallery</h3>
-                    <div className="h-px w-full bg-border/40" />
-                </div>
-            </div>
-
             {value.length > 0 && (
                 <div className="grid grid-cols-2 sm:grid-cols-3 gap-4">
                     {value.map((image, index) => (

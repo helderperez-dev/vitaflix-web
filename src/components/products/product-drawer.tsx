@@ -55,7 +55,6 @@ export function ProductDrawer({ open, onOpenChange, product }: ProductDrawerProp
             protein: 0,
             carbs: 0,
             fat: 0,
-            slug: "",
             tagIds: [],
             brandIds: [],
             images: [],
@@ -77,7 +76,6 @@ export function ProductDrawer({ open, onOpenChange, product }: ProductDrawerProp
                 protein: 0,
                 carbs: 0,
                 fat: 0,
-                slug: "",
                 tagIds: [],
                 brandIds: [],
                 images: [],
@@ -234,7 +232,7 @@ export function ProductDrawer({ open, onOpenChange, product }: ProductDrawerProp
                                 {/* System Settings */}
                                 <div className="space-y-8">
                                     <div className="flex items-center gap-2">
-                                        <h3 className="font-bold text-sm text-secondary uppercase tracking-widest">System Settings</h3>
+                                        <h3 className="font-bold text-sm text-secondary uppercase tracking-widest">Organization & Visibility</h3>
                                         <div className="h-px flex-1 bg-border/60 ml-2" />
                                     </div>
                                     <div className="grid grid-cols-1 gap-8">
@@ -252,20 +250,7 @@ export function ProductDrawer({ open, onOpenChange, product }: ProductDrawerProp
                                             />
                                         </div>
 
-                                        <FormField
-                                            control={form.control}
-                                            name="slug"
-                                            render={({ field }) => (
-                                                <FormItem>
-                                                    <FormLabel className="text-[10px] font-bold text-muted-foreground uppercase tracking-widest">External Key (Slug)</FormLabel>
-                                                    <FormControl>
-                                                        <Input placeholder="e.g. chicken-breast" className="font-mono text-xs" {...field} value={field.value || ""} />
-                                                    </FormControl>
-                                                    <FormDescription className="text-[10px]">Unique identifier used for external integrations and referencing.</FormDescription>
-                                                    <FormMessage className="text-[10px]" />
-                                                </FormItem>
-                                            )}
-                                        />
+
 
                                         <div className="p-4 rounded-lg bg-muted/20 border border-border group">
                                             <FormField

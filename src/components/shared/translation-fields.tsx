@@ -1,7 +1,7 @@
 "use client"
 
 import * as React from "react"
-import { X, Plus, Check } from "lucide-react"
+import { X, Plus, Check, Loader2 } from "lucide-react"
 import { FormField, FormItem, FormLabel, FormControl, FormMessage } from "@/components/ui/form"
 import { Input } from "@/components/ui/input"
 import { Textarea } from "@/components/ui/textarea"
@@ -71,9 +71,8 @@ export function TranslationFields({
 
     if (loading) {
         return (
-            <div className="space-y-4 animate-pulse">
-                <div className="h-4 w-24 bg-muted rounded" />
-                <div className="h-10 w-full bg-muted rounded" />
+            <div className="flex flex-col items-center justify-center py-12">
+                <Loader2 className="h-8 w-8 text-primary animate-spin" />
             </div>
         )
     }

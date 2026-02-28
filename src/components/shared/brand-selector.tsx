@@ -1,7 +1,7 @@
 "use client"
 
 import * as React from "react"
-import { Check, Plus, Settings2, X } from "lucide-react"
+import { Check, Plus, Settings2, X, Loader2 } from "lucide-react"
 import { cn } from "@/lib/utils"
 import { Button } from "@/components/ui/button"
 import {
@@ -59,6 +59,14 @@ export function BrandSelector({ selectedBrandIds, onBrandsChange }: BrandSelecto
 
     const removeBrand = (brandId: string) => {
         onBrandsChange(selectedBrandIds.filter((id) => id !== brandId))
+    }
+
+    if (loading) {
+        return (
+            <div className="flex flex-col items-center justify-center py-12">
+                <Loader2 className="h-8 w-8 text-primary animate-spin" />
+            </div>
+        )
     }
 
     return (
