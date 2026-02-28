@@ -1,51 +1,36 @@
-# Vitaflix: The Content-First Nutritional Engine
+This is a [Next.js](https://nextjs.org) project bootstrapped with [`create-next-app`](https://nextjs.org/docs/app/api-reference/cli/create-next-app).
 
-Vitaflix is a modern, cross-platform "Netflix for Recipes" platform designed to solve nutritional decision fatigue through caloric precision and high-quality curated content.
+## Getting Started
 
-## 🚀 The Product (The "Wedge")
+First, run the development server:
 
-Traditional recipe apps provide generic information. Vitaflix differentiates itself through **Caloric Versatility (MealOptions)**: every recipe is available in multiple precise caloric versions (200, 300, 400, and 500 kcal). The recipe adapts to the user's specific daily target, not the other way around.
+```bash
+npm run dev
+# or
+yarn dev
+# or
+pnpm dev
+# or
+bun dev
+```
 
-### Core Value Pillars
-- **The "Netflix" Experience**: High-engagement UI focused on browsing premium recipe content.
-- **Automated Ecosystem**: Seamless flow from recipe selection to Meal Plan updates and automated Shopping List generation.
-- **Precision Nutrition**: Integrated onboarding capturing physical data (BMR/TMB) to personalize the content feed instantly.
+Open [http://localhost:3000](http://localhost:3000) with your browser to see the result.
 
-## 🛠 Technology Stack
+You can start editing the page by modifying `app/page.tsx`. The page auto-updates as you edit the file.
 
-Vitaflix is built with a unified **TypeScript-first stack** for maximum cross-platform consistency:
+This project uses [`next/font`](https://nextjs.org/docs/app/building-your-application/optimizing/fonts) to automatically optimize and load [Geist](https://vercel.com/font), a new font family for Vercel.
 
-- **Web App & Admin Panel**: [Next.js](https://nextjs.org/) (App Router)
-- **Mobile Apps**: [React Native](https://reactnative.dev/) (Android + iOS)
-- **Backend & Data**: [Supabase](https://supabase.com/) (PostgreSQL + Auth + Storage)
-- **Validation**: [Zod](https://zod.dev/) (Shared schemas for all layers)
-- **Styling**: Tailwind CSS (Web)
-- **Payments**: Stripe (Primary Factory Implementation)
+## Learn More
 
-## 📂 Project Structure
+To learn more about Next.js, take a look at the following resources:
 
-- `/.docs`: Comprehensive documentation for product context, features, and domain models.
-- `/.ai-instructions`: Mandatory development guardrails for both Humans and AI Agents.
-- `/vitaflix-flows`: Detailed technical maps for all key user and administrative journeys.
-- `libs/shared`: (Planned) Shared Zod schemas and cross-platform utility libraries.
+- [Next.js Documentation](https://nextjs.org/docs) - learn about Next.js features and API.
+- [Learn Next.js](https://nextjs.org/learn) - an interactive Next.js tutorial.
 
-## 🏗 Architectural Principles
+You can check out [the Next.js GitHub repository](https://github.com/vercel/next.js) - your feedback and contributions are welcome!
 
-1. **Shared Schemas**: All data structures are defined by shared Zod schemas to ensure absolute consistency between the Mobile App, Web Admin, and Database.
-2. **Mobile-Balanced API**: Domain-level logic is shared or encapsulated, ensuring the Mobile experience is robust and independent of the Web frontend.
-3. **Provider Pattern for Payments**: All payment integrations (Stripe, PayPal) use a Factory interface to allow for future modularity.
-4. **Localization First**: All user-facing content (names, instructions) is stored in JSON format to support Portuguese (PT) and English (EN) natively.
+## Deploy on Vercel
 
-## 🛡 Development Guardrails
+The easiest way to deploy your Next.js app is to use the [Vercel Platform](https://vercel.com/new?utm_medium=default-template&filter=next.js&utm_source=create-next-app&utm_campaign=create-next-app-readme) from the creators of Next.js.
 
-All development in this repository **must** adhere to the mandatory guardrails defined in `/.ai-instructions/`:
-
-- **[AI_INSTRUCTIONS.md](./.ai-instructions/AI_INSTRUCTIONS.md)**: Mandatory LLM behavior and safety rules.
-- **[ARCHITECTURE.md](./.ai-instructions/ARCHITECTURE.md)**: Structural boundaries and dependency rules.
-- **[CODING_GUIDELINES.md](./.ai-instructions/CODING_GUIDELINES.md)**: Language, naming, and error handling standards.
-- **[SECURITY.md](./.ai-instructions/SECURITY.md)**: Data protection and RLS requirements.
-- **[TESTING.md](./.ai-instructions/TESTING.md)**: Testing expectations for the "Nutritional Engine."
-
-## 📈 Roadmap (2026)
-
-Evolution from a content platform into a **Data-Driven Nutritional Companion**, leveraging AI for semantic recommendations and real-time habit tracking.
+Check out our [Next.js deployment documentation](https://nextjs.org/docs/app/building-your-application/deploying) for more details.

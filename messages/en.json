@@ -1,0 +1,56 @@
+{
+    "Common": {
+        "save": "Save",
+        "edit": "Edit",
+        "delete": "Delete",
+        "actions": "Actions",
+        "loading": "Loading...",
+        "search": "Search..."
+    },
+    "Dashboard": {
+        "title": "Dashboard",
+        "welcome": "Welcome back"
+    },
+    "Products": {
+        "title": "Products",
+        "newProduct": "New Product",
+        "editProduct": "Edit Product",
+        "table": {
+            "name": "Product Name",
+            "macros": "Macros",
+            "kcal": "Kcal",
+            "p": "P",
+            "c": "C",
+            "f": "F",
+            "status": "Status"
+        }
+    },
+    "Recipes": {
+        "title": "Recipes",
+        "newRecipe": "New Recipe",
+        "editRecipe": "Edit Recipe",
+        "table": {
+            "name": "Recipe Name",
+            "cookTime": "Cook Time",
+            "categories": "Categories",
+            "satiety": "Satiety"
+        }
+    },
+    "Users": {
+        "title": "Users",
+        "table": {
+            "user": "User",
+            "role": "Role",
+            "goal": "Goal",
+            "status": "Status"
+        }
+    },
+    "Navigation": {
+        "dashboard": "Dashboard",
+        "products": "Products",
+        "recipes": "Recipes",
+        "users": "Users",
+        "settings": "Settings",
+        "logout": "Log out"
+    }
+}
