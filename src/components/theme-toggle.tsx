@@ -13,28 +13,33 @@ import {
 } from "@/components/ui/dropdown-menu"
 
 export function ModeToggle() {
-    const { setTheme } = useTheme()
+    const { theme, setTheme } = useTheme()
+    const [mounted, setMounted] = React.useState(false)
+
+    React.useEffect(() => {
+        setMounted(true)
+    }, [])
+
+    if (!mounted) return (
+        <Button variant="ghost" size="icon" className="size-8 rounded-lg">
+            <div className="size-[1.1rem]" />
+        </Button>
+    )
+
+    const toggleTheme = () => {
+        setTheme(theme === "light" ? "dark" : "light")
+    }
 
     return (
-        <DropdownMenu>
-            <DropdownMenuTrigger asChild>
-                <Button variant="outline" size="icon">
-                    <Sun className="h-[1.2rem] w-[1.2rem] rotate-0 scale-100 transition-all dark:-rotate-90 dark:scale-0" />
-                    <Moon className="absolute h-[1.2rem] w-[1.2rem] rotate-90 scale-0 transition-all dark:rotate-0 dark:scale-100" />
-                    <span className="sr-only">Toggle theme</span>
-                </Button>
-            </DropdownMenuTrigger>
-            <DropdownMenuContent align="end">
-                <DropdownMenuItem onClick={() => setTheme("light")}>
-                    Light
-                </DropdownMenuItem>
-                <DropdownMenuItem onClick={() => setTheme("dark")}>
-                    Dark
-                </DropdownMenuItem>
-                <DropdownMenuItem onClick={() => setTheme("system")}>
-                    System
-                </DropdownMenuItem>
-            </DropdownMenuContent>
-        </DropdownMenu>
+        <Button
+            variant="ghost"
+            size="icon"
+            onClick={toggleTheme}
+            className="size-8 rounded-lg hover:bg-primary/5 transition-all duration-300 group/theme"
+        >
+            <Sun className="h-[1.1rem] w-[1.1rem] rotate-0 scale-100 transition-all dark:-rotate-90 dark:scale-0 text-muted-foreground group-hover/theme:text-primary" />
+            <Moon className="absolute h-[1.1rem] w-[1.1rem] rotate-90 scale-0 transition-all dark:rotate-0 dark:scale-100 text-muted-foreground group-hover/theme:text-primary" />
+            <span className="sr-only">Toggle theme</span>
+        </Button>
     )
 }

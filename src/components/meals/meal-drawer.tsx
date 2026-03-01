@@ -7,6 +7,7 @@ import {
     Loader2
 } from "lucide-react"
 import { toast } from "sonner"
+import { useTranslations } from "next-intl"
 
 import { Button } from "@/components/ui/button"
 import {
@@ -39,6 +40,8 @@ interface MealDrawerProps {
 }
 
 export function MealDrawer({ open, onOpenChange, meal }: MealDrawerProps) {
+    const t = useTranslations("Recipes")
+    const commonT = useTranslations("Common")
     const [isSubmitting, setIsSubmitting] = React.useState(false)
 
     const form = useForm({
@@ -101,7 +104,7 @@ export function MealDrawer({ open, onOpenChange, meal }: MealDrawerProps) {
                     <SheetHeader className="px-8 py-8 space-y-2">
                         <div className="flex items-center gap-2">
                             <Badge variant="secondary" className="px-2 py-0.5 text-[10px] font-bold uppercase tracking-wider bg-primary/10 text-primary border-transparent">
-                                {meal ? "Culinary Management" : "Recipe Authoring"}
+                                {meal ? t("culinaryManagement") : t("recipeAuthoring")}
                             </Badge>
                             {meal && (
                                 <Badge variant="outline" className="px-2 py-0.5 text-[10px] font-mono border-border text-muted-foreground bg-muted/30">
@@ -109,13 +112,11 @@ export function MealDrawer({ open, onOpenChange, meal }: MealDrawerProps) {
                                 </Badge>
                             )}
                         </div>
-                        <SheetTitle className="text-2xl font-bold tracking-tight text-secondary">
-                            {meal ? "Edit Recipe" : "New Recipe"}
+                        <SheetTitle className="text-2xl font-bold tracking-tight text-secondary dark:text-foreground">
+                            {meal ? t("editRecipe") : t("newRecipe")}
                         </SheetTitle>
                         <SheetDescription className="text-sm">
-                            {meal
-                                ? "Update culinary instructions, titles, and categorization for this recipe."
-                                : "Create a world-class culinary recipe with detailed preparation steps."}
+                            {t("description")}
                         </SheetDescription>
                     </SheetHeader>
 
@@ -126,14 +127,14 @@ export function MealDrawer({ open, onOpenChange, meal }: MealDrawerProps) {
                                 <TranslationFields
                                     form={form}
                                     namePrefix="name"
-                                    label="Recipe Name"
+                                    label={t("table.name")}
                                     placeholder="e.g. Classic Burgers"
                                 />
 
                                 {/* Culinary Metrics */}
                                 <div className="space-y-8">
                                     <div className="flex items-center gap-2">
-                                        <h3 className="font-bold text-sm text-secondary uppercase tracking-widest">Culinary Metrics</h3>
+                                        <h3 className="font-bold text-sm text-secondary dark:text-white uppercase tracking-widest">{t("culinaryManagement")}</h3>
                                         <div className="h-px flex-1 bg-border/60 ml-2" />
                                     </div>
                                     <div className="grid grid-cols-2 gap-x-12 gap-y-8">
@@ -142,10 +143,16 @@ export function MealDrawer({ open, onOpenChange, meal }: MealDrawerProps) {
                                             name="cookTime"
                                             render={({ field }) => (
                                                 <FormItem>
-                                                    <FormLabel className="text-[10px] font-bold text-muted-foreground uppercase tracking-widest">Prep Time</FormLabel>
+                                                    <FormLabel className="text-[10px] font-bold text-muted-foreground uppercase tracking-widest">{t("prepTime")}</FormLabel>
                                                     <FormControl>
                                                         <div className="relative group">
-                                                            <Input type="number" className="pr-16 font-semibold" {...field} onChange={e => field.onChange(Number(e.target.value))} />
+                                                            <Input
+                                                                type="number"
+                                                                className="pr-16 font-semibold"
+                                                                {...field}
+                                                                value={field.value ?? ""}
+                                                                onChange={e => field.onChange(Number(e.target.value))}
+                                                            />
                                                             <span className="absolute right-4 top-1/2 -translate-y-1/2 text-[10px] font-bold text-muted-foreground/40 transition-colors group-hover:text-primary">MIN</span>
                                                         </div>
                                                     </FormControl>
@@ -158,10 +165,18 @@ export function MealDrawer({ open, onOpenChange, meal }: MealDrawerProps) {
                                             name="satiety"
                                             render={({ field }) => (
                                                 <FormItem>
-                                                    <FormLabel className="text-[10px] font-bold text-muted-foreground uppercase tracking-widest">Satiety Index</FormLabel>
+                                                    <FormLabel className="text-[10px] font-bold text-muted-foreground uppercase tracking-widest">{t("satietyIndex")}</FormLabel>
                                                     <FormControl>
                                                         <div className="relative group">
-                                                            <Input type="number" className="pr-16 font-semibold" min={0} max={10} {...field} onChange={e => field.onChange(Number(e.target.value))} />
+                                                            <Input
+                                                                type="number"
+                                                                className="pr-16 font-semibold"
+                                                                min={0}
+                                                                max={10}
+                                                                {...field}
+                                                                value={field.value ?? ""}
+                                                                onChange={e => field.onChange(Number(e.target.value))}
+                                                            />
                                                             <span className="absolute right-4 top-1/2 -translate-y-1/2 text-[10px] font-bold text-muted-foreground/40 transition-colors group-hover:text-primary">/ 10</span>
                                                         </div>
                                                     </FormControl>
@@ -175,7 +190,7 @@ export function MealDrawer({ open, onOpenChange, meal }: MealDrawerProps) {
                                 {/* Categorization */}
                                 <div className="space-y-8">
                                     <div className="flex items-center gap-2">
-                                        <h3 className="font-bold text-sm text-secondary uppercase tracking-widest">Categorization</h3>
+                                        <h3 className="font-bold text-sm text-secondary dark:text-white uppercase tracking-widest">{t("categorization")}</h3>
                                         <div className="h-px flex-1 bg-border/60 ml-2" />
                                     </div>
                                     <div className="grid grid-cols-1 md:grid-cols-2 gap-x-12 gap-y-8">
@@ -184,7 +199,7 @@ export function MealDrawer({ open, onOpenChange, meal }: MealDrawerProps) {
                                             name="mealTypes"
                                             render={({ field }) => (
                                                 <FormItem>
-                                                    <FormLabel className="text-[10px] font-bold text-muted-foreground uppercase tracking-widest">Meal Categories</FormLabel>
+                                                    <FormLabel className="text-[10px] font-bold text-muted-foreground uppercase tracking-widest">{t("mealCategories")}</FormLabel>
                                                     <FormControl>
                                                         <Input
                                                             placeholder="Lunch, Dinner..."
@@ -202,7 +217,7 @@ export function MealDrawer({ open, onOpenChange, meal }: MealDrawerProps) {
                                             name="restrictions"
                                             render={({ field }) => (
                                                 <FormItem>
-                                                    <FormLabel className="text-[10px] font-bold text-muted-foreground uppercase tracking-widest">Dietary Tags</FormLabel>
+                                                    <FormLabel className="text-[10px] font-bold text-muted-foreground uppercase tracking-widest">{t("dietaryTags")}</FormLabel>
                                                     <FormControl>
                                                         <Input
                                                             placeholder="Vegan, Low-carb..."
@@ -221,9 +236,9 @@ export function MealDrawer({ open, onOpenChange, meal }: MealDrawerProps) {
                                 <TranslationFields
                                     form={form}
                                     namePrefix="preparationMode"
-                                    label="Preparation Mode"
+                                    label={t("preparationMode")}
                                     type="textarea"
-                                    placeholder="Describe the culinary process..."
+                                    placeholder={t("prepPlaceholder")}
                                 />
                             </form>
                         </Form>
@@ -236,7 +251,7 @@ export function MealDrawer({ open, onOpenChange, meal }: MealDrawerProps) {
                             onClick={() => onOpenChange(false)}
                             disabled={isSubmitting}
                         >
-                            Cancel
+                            {commonT("cancel")}
                         </Button>
                         <Button
                             type="submit"
@@ -247,7 +262,7 @@ export function MealDrawer({ open, onOpenChange, meal }: MealDrawerProps) {
                             {isSubmitting ? (
                                 <Loader2 className="mr-2 h-4 w-4 animate-spin" />
                             ) : null}
-                            Save
+                            {commonT("save")}
                         </Button>
                     </SheetFooter>
                 </div>

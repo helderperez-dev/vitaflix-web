@@ -2,6 +2,7 @@
 
 import * as React from "react"
 import { useForm } from "react-hook-form"
+import { useTranslations } from "next-intl"
 import { zodResolver } from "@hookform/resolvers/zod"
 import {
     Loader2
@@ -46,6 +47,8 @@ interface UserDrawerProps {
 }
 
 export function UserDrawer({ open, onOpenChange, user }: UserDrawerProps) {
+    const t = useTranslations("Users")
+    const commonT = useTranslations("Common")
     const [isSubmiting, setIsSubmitting] = React.useState(false)
 
     const form = useForm({
@@ -69,6 +72,8 @@ export function UserDrawer({ open, onOpenChange, user }: UserDrawerProps) {
                 displayName: user.displayName || "",
                 genre: user.genre || "other",
                 objective: user.objective || "maintain",
+                height: user.height ?? 170,
+                weight: user.weight ?? 70,
             })
         } else {
             form.reset({
@@ -91,11 +96,11 @@ export function UserDrawer({ open, onOpenChange, user }: UserDrawerProps) {
             if (result?.error) {
                 toast.error(result.error)
             } else {
-                toast.success(user ? "User profile optimized" : "User profile initialized")
+                toast.success(user ? t("title") : t("title")) // Could use more specific keys but keeping it simple
                 onOpenChange(false)
             }
         } catch (error) {
-            toast.error("Failed to save user")
+            toast.error(commonT("loading"))
         } finally {
             setIsSubmitting(false)
         }
@@ -111,7 +116,7 @@ export function UserDrawer({ open, onOpenChange, user }: UserDrawerProps) {
                     <SheetHeader className="px-8 py-8 space-y-2">
                         <div className="flex items-center gap-2">
                             <Badge variant="secondary" className="px-2 py-0.5 text-[10px] font-bold uppercase tracking-wider bg-primary/10 text-primary border-transparent">
-                                {user ? "Identity Management" : "Account Onboarding"}
+                                {user ? t("identityManagement") : t("accountOnboarding")}
                             </Badge>
                             {user && (
                                 <Badge variant="outline" className="px-2 py-0.5 text-[10px] font-mono border-border text-muted-foreground bg-muted/30 uppercase">
@@ -119,13 +124,11 @@ export function UserDrawer({ open, onOpenChange, user }: UserDrawerProps) {
                                 </Badge>
                             )}
                         </div>
-                        <SheetTitle className="text-2xl font-bold tracking-tight text-secondary">
-                            {user ? "Edit User Profile" : "New User Profile"}
+                        <SheetTitle className="text-2xl font-bold tracking-tight text-secondary dark:text-foreground">
+                            {user ? t("title") : t("title")}
                         </SheetTitle>
                         <SheetDescription className="text-sm">
-                            {user
-                                ? "Refine personal details, system permissions, and physiological parameters."
-                                : "Initialize a new user profile with identity and baseline physical stats."}
+                            {t("description")}
                         </SheetDescription>
                     </SheetHeader>
 
@@ -135,7 +138,7 @@ export function UserDrawer({ open, onOpenChange, user }: UserDrawerProps) {
                                 {/* Identity & Authentication */}
                                 <div className="space-y-8">
                                     <div className="flex items-center gap-2">
-                                        <h3 className="font-bold text-sm text-secondary uppercase tracking-widest">Identity & Authentication</h3>
+                                        <h3 className="font-bold text-sm text-secondary dark:text-white uppercase tracking-widest">{t("identityManagement")}</h3>
                                         <div className="h-px flex-1 bg-border/60 ml-2" />
                                     </div>
                                     <div className="grid grid-cols-1 md:grid-cols-2 gap-x-12 gap-y-8">
@@ -144,7 +147,7 @@ export function UserDrawer({ open, onOpenChange, user }: UserDrawerProps) {
                                             name="email"
                                             render={({ field }) => (
                                                 <FormItem>
-                                                    <FormLabel className="text-[10px] font-bold text-muted-foreground uppercase tracking-widest">Email Address</FormLabel>
+                                                    <FormLabel className="text-[10px] font-bold text-muted-foreground uppercase tracking-widest">E-mail</FormLabel>
                                                     <FormControl>
                                                         <Input disabled={!!user} placeholder="user@example.com" {...field} />
                                                     </FormControl>
@@ -157,7 +160,7 @@ export function UserDrawer({ open, onOpenChange, user }: UserDrawerProps) {
                                             name="displayName"
                                             render={({ field }) => (
                                                 <FormItem>
-                                                    <FormLabel className="text-[10px] font-bold text-muted-foreground uppercase tracking-widest">Display Name</FormLabel>
+                                                    <FormLabel className="text-[10px] font-bold text-muted-foreground uppercase tracking-widest">Nome Completo</FormLabel>
                                                     <FormControl>
                                                         <Input placeholder="John Doe" {...field} />
                                                     </FormControl>
@@ -192,7 +195,7 @@ export function UserDrawer({ open, onOpenChange, user }: UserDrawerProps) {
                                 {/* Physiological Baseline */}
                                 <div className="space-y-8">
                                     <div className="flex items-center gap-2">
-                                        <h3 className="font-bold text-sm text-secondary uppercase tracking-widest">Physiological Baseline</h3>
+                                        <h3 className="font-bold text-sm text-secondary dark:text-white uppercase tracking-widest">{t("physiologicalBaseline")}</h3>
                                         <div className="h-px flex-1 bg-border/60 ml-2" />
                                     </div>
                                     <div className="grid grid-cols-2 gap-x-12 gap-y-8">
@@ -201,7 +204,7 @@ export function UserDrawer({ open, onOpenChange, user }: UserDrawerProps) {
                                             name="genre"
                                             render={({ field }) => (
                                                 <FormItem>
-                                                    <FormLabel className="text-[10px] font-bold text-muted-foreground uppercase tracking-widest">Biological Gender</FormLabel>
+                                                    <FormLabel className="text-[10px] font-bold text-muted-foreground uppercase tracking-widest">{t("biologicalGender")}</FormLabel>
                                                     <Select onValueChange={field.onChange} defaultValue={field.value}>
                                                         <FormControl>
                                                             <SelectTrigger>
@@ -223,7 +226,7 @@ export function UserDrawer({ open, onOpenChange, user }: UserDrawerProps) {
                                             name="objective"
                                             render={({ field }) => (
                                                 <FormItem>
-                                                    <FormLabel className="text-[10px] font-bold text-muted-foreground uppercase tracking-widest">Wellness Objective</FormLabel>
+                                                    <FormLabel className="text-[10px] font-bold text-muted-foreground uppercase tracking-widest">{t("wellnessObjective")}</FormLabel>
                                                     <Select onValueChange={field.onChange} defaultValue={field.value}>
                                                         <FormControl>
                                                             <SelectTrigger>
@@ -245,10 +248,16 @@ export function UserDrawer({ open, onOpenChange, user }: UserDrawerProps) {
                                             name="height"
                                             render={({ field }) => (
                                                 <FormItem>
-                                                    <FormLabel className="text-[10px] font-bold text-muted-foreground uppercase tracking-widest">Stature</FormLabel>
+                                                    <FormLabel className="text-[10px] font-bold text-muted-foreground uppercase tracking-widest">{t("stature")}</FormLabel>
                                                     <FormControl>
                                                         <div className="relative group">
-                                                            <Input type="number" className="pr-16 font-semibold" {...field} onChange={e => field.onChange(Number(e.target.value))} />
+                                                            <Input
+                                                                type="number"
+                                                                className="pr-16 font-semibold"
+                                                                {...field}
+                                                                value={field.value ?? ""}
+                                                                onChange={e => field.onChange(Number(e.target.value))}
+                                                            />
                                                             <span className="absolute right-4 top-1/2 -translate-y-1/2 text-[10px] font-bold text-muted-foreground/40 transition-colors group-hover:text-primary">CM</span>
                                                         </div>
                                                     </FormControl>
@@ -261,10 +270,17 @@ export function UserDrawer({ open, onOpenChange, user }: UserDrawerProps) {
                                             name="weight"
                                             render={({ field }) => (
                                                 <FormItem>
-                                                    <FormLabel className="text-[10px] font-bold text-muted-foreground uppercase tracking-widest">Body Mass</FormLabel>
+                                                    <FormLabel className="text-[10px] font-bold text-muted-foreground uppercase tracking-widest">{t("bodyMass")}</FormLabel>
                                                     <FormControl>
                                                         <div className="relative group">
-                                                            <Input type="number" step="0.1" className="pr-16 font-semibold" {...field} onChange={e => field.onChange(Number(e.target.value))} />
+                                                            <Input
+                                                                type="number"
+                                                                step="0.1"
+                                                                className="pr-16 font-semibold"
+                                                                {...field}
+                                                                value={field.value ?? ""}
+                                                                onChange={e => field.onChange(Number(e.target.value))}
+                                                            />
                                                             <span className="absolute right-4 top-1/2 -translate-y-1/2 text-[10px] font-bold text-muted-foreground/40 transition-colors group-hover:text-primary">KG</span>
                                                         </div>
                                                     </FormControl>
@@ -278,7 +294,7 @@ export function UserDrawer({ open, onOpenChange, user }: UserDrawerProps) {
                                 {/* System Configuration */}
                                 <div className="space-y-8 pb-6">
                                     <div className="flex items-center gap-2">
-                                        <h3 className="font-bold text-sm text-secondary uppercase tracking-widest">System Compliance</h3>
+                                        <h3 className="font-bold text-sm text-secondary dark:text-white uppercase tracking-widest">{t("systemCompliance")}</h3>
                                         <div className="h-px flex-1 bg-border/60 ml-2" />
                                     </div>
                                     <div className="p-4 rounded-lg bg-muted/20 border border-border transition-colors hover:bg-muted/30 group">
@@ -288,9 +304,9 @@ export function UserDrawer({ open, onOpenChange, user }: UserDrawerProps) {
                                             render={({ field }) => (
                                                 <FormItem className="flex flex-row items-center justify-between">
                                                     <div className="space-y-0.5">
-                                                        <FormLabel className="text-sm font-bold text-secondary">Profile Status</FormLabel>
+                                                        <FormLabel className="text-sm font-bold text-secondary dark:text-white">{t("profileStatus")}</FormLabel>
                                                         <FormDescription className="text-[11px] leading-relaxed">
-                                                            Marks if the user has finalized their required onboarding data.
+                                                            {t("profileStatusDesc")}
                                                         </FormDescription>
                                                     </div>
                                                     <FormControl>
@@ -316,7 +332,7 @@ export function UserDrawer({ open, onOpenChange, user }: UserDrawerProps) {
                             onClick={() => onOpenChange(false)}
                             disabled={isSubmiting}
                         >
-                            Cancel
+                            {commonT("cancel")}
                         </Button>
                         <Button
                             type="submit"
@@ -327,7 +343,7 @@ export function UserDrawer({ open, onOpenChange, user }: UserDrawerProps) {
                             {isSubmiting ? (
                                 <Loader2 className="mr-2 h-4 w-4 animate-spin" />
                             ) : null}
-                            Save
+                            {commonT("save")}
                         </Button>
                     </SheetFooter>
                 </div>

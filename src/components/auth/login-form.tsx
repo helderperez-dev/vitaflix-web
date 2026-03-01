@@ -15,7 +15,7 @@ import {
 import { Input } from "@/components/ui/input"
 import { useState } from "react"
 import { loginAction } from "@/app/actions/auth"
-import { useLocale } from "next-intl"
+import { useLocale, useTranslations } from "next-intl"
 
 const loginSchema = z.object({
     email: z.string().email({ message: "Invalid email address." }),
@@ -26,6 +26,7 @@ export function LoginForm() {
     const [isLoading, setIsLoading] = useState(false)
     const [error, setError] = useState<string | null>(null)
     const locale = useLocale()
+    const t = useTranslations("Auth")
 
     const form = useForm<z.infer<typeof loginSchema>>({
         resolver: zodResolver(loginSchema),
@@ -56,7 +57,7 @@ export function LoginForm() {
                         name="email"
                         render={({ field }) => (
                             <FormItem>
-                                <FormLabel>Email</FormLabel>
+                                <FormLabel>{t("email")}</FormLabel>
                                 <FormControl>
                                     <Input placeholder="admin@vitaflix.com" {...field} />
                                 </FormControl>
@@ -69,7 +70,7 @@ export function LoginForm() {
                         name="password"
                         render={({ field }) => (
                             <FormItem>
-                                <FormLabel>Password</FormLabel>
+                                <FormLabel>{t("password")}</FormLabel>
                                 <FormControl>
                                     <Input type="password" placeholder="••••••••" {...field} />
                                 </FormControl>
@@ -80,7 +81,7 @@ export function LoginForm() {
                 </div>
                 {error && <p className="text-sm text-destructive">{error}</p>}
                 <Button type="submit" className="w-full" disabled={isLoading}>
-                    {isLoading ? "Signing in..." : "Sign In"}
+                    {isLoading ? t("signingIn") : t("signIn")}
                 </Button>
             </form>
         </Form>

@@ -21,9 +21,6 @@ export const productSchema = z.object({
   protein: z.number().min(0).optional(),
   carbs: z.number().min(0).optional(),
   fat: z.number().min(0).optional(),
-  slug: z.string().transform(v => v === "" ? null : v).pipe(
-    z.string().regex(/^[a-z0-9-]+$/, "Must be lowercase slug without special chars").nullable()
-  ).optional(),
   tagIds: z.array(z.string().uuid()).default([]),
   brandIds: z.array(z.string().uuid()).default([]),
   images: z.array(productImageSchema).default([]),

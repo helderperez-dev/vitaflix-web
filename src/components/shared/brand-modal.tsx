@@ -113,7 +113,7 @@ export function BrandModal({ open, onOpenChange, brand, onSuccess }: BrandModalP
 
                 <div className="p-8 space-y-8 max-h-[85vh] overflow-y-auto">
                     <DialogHeader className=" space-y-2">
-                        <DialogTitle className="text-xl font-bold tracking-tight text-secondary">
+                        <DialogTitle className="text-xl font-bold tracking-tight text-secondary dark:text-foreground">
                             {brand ? "Edit Brand" : "New Brand"}
                         </DialogTitle>
                         <DialogDescription className="text-xs text-muted-foreground leading-relaxed">

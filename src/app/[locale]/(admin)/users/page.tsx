@@ -11,9 +11,5 @@ export default async function UsersPage() {
         .select("*")
         .order("created_at", { ascending: false })
 
-    return (
-        <div className="flex-1 space-y-4 p-8 pt-6">
-            <UserTableWrapper initialUsers={users || []} />
-        </div>
-    )
+    return <UserTableWrapper initialUsers={users || []} />
 }

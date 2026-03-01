@@ -6,7 +6,7 @@ export default async function SettingsPage() {
     const defaultLocale = await getDefaultLocale()
 
     return (
-        <div className="space-y-10 animate-in fade-in duration-700">
+        <div className="h-full overflow-y-auto p-8 space-y-10 animate-in fade-in duration-700">
             <div className="flex flex-col gap-3">
                 <div className="flex items-center gap-2 text-primary font-bold text-xs uppercase tracking-[0.2em] bg-primary/10 w-fit px-3 py-1 rounded-full border border-primary/20">
                     <ShieldCheck className="w-3.5 h-3.5" />

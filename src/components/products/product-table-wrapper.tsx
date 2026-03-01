@@ -1,124 +1,141 @@
 "use client"
 
 import * as React from "react"
-import {
-    ColumnDef,
-    ColumnFiltersState,
-    SortingState,
-    VisibilityState,
-    ColumnSizingState,
-    flexRender,
-    getCoreRowModel,
-    getFilteredRowModel,
-    getPaginationRowModel,
-    getSortedRowModel,
-    useReactTable,
-} from "@tanstack/react-table"
-import {
-    Table,
-    TableBody,
-    TableCell,
-    TableHead,
-    TableHeader,
-    TableRow,
-} from "@/components/ui/table"
-import { Badge } from "@/components/ui/badge"
-import { Plus, ArrowUpDown, ChevronLeft, ChevronRight, ChevronsLeft, ChevronsRight, Settings2, Check, ArrowUp, ArrowDown } from "lucide-react"
+import { Plus, Trash2 } from "lucide-react"
 import { Button } from "@/components/ui/button"
-import {
-    DropdownMenu,
-    DropdownMenuCheckboxItem,
-    DropdownMenuContent,
-    DropdownMenuLabel,
-    DropdownMenuSeparator,
-    DropdownMenuTrigger,
-} from "@/components/ui/dropdown-menu"
-import {
-    Select,
-    SelectContent,
-    SelectItem,
-    SelectTrigger,
-    SelectValue,
-} from "@/components/ui/select"
-import { cn } from "@/lib/utils"
-
-import { ProductDrawer } from "./product-drawer"
-import { ProductActions } from "./product-actions"
-import { useLocale } from "next-intl"
+import { Badge } from "@/components/ui/badge"
+import { useLocale, useTranslations } from "next-intl"
 import type { Product } from "@/shared-schemas/product"
 import type { UserProfile } from "@/shared-schemas/user"
 import { updateUserPreferences } from "@/app/actions/users"
-
-interface SortableHeaderProps {
-    column: any
-    title: string
-}
-
-function SortableHeader({ column, title }: SortableHeaderProps) {
-    const isSorted = column.getIsSorted()
-    return (
-        <Button
-            variant="ghost"
-            onClick={() => column.toggleSorting(isSorted === "asc")}
-            className="-ml-4 h-8 text-xs font-bold uppercase tracking-wider text-muted-foreground/70 group/sort hover:bg-transparent"
-        >
-            {title}
-            <div className="ml-2 w-4 flex items-center justify-center">
-                {isSorted === "asc" ? (
-                    <ArrowUp className="h-3.5 w-3.5 text-primary" />
-                ) : isSorted === "desc" ? (
-                    <ArrowDown className="h-3.5 w-3.5 text-primary" />
-                ) : (
-                    <ArrowUpDown className="h-3.5 w-3.5 opacity-0 group-hover/sort:opacity-100 transition-opacity" />
-                )}
-            </div>
-        </Button>
-    )
-}
+import { bulkUpdateProductStatus, bulkDeleteProducts } from "@/app/actions/products"
+import { DataTable, SortableHeader } from "@/components/ui/data-table"
+import { useQueryState } from "nuqs"
+import { ProductDrawer } from "./product-drawer"
+import { ProductActions } from "./product-actions"
+import { Switch } from "@/components/ui/switch"
+import { Label } from "@/components/ui/label"
+import { toast } from "sonner"
+import { motion, AnimatePresence } from "framer-motion"
+import { Loader2, Maximize2 } from "lucide-react"
+import { ImageGalleryModal } from "@/components/shared/image-gallery-modal"
+import {
+    AlertDialog,
+    AlertDialogAction,
+    AlertDialogCancel,
+    AlertDialogContent,
+    AlertDialogDescription,
+    AlertDialogFooter,
+    AlertDialogHeader,
+    AlertDialogTitle,
+} from "@/components/ui/alert-dialog"
+import { cn } from "@/lib/utils"
+import type { ColumnDef } from "@tanstack/react-table"
 
 interface ProductTableWrapperProps {
     initialProducts: any[]
     userProfile?: any
 }
 
+function BulkStatusActions({ selectedRows, clearSelection }: { selectedRows: any[], clearSelection: () => void }) {
+    // Determine the consensus status
+    const allPublic = selectedRows.every(r => r.is_public === true || r.is_public === 1)
+
+    const [targetPublic, setTargetPublic] = React.useState(allPublic)
+    const [isDirty, setIsDirty] = React.useState(false)
+    const [isLoading, setIsLoading] = React.useState(false)
+
+    // Reset when selection changes
+    React.useEffect(() => {
+        setTargetPublic(allPublic)
+        setIsDirty(false)
+    }, [allPublic, selectedRows])
+
+    const handleApply = async () => {
+        setIsLoading(true)
+        const ids = selectedRows.map(r => r.id)
+        const result = await bulkUpdateProductStatus(ids, targetPublic)
+
+        if (result.success) {
+            toast.success(`Successfully updated ${ids.length} items`)
+            clearSelection()
+            setIsDirty(false)
+        } else {
+            toast.error(result.error || "Failed to update items")
+        }
+        setIsLoading(false)
+    }
+
+    return (
+        <div className="flex items-center ml-auto">
+            <div className={cn(
+                "flex items-center gap-0 bg-slate-100/50 dark:bg-white/5 rounded-xl border border-slate-200 dark:border-white/10 transition-all overflow-hidden",
+                isDirty && "border-primary/30 ring-1 ring-primary/10"
+            )}>
+                <div className="flex items-center gap-3 px-3 py-1.5 border-r border-slate-200 dark:border-white/10">
+                    <span className={cn(
+                        "text-[10px] font-bold uppercase tracking-widest transition-colors w-14 text-center select-none",
+                        targetPublic ? "text-primary" : "text-muted-foreground"
+                    )}>
+                        {targetPublic ? "Public" : "Private"}
+                    </span>
+                    <Switch
+                        checked={targetPublic}
+                        onCheckedChange={(val) => {
+                            setTargetPublic(val)
+                            setIsDirty(val !== allPublic)
+                        }}
+                        disabled={isLoading}
+                        className="data-[state=checked]:bg-primary"
+                    />
+                </div>
+
+                <AnimatePresence mode="popLayout" initial={false}>
+                    {isDirty && (
+                        <motion.button
+                            key="apply-btn"
+                            initial={{ width: 0, opacity: 0 }}
+                            animate={{ width: "auto", opacity: 1 }}
+                            exit={{ width: 0, opacity: 0 }}
+                            transition={{ duration: 0.2, ease: "easeInOut" }}
+                            onClick={handleApply}
+                            disabled={isLoading}
+                            className="bg-primary hover:bg-primary/90 text-white font-bold h-9 px-4 uppercase tracking-widest text-[9px] flex items-center justify-center whitespace-nowrap active:scale-95 transition-all disabled:opacity-50"
+                        >
+                            {isLoading ? (
+                                <Loader2 className="h-3 w-3 animate-spin" />
+                            ) : (
+                                "Apply Changes"
+                            )}
+                        </motion.button>
+                    )}
+                </AnimatePresence>
+            </div>
+        </div>
+    )
+}
+
 export function ProductTableWrapper({ initialProducts, userProfile }: ProductTableWrapperProps) {
     const locale = useLocale()
+    const t = useTranslations("Products")
+    const commonT = useTranslations("Common")
     const [drawerOpen, setDrawerOpen] = React.useState(false)
     const [selectedProduct, setSelectedProduct] = React.useState<Product | null>(null)
-    const [sorting, setSorting] = React.useState<SortingState>([])
-    const [columnFilters, setColumnFilters] = React.useState<ColumnFiltersState>([])
+    const [deleteModalOpen, setDeleteModalOpen] = React.useState(false)
+    const [rowsToDelete, setRowsToDelete] = React.useState<any[]>([])
+    const [clearSelectionRef, setClearSelectionRef] = React.useState<{ fn: () => void } | null>(null)
+    const [searchQuery, setSearchQuery] = useQueryState("search", { defaultValue: "" })
+    const [idParam, setIdParam] = useQueryState("id")
+    const [galleryImages, setGalleryImages] = React.useState<{ url: string; isDefault?: boolean }[] | null>(null)
+    const [isGalleryOpen, setIsGalleryOpen] = React.useState(false)
+    const hoverTimeoutRef = React.useRef<NodeJS.Timeout | null>(null)
 
-    // Initialize state from user preferences
-    const initialVisibility = userProfile?.preferences?.productTable?.columnVisibility || {}
-    const initialSizing = userProfile?.preferences?.productTable?.columnSizing || {}
-
-    const [columnVisibility, setColumnVisibility] = React.useState<VisibilityState>(initialVisibility)
-    const [columnSizing, setColumnSizing] = React.useState<ColumnSizingState>(initialSizing)
-    const [rowSelection, setRowSelection] = React.useState({})
-
-    // Save preferences to DB when they change
-    const isFirstRender = React.useRef(true)
+    // Clear timeout on unmount
     React.useEffect(() => {
-        if (isFirstRender.current) {
-            isFirstRender.current = false
-            return
+        return () => {
+            if (hoverTimeoutRef.current) clearTimeout(hoverTimeoutRef.current)
         }
-
-        if (!userProfile?.id) return
-
-        const timer = setTimeout(() => {
-            const newPrefs = {
-                ...userProfile.preferences,
-                productTable: {
-                    columnVisibility,
-                    columnSizing,
-                }
-            }
-            updateUserPreferences(userProfile.id, newPrefs)
-        }, 1000)
-
-        return () => clearTimeout(timer)
-    }, [columnVisibility, columnSizing, userProfile])
+    }, [])
 
     // Map initial data to our Product type structure
     const data = React.useMemo(() => {
@@ -131,47 +148,66 @@ export function ProductTableWrapper({ initialProducts, userProfile }: ProductTab
                 protein: p.protein,
                 carbs: p.carbs,
                 fat: p.fat,
-                slug: p.slug,
                 tagIds: p.product_tags?.map((pt: any) => pt.tag_id) || [],
                 brandIds: p.product_brands?.map((pb: any) => pb.brand_id) || [],
                 images: p.images || [],
                 isPublic: p.is_public,
             } as Product,
-            nameEn: p.name?.en || "",
             nameLocale: p.name?.[locale] || p.name?.en || "",
         }))
     }, [initialProducts, locale])
 
+
     const columns = React.useMemo<ColumnDef<any>[]>(() => [
         {
-            id: "image",
-            header: "",
+            accessorKey: "nameLocale",
+            header: ({ column }) => <SortableHeader column={column} title={t("table.name")} />,
             cell: ({ row }) => {
                 const product = row.original.mappedProduct
                 const defaultImage = product.images?.find((img: any) => img.isDefault) || product.images?.[0]
                 return (
-                    <div className="h-10 w-10 rounded-md overflow-hidden bg-muted border">
-                        <img
-                            src={defaultImage ? defaultImage.url : "/product_placeholder.png"}
-                            alt="Product"
-                            className="w-full h-full object-cover transition-all"
-                        />
+                    <div className="flex items-center gap-3">
+                        <motion.div
+                            whileHover={{ scale: 1.05 }}
+                            whileTap={{ scale: 0.95 }}
+                            onClick={() => {
+                                if (hoverTimeoutRef.current) clearTimeout(hoverTimeoutRef.current)
+                                setGalleryImages(product.images || [])
+                                setIsGalleryOpen(true)
+                            }}
+                            onMouseEnter={() => {
+                                if (product.images && product.images.length > 0) {
+                                    hoverTimeoutRef.current = setTimeout(() => {
+                                        setGalleryImages(product.images)
+                                        setIsGalleryOpen(true)
+                                    }, 400) // 400ms delay to prevent accidental pops
+                                }
+                            }}
+                            onMouseLeave={() => {
+                                if (hoverTimeoutRef.current) clearTimeout(hoverTimeoutRef.current)
+                            }}
+                            className="h-10 w-10 rounded-md overflow-hidden bg-muted border border-border/40 flex-shrink-0 relative group cursor-pointer"
+                        >
+                            <img
+                                src={defaultImage ? defaultImage.url : "/product_placeholder.png"}
+                                alt="Product"
+                                className="w-full h-full object-cover transition-all group-hover:brightness-50"
+                            />
+                            <div className="absolute inset-0 flex items-center justify-center opacity-0 group-hover:opacity-100 transition-opacity">
+                                <Maximize2 className="h-4 w-4 text-white" />
+                            </div>
+                        </motion.div>
+                        <div className="font-medium truncate">{row.getValue("nameLocale")}</div>
                     </div>
                 )
             },
-            size: 60,
-            enableResizing: false,
-        },
-        {
-            accessorKey: "nameLocale",
-            header: ({ column }) => <SortableHeader column={column} title="Name" />,
-            cell: ({ row }) => <div className="font-medium">{row.getValue("nameLocale")}</div>,
-            size: 200,
+            size: 260,
+            enableHiding: false,
         },
         {
             id: "brand",
             header: ({ column }) => <SortableHeader column={column} title="Brand" />,
-            sortingFn: (rowA, rowB, columnId) => {
+            sortingFn: (rowA, rowB) => {
                 const getBrandName = (pb: any) => {
                     const brandData = Array.isArray(pb?.brands) ? pb.brands[0] : pb?.brands;
                     return (brandData?.name?.[locale] || brandData?.name?.en || "").toLowerCase();
@@ -208,25 +244,25 @@ export function ProductTableWrapper({ initialProducts, userProfile }: ProductTab
         },
         {
             accessorKey: "kcal",
-            header: ({ column }) => <SortableHeader column={column} title="Kcal" />,
+            header: ({ column }) => <SortableHeader column={column} title={t("table.kcal")} />,
             cell: ({ row }) => <div>{row.getValue("kcal")} kcal</div>,
             size: 100,
         },
         {
             accessorKey: "protein",
-            header: ({ column }) => <SortableHeader column={column} title="Protein" />,
+            header: ({ column }) => <SortableHeader column={column} title={t("table.p")} />,
             cell: ({ row }) => <div>{row.getValue("protein")}g</div>,
             size: 80
         },
         {
             accessorKey: "carbs",
-            header: ({ column }) => <SortableHeader column={column} title="Carbs" />,
+            header: ({ column }) => <SortableHeader column={column} title={t("table.c")} />,
             cell: ({ row }) => <div>{row.getValue("carbs")}g</div>,
             size: 80
         },
         {
             accessorKey: "fat",
-            header: ({ column }) => <SortableHeader column={column} title="Fat" />,
+            header: ({ column }) => <SortableHeader column={column} title={t("table.f")} />,
             cell: ({ row }) => <div>{row.getValue("fat")}g</div>,
             size: 80
         },
@@ -261,7 +297,7 @@ export function ProductTableWrapper({ initialProducts, userProfile }: ProductTab
         },
         {
             accessorKey: "is_public",
-            header: ({ column }) => <SortableHeader column={column} title="Status" />,
+            header: ({ column }) => <SortableHeader column={column} title={t("table.status")} />,
             cell: ({ row }) => (
                 <Badge variant={row.getValue("is_public") ? "default" : "outline"} className="capitalize">
                     {row.getValue("is_public") ? "Public" : "Private"}
@@ -273,196 +309,139 @@ export function ProductTableWrapper({ initialProducts, userProfile }: ProductTab
             id: "actions",
             header: "",
             cell: ({ row }) => (
-                <ProductActions
-                    product={row.original.mappedProduct}
-                    onEdit={() => {
-                        setSelectedProduct(row.original.mappedProduct)
-                        setDrawerOpen(true)
-                    }}
-                />
+                <div onClick={(e) => e.stopPropagation()}>
+                    <ProductActions
+                        product={row.original.mappedProduct}
+                        onEdit={() => {
+                            setSelectedProduct(row.original.mappedProduct)
+                            setDrawerOpen(true)
+                        }}
+                    />
+                </div>
             ),
             size: 50,
             enableResizing: false,
+            enableHiding: false,
         },
     ], [locale])
 
-    const table = useReactTable({
-        data,
-        columns,
-        columnResizeMode: "onChange",
-        onSortingChange: setSorting,
-        onColumnFiltersChange: setColumnFilters,
-        getCoreRowModel: getCoreRowModel(),
-        getPaginationRowModel: getPaginationRowModel(),
-        getSortedRowModel: getSortedRowModel(),
-        getFilteredRowModel: getFilteredRowModel(),
-        onColumnVisibilityChange: setColumnVisibility,
-        onColumnSizingChange: setColumnSizing,
-        onRowSelectionChange: setRowSelection,
-        state: {
-            sorting,
-            columnFilters,
-            columnVisibility,
-            columnSizing,
-            rowSelection,
-        },
-        initialState: {
-            pagination: { pageSize: 10 },
-        },
-    })
+    const handlePreferencesChange = React.useCallback((newPrefs: any) => {
+        if (!userProfile?.id) return
+        const fullPrefs = {
+            ...userProfile.preferences,
+            productTable: newPrefs
+        }
+        updateUserPreferences(userProfile.id, fullPrefs)
+    }, [userProfile.id, userProfile.preferences])
 
     return (
-        <div className="space-y-6">
-            <div className="flex flex-col gap-2 relative">
-                <h1 className="text-3xl font-bold tracking-tight text-secondary">Products</h1>
-                <p className="text-muted-foreground text-sm">
-                    Manage nutritional ingredients and products available in the application.
-                </p>
-                <div className="absolute right-0 top-0 flex gap-2">
-                    {/* Column Visibility Toggle */}
-                    <DropdownMenu>
-                        <DropdownMenuTrigger asChild>
-                            <Button variant="outline" className="h-9 px-3 border-border/60 hover:bg-muted/40 text-muted-foreground">
-                                <Settings2 className="h-4 w-4 mr-2" />
-                                Columns
-                            </Button>
-                        </DropdownMenuTrigger>
-                        <DropdownMenuContent align="end" className="w-[200px]">
-                            <DropdownMenuLabel className="text-[10px] uppercase tracking-widest font-bold text-muted-foreground/70">Toggle Columns</DropdownMenuLabel>
-                            <DropdownMenuSeparator />
-                            {table
-                                .getAllColumns()
-                                .filter((column) => column.getCanHide())
-                                .map((column) => {
-                                    return (
-                                        <DropdownMenuCheckboxItem
-                                            key={column.id}
-                                            className="capitalize text-xs font-medium"
-                                            checked={column.getIsVisible()}
-                                            onCheckedChange={(value) => column.toggleVisibility(!!value)}
-                                        >
-                                            {column.id === "nameLocale" ? "Name" : column.id.replace("_", " ")}
-                                        </DropdownMenuCheckboxItem>
-                                    )
-                                })}
-                        </DropdownMenuContent>
-                    </DropdownMenu>
-
-                    <Button onClick={() => { setSelectedProduct(null); setDrawerOpen(true); }} className="bg-primary hover:bg-primary/90 text-white font-bold transition-all active:scale-95 shadow-sm shadow-primary/20 h-9 px-6 rounded-lg uppercase tracking-widest text-[10px]">
-                        <Plus className="mr-2 h-4 w-4" /> Add Product
-                    </Button>
+        <div className="h-full flex flex-col">
+            <div className="flex justify-between items-center shrink-0 px-8 py-5 border-b border-border/40 bg-gradient-to-r from-primary/10 via-primary/5 to-secondary/5 dark:from-primary/20 dark:via-primary/10 dark:to-secondary/20">
+                <div className="flex flex-col">
+                    <h2 className="text-2xl font-bold tracking-tight text-secondary dark:text-white dark:drop-shadow-sm leading-none">{t("title")}</h2>
+                    <p className="text-xs text-muted-foreground dark:text-white/60 mt-1.5">{t("description")}</p>
                 </div>
+                <Button onClick={() => { setSelectedProduct(null); setDrawerOpen(true); }} className="bg-primary hover:bg-primary/90 text-white font-bold transition-all active:scale-95 shadow-sm shadow-primary/20 h-8 px-4 rounded-md uppercase tracking-widest text-[10px]">
+                    <Plus className="mr-1.5 h-3.5 w-3.5" /> {t("addProduct")}
+                </Button>
             </div>
 
-            <div className="rounded-xl border border-border/50 bg-card overflow-hidden shadow-sm shadow-black/5">
-                <div className="w-full">
-                    <Table>
-                        <TableHeader className="bg-muted/30">
-                            {table.getHeaderGroups().map((headerGroup) => (
-                                <TableRow key={headerGroup.id} className="hover:bg-transparent border-border/50">
-                                    {headerGroup.headers.map((header) => (
-                                        <TableHead
-                                            key={header.id}
-                                            className={cn(
-                                                "h-11 text-xs font-bold uppercase tracking-wider text-muted-foreground/70 relative group/head",
-                                                header.id === "nameLocale" && "pl-0"
-                                            )}
-                                            style={{
-                                                width: header.column.getIsResizing() ? header.getSize() : (header.column.columnDef.size || 'auto')
-                                            }}
-                                        >
-                                            {header.isPlaceholder ? null : flexRender(header.column.columnDef.header, header.getContext())}
+            <DataTable
+                columns={columns}
+                data={data}
+                globalFilter={searchQuery}
+                onGlobalFilterChange={setSearchQuery}
+                className="flex-1"
+                enableRowSelection={true}
+                initialPreferences={userProfile?.preferences?.productTable}
+                onPreferencesChange={handlePreferencesChange}
+                onRowClick={(row) => {
+                    setSelectedProduct(row.mappedProduct)
+                    setDrawerOpen(true)
+                }}
+                onSelectedRowsChange={(rows) => {
+                    // console.log("Selected rows:", rows)
+                }}
+                selectionActions={(selectedRows, clearSelection) => (
+                    <div className="flex items-center gap-6 w-full">
+                        <BulkStatusActions
+                            selectedRows={selectedRows}
+                            clearSelection={clearSelection}
+                        />
 
-                                            {header.column.getCanResize() && (
-                                                <div
-                                                    onMouseDown={header.getResizeHandler()}
-                                                    onTouchStart={header.getResizeHandler()}
-                                                    className={cn(
-                                                        "absolute right-0 top-0 h-full w-2 cursor-col-resize hover:bg-primary/5 transition-all flex items-center justify-center",
-                                                        header.column.getIsResizing() ? "opacity-100" : "opacity-0 group-hover/head:opacity-100"
-                                                    )}
-                                                >
-                                                    <div className={cn(
-                                                        "h-5 w-[2px] rounded-full transition-colors",
-                                                        header.column.getIsResizing() ? "bg-primary scale-x-150" : "bg-muted-foreground/20"
-                                                    )} />
-                                                </div>
-                                            )}
-                                        </TableHead>
-                                    ))}
-                                </TableRow>
-                            ))}
-                        </TableHeader>
-                        <TableBody>
-                            {table.getRowModel().rows?.length ? (
-                                table.getRowModel().rows.map((row) => (
-                                    <TableRow
-                                        key={row.id}
-                                        className="hover:bg-muted/30 border-border/40 transition-colors"
-                                    >
-                                        {row.getVisibleCells().map((cell) => (
-                                            <TableCell
-                                                key={cell.id}
-                                                className={cn("py-3", cell.column.id === "nameLocale" && "pl-0")}
-                                            >
-                                                {flexRender(cell.column.columnDef.cell, cell.getContext())}
-                                            </TableCell>
-                                        ))}
-                                    </TableRow>
-                                ))
-                            ) : (
-                                <TableRow>
-                                    <TableCell colSpan={columns.length} className="h-24 text-center text-muted-foreground italic truncate">
-                                        No products found.
-                                    </TableCell>
-                                </TableRow>
-                            )}
-                        </TableBody>
-                    </Table>
-                </div>
-            </div>
+                        <div className="h-4 w-px bg-slate-200 dark:bg-white/10 shrink-0" />
 
-            {/* Pagination Controls */}
-            <div className="flex items-center justify-between px-2">
-                <div className="flex-1 text-[10px] font-bold uppercase tracking-widest text-muted-foreground/50">
-                    {table.getFilteredRowModel().rows.length} Total Ingredients
-                </div>
-                <div className="flex items-center gap-6 lg:gap-8">
-                    <div className="flex items-center gap-2">
-                        <p className="text-[10px] font-bold uppercase tracking-widest text-muted-foreground/50">Rows per page</p>
-                        <Select
-                            value={table.getState().pagination.pageSize.toString()}
-                            onValueChange={(value) => table.setPageSize(Number(value))}
+                        <Button
+                            variant="ghost"
+                            className="h-9 px-4 text-[11px] font-bold uppercase tracking-widest hover:bg-slate-100 dark:hover:bg-white/5 text-muted-foreground dark:text-white/80 hover:text-foreground dark:hover:text-white transition-all shrink-0"
+                            onClick={() => {
+                                setRowsToDelete(selectedRows)
+                                setClearSelectionRef({ fn: clearSelection })
+                                setDeleteModalOpen(true)
+                            }}
                         >
-                            <SelectTrigger className="h-8 w-16 text-[10px] font-bold">
-                                <SelectValue placeholder={table.getState().pagination.pageSize} />
-                            </SelectTrigger>
-                            <SelectContent side="top">
-                                {[10, 20, 30, 40, 50].map((pageSize) => (
-                                    <SelectItem
-                                        key={pageSize}
-                                        value={pageSize.toString()}
-                                        className="text-[10px] font-bold"
-                                    >
-                                        {pageSize}
-                                    </SelectItem>
-                                ))}
-                            </SelectContent>
-                        </Select>
+                            <Trash2 className="h-4 w-4 mr-2" />
+                            Delete ({selectedRows.length})
+                        </Button>
                     </div>
-                    <div className="flex w-[100px] items-center justify-center text-[10px] font-bold uppercase tracking-widest text-muted-foreground/50 text-center whitespace-nowrap">
-                        Page {table.getState().pagination.pageIndex + 1} of {table.getPageCount()}
-                    </div>
-                    <div className="flex items-center gap-1">
-                        <Button variant="outline" className="hidden h-8 w-8 p-0 lg:flex border-border/60 hover:bg-muted/40" onClick={() => table.setPageIndex(0)} disabled={!table.getCanPreviousPage()}><span className="sr-only">Go to first page</span><ChevronsLeft className="h-4 w-4" /></Button>
-                        <Button variant="outline" className="h-8 w-8 p-0 border-border/60 hover:bg-muted/40" onClick={() => table.previousPage()} disabled={!table.getCanPreviousPage()}><span className="sr-only">Go to previous page</span><ChevronLeft className="h-4 w-4" /></Button>
-                        <Button variant="outline" className="h-8 w-8 p-0 border-border/60 hover:bg-muted/40" onClick={() => table.nextPage()} disabled={!table.getCanNextPage()}><span className="sr-only">Go to next page</span><ChevronRight className="h-4 w-4" /></Button>
-                        <Button variant="outline" className="hidden h-8 w-8 p-0 lg:flex border-border/60 hover:bg-muted/40" onClick={() => table.setPageIndex(table.getPageCount() - 1)} disabled={!table.getCanNextPage()}><span className="sr-only">Go to last page</span><ChevronsRight className="h-4 w-4" /></Button>
-                    </div>
-                </div>
-            </div>
+                )}
+                emptyStateText={t("noProducts")}
+            />
 
-            <ProductDrawer open={drawerOpen} onOpenChange={(open) => { setDrawerOpen(open); if (!open) setSelectedProduct(null); }} product={selectedProduct} />
+            <AlertDialog open={deleteModalOpen} onOpenChange={setDeleteModalOpen}>
+                <AlertDialogContent className="rounded-2xl border-sidebar-border/50 shadow-2xl">
+                    <AlertDialogHeader>
+                        <AlertDialogTitle>Are you absolutely sure?</AlertDialogTitle>
+                        <AlertDialogDescription>
+                            This will permanently delete {rowsToDelete.length} {rowsToDelete.length === 1 ? 'product' : 'products'}.
+                            This action cannot be undone and will remove all associated nutritional data.
+                        </AlertDialogDescription>
+                    </AlertDialogHeader>
+                    <AlertDialogFooter className="gap-2">
+                        <AlertDialogCancel className="rounded-xl font-bold uppercase tracking-widest text-[10px] h-9">
+                            Cancel
+                        </AlertDialogCancel>
+                        <AlertDialogAction
+                            onClick={async () => {
+                                try {
+                                    const ids = rowsToDelete.map(r => r.id)
+                                    const result = await bulkDeleteProducts(ids)
+
+                                    if (result.success) {
+                                        toast.success(`Deleted ${ids.length} products`)
+                                        clearSelectionRef?.fn()
+                                    } else {
+                                        toast.error(result.error || "Failed to delete products")
+                                    }
+                                } finally {
+                                    setDeleteModalOpen(false)
+                                }
+                            }}
+                            className="bg-primary hover:bg-primary/90 text-white rounded-xl font-bold uppercase tracking-widest text-[10px] h-9 px-6"
+                        >
+                            Confirm Deletion
+                        </AlertDialogAction>
+                    </AlertDialogFooter>
+                </AlertDialogContent>
+            </AlertDialog>
+
+            <ProductDrawer
+                open={drawerOpen}
+                onOpenChange={(open) => {
+                    setDrawerOpen(open);
+                    if (!open) {
+                        setSelectedProduct(null);
+                        setIdParam(null);
+                    }
+                }}
+                product={selectedProduct}
+            />
+
+            <ImageGalleryModal
+                open={isGalleryOpen}
+                onOpenChange={setIsGalleryOpen}
+                images={galleryImages || []}
+            />
         </div>
     )
 }

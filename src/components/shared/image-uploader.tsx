@@ -121,107 +121,102 @@ export function ImageUploader({ folder, value = [], onChange, maxImages = 10 }: 
 
     return (
         <div className="space-y-4">
-            <div className="flex items-center justify-between gap-4">
-                <div className="flex items-center gap-2 flex-1">
-                    <h3 className="font-bold text-[10px] text-muted-foreground uppercase tracking-widest whitespace-nowrap">Media Gallery</h3>
-                    <div className="h-px w-full bg-border/40" />
-                </div>
-            </div>
+            <div className="grid grid-cols-2 sm:grid-cols-3 gap-4">
+                {/* Existing Images */}
+                {value.map((image, index) => (
+                    <div
+                        key={image.url}
+                        draggable
+                        onDragStart={(e) => handleDragStart(e, index)}
+                        onDragOver={(e) => handleDragOver(e, index)}
+                        onDragEnd={handleDragEnd}
+                        className={cn(
+                            "relative group aspect-square rounded-2xl overflow-hidden border-2 bg-muted transition-all cursor-move shadow-sm hover:shadow-md",
+                            image.isDefault ? "border-primary/50 ring-2 ring-primary/10" : "border-border/30",
+                            draggedItemIndex === index && "opacity-50 scale-95"
+                        )}
+                    >
+                        <img
+                            src={image.url}
+                            alt={`Product ${index + 1}`}
+                            className="w-full h-full object-cover"
+                        />
 
-            {value.length > 0 && (
-                <div className="grid grid-cols-2 sm:grid-cols-3 gap-4">
-                    {value.map((image, index) => (
-                        <div
-                            key={image.url}
-                            draggable
-                            onDragStart={(e) => handleDragStart(e, index)}
-                            onDragOver={(e) => handleDragOver(e, index)}
-                            onDragEnd={handleDragEnd}
-                            className={cn(
-                                "relative group aspect-square rounded-xl overflow-hidden border-2 bg-muted transition-all cursor-move",
-                                image.isDefault ? "border-primary" : "border-transparent",
-                                draggedItemIndex === index && "opacity-50 scale-95"
-                            )}
-                        >
-                            <img
-                                src={image.url}
-                                alt={`Product ${index + 1}`}
-                                className="w-full h-full object-cover"
-                            />
-
-                            {/* Overlay Controls */}
-                            <div className="absolute inset-0 bg-black/40 opacity-0 group-hover:opacity-100 transition-opacity flex flex-col justify-between p-2">
-                                <div className="flex justify-between items-start">
-                                    <div className="p-1 bg-black/40 rounded-md text-white/70">
-                                        <GripVertical className="h-4 w-4" />
-                                    </div>
-                                    <button
-                                        type="button"
-                                        onClick={() => removeImage(index)}
-                                        className="p-1.5 bg-red-500 hover:bg-red-600 text-white rounded-full transition-colors"
-                                    >
-                                        <X className="h-3 w-3" />
-                                    </button>
+                        {/* Overlay Controls */}
+                        <div className="absolute inset-0 bg-black/40 opacity-0 group-hover:opacity-100 transition-opacity flex flex-col justify-between p-2.5">
+                            <div className="flex justify-between items-start">
+                                <div className="p-1.5 bg-black/40 rounded-lg text-white/70 backdrop-blur-md">
+                                    <GripVertical className="h-4 w-4" />
                                 </div>
-                                <div className="flex justify-center">
-                                    <button
-                                        type="button"
-                                        onClick={() => setDefault(index)}
-                                        className={cn(
-                                            "px-3 py-1.5 rounded-full text-[10px] font-bold uppercase tracking-wider flex items-center gap-1.5 transition-colors",
-                                            image.isDefault
-                                                ? "bg-primary text-primary-foreground"
-                                                : "bg-white/20 hover:bg-white/40 text-white backdrop-blur-sm"
-                                        )}
-                                    >
-                                        <Star className={cn("h-3 w-3", image.isDefault && "fill-current")} />
-                                        {image.isDefault ? "Thumbnail" : "Set Main"}
-                                    </button>
-                                </div>
+                                <button
+                                    type="button"
+                                    onClick={() => removeImage(index)}
+                                    className="p-1.5 bg-red-500/80 hover:bg-red-500 text-white rounded-lg transition-colors backdrop-blur-md"
+                                >
+                                    <X className="h-3.5 w-3.5" />
+                                </button>
+                            </div>
+                            <div className="flex justify-center">
+                                <button
+                                    type="button"
+                                    onClick={() => setDefault(index)}
+                                    className={cn(
+                                        "px-3 py-2 rounded-xl text-[9px] font-bold uppercase tracking-widest flex items-center gap-2 transition-all active:scale-95",
+                                        image.isDefault
+                                            ? "bg-primary text-primary-foreground shadow-lg shadow-primary/20"
+                                            : "bg-white/20 hover:bg-white/40 text-white backdrop-blur-md"
+                                    )}
+                                >
+                                    <Star className={cn("h-3 w-3", image.isDefault && "fill-current")} />
+                                    {image.isDefault ? "Main Product" : "Set as Main"}
+                                </button>
                             </div>
                         </div>
-                    ))}
-                </div>
-            )}
+                    </div>
+                ))}
 
-            {value.length < maxImages && (
-                <div
-                    onClick={() => !isUploading && fileInputRef.current?.click()}
-                    className={cn(
-                        "w-full py-8 border-2 border-dashed rounded-xl flex flex-col items-center justify-center transition-colors cursor-pointer group",
-                        isUploading ? "border-primary bg-primary/5 cursor-not-allowed" : "border-border/60 hover:border-primary/50 hover:bg-muted/10 bg-muted/5"
-                    )}
-                >
-                    <input
-                        type="file"
-                        ref={fileInputRef}
-                        className="hidden"
-                        accept="image/*"
-                        multiple={maxImages > 1}
-                        onChange={handleUpload}
-                        disabled={isUploading}
-                    />
+                {/* Upload Trigger */}
+                {value.length < maxImages && (
+                    <div
+                        onClick={() => !isUploading && fileInputRef.current?.click()}
+                        className={cn(
+                            "relative aspect-square rounded-2xl border-2 border-dashed flex flex-col items-center justify-center transition-all cursor-pointer group shadow-sm",
+                            isUploading
+                                ? "border-primary bg-primary/5 cursor-not-allowed ring-2 ring-primary/5"
+                                : "border-border/60 hover:border-primary/50 hover:bg-primary/[0.02] bg-muted/5 hover:shadow-md"
+                        )}
+                    >
+                        <input
+                            type="file"
+                            ref={fileInputRef}
+                            className="hidden"
+                            accept="image/*"
+                            multiple={maxImages > 1}
+                            onChange={handleUpload}
+                            disabled={isUploading}
+                        />
 
-                    {isUploading ? (
-                        <>
-                            <Loader2 className="h-6 w-6 text-primary animate-spin mb-3" />
-                            <p className="text-[10px] font-bold text-primary uppercase tracking-widest">Uploading Media...</p>
-                        </>
-                    ) : (
-                        <>
-                            <div className="h-10 w-10 rounded-full bg-background border flex items-center justify-center mb-3 group-hover:scale-110 transition-transform shadow-sm">
-                                <UploadCloud className="h-5 w-5 text-muted-foreground group-hover:text-primary transition-colors" />
-                            </div>
-                            <p className="text-[10px] font-bold text-muted-foreground uppercase tracking-widest">
-                                {maxImages === 1 ? 'Click to upload brand logo' : 'Click to upload product images'}
-                            </p>
-                            <p className="text-[10px] text-muted-foreground/60 mt-1 max-w-[200px] text-center leading-relaxed">
-                                {maxImages > 1 && "You can drag and drop images to reorder them."} Supports JPG, PNG, WEBP.
-                            </p>
-                        </>
-                    )}
-                </div>
-            )}
+                        {isUploading ? (
+                            <>
+                                <div className="relative h-12 w-12 flex items-center justify-center mb-2">
+                                    <Loader2 className="absolute h-10 w-10 text-primary animate-spin" />
+                                    <UploadCloud className="h-5 w-5 text-primary/40" />
+                                </div>
+                                <p className="text-[9px] font-black text-primary uppercase tracking-[0.2em] text-center px-2">Uploading...</p>
+                            </>
+                        ) : (
+                            <>
+                                <div className="h-12 w-12 rounded-2xl bg-white dark:bg-slate-900 border border-border/50 flex items-center justify-center mb-3 group-hover:scale-110 transition-all shadow-sm group-hover:shadow-primary/10 group-hover:border-primary/30">
+                                    <UploadCloud className="h-6 w-6 text-muted-foreground group-hover:text-primary transition-colors" />
+                                </div>
+                                <p className="text-[9px] font-black text-muted-foreground/60 uppercase tracking-[0.2em] text-center px-4 group-hover:text-primary/70 transition-colors">
+                                    {maxImages === 1 ? 'Add Logo' : 'Add Image'}
+                                </p>
+                            </>
+                        )}
+                    </div>
+                )}
+            </div>
         </div>
     )
 }
