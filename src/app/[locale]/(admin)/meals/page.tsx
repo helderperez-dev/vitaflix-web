@@ -3,7 +3,7 @@ import { MealTableWrapper } from "@/components/meals/meal-table-wrapper"
 
 export const dynamic = "force-dynamic"
 
-export default async function RecipesPage() {
+export default async function MealsPage() {
     const supabase = await createClient()
 
     const { data: meals } = await supabase

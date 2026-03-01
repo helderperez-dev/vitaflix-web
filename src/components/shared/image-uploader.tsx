@@ -161,7 +161,7 @@ export function ImageUploader({ folder, value = [], onChange, maxImages = 10 }: 
                                     type="button"
                                     onClick={() => setDefault(index)}
                                     className={cn(
-                                        "px-3 py-2 rounded-xl text-[9px] font-bold uppercase tracking-widest flex items-center gap-2 transition-all active:scale-95",
+                                        "px-3 py-2 rounded-xl text-xs font-semibold flex items-center gap-2 transition-all active:scale-95",
                                         image.isDefault
                                             ? "bg-primary text-primary-foreground shadow-lg shadow-primary/20"
                                             : "bg-white/20 hover:bg-white/40 text-white backdrop-blur-md"
@@ -202,14 +202,14 @@ export function ImageUploader({ folder, value = [], onChange, maxImages = 10 }: 
                                     <Loader2 className="absolute h-10 w-10 text-primary animate-spin" />
                                     <UploadCloud className="h-5 w-5 text-primary/40" />
                                 </div>
-                                <p className="text-[9px] font-black text-primary uppercase tracking-[0.2em] text-center px-2">Uploading...</p>
+                                <p className="text-xs font-semibold text-primary text-center px-2">Uploading...</p>
                             </>
                         ) : (
                             <>
                                 <div className="h-12 w-12 rounded-2xl bg-white dark:bg-slate-900 border border-border/50 flex items-center justify-center mb-3 group-hover:scale-110 transition-all shadow-sm group-hover:shadow-primary/10 group-hover:border-primary/30">
                                     <UploadCloud className="h-6 w-6 text-muted-foreground group-hover:text-primary transition-colors" />
                                 </div>
-                                <p className="text-[9px] font-black text-muted-foreground/60 uppercase tracking-[0.2em] text-center px-4 group-hover:text-primary/70 transition-colors">
+                                <p className="text-xs font-semibold text-muted-foreground/60 text-center px-4 group-hover:text-primary/70 transition-colors">
                                     {maxImages === 1 ? 'Add Logo' : 'Add Image'}
                                 </p>
                             </>

@@ -72,7 +72,7 @@ export function UserTableWrapper({ initialUsers }: UserTableWrapperProps) {
             accessorKey: "role",
             header: ({ column }) => <SortableHeader column={column} title={t("table.role")} />,
             cell: ({ row }) => (
-                <Badge variant={row.getValue("role") === "admin" ? "default" : "outline"} className="capitalize text-[10px] font-bold">
+                <Badge variant={row.getValue("role") === "admin" ? "default" : "outline"} className="capitalize text-[10px] font-semibold">
                     {row.getValue("role")}
                 </Badge>
             ),
@@ -84,7 +84,7 @@ export function UserTableWrapper({ initialUsers }: UserTableWrapperProps) {
             cell: ({ row }) => {
                 const goal = row.getValue("objective") as string
                 return (
-                    <span className="text-[10px] capitalize font-bold text-muted-foreground bg-muted/50 px-2 py-0.5 rounded tracking-wider">
+                    <span className="text-[10px] capitalize font-semibold text-muted-foreground bg-muted/50 px-2 py-0.5 rounded">
                         {goal?.replace("_", " ") || "No goal"}
                     </span>
                 )
@@ -96,9 +96,9 @@ export function UserTableWrapper({ initialUsers }: UserTableWrapperProps) {
             header: ({ column }) => <SortableHeader column={column} title={t("table.status")} />,
             cell: ({ row }) => (
                 row.getValue("extraDataComplete") ? (
-                    <Badge className="bg-emerald-500/10 text-emerald-600 border-emerald-500/20 hover:bg-emerald-500/10 text-[10px] font-bold border">Full Profile</Badge>
+                    <Badge className="bg-emerald-500/10 text-emerald-600 border-emerald-500/20 hover:bg-emerald-500/10 text-[10px] font-semibold border">Full Profile</Badge>
                 ) : (
-                    <Badge variant="secondary" className="bg-amber-500/10 text-amber-600 border-amber-500/20 hover:bg-amber-500/10 text-[10px] font-bold border">Pending Bio</Badge>
+                    <Badge variant="secondary" className="bg-amber-500/10 text-amber-600 border-amber-500/20 hover:bg-amber-500/10 text-[10px] font-semibold border">Pending Bio</Badge>
                 )
             ),
             size: 120,
@@ -128,13 +128,27 @@ export function UserTableWrapper({ initialUsers }: UserTableWrapperProps) {
 
     return (
         <div className="h-full flex flex-col">
-            <div className="flex justify-between items-center shrink-0 px-8 py-5 border-b border-border/40 bg-gradient-to-r from-primary/10 via-primary/5 to-secondary/5 dark:from-primary/20 dark:via-primary/10 dark:to-secondary/20">
-                <div className="flex flex-col">
-                    <h2 className="text-2xl font-bold tracking-tight text-secondary dark:text-white dark:drop-shadow-sm leading-none">{t("title")}</h2>
-                    <p className="text-xs text-muted-foreground dark:text-white/60 mt-1.5">{t("description")}</p>
+            <div className="flex justify-between items-center shrink-0 px-10 py-8 border-b border-border/40 bg-white dark:bg-background relative overflow-hidden">
+                {/* Premium Background Accent */}
+                <div className="absolute top-0 right-0 w-1/3 h-full bg-gradient-to-l from-primary/5 to-transparent pointer-events-none" />
+                <div className="absolute top-0 left-0 w-64 h-64 bg-primary/5 rounded-full -translate-x-1/2 -translate-y-1/2 blur-[80px] pointer-events-none" />
+
+                <div className="flex flex-col relative z-10">
+                    <div className="flex items-center gap-3">
+                        <div className="w-1 h-6 bg-primary rounded-full opacity-80" />
+                        <h2 className="text-3xl font-semibold tracking-tight text-foreground dark:text-white leading-none">
+                            {t("title")}
+                        </h2>
+                    </div>
+                    <p className="text-[11px] font-medium text-muted-foreground/70 dark:text-white/40 mt-2.5 ml-4">
+                        {t("description")}
+                    </p>
                 </div>
-                <Button onClick={handleAdd} className="bg-primary hover:bg-primary/90 text-white font-bold transition-all active:scale-95 shadow-sm shadow-primary/20 h-8 px-4 rounded-md uppercase tracking-widest text-[10px]">
-                    <UserPlus className="mr-1.5 h-3.5 w-3.5" />
+
+                <Button onClick={handleAdd} className="bg-primary hover:bg-primary/95 text-white font-semibold transition-all active:scale-95 shadow-sm shadow-primary/5 h-10 px-6 rounded-xl text-xs flex items-center gap-2 group/add">
+                    <div className="p-0.5 rounded-md bg-white/20 transition-transform group-hover/add:rotate-90">
+                        <UserPlus className="h-3.5 w-3.5" />
+                    </div>
                     {t("addManual")}
                 </Button>
             </div>

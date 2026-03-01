@@ -23,7 +23,7 @@ export function MealActions({ meal, onEdit }: MealActionsProps) {
     const [isDeleting, setIsDeleting] = React.useState(false)
 
     async function handleDelete() {
-        if (!confirm("Are you sure you want to delete this recipe?")) return
+        if (!confirm("Are you sure you want to delete this meal?")) return
         if (!meal.id) return
 
         setIsDeleting(true)
@@ -32,10 +32,10 @@ export function MealActions({ meal, onEdit }: MealActionsProps) {
             if (result.error) {
                 toast.error(result.error)
             } else {
-                toast.success("Recipe deleted")
+                toast.success("Meal deleted")
             }
         } catch (error) {
-            toast.error("Failed to delete recipe")
+            toast.error("Failed to delete meal")
         } finally {
             setIsDeleting(false)
         }

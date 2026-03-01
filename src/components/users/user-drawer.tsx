@@ -39,6 +39,7 @@ import { Switch } from "@/components/ui/switch"
 import { Badge } from "@/components/ui/badge"
 import { userProfileSchema, type UserProfile } from "@/shared-schemas/user"
 import { upsertUser } from "@/app/actions/users"
+import { Stepper } from "@/components/ui/stepper"
 
 interface UserDrawerProps {
     open: boolean
@@ -114,16 +115,6 @@ export function UserDrawer({ open, onOpenChange, user }: UserDrawerProps) {
 
                 <div className="flex-1 flex flex-col min-h-0 overflow-hidden">
                     <SheetHeader className="px-8 py-8 space-y-2">
-                        <div className="flex items-center gap-2">
-                            <Badge variant="secondary" className="px-2 py-0.5 text-[10px] font-bold uppercase tracking-wider bg-primary/10 text-primary border-transparent">
-                                {user ? t("identityManagement") : t("accountOnboarding")}
-                            </Badge>
-                            {user && (
-                                <Badge variant="outline" className="px-2 py-0.5 text-[10px] font-mono border-border text-muted-foreground bg-muted/30 uppercase">
-                                    {user.role}
-                                </Badge>
-                            )}
-                        </div>
                         <SheetTitle className="text-2xl font-bold tracking-tight text-secondary dark:text-foreground">
                             {user ? t("title") : t("title")}
                         </SheetTitle>
@@ -138,7 +129,7 @@ export function UserDrawer({ open, onOpenChange, user }: UserDrawerProps) {
                                 {/* Identity & Authentication */}
                                 <div className="space-y-8">
                                     <div className="flex items-center gap-2">
-                                        <h3 className="font-bold text-sm text-secondary dark:text-white uppercase tracking-widest">{t("identityManagement")}</h3>
+                                        <h3 className="font-bold text-sm text-secondary dark:text-white">{t("identityManagement")}</h3>
                                         <div className="h-px flex-1 bg-border/60 ml-2" />
                                     </div>
                                     <div className="grid grid-cols-1 md:grid-cols-2 gap-x-12 gap-y-8">
@@ -147,7 +138,7 @@ export function UserDrawer({ open, onOpenChange, user }: UserDrawerProps) {
                                             name="email"
                                             render={({ field }) => (
                                                 <FormItem>
-                                                    <FormLabel className="text-[10px] font-bold text-muted-foreground uppercase tracking-widest">E-mail</FormLabel>
+                                                    <FormLabel className="text-xs font-semibold text-muted-foreground/70">E-mail</FormLabel>
                                                     <FormControl>
                                                         <Input disabled={!!user} placeholder="user@example.com" {...field} />
                                                     </FormControl>
@@ -160,7 +151,7 @@ export function UserDrawer({ open, onOpenChange, user }: UserDrawerProps) {
                                             name="displayName"
                                             render={({ field }) => (
                                                 <FormItem>
-                                                    <FormLabel className="text-[10px] font-bold text-muted-foreground uppercase tracking-widest">Nome Completo</FormLabel>
+                                                    <FormLabel className="text-xs font-semibold text-muted-foreground/70">Nome Completo</FormLabel>
                                                     <FormControl>
                                                         <Input placeholder="John Doe" {...field} />
                                                     </FormControl>
@@ -173,7 +164,7 @@ export function UserDrawer({ open, onOpenChange, user }: UserDrawerProps) {
                                             name="role"
                                             render={({ field }) => (
                                                 <FormItem className="md:col-span-2">
-                                                    <FormLabel className="text-[10px] font-bold text-muted-foreground uppercase tracking-widest">System Authorization Role</FormLabel>
+                                                    <FormLabel className="text-xs font-semibold text-muted-foreground/70">System Authorization Role</FormLabel>
                                                     <Select onValueChange={field.onChange} defaultValue={field.value}>
                                                         <FormControl>
                                                             <SelectTrigger>
@@ -195,7 +186,7 @@ export function UserDrawer({ open, onOpenChange, user }: UserDrawerProps) {
                                 {/* Physiological Baseline */}
                                 <div className="space-y-8">
                                     <div className="flex items-center gap-2">
-                                        <h3 className="font-bold text-sm text-secondary dark:text-white uppercase tracking-widest">{t("physiologicalBaseline")}</h3>
+                                        <h3 className="font-bold text-sm text-secondary dark:text-white">{t("physiologicalBaseline")}</h3>
                                         <div className="h-px flex-1 bg-border/60 ml-2" />
                                     </div>
                                     <div className="grid grid-cols-2 gap-x-12 gap-y-8">
@@ -204,7 +195,7 @@ export function UserDrawer({ open, onOpenChange, user }: UserDrawerProps) {
                                             name="genre"
                                             render={({ field }) => (
                                                 <FormItem>
-                                                    <FormLabel className="text-[10px] font-bold text-muted-foreground uppercase tracking-widest">{t("biologicalGender")}</FormLabel>
+                                                    <FormLabel className="text-xs font-semibold text-muted-foreground/70">{t("biologicalGender")}</FormLabel>
                                                     <Select onValueChange={field.onChange} defaultValue={field.value}>
                                                         <FormControl>
                                                             <SelectTrigger>
@@ -226,7 +217,7 @@ export function UserDrawer({ open, onOpenChange, user }: UserDrawerProps) {
                                             name="objective"
                                             render={({ field }) => (
                                                 <FormItem>
-                                                    <FormLabel className="text-[10px] font-bold text-muted-foreground uppercase tracking-widest">{t("wellnessObjective")}</FormLabel>
+                                                    <FormLabel className="text-xs font-semibold text-muted-foreground/70">{t("wellnessObjective")}</FormLabel>
                                                     <Select onValueChange={field.onChange} defaultValue={field.value}>
                                                         <FormControl>
                                                             <SelectTrigger>
@@ -248,18 +239,14 @@ export function UserDrawer({ open, onOpenChange, user }: UserDrawerProps) {
                                             name="height"
                                             render={({ field }) => (
                                                 <FormItem>
-                                                    <FormLabel className="text-[10px] font-bold text-muted-foreground uppercase tracking-widest">{t("stature")}</FormLabel>
+                                                    <FormLabel className="text-xs font-semibold text-muted-foreground/70">{t("stature")}</FormLabel>
                                                     <FormControl>
-                                                        <div className="relative group">
-                                                            <Input
-                                                                type="number"
-                                                                className="pr-16 font-semibold"
-                                                                {...field}
-                                                                value={field.value ?? ""}
-                                                                onChange={e => field.onChange(Number(e.target.value))}
-                                                            />
-                                                            <span className="absolute right-4 top-1/2 -translate-y-1/2 text-[10px] font-bold text-muted-foreground/40 transition-colors group-hover:text-primary">CM</span>
-                                                        </div>
+                                                        <Stepper
+                                                            value={field.value ?? 170}
+                                                            onChange={field.onChange}
+                                                            step={1}
+                                                            unit="CM"
+                                                        />
                                                     </FormControl>
                                                     <FormMessage className="text-[10px]" />
                                                 </FormItem>
@@ -270,19 +257,14 @@ export function UserDrawer({ open, onOpenChange, user }: UserDrawerProps) {
                                             name="weight"
                                             render={({ field }) => (
                                                 <FormItem>
-                                                    <FormLabel className="text-[10px] font-bold text-muted-foreground uppercase tracking-widest">{t("bodyMass")}</FormLabel>
+                                                    <FormLabel className="text-xs font-semibold text-muted-foreground/70">{t("bodyMass")}</FormLabel>
                                                     <FormControl>
-                                                        <div className="relative group">
-                                                            <Input
-                                                                type="number"
-                                                                step="0.1"
-                                                                className="pr-16 font-semibold"
-                                                                {...field}
-                                                                value={field.value ?? ""}
-                                                                onChange={e => field.onChange(Number(e.target.value))}
-                                                            />
-                                                            <span className="absolute right-4 top-1/2 -translate-y-1/2 text-[10px] font-bold text-muted-foreground/40 transition-colors group-hover:text-primary">KG</span>
-                                                        </div>
+                                                        <Stepper
+                                                            value={field.value ?? 70}
+                                                            onChange={field.onChange}
+                                                            step={0.1}
+                                                            unit="KG"
+                                                        />
                                                     </FormControl>
                                                     <FormMessage className="text-[10px]" />
                                                 </FormItem>
@@ -294,7 +276,7 @@ export function UserDrawer({ open, onOpenChange, user }: UserDrawerProps) {
                                 {/* System Configuration */}
                                 <div className="space-y-8 pb-6">
                                     <div className="flex items-center gap-2">
-                                        <h3 className="font-bold text-sm text-secondary dark:text-white uppercase tracking-widest">{t("systemCompliance")}</h3>
+                                        <h3 className="font-bold text-sm text-secondary dark:text-white">{t("systemCompliance")}</h3>
                                         <div className="h-px flex-1 bg-border/60 ml-2" />
                                     </div>
                                     <div className="p-4 rounded-lg bg-muted/20 border border-border transition-colors hover:bg-muted/30 group">
@@ -328,7 +310,7 @@ export function UserDrawer({ open, onOpenChange, user }: UserDrawerProps) {
                     <SheetFooter className="px-8 py-8 border-t flex flex-row items-center justify-end gap-3 bg-muted/5">
                         <Button
                             variant="outline"
-                            className="h-10 px-6 font-bold text-xs uppercase tracking-widest border-border hover:bg-muted/30 transition-colors"
+                            className="h-10 px-6 font-semibold text-xs border-border hover:bg-muted/30 transition-colors"
                             onClick={() => onOpenChange(false)}
                             disabled={isSubmiting}
                         >
@@ -337,7 +319,7 @@ export function UserDrawer({ open, onOpenChange, user }: UserDrawerProps) {
                         <Button
                             type="submit"
                             form="user-form"
-                            className="h-10 px-8 bg-primary hover:bg-primary/90 text-white font-bold text-xs uppercase tracking-widest shadow-sm shadow-primary/10 transition-all active:scale-[0.98]"
+                            className="h-10 px-8 bg-primary hover:bg-primary/90 text-white font-semibold text-xs shadow-sm shadow-primary/5 transition-all active:scale-[0.98]"
                             disabled={isSubmiting}
                         >
                             {isSubmiting ? (

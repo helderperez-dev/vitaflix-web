@@ -36,6 +36,7 @@ import { TranslationFields } from "@/components/shared/translation-fields"
 import { TagSelector } from "@/components/shared/tag-selector"
 import { BrandSelector } from "@/components/shared/brand-selector"
 import { ImageUploader } from "@/components/shared/image-uploader"
+import { Stepper } from "@/components/ui/stepper"
 
 interface ProductDrawerProps {
     open: boolean
@@ -114,16 +115,6 @@ export function ProductDrawer({ open, onOpenChange, product }: ProductDrawerProp
 
                 <div className="flex-1 flex flex-col min-h-0 overflow-hidden">
                     <SheetHeader className="px-8 py-8 space-y-2">
-                        <div className="flex items-center gap-2">
-                            <Badge variant="secondary" className="px-2 py-0.5 text-[10px] font-bold uppercase tracking-wider bg-primary/10 text-primary border-transparent">
-                                {product ? "Management" : "Creation"}
-                            </Badge>
-                            {product && (
-                                <Badge variant="outline" className="px-2 py-0.5 text-[10px] font-mono border-border text-muted-foreground bg-muted/30">
-                                    ID: {product.id?.split("-")[0]}
-                                </Badge>
-                            )}
-                        </div>
                         <SheetTitle className="text-2xl font-bold tracking-tight text-secondary dark:text-foreground">
                             {product ? t("editProduct") : t("newProduct")}
                         </SheetTitle>
@@ -146,7 +137,7 @@ export function ProductDrawer({ open, onOpenChange, product }: ProductDrawerProp
                                 {/* Nutritional Values */}
                                 <div className="space-y-8">
                                     <div className="flex items-center gap-2">
-                                        <h3 className="font-bold text-sm text-secondary dark:text-white uppercase tracking-widest">{t("mediaGallery")}</h3>
+                                        <h3 className="font-bold text-sm text-secondary dark:text-white">{t("mediaGallery")}</h3>
                                         <div className="h-px flex-1 bg-border/60 ml-2" />
                                     </div>
                                     <ImageUploader
@@ -159,7 +150,7 @@ export function ProductDrawer({ open, onOpenChange, product }: ProductDrawerProp
                                 {/* Nutritional Values */}
                                 <div className="space-y-8">
                                     <div className="flex items-center gap-2">
-                                        <h3 className="font-bold text-sm text-secondary dark:text-white uppercase tracking-widest">{t("nutritionalValues")} <span className="text-[10px] font-normal lowercase opacity-50 ml-1">({t("per100g")})</span></h3>
+                                        <h3 className="font-bold text-sm text-secondary dark:text-white">{t("nutritionalValues")} <span className="text-[10px] font-normal lowercase opacity-50 ml-1">({t("per100g")})</span></h3>
                                         <div className="h-px flex-1 bg-border/60 ml-2" />
                                     </div>
                                     <div className="grid grid-cols-2 gap-x-12 gap-y-8">
@@ -168,18 +159,13 @@ export function ProductDrawer({ open, onOpenChange, product }: ProductDrawerProp
                                             name="kcal"
                                             render={({ field }) => (
                                                 <FormItem>
-                                                    <FormLabel className="text-[10px] font-bold text-muted-foreground uppercase tracking-widest">{t("energy")}</FormLabel>
+                                                    <FormLabel className="text-xs font-semibold text-muted-foreground/70">{t("energy")}</FormLabel>
                                                     <FormControl>
-                                                        <div className="relative">
-                                                            <Input
-                                                                type="number"
-                                                                className="pr-16 font-semibold"
-                                                                {...field}
-                                                                value={field.value ?? ""}
-                                                                onChange={e => field.onChange(Number(e.target.value))}
-                                                            />
-                                                            <span className="absolute right-4 top-1/2 -translate-y-1/2 text-[10px] font-bold text-muted-foreground/40">KCAL</span>
-                                                        </div>
+                                                        <Stepper
+                                                            value={field.value ?? 0}
+                                                            onChange={field.onChange}
+                                                            unit="KCAL"
+                                                        />
                                                     </FormControl>
                                                     <FormMessage className="text-[10px]" />
                                                 </FormItem>
@@ -190,19 +176,14 @@ export function ProductDrawer({ open, onOpenChange, product }: ProductDrawerProp
                                             name="protein"
                                             render={({ field }) => (
                                                 <FormItem>
-                                                    <FormLabel className="text-[10px] font-bold text-muted-foreground uppercase tracking-widest">{t("protein")}</FormLabel>
+                                                    <FormLabel className="text-xs font-semibold text-muted-foreground/70">{t("protein")}</FormLabel>
                                                     <FormControl>
-                                                        <div className="relative">
-                                                            <Input
-                                                                type="number"
-                                                                step="0.1"
-                                                                className="pr-12 font-semibold"
-                                                                {...field}
-                                                                value={field.value ?? ""}
-                                                                onChange={e => field.onChange(Number(e.target.value))}
-                                                            />
-                                                            <span className="absolute right-4 top-1/2 -translate-y-1/2 text-[10px] font-bold text-muted-foreground/40">G</span>
-                                                        </div>
+                                                        <Stepper
+                                                            value={field.value ?? 0}
+                                                            onChange={field.onChange}
+                                                            step={0.1}
+                                                            unit="G"
+                                                        />
                                                     </FormControl>
                                                     <FormMessage className="text-[10px]" />
                                                 </FormItem>
@@ -213,19 +194,14 @@ export function ProductDrawer({ open, onOpenChange, product }: ProductDrawerProp
                                             name="carbs"
                                             render={({ field }) => (
                                                 <FormItem>
-                                                    <FormLabel className="text-[10px] font-bold text-muted-foreground uppercase tracking-widest">{t("carbs")}</FormLabel>
+                                                    <FormLabel className="text-xs font-semibold text-muted-foreground/70">{t("carbs")}</FormLabel>
                                                     <FormControl>
-                                                        <div className="relative">
-                                                            <Input
-                                                                type="number"
-                                                                step="0.1"
-                                                                className="pr-12 font-semibold"
-                                                                {...field}
-                                                                value={field.value ?? ""}
-                                                                onChange={e => field.onChange(Number(e.target.value))}
-                                                            />
-                                                            <span className="absolute right-4 top-1/2 -translate-y-1/2 text-[10px] font-bold text-muted-foreground/40">G</span>
-                                                        </div>
+                                                        <Stepper
+                                                            value={field.value ?? 0}
+                                                            onChange={field.onChange}
+                                                            step={0.1}
+                                                            unit="G"
+                                                        />
                                                     </FormControl>
                                                     <FormMessage className="text-[10px]" />
                                                 </FormItem>
@@ -236,19 +212,14 @@ export function ProductDrawer({ open, onOpenChange, product }: ProductDrawerProp
                                             name="fat"
                                             render={({ field }) => (
                                                 <FormItem>
-                                                    <FormLabel className="text-[10px] font-bold text-muted-foreground uppercase tracking-widest">{t("fat")}</FormLabel>
+                                                    <FormLabel className="text-xs font-semibold text-muted-foreground/70">{t("fat")}</FormLabel>
                                                     <FormControl>
-                                                        <div className="relative">
-                                                            <Input
-                                                                type="number"
-                                                                step="0.1"
-                                                                className="pr-12 font-semibold"
-                                                                {...field}
-                                                                value={field.value ?? ""}
-                                                                onChange={e => field.onChange(Number(e.target.value))}
-                                                            />
-                                                            <span className="absolute right-4 top-1/2 -translate-y-1/2 text-[10px] font-bold text-muted-foreground/40">G</span>
-                                                        </div>
+                                                        <Stepper
+                                                            value={field.value ?? 0}
+                                                            onChange={field.onChange}
+                                                            step={0.1}
+                                                            unit="G"
+                                                        />
                                                     </FormControl>
                                                     <FormMessage className="text-[10px]" />
                                                 </FormItem>
@@ -260,7 +231,7 @@ export function ProductDrawer({ open, onOpenChange, product }: ProductDrawerProp
                                 {/* System Settings */}
                                 <div className="space-y-8">
                                     <div className="flex items-center gap-2">
-                                        <h3 className="font-bold text-sm text-secondary dark:text-white uppercase tracking-widest">{t("organization")}</h3>
+                                        <h3 className="font-bold text-sm text-secondary dark:text-white">{t("organization")}</h3>
                                         <div className="h-px flex-1 bg-border/60 ml-2" />
                                     </div>
                                     <div className="grid grid-cols-1 gap-8">
@@ -312,7 +283,7 @@ export function ProductDrawer({ open, onOpenChange, product }: ProductDrawerProp
                     <SheetFooter className="px-8 py-8 border-t flex flex-row items-center justify-end gap-3 bg-muted/5">
                         <Button
                             variant="outline"
-                            className="h-10 px-6 font-bold text-xs uppercase tracking-widest border-border hover:bg-muted/30 transition-colors"
+                            className="h-10 px-6 font-semibold text-xs border-border hover:bg-muted/30 transition-colors"
                             onClick={() => onOpenChange(false)}
                             disabled={isSubmitting}
                         >
@@ -321,7 +292,7 @@ export function ProductDrawer({ open, onOpenChange, product }: ProductDrawerProp
                         <Button
                             type="submit"
                             form="product-form"
-                            className="h-10 px-8 bg-primary hover:bg-primary/90 text-white font-bold text-xs uppercase tracking-widest shadow-sm shadow-primary/10 transition-all active:scale-[0.98]"
+                            className="h-10 px-8 bg-primary hover:bg-primary/90 text-white font-semibold text-xs shadow-sm shadow-primary/5 transition-all active:scale-[0.98]"
                             disabled={isSubmitting}
                         >
                             {isSubmitting ? (

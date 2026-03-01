@@ -36,7 +36,7 @@
         "activeUsers": "Utilizadores Ativos",
         "activeSubs": "Subscrições Ativas",
         "inventory": "Inventário",
-        "recipes": "Receitas",
+        "meals": "Refeições",
         "systemIntegrity": "Integridade do Sistema",
         "maintenanceMode": "Modo de Manutenção",
         "deployScan": "Verificação de Integridade",
@@ -75,14 +75,14 @@
             "status": "Estado"
         }
     },
-    "Recipes": {
-        "title": "Receitas",
+    "Meals": {
+        "title": "Refeições",
         "description": "Gerir a base de dados culinária e traduções.",
-        "newRecipe": "Nova Receita",
-        "editRecipe": "Editar Receita",
-        "addRecipe": "Nova Receita",
+        "newMeal": "Nova Refeição",
+        "editMeal": "Editar Refeição",
+        "addMeal": "Nova Refeição",
         "culinaryManagement": "Gestão Culinária",
-        "recipeAuthoring": "Criação de Receitas",
+        "mealAuthoring": "Criação de Refeições",
         "prepTime": "Tempo Prep",
         "satietyIndex": "Índice de Saciedade",
         "categorization": "Categorização",
@@ -91,7 +91,7 @@
         "preparationMode": "Modo de Preparação",
         "prepPlaceholder": "Descreva o processo culinário...",
         "table": {
-            "name": "Nome da Receita",
+            "name": "Nome da Refeição",
             "cookTime": "Tempo de Prep.",
             "categories": "Categorias",
             "satiety": "Saciedade"
@@ -121,7 +121,7 @@
     "Navigation": {
         "dashboard": "Painel",
         "products": "Produtos",
-        "recipes": "Receitas",
+        "meals": "Refeições",
         "users": "Utilizadores",
         "settings": "Definições",
         "logout": "Sair",

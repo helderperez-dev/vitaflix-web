@@ -112,16 +112,7 @@ export function ImageGalleryModal({
 
                             {/* Controls Overlay */}
                             <div className="absolute inset-x-0 bottom-0 p-8 flex items-center justify-between bg-gradient-to-t from-black/60 to-transparent">
-                                <div className="flex flex-col gap-1">
-                                    <span className="text-white/40 text-[10px] font-black uppercase tracking-[0.2em]">
-                                        Product Reference
-                                    </span>
-                                    <span className="text-white text-sm font-bold tracking-tight">
-                                        Frame {currentIndex + 1} of {images.length}
-                                    </span>
-                                </div>
-
-                                <div className="flex gap-2">
+                                <div className="flex gap-2 ml-auto">
                                     <Button
                                         variant="outline"
                                         size="icon"

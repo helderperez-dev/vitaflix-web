@@ -18,7 +18,7 @@ interface MealTableWrapperProps {
 
 export function MealTableWrapper({ initialMeals }: MealTableWrapperProps) {
     const locale = useLocale()
-    const t = useTranslations("Recipes")
+    const t = useTranslations("Meals")
     const commonT = useTranslations("Common")
     const [open, setOpen] = React.useState(false)
     const [selectedMeal, setSelectedMeal] = React.useState<Meal | null>(null)
@@ -45,7 +45,7 @@ export function MealTableWrapper({ initialMeals }: MealTableWrapperProps) {
             header: ({ column }) => <SortableHeader column={column} title={t("table.name")} />,
             cell: ({ row }) => (
                 <span className="font-medium text-foreground text-sm">
-                    {row.original.name?.[locale] || row.original.name?.en || "Unnamed Recipe"}
+                    {row.original.name?.[locale] || row.original.name?.en || "Unnamed Meal"}
                 </span>
             ),
             size: 300,
@@ -68,7 +68,7 @@ export function MealTableWrapper({ initialMeals }: MealTableWrapperProps) {
                 return (
                     <div className="flex flex-wrap gap-1.5 max-w-[200px]">
                         {types.map((type) => (
-                            <Badge key={type} variant="secondary" className="px-2 py-0 h-5 text-[10px] uppercase font-bold">
+                            <Badge key={type} variant="secondary" className="px-2 py-0 h-5 text-[10px] font-semibold">
                                 {type}
                             </Badge>
                         ))}
@@ -121,14 +121,28 @@ export function MealTableWrapper({ initialMeals }: MealTableWrapperProps) {
 
     return (
         <div className="h-full flex flex-col">
-            <div className="flex justify-between items-center shrink-0 px-8 py-5 border-b border-border/40 bg-gradient-to-r from-primary/10 via-primary/5 to-secondary/5 dark:from-primary/20 dark:via-primary/10 dark:to-secondary/20">
-                <div className="flex flex-col">
-                    <h2 className="text-2xl font-bold tracking-tight text-secondary dark:text-white dark:drop-shadow-sm leading-none">{t("title")}</h2>
-                    <p className="text-xs text-muted-foreground dark:text-white/60 mt-1.5">{t("description")}</p>
+            <div className="flex justify-between items-center shrink-0 px-10 py-8 border-b border-border/40 bg-white dark:bg-background relative overflow-hidden">
+                {/* Premium Background Accent */}
+                <div className="absolute top-0 right-0 w-1/3 h-full bg-gradient-to-l from-primary/5 to-transparent pointer-events-none" />
+                <div className="absolute top-0 left-0 w-64 h-64 bg-primary/5 rounded-full -translate-x-1/2 -translate-y-1/2 blur-[80px] pointer-events-none" />
+
+                <div className="flex flex-col relative z-10">
+                    <div className="flex items-center gap-3">
+                        <div className="w-1 h-6 bg-primary rounded-full opacity-80" />
+                        <h2 className="text-3xl font-semibold tracking-tight text-foreground dark:text-white leading-none">
+                            {t("title")}
+                        </h2>
+                    </div>
+                    <p className="text-[11px] font-medium text-muted-foreground/70 dark:text-white/40 mt-2.5 ml-4">
+                        {t("description")}
+                    </p>
                 </div>
-                <Button onClick={handleAdd} className="bg-primary hover:bg-primary/90 text-white font-bold transition-all active:scale-95 shadow-sm shadow-primary/20 h-8 px-4 rounded-md uppercase tracking-widest text-[10px]">
-                    <Plus className="mr-1.5 h-3.5 w-3.5" />
-                    {t("addRecipe")}
+
+                <Button onClick={handleAdd} className="bg-primary hover:bg-primary/95 text-white font-semibold transition-all active:scale-95 shadow-sm h-10 px-6 rounded-xl text-xs flex items-center gap-2 group/add">
+                    <div className="p-0.5 rounded-md bg-white/20 transition-transform group-hover/add:rotate-90">
+                        <Plus className="h-3.5 w-3.5" />
+                    </div>
+                    {t("addMeal")}
                 </Button>
             </div>
 
