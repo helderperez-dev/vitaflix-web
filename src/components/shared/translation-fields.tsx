@@ -2,6 +2,7 @@
 
 import * as React from "react"
 import { X, Plus, Check, Loader2 } from "lucide-react"
+import { useTranslations } from "next-intl"
 import { FormField, FormItem, FormLabel, FormControl, FormMessage } from "@/components/ui/form"
 import { Input } from "@/components/ui/input"
 import { Textarea } from "@/components/ui/textarea"
@@ -34,6 +35,7 @@ export function TranslationFields({
     type = "input",
     placeholder = "Enter translation..."
 }: TranslationFieldsProps) {
+    const t = useTranslations("Common")
     const [availableLanguages, setAvailableLanguages] = React.useState<string[]>([])
     const [loading, setLoading] = React.useState(true)
     const [open, setOpen] = React.useState(false)
@@ -80,9 +82,9 @@ export function TranslationFields({
     return (
         <div className="space-y-6">
             <div className="flex items-center justify-between gap-4">
-                <div className="flex items-center gap-2 flex-1">
-                    <h3 className="font-bold text-[10px] text-muted-foreground uppercase tracking-widest whitespace-nowrap">{label}</h3>
-                    <div className="h-px w-full bg-border/40" />
+                <div className="flex items-center gap-3 flex-1">
+                    <h3 className="font-black text-[10px] text-muted-foreground/60 uppercase tracking-[0.2em] whitespace-nowrap">{label}</h3>
+                    <div className="h-px w-full bg-sidebar-border/30" />
                 </div>
 
                 {remainingLanguages.length > 0 && (
@@ -91,27 +93,29 @@ export function TranslationFields({
                             <Button
                                 variant="outline"
                                 size="sm"
-                                className="h-6 px-2 text-[8px] font-bold uppercase tracking-widest border-border/50 bg-transparent text-muted-foreground/60 hover:text-foreground hover:bg-muted/5 transition-all gap-1"
+                                className="h-7 px-3 text-[9px] font-black uppercase tracking-[0.1em] border-sidebar-border/50 bg-sidebar-accent/10 text-muted-foreground hover:text-primary hover:bg-primary/5 hover:border-primary/20 transition-all gap-1.5 rounded-full"
                             >
-                                <Plus className="h-2.5 w-2.5" />
-                                Add translation
+                                <Plus className="h-3 w-3" />
+                                <span>{t("addLocalization")}</span>
                             </Button>
                         </PopoverTrigger>
-                        <PopoverContent className="w-[180px] p-0" align="end">
-                            <Command className="bg-popover border-border shadow-lg">
-                                <CommandInput placeholder="Search..." className="h-8 text-xs" />
-                                <CommandList>
-                                    <CommandEmpty className="py-2 text-[10px] text-center text-muted-foreground">None</CommandEmpty>
+                        <PopoverContent className="w-[220px] p-1.5 shadow-2xl border-sidebar-border/40 rounded-2xl backdrop-blur-xl bg-background/90" align="end">
+                            <Command className="bg-transparent border-none">
+                                <CommandInput placeholder={`${t("search")}...`} className="h-9 text-xs" />
+                                <CommandList className="max-h-[240px]">
+                                    <CommandEmpty className="py-4 text-[10px] font-bold text-center text-muted-foreground/40 uppercase tracking-widest">{t("noResults")}</CommandEmpty>
                                     <CommandGroup>
                                         {remainingLanguages.map((lang) => (
                                             <CommandItem
                                                 key={lang}
                                                 value={lang}
                                                 onSelect={() => addLanguage(lang)}
-                                                className="text-[10px] py-1.5 cursor-pointer uppercase font-semibold tracking-wider"
+                                                className="text-[11px] py-2 px-3 cursor-pointer uppercase font-bold tracking-tight rounded-xl hover:bg-primary/10 hover:text-primary mb-1 last:mb-0 transition-colors"
                                             >
-                                                <Check className={cn("mr-2 h-3 w-3 opacity-0")} />
-                                                {LANGUAGE_NAMES[lang] || lang}
+                                                <span className="flex items-center gap-2">
+                                                    <span className="opacity-60">{lang.split('-')[0].toUpperCase()}</span>
+                                                    {LANGUAGE_NAMES[lang] || lang}
+                                                </span>
                                             </CommandItem>
                                         ))}
                                     </CommandGroup>
@@ -122,66 +126,55 @@ export function TranslationFields({
                 )}
             </div>
 
-            <div className="space-y-5">
+            <div className="space-y-6">
                 {activeKeys.length === 0 ? (
-                    <div className="py-6 border border-dashed border-border/60 rounded-lg flex flex-col items-center justify-center bg-muted/5">
-                        <p className="text-[9px] font-bold text-muted-foreground/40 uppercase tracking-widest">No keys added</p>
+                    <div className="py-10 border-2 border-dashed border-sidebar-border/40 rounded-3xl flex flex-col items-center justify-center bg-muted/5 group hover:border-primary/20 transition-colors duration-500">
+                        <div className="p-3 rounded-2xl bg-muted/10 text-muted-foreground/20 group-hover:text-primary/20 group-hover:scale-110 transition-all duration-500">
+                            <Plus className="h-6 w-6" />
+                        </div>
+                        <p className="mt-3 text-[10px] font-black text-muted-foreground/30 uppercase tracking-[0.25em]">{t("translationsRequired")}</p>
                     </div>
                 ) : (
                     activeKeys.map((lang) => (
-                        <div key={lang} className="relative group animate-in fade-in slide-in-from-top-1 duration-200">
+                        <div key={lang} className="relative group animate-in fade-in slide-in-from-top-2 duration-500">
                             <FormField
                                 control={form.control}
                                 name={`${namePrefix}.${lang}`}
                                 render={({ field }) => (
-                                    <FormItem className="space-y-1.5">
-                                        <FormLabel className="text-[10px] font-bold text-muted-foreground/60 uppercase tracking-widest ml-1">
-                                            {LANGUAGE_NAMES[lang] || lang}
-                                        </FormLabel>
+                                    <FormItem className="space-y-2">
+                                        <div className="flex items-center justify-between px-1">
+                                            <FormLabel className="text-[10px] font-black text-muted-foreground uppercase tracking-[0.15em] flex items-center gap-2">
+                                                <span className="h-1.5 w-1.5 rounded-full bg-primary/40" />
+                                                {LANGUAGE_NAMES[lang] || lang}
+                                            </FormLabel>
+                                            <Button
+                                                type="button"
+                                                variant="ghost"
+                                                size="icon"
+                                                onClick={() => removeLanguage(lang)}
+                                                className="h-6 w-6 rounded-full text-muted-foreground/0 group-hover:text-muted-foreground/40 group-hover:hover:text-destructive group-hover:hover:bg-destructive/10 transition-all duration-300"
+                                            >
+                                                <X className="h-3 w-3" />
+                                            </Button>
+                                        </div>
                                         <FormControl>
                                             <div className="relative group/input">
                                                 {type === "textarea" ? (
-                                                    <div className="relative">
-                                                        <Textarea
-                                                            placeholder={`${placeholder} (${lang.toUpperCase()})`}
-                                                            className="resize-none min-h-[120px] bg-muted/5 focus:bg-background transition-all pr-10 rounded-lg border-border"
-                                                            {...field}
-                                                        />
-                                                        <div className="absolute top-2 right-2 opacity-0 group-hover/input:opacity-100 transition-all duration-200">
-                                                            <Button
-                                                                type="button"
-                                                                variant="ghost"
-                                                                size="icon"
-                                                                onClick={() => removeLanguage(lang)}
-                                                                className="h-7 w-7 rounded-full text-muted-foreground/30 hover:text-destructive hover:bg-destructive/5 transition-all"
-                                                            >
-                                                                <X className="h-3.5 w-3.5" />
-                                                            </Button>
-                                                        </div>
-                                                    </div>
+                                                    <Textarea
+                                                        placeholder={`${placeholder} (${lang.toUpperCase()})`}
+                                                        className="resize-none min-h-[140px] bg-muted/5 focus:bg-background transition-all duration-300 rounded-2xl border-sidebar-border/40 focus:ring-4 ring-primary/5 p-4 text-sm font-medium leading-relaxed"
+                                                        {...field}
+                                                    />
                                                 ) : (
-                                                    <div className="relative">
-                                                        <Input
-                                                            placeholder={`${placeholder} (${lang.toUpperCase()})`}
-                                                            className="h-11 bg-muted/5 focus:bg-background transition-all pr-10 rounded-lg border-border"
-                                                            {...field}
-                                                        />
-                                                        <div className="absolute right-2 top-1/2 -translate-y-1/2 opacity-0 group-hover/input:opacity-100 transition-all duration-200">
-                                                            <Button
-                                                                type="button"
-                                                                variant="ghost"
-                                                                size="icon"
-                                                                onClick={() => removeLanguage(lang)}
-                                                                className="h-7 w-7 rounded-full text-muted-foreground/30 hover:text-destructive hover:bg-destructive/5 transition-all"
-                                                            >
-                                                                <X className="h-3.5 w-3.5" />
-                                                            </Button>
-                                                        </div>
-                                                    </div>
+                                                    <Input
+                                                        placeholder={`${placeholder} (${lang.toUpperCase()})`}
+                                                        className="h-12 bg-muted/5 focus:bg-background transition-all duration-300 rounded-2xl border-sidebar-border/40 focus:ring-4 ring-primary/5 px-4 text-sm font-medium"
+                                                        {...field}
+                                                    />
                                                 )}
                                             </div>
                                         </FormControl>
-                                        <FormMessage className="text-[9px] font-medium" />
+                                        <FormMessage className="text-[10px] font-bold text-destructive px-1" />
                                     </FormItem>
                                 )}
                             />
@@ -192,3 +185,4 @@ export function TranslationFields({
         </div>
     )
 }
+

@@ -4,7 +4,7 @@ import { ModeToggle } from "@/components/theme-toggle"
 import { getTranslations } from "next-intl/server"
 
 export default async function LoginPage() {
-  const t = await getTranslations("Dashboard") // Reusing some keys or add a special screen
+  const t = await getTranslations("Auth")
 
   return (
     <div className="grid min-h-screen w-full lg:grid-cols-2 overflow-hidden">
@@ -37,9 +37,9 @@ export default async function LoginPage() {
 
             <div className="space-y-6">
               <div className="space-y-2">
-                <h1 className="text-3xl font-bold tracking-tight">Welcome back</h1>
+                <h1 className="text-3xl font-bold tracking-tight">{t("welcome")}</h1>
                 <p className="text-muted-foreground text-sm">
-                  Enter your credentials to access the administrative panel.
+                  {t("description")}
                 </p>
               </div>
               <LoginForm />
@@ -64,11 +64,11 @@ export default async function LoginPage() {
         <div className="absolute bottom-12 left-12 right-12 z-10 text-white animate-in fade-in slide-in-from-bottom-4 duration-1000">
           <blockquote className="space-y-4">
             <p className="text-3xl font-medium leading-tight tracking-tight max-w-lg">
-              &ldquo;The best way to manage content and caloric variations seamlessly.&rdquo;
+              &ldquo;{t("quote")}&rdquo;
             </p>
             <footer className="flex flex-col gap-1">
-              <cite className="not-italic font-semibold text-primary">Vitaflix Internal System</cite>
-              <span className="text-sm opacity-60">Unified Administrative Command</span>
+              <cite className="not-italic font-semibold text-primary">{t("quoteAuthor")}</cite>
+              <span className="text-sm opacity-60">{t("quoteTitle")}</span>
             </footer>
           </blockquote>
         </div>

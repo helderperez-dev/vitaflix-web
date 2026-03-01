@@ -80,3 +80,44 @@ export async function deleteProduct(id: string) {
     revalidatePath("/", "layout")
     return { success: true }
 }
+
+export async function bulkUpdateProductStatus(ids: string[], isPublic: boolean) {
+    const supabase = await createClient()
+
+    const { error } = await supabase
+        .from("products")
+        .update({ is_public: isPublic })
+        .in("id", ids)
+
+    if (error) {
+        return { error: error.message }
+    }
+
+    revalidatePath("/", "layout")
+    return { success: true }
+}
+
+export async function bulkDeleteProducts(ids: string[]) {
+    const supabase = await createClient()
+
+    // Storage cleanup for all products
+    for (const id of ids) {
+        const { data: files } = await supabase.storage.from("vitaflix").list(id)
+        if (files && files.length > 0) {
+            const paths = files.map(file => `${id}/${file.name}`)
+            await supabase.storage.from("vitaflix").remove(paths)
+        }
+    }
+
+    const { error } = await supabase
+        .from("products")
+        .delete()
+        .in("id", ids)
+
+    if (error) {
+        return { error: error.message }
+    }
+
+    revalidatePath("/", "layout")
+    return { success: true }
+}

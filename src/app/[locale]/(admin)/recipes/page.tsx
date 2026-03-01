@@ -11,9 +11,5 @@ export default async function RecipesPage() {
         .select("*")
         .order("name->>en", { ascending: true })
 
-    return (
-        <div className="flex-1 space-y-4 p-8 pt-6">
-            <MealTableWrapper initialMeals={meals || []} />
-        </div>
-    )
+    return <MealTableWrapper initialMeals={meals || []} />
 }

@@ -2,32 +2,26 @@
 
 import * as React from "react"
 import { useTranslations, useLocale } from "next-intl"
-import { Home, Apple, Utensils, Users, Settings, LogOut, ChevronUp, Languages } from "lucide-react"
+import { Home, Apple, Utensils, Users, Settings, Sun, Moon, PanelLeftClose, PanelLeftOpen } from "lucide-react"
 import Image from "next/image"
+import { cn } from "@/lib/utils"
+import { motion, AnimatePresence } from "framer-motion"
+import { useTheme } from "next-themes"
 
 import {
     Sidebar,
     SidebarContent,
     SidebarGroup,
     SidebarGroupContent,
-    SidebarGroupLabel,
     SidebarHeader,
     SidebarMenu,
     SidebarMenuButton,
     SidebarMenuItem,
     SidebarFooter,
+    useSidebar,
 } from "@/components/ui/sidebar"
-import {
-    DropdownMenu,
-    DropdownMenuContent,
-    DropdownMenuItem,
-    DropdownMenuTrigger,
-    DropdownMenuSeparator,
-} from "@/components/ui/dropdown-menu"
-import { Avatar, AvatarFallback } from "@/components/ui/avatar"
-import { logoutAction } from "@/app/actions/auth"
-import { Link, useRouter, usePathname } from "@/i18n/routing"
-import { updateUserLocale } from "@/app/actions/users"
+import { Link, usePathname } from "@/i18n/routing"
+import { ModeToggle } from "../theme-toggle"
 
 interface AppSidebarProps {
     user: {
@@ -37,138 +31,169 @@ interface AppSidebarProps {
 }
 
 export function AppSidebar({ user }: AppSidebarProps) {
+    const { theme, setTheme } = useTheme()
+    const { toggleSidebar } = useSidebar()
+    const [mounted, setMounted] = React.useState(false)
     const t = useTranslations("Navigation")
-    const locale = useLocale()
-    const router = useRouter()
     const pathname = usePathname()
 
-    const items = [
+    React.useEffect(() => {
+        setMounted(true)
+    }, [])
+
+    const groups = [
         {
-            title: t("dashboard"),
-            url: "/dashboard",
-            icon: Home,
+            id: "main",
+            items: [
+                {
+                    title: t("dashboard"),
+                    url: "/dashboard",
+                    icon: Home,
+                },
+            ]
         },
         {
-            title: t("products"),
-            url: "/products",
-            icon: Apple,
+            id: "catalogue",
+            items: [
+                {
+                    title: t("products"),
+                    url: "/products",
+                    icon: Apple,
+                },
+                {
+                    title: t("recipes"),
+                    url: "/recipes",
+                    icon: Utensils,
+                },
+            ]
         },
         {
-            title: t("recipes"),
-            url: "/recipes",
-            icon: Utensils,
-        },
-        {
-            title: t("users"),
-            url: "/users",
-            icon: Users,
-        },
-        {
-            title: t("settings"),
-            url: "/settings",
-            icon: Settings,
-        },
+            id: "system",
+            items: [
+                {
+                    title: t("users"),
+                    url: "/users",
+                    icon: Users,
+                },
+                {
+                    title: t("settings"),
+                    url: "/settings",
+                    icon: Settings,
+                },
+            ]
+        }
     ]
 
-    const handleLocaleChange = async (newLocale: string) => {
-        // Persist to DB for the user
-        await updateUserLocale(user.id, newLocale)
-
-        // We need to keep the same pathname but change the locale
-        // next-intl's useRouter handle this
-        router.replace(pathname, { locale: newLocale })
-    }
-
     return (
-        <Sidebar collapsible="icon">
-            <SidebarHeader className="flex items-center justify-between px-4 py-6">
+        <Sidebar collapsible="icon" className="border-r border-sidebar-border/50 sidebar-gradient">
+            <SidebarHeader className="flex flex-row items-center justify-between pl-7 pr-4 pt-5 pb-4 transition-all duration-300 group-data-[collapsible=icon]:flex-col group-data-[collapsible=icon]:items-center group-data-[collapsible=icon]:justify-center group-data-[collapsible=icon]:px-0 group-data-[collapsible=icon]:pt-5">
                 <div className="flex items-center gap-3">
-                    <Image
-                        src="/vitaflix_logo_light_mode.png"
-                        alt="Vitaflix Logo"
-                        width={32}
-                        height={32}
-                        className="dark:hidden object-contain"
-                    />
-                    <Image
-                        src="/vitaflix_logo_dark_mode.png"
-                        alt="Vitaflix Logo"
-                        width={32}
-                        height={32}
-                        className="hidden dark:block object-contain"
-                    />
-                    <span className="text-xl font-bold tracking-tight group-data-[collapsible=icon]:hidden bg-gradient-to-r from-primary to-primary/60 bg-clip-text text-transparent">
-                        Vitaflix
+                    <div className="relative">
+                        <Image
+                            src="/vitaflix_logo_light_mode.png"
+                            alt="Vitaflix Logo"
+                            width={32}
+                            height={32}
+                            className="dark:hidden object-contain transition-all duration-300 w-8 h-8 group-data-[collapsible=icon]:w-5 group-data-[collapsible=icon]:h-5"
+                        />
+                        <Image
+                            src="/vitaflix_logo_dark_mode.png"
+                            alt="Vitaflix Logo"
+                            width={32}
+                            height={32}
+                            className="hidden dark:block object-contain transition-all duration-300 w-8 h-8 group-data-[collapsible=icon]:w-5 group-data-[collapsible=icon]:h-5"
+                        />
+                    </div>
+                    <span className="font-black text-xl tracking-tighter text-foreground group-data-[collapsible=icon]:hidden">
+                        vitaflix
                     </span>
                 </div>
+                <button
+                    onClick={toggleSidebar}
+                    className="h-8 w-8 rounded-md flex items-center justify-center hover:bg-sidebar-accent transition-colors group-data-[collapsible=icon]:hidden text-sidebar-foreground/70 hover:text-sidebar-foreground"
+                >
+                    <PanelLeftClose className="h-[1.2rem] w-[1.2rem]" />
+                </button>
             </SidebarHeader>
-            <SidebarContent>
-                <SidebarGroup>
-                    <SidebarGroupLabel>Administrative</SidebarGroupLabel>
-                    <SidebarGroupContent>
-                        <SidebarMenu>
-                            {items.map((item) => (
-                                <SidebarMenuItem key={item.title}>
-                                    <SidebarMenuButton asChild isActive={pathname.includes(item.url)} tooltip={item.title}>
-                                        <Link href={item.url}>
-                                            <item.icon />
-                                            <span>{item.title}</span>
-                                        </Link>
-                                    </SidebarMenuButton>
-                                </SidebarMenuItem>
-                            ))}
-                        </SidebarMenu>
-                    </SidebarGroupContent>
-                </SidebarGroup>
+            <SidebarContent className="px-3 group-data-[collapsible=icon]:px-0">
+                {groups.map((group) => (
+                    <SidebarGroup key={group.id} className="py-0 group-data-[collapsible=icon]:px-0">
+                        <SidebarGroupContent>
+                            <SidebarMenu className="group-data-[collapsible=icon]:items-center">
+                                {group.items.map((item) => {
+                                    const isActive = pathname.includes(item.url)
+                                    return (
+                                        <SidebarMenuItem key={item.title}>
+                                            <SidebarMenuButton
+                                                asChild
+                                                isActive={isActive}
+                                                tooltip={item.title}
+                                                className={cn(
+                                                    "h-10 transition-all duration-300 relative group/button overflow-hidden rounded-xl",
+                                                    "group-data-[collapsible=icon]:!size-10 group-data-[collapsible=icon]:!rounded-xl",
+                                                    isActive
+                                                        ? "bg-primary/10 text-primary shadow-sm shadow-primary/5"
+                                                        : "hover:bg-sidebar-accent/50 text-sidebar-foreground/60 hover:text-sidebar-foreground"
+                                                )}
+                                            >
+                                                <Link href={item.url} className="flex items-center gap-3 px-3 w-full h-full relative group-data-[collapsible=icon]:justify-center group-data-[collapsible=icon]:!px-0">
+                                                    <AnimatePresence>
+                                                        {isActive && (
+                                                            <motion.div
+                                                                layoutId="sidebar-active-pill"
+                                                                className="absolute inset-0 bg-primary/5 rounded-xl -z-10"
+                                                                transition={{ type: "spring", bounce: 0.2, duration: 0.6 }}
+                                                            />
+                                                        )}
+                                                    </AnimatePresence>
+                                                    <item.icon className={cn(
+                                                        "size-[18px] transition-all duration-300 shrink-0",
+                                                        isActive
+                                                            ? "text-primary scale-110"
+                                                            : "text-muted-foreground/70 group-hover/button:text-sidebar-foreground group-hover/button:scale-105"
+                                                    )} />
+                                                    <span className={cn(
+                                                        "font-bold text-[13px] tracking-tight transition-colors duration-300 group-data-[collapsible=icon]:hidden",
+                                                        isActive ? "text-primary" : "text-sidebar-foreground/80"
+                                                    )}>{item.title}</span>
+                                                </Link>
+                                            </SidebarMenuButton>
+                                        </SidebarMenuItem>
+                                    )
+                                })}
+                            </SidebarMenu>
+                        </SidebarGroupContent>
+                    </SidebarGroup>
+                ))}
             </SidebarContent>
-            <SidebarFooter>
-                <SidebarMenu>
+            <SidebarFooter className="p-3 group-data-[collapsible=icon]:p-2 group-data-[collapsible=icon]:items-center">
+                <SidebarMenu className="gap-2">
                     <SidebarMenuItem>
-                        <DropdownMenu>
-                            <DropdownMenuTrigger asChild>
-                                <SidebarMenuButton
-                                    size="lg"
-                                    className="data-[state=open]:bg-sidebar-accent data-[state=open]:text-sidebar-accent-foreground"
-                                >
-                                    <Avatar className="h-8 w-8 rounded-lg shadow-sm border">
-                                        <AvatarFallback className="rounded-lg bg-primary/10 text-primary text-xs font-bold">
-                                            {user.email.substring(0, 2).toUpperCase()}
-                                        </AvatarFallback>
-                                    </Avatar>
-                                    <div className="grid flex-1 text-left text-sm leading-tight">
-                                        <span className="truncate font-semibold">Admin Panel</span>
-                                        <span className="truncate text-[10px] text-muted-foreground uppercase font-bold">{locale}</span>
-                                    </div>
-                                    <ChevronUp className="ml-auto size-4" />
-                                </SidebarMenuButton>
-                            </DropdownMenuTrigger>
-                            <DropdownMenuContent
-                                side="top"
-                                align="start"
-                                className="w-[200px]"
-                            >
-                                <div className="px-2 py-1.5 text-xs font-semibold text-muted-foreground">Change Language</div>
-                                <DropdownMenuItem onClick={() => handleLocaleChange("en")} className={locale === "en" ? "bg-accent" : ""}>
-                                    <span>🇺🇸 English</span>
-                                </DropdownMenuItem>
-                                <DropdownMenuItem onClick={() => handleLocaleChange("es")} className={locale === "es" ? "bg-accent" : ""}>
-                                    <span>🇪🇸 Español</span>
-                                </DropdownMenuItem>
-                                <DropdownMenuItem onClick={() => handleLocaleChange("pt-pt")} className={locale === "pt-pt" ? "bg-accent" : ""}>
-                                    <span>🇵🇹 Português (PT)</span>
-                                </DropdownMenuItem>
-                                <DropdownMenuItem onClick={() => handleLocaleChange("pt-br")} className={locale === "pt-br" ? "bg-accent" : ""}>
-                                    <span>🇧🇷 Português (BR)</span>
-                                </DropdownMenuItem>
-
-                                <DropdownMenuSeparator />
-
-                                <DropdownMenuItem onClick={() => React.startTransition(() => { logoutAction() })}>
-                                    <LogOut className="mr-2 h-4 w-4" />
-                                    <span>{t("logout")}</span>
-                                </DropdownMenuItem>
-                            </DropdownMenuContent>
-                        </DropdownMenu>
+                        <SidebarMenuButton
+                            onClick={() => setTheme(theme === "dark" ? "light" : "dark")}
+                            className="h-10 rounded-xl hover:bg-sidebar-accent/50 transition-all duration-300 group/theme-toggle"
+                            tooltip={mounted && theme === "dark" ? t("lightMode") : t("darkMode")}
+                        >
+                            <div className="flex items-center gap-3 px-3 w-full group-data-[collapsible=icon]:justify-center group-data-[collapsible=icon]:!px-0">
+                                <div className="relative size-5 flex items-center justify-center shrink-0">
+                                    <Sun className="h-[1.2rem] w-[1.2rem] rotate-0 scale-100 transition-all dark:-rotate-90 dark:scale-0 text-sidebar-foreground/50 group-hover/theme-toggle:text-primary" />
+                                    <Moon className="absolute h-[1.2rem] w-[1.2rem] rotate-90 scale-0 transition-all dark:rotate-0 dark:scale-100 text-sidebar-foreground/50 group-hover/theme-toggle:text-primary" />
+                                </div>
+                                <span className="text-[13px] font-bold text-sidebar-foreground/70 group-hover/theme-toggle:text-sidebar-foreground transition-colors group-data-[collapsible=icon]:hidden">
+                                    {mounted && (theme === "dark" ? t("darkMode") : t("lightMode"))}
+                                </span>
+                            </div>
+                        </SidebarMenuButton>
+                    </SidebarMenuItem>
+                    <SidebarMenuItem className="hidden group-data-[collapsible=icon]:block">
+                        <SidebarMenuButton
+                            onClick={toggleSidebar}
+                            className="h-10 rounded-xl hover:bg-sidebar-accent/50 transition-all duration-300 group/toggle-expanded"
+                        >
+                            <div className="flex items-center justify-center w-full">
+                                <PanelLeftOpen className="h-[1.2rem] w-[1.2rem] text-sidebar-foreground/50 group-hover/toggle-expanded:text-primary transition-colors" />
+                            </div>
+                        </SidebarMenuButton>
                     </SidebarMenuItem>
                 </SidebarMenu>
             </SidebarFooter>

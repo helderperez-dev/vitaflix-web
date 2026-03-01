@@ -3,6 +3,7 @@
 import * as React from "react"
 import { useForm } from "react-hook-form"
 import { zodResolver } from "@hookform/resolvers/zod"
+import { useTranslations } from "next-intl"
 import {
     Loader2
 } from "lucide-react"
@@ -43,6 +44,8 @@ interface ProductDrawerProps {
 }
 
 export function ProductDrawer({ open, onOpenChange, product }: ProductDrawerProps) {
+    const t = useTranslations("Products")
+    const commonT = useTranslations("Common")
     const [isSubmitting, setIsSubmitting] = React.useState(false)
     const [formId] = React.useState(() => crypto.randomUUID())
 
@@ -121,13 +124,11 @@ export function ProductDrawer({ open, onOpenChange, product }: ProductDrawerProp
                                 </Badge>
                             )}
                         </div>
-                        <SheetTitle className="text-2xl font-bold tracking-tight text-secondary">
-                            {product ? "Edit Product" : "New Product"}
+                        <SheetTitle className="text-2xl font-bold tracking-tight text-secondary dark:text-foreground">
+                            {product ? t("editProduct") : t("newProduct")}
                         </SheetTitle>
                         <SheetDescription className="text-sm">
-                            {product
-                                ? "Refine the nutritional details and multilingual names for this ingredient."
-                                : "Easily add a new nutritional ingredient to the database."}
+                            {t("description")}
                         </SheetDescription>
                     </SheetHeader>
 
@@ -138,14 +139,14 @@ export function ProductDrawer({ open, onOpenChange, product }: ProductDrawerProp
                                 <TranslationFields
                                     form={form}
                                     namePrefix="name"
-                                    label="Product Name"
+                                    label={t("table.name")}
                                     placeholder="e.g. Chicken Breast"
                                 />
 
                                 {/* Nutritional Values */}
                                 <div className="space-y-8">
                                     <div className="flex items-center gap-2">
-                                        <h3 className="font-bold text-sm text-secondary uppercase tracking-widest">Media Gallery</h3>
+                                        <h3 className="font-bold text-sm text-secondary dark:text-white uppercase tracking-widest">{t("mediaGallery")}</h3>
                                         <div className="h-px flex-1 bg-border/60 ml-2" />
                                     </div>
                                     <ImageUploader
@@ -158,7 +159,7 @@ export function ProductDrawer({ open, onOpenChange, product }: ProductDrawerProp
                                 {/* Nutritional Values */}
                                 <div className="space-y-8">
                                     <div className="flex items-center gap-2">
-                                        <h3 className="font-bold text-sm text-secondary uppercase tracking-widest">Nutritional Values <span className="text-[10px] font-normal lowercase opacity-50 ml-1">(per 100g)</span></h3>
+                                        <h3 className="font-bold text-sm text-secondary dark:text-white uppercase tracking-widest">{t("nutritionalValues")} <span className="text-[10px] font-normal lowercase opacity-50 ml-1">({t("per100g")})</span></h3>
                                         <div className="h-px flex-1 bg-border/60 ml-2" />
                                     </div>
                                     <div className="grid grid-cols-2 gap-x-12 gap-y-8">
@@ -167,10 +168,16 @@ export function ProductDrawer({ open, onOpenChange, product }: ProductDrawerProp
                                             name="kcal"
                                             render={({ field }) => (
                                                 <FormItem>
-                                                    <FormLabel className="text-[10px] font-bold text-muted-foreground uppercase tracking-widest">Energy</FormLabel>
+                                                    <FormLabel className="text-[10px] font-bold text-muted-foreground uppercase tracking-widest">{t("energy")}</FormLabel>
                                                     <FormControl>
                                                         <div className="relative">
-                                                            <Input type="number" className="pr-16 font-semibold" {...field} onChange={e => field.onChange(Number(e.target.value))} />
+                                                            <Input
+                                                                type="number"
+                                                                className="pr-16 font-semibold"
+                                                                {...field}
+                                                                value={field.value ?? ""}
+                                                                onChange={e => field.onChange(Number(e.target.value))}
+                                                            />
                                                             <span className="absolute right-4 top-1/2 -translate-y-1/2 text-[10px] font-bold text-muted-foreground/40">KCAL</span>
                                                         </div>
                                                     </FormControl>
@@ -183,10 +190,17 @@ export function ProductDrawer({ open, onOpenChange, product }: ProductDrawerProp
                                             name="protein"
                                             render={({ field }) => (
                                                 <FormItem>
-                                                    <FormLabel className="text-[10px] font-bold text-muted-foreground uppercase tracking-widest">Protein</FormLabel>
+                                                    <FormLabel className="text-[10px] font-bold text-muted-foreground uppercase tracking-widest">{t("protein")}</FormLabel>
                                                     <FormControl>
                                                         <div className="relative">
-                                                            <Input type="number" step="0.1" className="pr-12 font-semibold" {...field} onChange={e => field.onChange(Number(e.target.value))} />
+                                                            <Input
+                                                                type="number"
+                                                                step="0.1"
+                                                                className="pr-12 font-semibold"
+                                                                {...field}
+                                                                value={field.value ?? ""}
+                                                                onChange={e => field.onChange(Number(e.target.value))}
+                                                            />
                                                             <span className="absolute right-4 top-1/2 -translate-y-1/2 text-[10px] font-bold text-muted-foreground/40">G</span>
                                                         </div>
                                                     </FormControl>
@@ -199,10 +213,17 @@ export function ProductDrawer({ open, onOpenChange, product }: ProductDrawerProp
                                             name="carbs"
                                             render={({ field }) => (
                                                 <FormItem>
-                                                    <FormLabel className="text-[10px] font-bold text-muted-foreground uppercase tracking-widest">Carbs</FormLabel>
+                                                    <FormLabel className="text-[10px] font-bold text-muted-foreground uppercase tracking-widest">{t("carbs")}</FormLabel>
                                                     <FormControl>
                                                         <div className="relative">
-                                                            <Input type="number" step="0.1" className="pr-12 font-semibold" {...field} onChange={e => field.onChange(Number(e.target.value))} />
+                                                            <Input
+                                                                type="number"
+                                                                step="0.1"
+                                                                className="pr-12 font-semibold"
+                                                                {...field}
+                                                                value={field.value ?? ""}
+                                                                onChange={e => field.onChange(Number(e.target.value))}
+                                                            />
                                                             <span className="absolute right-4 top-1/2 -translate-y-1/2 text-[10px] font-bold text-muted-foreground/40">G</span>
                                                         </div>
                                                     </FormControl>
@@ -215,10 +236,17 @@ export function ProductDrawer({ open, onOpenChange, product }: ProductDrawerProp
                                             name="fat"
                                             render={({ field }) => (
                                                 <FormItem>
-                                                    <FormLabel className="text-[10px] font-bold text-muted-foreground uppercase tracking-widest">Fat</FormLabel>
+                                                    <FormLabel className="text-[10px] font-bold text-muted-foreground uppercase tracking-widest">{t("fat")}</FormLabel>
                                                     <FormControl>
                                                         <div className="relative">
-                                                            <Input type="number" step="0.1" className="pr-12 font-semibold" {...field} onChange={e => field.onChange(Number(e.target.value))} />
+                                                            <Input
+                                                                type="number"
+                                                                step="0.1"
+                                                                className="pr-12 font-semibold"
+                                                                {...field}
+                                                                value={field.value ?? ""}
+                                                                onChange={e => field.onChange(Number(e.target.value))}
+                                                            />
                                                             <span className="absolute right-4 top-1/2 -translate-y-1/2 text-[10px] font-bold text-muted-foreground/40">G</span>
                                                         </div>
                                                     </FormControl>
@@ -232,7 +260,7 @@ export function ProductDrawer({ open, onOpenChange, product }: ProductDrawerProp
                                 {/* System Settings */}
                                 <div className="space-y-8">
                                     <div className="flex items-center gap-2">
-                                        <h3 className="font-bold text-sm text-secondary uppercase tracking-widest">Organization & Visibility</h3>
+                                        <h3 className="font-bold text-sm text-secondary dark:text-white uppercase tracking-widest">{t("organization")}</h3>
                                         <div className="h-px flex-1 bg-border/60 ml-2" />
                                     </div>
                                     <div className="grid grid-cols-1 gap-8">
@@ -259,9 +287,9 @@ export function ProductDrawer({ open, onOpenChange, product }: ProductDrawerProp
                                                 render={({ field }) => (
                                                     <FormItem className="flex flex-row items-center justify-between">
                                                         <div className="space-y-0.5">
-                                                            <FormLabel className="text-sm font-bold text-secondary">Global Visibility</FormLabel>
+                                                            <FormLabel className="text-sm font-bold text-secondary dark:text-white">{t("globalVisibility")}</FormLabel>
                                                             <FormDescription className="text-[11px] leading-relaxed">
-                                                                When active, this ingredient is visible to all users across the platform.
+                                                                {t("visibilityDesc")}
                                                             </FormDescription>
                                                         </div>
                                                         <FormControl>
@@ -288,7 +316,7 @@ export function ProductDrawer({ open, onOpenChange, product }: ProductDrawerProp
                             onClick={() => onOpenChange(false)}
                             disabled={isSubmitting}
                         >
-                            Cancel
+                            {commonT("cancel")}
                         </Button>
                         <Button
                             type="submit"
@@ -299,7 +327,7 @@ export function ProductDrawer({ open, onOpenChange, product }: ProductDrawerProp
                             {isSubmitting ? (
                                 <Loader2 className="mr-2 h-4 w-4 animate-spin" />
                             ) : null}
-                            Save
+                            {commonT("save")}
                         </Button>
                     </SheetFooter>
                 </div>

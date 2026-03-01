@@ -102,7 +102,7 @@ export function TagModal({ open, onOpenChange, tag, onSuccess }: TagModalProps) 
 
                 <div className="p-8 space-y-8">
                     <DialogHeader className=" space-y-2">
-                        <DialogTitle className="text-xl font-bold tracking-tight text-secondary">
+                        <DialogTitle className="text-xl font-bold tracking-tight text-secondary dark:text-foreground">
                             {tag ? "Edit Tag" : "New Tag"}
                         </DialogTitle>
                         <DialogDescription className="text-xs text-muted-foreground leading-relaxed">
