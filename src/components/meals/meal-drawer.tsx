@@ -32,6 +32,7 @@ import { Badge } from "@/components/ui/badge"
 import { mealSchema, type Meal } from "@/shared-schemas/meal"
 import { upsertMeal } from "@/app/actions/meals"
 import { TranslationFields } from "@/components/shared/translation-fields"
+import { Stepper } from "@/components/ui/stepper"
 
 interface MealDrawerProps {
     open: boolean
@@ -40,7 +41,7 @@ interface MealDrawerProps {
 }
 
 export function MealDrawer({ open, onOpenChange, meal }: MealDrawerProps) {
-    const t = useTranslations("Recipes")
+    const t = useTranslations("Meals")
     const commonT = useTranslations("Common")
     const [isSubmitting, setIsSubmitting] = React.useState(false)
 
@@ -84,7 +85,7 @@ export function MealDrawer({ open, onOpenChange, meal }: MealDrawerProps) {
             if (result?.error) {
                 toast.error(result.error)
             } else {
-                toast.success(meal ? "Recipe updated successfully" : "Recipe created successfully")
+                toast.success(meal ? "Meal updated successfully" : "Meal created successfully")
                 onOpenChange(false)
             }
         } catch (error) {
@@ -102,18 +103,8 @@ export function MealDrawer({ open, onOpenChange, meal }: MealDrawerProps) {
 
                 <div className="flex-1 flex flex-col min-h-0 overflow-hidden">
                     <SheetHeader className="px-8 py-8 space-y-2">
-                        <div className="flex items-center gap-2">
-                            <Badge variant="secondary" className="px-2 py-0.5 text-[10px] font-bold uppercase tracking-wider bg-primary/10 text-primary border-transparent">
-                                {meal ? t("culinaryManagement") : t("recipeAuthoring")}
-                            </Badge>
-                            {meal && (
-                                <Badge variant="outline" className="px-2 py-0.5 text-[10px] font-mono border-border text-muted-foreground bg-muted/30">
-                                    REF: {meal.id?.split("-")[0]}
-                                </Badge>
-                            )}
-                        </div>
                         <SheetTitle className="text-2xl font-bold tracking-tight text-secondary dark:text-foreground">
-                            {meal ? t("editRecipe") : t("newRecipe")}
+                            {meal ? t("editMeal") : t("newMeal")}
                         </SheetTitle>
                         <SheetDescription className="text-sm">
                             {t("description")}
@@ -123,7 +114,7 @@ export function MealDrawer({ open, onOpenChange, meal }: MealDrawerProps) {
                     <div className="flex-1 overflow-y-auto px-8 py-4 custom-scrollbar">
                         <Form {...form}>
                             <form id="meal-form" onSubmit={form.handleSubmit(onSubmit)} className="space-y-12">
-                                {/* Recipe Name */}
+                                {/* Meal Name */}
                                 <TranslationFields
                                     form={form}
                                     namePrefix="name"
@@ -134,7 +125,7 @@ export function MealDrawer({ open, onOpenChange, meal }: MealDrawerProps) {
                                 {/* Culinary Metrics */}
                                 <div className="space-y-8">
                                     <div className="flex items-center gap-2">
-                                        <h3 className="font-bold text-sm text-secondary dark:text-white uppercase tracking-widest">{t("culinaryManagement")}</h3>
+                                        <h3 className="font-bold text-sm text-secondary dark:text-white">{t("culinaryManagement")}</h3>
                                         <div className="h-px flex-1 bg-border/60 ml-2" />
                                     </div>
                                     <div className="grid grid-cols-2 gap-x-12 gap-y-8">
@@ -143,18 +134,13 @@ export function MealDrawer({ open, onOpenChange, meal }: MealDrawerProps) {
                                             name="cookTime"
                                             render={({ field }) => (
                                                 <FormItem>
-                                                    <FormLabel className="text-[10px] font-bold text-muted-foreground uppercase tracking-widest">{t("prepTime")}</FormLabel>
+                                                    <FormLabel className="text-xs font-semibold text-muted-foreground/70">{t("prepTime")}</FormLabel>
                                                     <FormControl>
-                                                        <div className="relative group">
-                                                            <Input
-                                                                type="number"
-                                                                className="pr-16 font-semibold"
-                                                                {...field}
-                                                                value={field.value ?? ""}
-                                                                onChange={e => field.onChange(Number(e.target.value))}
-                                                            />
-                                                            <span className="absolute right-4 top-1/2 -translate-y-1/2 text-[10px] font-bold text-muted-foreground/40 transition-colors group-hover:text-primary">MIN</span>
-                                                        </div>
+                                                        <Stepper
+                                                            value={field.value ?? 0}
+                                                            onChange={field.onChange}
+                                                            unit="MIN"
+                                                        />
                                                     </FormControl>
                                                     <FormMessage className="text-[10px]" />
                                                 </FormItem>
@@ -165,20 +151,15 @@ export function MealDrawer({ open, onOpenChange, meal }: MealDrawerProps) {
                                             name="satiety"
                                             render={({ field }) => (
                                                 <FormItem>
-                                                    <FormLabel className="text-[10px] font-bold text-muted-foreground uppercase tracking-widest">{t("satietyIndex")}</FormLabel>
+                                                    <FormLabel className="text-xs font-semibold text-muted-foreground/70">{t("satietyIndex")}</FormLabel>
                                                     <FormControl>
-                                                        <div className="relative group">
-                                                            <Input
-                                                                type="number"
-                                                                className="pr-16 font-semibold"
-                                                                min={0}
-                                                                max={10}
-                                                                {...field}
-                                                                value={field.value ?? ""}
-                                                                onChange={e => field.onChange(Number(e.target.value))}
-                                                            />
-                                                            <span className="absolute right-4 top-1/2 -translate-y-1/2 text-[10px] font-bold text-muted-foreground/40 transition-colors group-hover:text-primary">/ 10</span>
-                                                        </div>
+                                                        <Stepper
+                                                            value={field.value ?? 0}
+                                                            onChange={field.onChange}
+                                                            min={0}
+                                                            max={10}
+                                                            unit="/ 10"
+                                                        />
                                                     </FormControl>
                                                     <FormMessage className="text-[10px]" />
                                                 </FormItem>
@@ -190,7 +171,7 @@ export function MealDrawer({ open, onOpenChange, meal }: MealDrawerProps) {
                                 {/* Categorization */}
                                 <div className="space-y-8">
                                     <div className="flex items-center gap-2">
-                                        <h3 className="font-bold text-sm text-secondary dark:text-white uppercase tracking-widest">{t("categorization")}</h3>
+                                        <h3 className="font-bold text-sm text-secondary dark:text-white">{t("categorization")}</h3>
                                         <div className="h-px flex-1 bg-border/60 ml-2" />
                                     </div>
                                     <div className="grid grid-cols-1 md:grid-cols-2 gap-x-12 gap-y-8">
@@ -199,7 +180,7 @@ export function MealDrawer({ open, onOpenChange, meal }: MealDrawerProps) {
                                             name="mealTypes"
                                             render={({ field }) => (
                                                 <FormItem>
-                                                    <FormLabel className="text-[10px] font-bold text-muted-foreground uppercase tracking-widest">{t("mealCategories")}</FormLabel>
+                                                    <FormLabel className="text-xs font-semibold text-muted-foreground/70">{t("mealCategories")}</FormLabel>
                                                     <FormControl>
                                                         <Input
                                                             placeholder="Lunch, Dinner..."
@@ -217,7 +198,7 @@ export function MealDrawer({ open, onOpenChange, meal }: MealDrawerProps) {
                                             name="restrictions"
                                             render={({ field }) => (
                                                 <FormItem>
-                                                    <FormLabel className="text-[10px] font-bold text-muted-foreground uppercase tracking-widest">{t("dietaryTags")}</FormLabel>
+                                                    <FormLabel className="text-xs font-semibold text-muted-foreground/70">{t("dietaryTags")}</FormLabel>
                                                     <FormControl>
                                                         <Input
                                                             placeholder="Vegan, Low-carb..."
@@ -247,7 +228,7 @@ export function MealDrawer({ open, onOpenChange, meal }: MealDrawerProps) {
                     <SheetFooter className="px-8 py-8 border-t flex flex-row items-center justify-end gap-3 bg-muted/5">
                         <Button
                             variant="outline"
-                            className="h-10 px-6 font-bold text-xs uppercase tracking-widest border-border hover:bg-muted/30 transition-colors"
+                            className="h-10 px-6 font-semibold text-xs border-border hover:bg-muted/30 transition-colors"
                             onClick={() => onOpenChange(false)}
                             disabled={isSubmitting}
                         >
@@ -256,7 +237,7 @@ export function MealDrawer({ open, onOpenChange, meal }: MealDrawerProps) {
                         <Button
                             type="submit"
                             form="meal-form"
-                            className="h-10 px-8 bg-primary hover:bg-primary/90 text-white font-bold text-xs uppercase tracking-widest shadow-sm shadow-primary/10 transition-all active:scale-[0.98]"
+                            className="h-10 px-8 bg-primary hover:bg-primary/90 text-white font-semibold text-xs shadow-sm shadow-primary/5 transition-all active:scale-[0.98]"
                             disabled={isSubmitting}
                         >
                             {isSubmitting ? (

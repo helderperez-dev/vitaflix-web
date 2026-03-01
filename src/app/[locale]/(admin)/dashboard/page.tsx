@@ -42,7 +42,7 @@ export default async function DashboardPage() {
             bg: "bg-amber-500/10"
         },
         {
-            title: t("recipes"),
+            title: t("meals"),
             value: mealCount || 0,
             description: "Culinary collection",
             icon: Utensils,
@@ -62,7 +62,7 @@ export default async function DashboardPage() {
                         <Card key={stat.title}
                             className="relative overflow-hidden border-border/40 shadow-sm hover:shadow-md transition-all duration-300 group">
                             <CardHeader className="flex flex-row items-center justify-between pb-2 space-y-0">
-                                <CardTitle className="text-[10px] font-bold uppercase tracking-[0.1em] text-muted-foreground/70">
+                                <CardTitle className="text-xs font-semibold text-muted-foreground/70">
                                     {stat.title}
                                 </CardTitle>
                                 <div className={cn("p-2 rounded-lg transition-transform group-hover:scale-110 duration-300 flex items-center justify-center", stat.bg, stat.color)}>
@@ -76,7 +76,7 @@ export default async function DashboardPage() {
                                         {stat.trend}
                                     </span>
                                 </div>
-                                <p className="text-[10px] font-medium text-muted-foreground uppercase tracking-tight mt-1 opacity-70">
+                                <p className="text-[10px] font-medium text-muted-foreground mt-1 opacity-70">
                                     {stat.description}
                                 </p>
                             </CardContent>
@@ -96,7 +96,7 @@ export default async function DashboardPage() {
                                         Analytics
                                         <Activity className="h-4 w-4 text-primary" />
                                     </CardTitle>
-                                    <CardDescription className="text-xs font-medium uppercase tracking-widest text-muted-foreground/40">{t("engagementIndex")}</CardDescription>
+                                    <CardDescription className="text-xs font-medium text-muted-foreground/40">{t("engagementIndex")}</CardDescription>
                                 </div>
                                 <div className="flex items-center gap-2">
                                     <div className="flex -space-x-1.5 overflow-hidden p-1">
@@ -105,7 +105,7 @@ export default async function DashboardPage() {
                                         ))}
                                     </div>
                                     <div className="h-4 w-px bg-border/40 mx-1" />
-                                    <button className="text-[9px] font-bold uppercase tracking-widest text-primary hover:underline">{t("viewReport")}</button>
+                                    <button className="text-[10px] font-bold text-primary hover:underline">{t("viewReport")}</button>
                                 </div>
                             </div>
                         </CardHeader>
@@ -138,7 +138,7 @@ export default async function DashboardPage() {
                             <CardHeader className="pb-4 relative z-10">
                                 <div className="flex items-center gap-2">
                                     <CheckCircle2 className="h-4 w-4 text-primary" />
-                                    <CardTitle className="text-sm font-bold uppercase tracking-wider">{t("systemIntegrity")}</CardTitle>
+                                    <CardTitle className="text-sm font-bold">{t("systemIntegrity")}</CardTitle>
                                 </div>
                             </CardHeader>
                             <CardContent className="space-y-3 relative z-10">
@@ -151,7 +151,7 @@ export default async function DashboardPage() {
                                         <span className="text-[11px] font-semibold tracking-tight opacity-80 group-hover/item:opacity-100">{s.name}</span>
                                         <div className="flex items-center gap-2">
                                             <div className="h-1.5 w-1.5 rounded-full bg-primary shadow-[0_0_10px_rgba(19,165,126,0.8)]" />
-                                            <span className="text-[9px] font-bold uppercase tracking-widest text-primary/90">{s.status}</span>
+                                            <span className="text-[9px] font-bold text-primary/90">{s.status}</span>
                                         </div>
                                     </div>
                                 ))}
@@ -162,10 +162,10 @@ export default async function DashboardPage() {
                         <Card className="border-border/30 bg-card rounded-2xl overflow-hidden border-dashed border-2 p-1 group hover:border-primary/30 transition-colors">
                             <div className="bg-muted/30 rounded-[0.9rem] p-6 text-center space-y-5 group-hover:bg-muted/50 transition-all">
                                 <div className="space-y-1.5">
-                                    <p className="text-[9px] font-bold uppercase tracking-[0.25em] text-muted-foreground/60">Administrative Duty</p>
-                                    <CardTitle className="text-xs font-bold uppercase tracking-widest text-muted-foreground">{t("maintenanceMode")}</CardTitle>
+                                    <p className="text-[10px] font-bold text-muted-foreground/60 tracking-wider">Administrative Duty</p>
+                                    <CardTitle className="text-xs font-bold text-muted-foreground">{t("maintenanceMode")}</CardTitle>
                                 </div>
-                                <button className="w-full bg-foreground text-background dark:bg-primary dark:text-white font-bold py-3.5 rounded-xl text-[10px] uppercase tracking-widest hover:scale-[1.02] active:scale-[0.98] transition-all shadow-lg hover:shadow-primary/20">
+                                <button className="w-full bg-foreground text-background dark:bg-primary dark:text-white font-semibold py-3.5 rounded-xl text-xs hover:scale-[1.02] active:scale-[0.98] transition-all shadow-lg hover:shadow-primary/5">
                                     {t("deployScan")}
                                 </button>
                                 <p className="text-[9px] text-muted-foreground/50 font-medium italic">{t("nextScan")}</p>

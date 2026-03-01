@@ -102,7 +102,7 @@ export function TagModal({ open, onOpenChange, tag, onSuccess }: TagModalProps) 
 
                 <div className="p-8 space-y-8">
                     <DialogHeader className=" space-y-2">
-                        <DialogTitle className="text-xl font-bold tracking-tight text-secondary dark:text-foreground">
+                        <DialogTitle className="text-xl font-semibold tracking-tight text-secondary dark:text-foreground">
                             {tag ? "Edit Tag" : "New Tag"}
                         </DialogTitle>
                         <DialogDescription className="text-xs text-muted-foreground leading-relaxed">
@@ -132,7 +132,7 @@ export function TagModal({ open, onOpenChange, tag, onSuccess }: TagModalProps) 
                                 size="sm"
                                 onClick={onDelete}
                                 disabled={isSubmitting || isDeleting}
-                                className="h-9 px-3 text-[10px] font-bold uppercase tracking-widest text-muted-foreground/40 hover:text-destructive hover:bg-destructive/5 transition-colors gap-2"
+                                className="h-9 px-3 text-xs font-semibold text-muted-foreground/40 hover:text-destructive hover:bg-destructive/5 transition-colors gap-2"
                             >
                                 <Trash2 className="h-3.5 w-3.5" />
                                 Delete Tag
@@ -143,7 +143,7 @@ export function TagModal({ open, onOpenChange, tag, onSuccess }: TagModalProps) 
                     <div className="flex items-center gap-2">
                         <Button
                             variant="outline"
-                            className="h-9 px-6 font-bold text-[10px] uppercase tracking-widest border-border hover:bg-muted/10 transition-colors"
+                            className="h-9 px-6 font-semibold text-xs border-border hover:bg-muted/10 transition-colors"
                             onClick={() => onOpenChange(false)}
                             disabled={isSubmitting || isDeleting}
                         >
@@ -152,7 +152,7 @@ export function TagModal({ open, onOpenChange, tag, onSuccess }: TagModalProps) 
                         <Button
                             type="submit"
                             form="tag-form"
-                            className="h-9 px-8 bg-primary hover:bg-primary/90 text-white font-bold text-[10px] uppercase tracking-widest shadow-sm shadow-primary/10 transition-all active:scale-[0.98]"
+                            className="h-9 px-8 bg-primary hover:bg-primary/90 text-white font-semibold text-xs shadow-sm shadow-primary/5 transition-all active:scale-[0.98]"
                             disabled={isSubmitting || isDeleting}
                         >
                             {isSubmitting ? (

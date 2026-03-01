@@ -28,13 +28,13 @@ This document defines the standard design patterns and component usages for the 
   - Focus state: `border-primary` with a subtle `ring-primary/10` and `ring-4` for a premium feel.
   - Background: Subtle `bg-muted/5` for a slight distinction from the main surface.
 - **Height**: Standard height is `h-10`.
-- **Groups**: Use logical grouping with uppercase bold text headers (e.g., `text-[10px] font-bold uppercase tracking-widest`). Avoid icons in form labels and section headers.
+- **Groups**: Use logical grouping with bold text headers (e.g., `text-xs font-bold`). Avoid icons in form labels and section headers.
 
 ## 📐 Layout & Spacing
 - **Internal Padding**: Use `px-8 py-8` for the main drawer container.
 - **Section Spacing**: Separate logical groups with `space-y-12`.
 - **Grid Gaps**: When using side-by-side inputs (e.g., `md:grid-cols-2`), use a minimum horizontal gap of `gap-x-12` and vertical gap of `gap-y-8`.
-- **Label Spacing**: Use standard `FormItem` spacing. Labels should be `uppercase tracking-widest text-[10px] font-bold text-muted-foreground`.
+- **Label Spacing**: Use standard `FormItem` spacing. Labels should be `text-[10px] font-bold text-muted-foreground/70 tracking-wide`.
 
 ## 💎 Iconography
 - **Library**: Lucide React.
@@ -44,7 +44,8 @@ This document defines the standard design patterns and component usages for the 
 ## ✨ Buttons & Actions
 - **Drawer Actions**: Use a two-button pattern in the footer: a `variant="outline"` **Cancel** button and a primary **Save** button.
 - **Grid Layout**: Buttons should be right-aligned with standard spacing (`gap-3`).
-- **Typography**: Button text should be `font-bold text-xs uppercase tracking-widest`.
+- **Typography**: Button text should be `font-semibold text-xs`. Avoid forced capitalization.
+- **Shadows**: Use subtle shadows (e.g. `shadow-sm`). Avoid heavy colored shadows like `shadow-primary/20`.
 - **Feedback**: Always provide loading states using `Loader2` within the Save button.
 - **Actions Menu (3 Dots)**: 
   - **No Header**: Do not use `DropdownMenuLabel` or `DropdownMenuSeparator` headers (avoid "Actions").

@@ -61,8 +61,8 @@ export function AppSidebar({ user }: AppSidebarProps) {
                     icon: Apple,
                 },
                 {
-                    title: t("recipes"),
-                    url: "/recipes",
+                    title: t("meals"),
+                    url: "/meals",
                     icon: Utensils,
                 },
             ]
@@ -104,8 +104,8 @@ export function AppSidebar({ user }: AppSidebarProps) {
                             className="hidden dark:block object-contain transition-all duration-300 w-8 h-8 group-data-[collapsible=icon]:w-5 group-data-[collapsible=icon]:h-5"
                         />
                     </div>
-                    <span className="font-black text-xl tracking-tighter text-foreground group-data-[collapsible=icon]:hidden">
-                        vitaflix
+                    <span className="font-light text-xl tracking-tighter text-foreground group-data-[collapsible=icon]:hidden">
+                        Vitaflix
                     </span>
                 </div>
                 <button
@@ -129,8 +129,8 @@ export function AppSidebar({ user }: AppSidebarProps) {
                                                 isActive={isActive}
                                                 tooltip={item.title}
                                                 className={cn(
-                                                    "h-10 transition-all duration-300 relative group/button overflow-hidden rounded-xl",
-                                                    "group-data-[collapsible=icon]:!size-10 group-data-[collapsible=icon]:!rounded-xl",
+                                                    "h-10 transition-all duration-300 relative group/button overflow-hidden rounded-lg",
+                                                    "group-data-[collapsible=icon]:!size-10 group-data-[collapsible=icon]:!rounded-lg",
                                                     isActive
                                                         ? "bg-primary/10 text-primary shadow-sm shadow-primary/5"
                                                         : "hover:bg-sidebar-accent/50 text-sidebar-foreground/60 hover:text-sidebar-foreground"
@@ -141,7 +141,7 @@ export function AppSidebar({ user }: AppSidebarProps) {
                                                         {isActive && (
                                                             <motion.div
                                                                 layoutId="sidebar-active-pill"
-                                                                className="absolute inset-0 bg-primary/5 rounded-xl -z-10"
+                                                                className="absolute inset-0 bg-primary/5 rounded-lg -z-10"
                                                                 transition={{ type: "spring", bounce: 0.2, duration: 0.6 }}
                                                             />
                                                         )}
@@ -153,7 +153,7 @@ export function AppSidebar({ user }: AppSidebarProps) {
                                                             : "text-muted-foreground/70 group-hover/button:text-sidebar-foreground group-hover/button:scale-105"
                                                     )} />
                                                     <span className={cn(
-                                                        "font-bold text-[13px] tracking-tight transition-colors duration-300 group-data-[collapsible=icon]:hidden",
+                                                        "font-semibold text-[13px] tracking-tight transition-colors duration-300 group-data-[collapsible=icon]:hidden",
                                                         isActive ? "text-primary" : "text-sidebar-foreground/80"
                                                     )}>{item.title}</span>
                                                 </Link>
@@ -171,7 +171,7 @@ export function AppSidebar({ user }: AppSidebarProps) {
                     <SidebarMenuItem>
                         <SidebarMenuButton
                             onClick={() => setTheme(theme === "dark" ? "light" : "dark")}
-                            className="h-10 rounded-xl hover:bg-sidebar-accent/50 transition-all duration-300 group/theme-toggle"
+                            className="h-10 rounded-lg hover:bg-sidebar-accent/50 transition-all duration-300 group/theme-toggle"
                             tooltip={mounted && theme === "dark" ? t("lightMode") : t("darkMode")}
                         >
                             <div className="flex items-center gap-3 px-3 w-full group-data-[collapsible=icon]:justify-center group-data-[collapsible=icon]:!px-0">
@@ -179,7 +179,7 @@ export function AppSidebar({ user }: AppSidebarProps) {
                                     <Sun className="h-[1.2rem] w-[1.2rem] rotate-0 scale-100 transition-all dark:-rotate-90 dark:scale-0 text-sidebar-foreground/50 group-hover/theme-toggle:text-primary" />
                                     <Moon className="absolute h-[1.2rem] w-[1.2rem] rotate-90 scale-0 transition-all dark:rotate-0 dark:scale-100 text-sidebar-foreground/50 group-hover/theme-toggle:text-primary" />
                                 </div>
-                                <span className="text-[13px] font-bold text-sidebar-foreground/70 group-hover/theme-toggle:text-sidebar-foreground transition-colors group-data-[collapsible=icon]:hidden">
+                                <span className="text-[13px] font-semibold text-sidebar-foreground/70 group-hover/theme-toggle:text-sidebar-foreground transition-colors group-data-[collapsible=icon]:hidden">
                                     {mounted && (theme === "dark" ? t("darkMode") : t("lightMode"))}
                                 </span>
                             </div>
@@ -188,7 +188,7 @@ export function AppSidebar({ user }: AppSidebarProps) {
                     <SidebarMenuItem className="hidden group-data-[collapsible=icon]:block">
                         <SidebarMenuButton
                             onClick={toggleSidebar}
-                            className="h-10 rounded-xl hover:bg-sidebar-accent/50 transition-all duration-300 group/toggle-expanded"
+                            className="h-10 rounded-lg hover:bg-sidebar-accent/50 transition-all duration-300 group/toggle-expanded"
                         >
                             <div className="flex items-center justify-center w-full">
                                 <PanelLeftOpen className="h-[1.2rem] w-[1.2rem] text-sidebar-foreground/50 group-hover/toggle-expanded:text-primary transition-colors" />

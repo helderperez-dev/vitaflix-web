@@ -36,7 +36,7 @@
         "activeUsers": "Active Users",
         "activeSubs": "Active Subs",
         "inventory": "Inventory",
-        "recipes": "Recipes",
+        "meals": "Meals",
         "systemIntegrity": "System Integrity",
         "maintenanceMode": "Maintenance Mode",
         "deployScan": "Deploy Integrity Scan",
@@ -75,14 +75,14 @@
             "status": "Status"
         }
     },
-    "Recipes": {
-        "title": "Recipes",
+    "Meals": {
+        "title": "Meals",
         "description": "Manage your culinary database and translations.",
-        "newRecipe": "New Recipe",
-        "editRecipe": "Edit Recipe",
-        "addRecipe": "New Recipe",
+        "newMeal": "New Meal",
+        "editMeal": "Edit Meal",
+        "addMeal": "New Meal",
         "culinaryManagement": "Culinary Management",
-        "recipeAuthoring": "Recipe Authoring",
+        "mealAuthoring": "Meal Authoring",
         "prepTime": "Prep Time",
         "satietyIndex": "Satiety Index",
         "categorization": "Categorization",
@@ -91,7 +91,7 @@
         "preparationMode": "Preparation Mode",
         "prepPlaceholder": "Describe the culinary process...",
         "table": {
-            "name": "Recipe Name",
+            "name": "Meal Name",
             "cookTime": "Cook Time",
             "categories": "Categories",
             "satiety": "Satiety"
@@ -121,7 +121,7 @@
     "Navigation": {
         "dashboard": "Dashboard",
         "products": "Products",
-        "recipes": "Recipes",
+        "meals": "Meals",
         "users": "Users",
         "settings": "Settings",
         "logout": "Log out",

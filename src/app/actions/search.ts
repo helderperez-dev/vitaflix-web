@@ -4,7 +4,7 @@ import { createClient } from "@/lib/supabase/server"
 
 export type SearchResult = {
     id: string;
-    type: 'product' | 'recipe' | 'user' | 'brand' | 'tag';
+    type: 'product' | 'meal' | 'user' | 'brand' | 'tag';
     title: string;
     subtitle?: string;
     url: string;
@@ -44,13 +44,13 @@ export async function globalSearch(query: string): Promise<SearchResult[]> {
 
         if (mealsRes.data) {
             mealsRes.data.forEach((m: any) => {
-                const name = m.name?.en || Object.values(m.name || {})[0] || 'Unknown Recipe'
+                const name = m.name?.en || Object.values(m.name || {})[0] || 'Unknown Meal'
                 results.push({
                     id: m.id,
-                    type: 'recipe',
+                    type: 'meal',
                     title: name,
-                    subtitle: 'Recipe',
-                    url: `/recipes?search=${encodeURIComponent(query)}`
+                    subtitle: 'Meal',
+                    url: `/meals?search=${encodeURIComponent(query)}`
                 })
             })
         }

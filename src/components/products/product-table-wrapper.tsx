@@ -74,7 +74,7 @@ function BulkStatusActions({ selectedRows, clearSelection }: { selectedRows: any
             )}>
                 <div className="flex items-center gap-3 px-3 py-1.5 border-r border-slate-200 dark:border-white/10">
                     <span className={cn(
-                        "text-[10px] font-bold uppercase tracking-widest transition-colors w-14 text-center select-none",
+                        "text-[10px] font-bold tracking-wide transition-colors w-14 text-center select-none",
                         targetPublic ? "text-primary" : "text-muted-foreground"
                     )}>
                         {targetPublic ? "Public" : "Private"}
@@ -100,7 +100,7 @@ function BulkStatusActions({ selectedRows, clearSelection }: { selectedRows: any
                             transition={{ duration: 0.2, ease: "easeInOut" }}
                             onClick={handleApply}
                             disabled={isLoading}
-                            className="bg-primary hover:bg-primary/90 text-white font-bold h-9 px-4 uppercase tracking-widest text-[9px] flex items-center justify-center whitespace-nowrap active:scale-95 transition-all disabled:opacity-50"
+                            className="bg-primary hover:bg-primary/90 text-white font-semibold h-9 px-4 text-xs flex items-center justify-center whitespace-nowrap active:scale-95 transition-all disabled:opacity-50"
                         >
                             {isLoading ? (
                                 <Loader2 className="h-3 w-3 animate-spin" />
@@ -128,14 +128,7 @@ export function ProductTableWrapper({ initialProducts, userProfile }: ProductTab
     const [idParam, setIdParam] = useQueryState("id")
     const [galleryImages, setGalleryImages] = React.useState<{ url: string; isDefault?: boolean }[] | null>(null)
     const [isGalleryOpen, setIsGalleryOpen] = React.useState(false)
-    const hoverTimeoutRef = React.useRef<NodeJS.Timeout | null>(null)
 
-    // Clear timeout on unmount
-    React.useEffect(() => {
-        return () => {
-            if (hoverTimeoutRef.current) clearTimeout(hoverTimeoutRef.current)
-        }
-    }, [])
 
     // Map initial data to our Product type structure
     const data = React.useMemo(() => {
@@ -170,21 +163,10 @@ export function ProductTableWrapper({ initialProducts, userProfile }: ProductTab
                         <motion.div
                             whileHover={{ scale: 1.05 }}
                             whileTap={{ scale: 0.95 }}
-                            onClick={() => {
-                                if (hoverTimeoutRef.current) clearTimeout(hoverTimeoutRef.current)
+                            onClick={(e) => {
+                                e.stopPropagation()
                                 setGalleryImages(product.images || [])
                                 setIsGalleryOpen(true)
-                            }}
-                            onMouseEnter={() => {
-                                if (product.images && product.images.length > 0) {
-                                    hoverTimeoutRef.current = setTimeout(() => {
-                                        setGalleryImages(product.images)
-                                        setIsGalleryOpen(true)
-                                    }, 400) // 400ms delay to prevent accidental pops
-                                }
-                            }}
-                            onMouseLeave={() => {
-                                if (hoverTimeoutRef.current) clearTimeout(hoverTimeoutRef.current)
                             }}
                             className="h-10 w-10 rounded-md overflow-hidden bg-muted border border-border/40 flex-shrink-0 relative group cursor-pointer"
                         >
@@ -230,12 +212,12 @@ export function ProductTableWrapper({ initialProducts, userProfile }: ProductTab
                                             <img src={brandData.logo_url} alt="brand" className="h-full w-full object-cover" />
                                         </div>
                                     )}
-                                    <span className="text-xs font-bold text-muted-foreground uppercase">{brandData.name?.[locale] || brandData.name?.en}</span>
+                                    <span className="text-xs font-semibold text-muted-foreground">{brandData.name?.[locale] || brandData.name?.en}</span>
                                 </div>
                             );
                         })}
                         {brands.length === 0 && (
-                            <span className="text-[10px] text-muted-foreground italic uppercase">No Brand</span>
+                            <span className="text-xs text-muted-foreground italic">No Brand</span>
                         )}
                     </div>
                 )
@@ -282,13 +264,13 @@ export function ProductTableWrapper({ initialProducts, userProfile }: ProductTab
                             const tagData = Array.isArray(pt.tags) ? pt.tags[0] : pt.tags;
                             if (!tagData) return null;
                             return (
-                                <Badge key={pt.tag_id} variant="secondary" className="text-[10px] uppercase h-5 px-1.5 font-bold tracking-wider">
+                                <Badge key={pt.tag_id} variant="secondary" className="text-[10px] h-5 px-1.5 font-semibold">
                                     {tagData.name?.[locale] || tagData.name?.en}
                                 </Badge>
                             );
                         })}
                         {tags.length === 0 && (
-                            <span className="text-[10px] text-muted-foreground italic uppercase">None</span>
+                            <span className="text-xs text-muted-foreground italic">None</span>
                         )}
                     </div>
                 )
@@ -336,13 +318,31 @@ export function ProductTableWrapper({ initialProducts, userProfile }: ProductTab
 
     return (
         <div className="h-full flex flex-col">
-            <div className="flex justify-between items-center shrink-0 px-8 py-5 border-b border-border/40 bg-gradient-to-r from-primary/10 via-primary/5 to-secondary/5 dark:from-primary/20 dark:via-primary/10 dark:to-secondary/20">
-                <div className="flex flex-col">
-                    <h2 className="text-2xl font-bold tracking-tight text-secondary dark:text-white dark:drop-shadow-sm leading-none">{t("title")}</h2>
-                    <p className="text-xs text-muted-foreground dark:text-white/60 mt-1.5">{t("description")}</p>
+            <div className="flex justify-between items-center shrink-0 px-10 py-8 border-b border-border/40 bg-white dark:bg-background relative overflow-hidden">
+                {/* Premium Background Accent */}
+                <div className="absolute top-0 right-0 w-1/3 h-full bg-gradient-to-l from-primary/5 to-transparent pointer-events-none" />
+                <div className="absolute top-0 left-0 w-64 h-64 bg-primary/5 rounded-full -translate-x-1/2 -translate-y-1/2 blur-[80px] pointer-events-none" />
+
+                <div className="flex flex-col relative z-10">
+                    <div className="flex items-center gap-3">
+                        <div className="w-1 h-6 bg-primary rounded-full opacity-80" />
+                        <h2 className="text-3xl font-semibold tracking-tight text-foreground dark:text-white leading-none">
+                            {t("title")}
+                        </h2>
+                    </div>
+                    <p className="text-[11px] font-medium text-muted-foreground/70 dark:text-white/40 mt-2.5 ml-4">
+                        {t("description")}
+                    </p>
                 </div>
-                <Button onClick={() => { setSelectedProduct(null); setDrawerOpen(true); }} className="bg-primary hover:bg-primary/90 text-white font-bold transition-all active:scale-95 shadow-sm shadow-primary/20 h-8 px-4 rounded-md uppercase tracking-widest text-[10px]">
-                    <Plus className="mr-1.5 h-3.5 w-3.5" /> {t("addProduct")}
+
+                <Button
+                    onClick={() => { setSelectedProduct(null); setDrawerOpen(true); }}
+                    className="bg-primary hover:bg-primary/95 text-white font-semibold transition-all active:scale-95 shadow-sm h-10 px-6 rounded-xl text-xs flex items-center gap-2 group/add"
+                >
+                    <div className="p-0.5 rounded-md bg-white/20 transition-transform group-hover/add:rotate-90">
+                        <Plus className="h-3.5 w-3.5" />
+                    </div>
+                    {t("addProduct")}
                 </Button>
             </div>
 
@@ -373,7 +373,7 @@ export function ProductTableWrapper({ initialProducts, userProfile }: ProductTab
 
                         <Button
                             variant="ghost"
-                            className="h-9 px-4 text-[11px] font-bold uppercase tracking-widest hover:bg-slate-100 dark:hover:bg-white/5 text-muted-foreground dark:text-white/80 hover:text-foreground dark:hover:text-white transition-all shrink-0"
+                            className="h-9 px-4 text-[11px] font-semibold hover:bg-slate-100 dark:hover:bg-white/5 text-muted-foreground dark:text-white/80 hover:text-foreground dark:hover:text-white transition-all shrink-0"
                             onClick={() => {
                                 setRowsToDelete(selectedRows)
                                 setClearSelectionRef({ fn: clearSelection })
@@ -398,7 +398,7 @@ export function ProductTableWrapper({ initialProducts, userProfile }: ProductTab
                         </AlertDialogDescription>
                     </AlertDialogHeader>
                     <AlertDialogFooter className="gap-2">
-                        <AlertDialogCancel className="rounded-xl font-bold uppercase tracking-widest text-[10px] h-9">
+                        <AlertDialogCancel className="rounded-xl font-semibold text-xs h-9">
                             Cancel
                         </AlertDialogCancel>
                         <AlertDialogAction
@@ -417,7 +417,7 @@ export function ProductTableWrapper({ initialProducts, userProfile }: ProductTab
                                     setDeleteModalOpen(false)
                                 }
                             }}
-                            className="bg-primary hover:bg-primary/90 text-white rounded-xl font-bold uppercase tracking-widest text-[10px] h-9 px-6"
+                            className="bg-primary hover:bg-primary/90 text-white rounded-xl font-semibold text-xs h-9 px-6"
                         >
                             Confirm Deletion
                         </AlertDialogAction>

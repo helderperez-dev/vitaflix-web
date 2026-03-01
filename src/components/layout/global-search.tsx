@@ -12,7 +12,7 @@ import { cn } from "@/lib/utils"
 
 const sectionConfig: Record<string, { label: string; icon: LucideIcon }> = {
     product: { label: "Products", icon: Apple },
-    recipe: { label: "Recipes", icon: Utensils },
+    meal: { label: "Meals", icon: Utensils },
     user: { label: "Users", icon: Users },
     brand: { label: "Brands", icon: Store },
     tag: { label: "Tags", icon: Tag },
@@ -145,7 +145,7 @@ export function GlobalSearch() {
         // or if the current tags don't belong to this page
         if (selectionPathRef.current && pathname !== selectionPathRef.current) return
 
-        const supportedPaths = ["/products", "/recipes", "/users"]
+        const supportedPaths = ["/products", "/meals", "/users"]
         const isSupported = supportedPaths.some(p => pathname.endsWith(p))
         if (!isSupported) return
 
@@ -153,7 +153,7 @@ export function GlobalSearch() {
         const oldSearch = currentParams.get("search") || ""
 
         const tagTerms = selectedItems
-            .filter(s => ["product", "recipe", "user"].includes(s.type))
+            .filter(s => ["product", "meal", "user"].includes(s.type))
             .map(s => s.title)
 
         const allTerms = [...tagTerms]
@@ -185,7 +185,7 @@ export function GlobalSearch() {
         const finalParams = new URLSearchParams()
 
         const searchTerms = newSelected
-            .filter(s => ["product", "recipe", "user"].includes(s.type))
+            .filter(s => ["product", "meal", "user"].includes(s.type))
             .map(s => s.title)
 
         if (searchTerms.length > 0) {
@@ -227,7 +227,7 @@ export function GlobalSearch() {
             const finalParams = new URLSearchParams()
 
             const searchTerms = remainingItems
-                .filter(s => ["product", "recipe", "user"].includes(s.type))
+                .filter(s => ["product", "meal", "user"].includes(s.type))
                 .map(s => s.title)
 
             if (searchTerms.length > 0) {
@@ -392,7 +392,7 @@ export function GlobalSearch() {
                                         )}
                                         <div className="flex items-center gap-2 px-3 pt-2 pb-1">
                                             <SectionIcon className="size-3.5 text-muted-foreground/50" />
-                                            <span className="text-[11px] font-semibold text-muted-foreground/60 uppercase tracking-wider">
+                                            <span className="text-[11px] font-semibold text-muted-foreground/60 tracking-tight">
                                                 {config.label}
                                             </span>
                                         </div>

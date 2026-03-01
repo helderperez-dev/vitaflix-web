@@ -73,8 +73,8 @@ export function TagSelector({ selectedTagIds, onTagsChange }: TagSelectorProps) 
         <div className="space-y-4">
             <div className="flex items-center justify-between gap-4">
                 <div className="flex items-center gap-2 flex-1">
-                    <h3 className="font-bold text-[10px] text-muted-foreground uppercase tracking-widest whitespace-nowrap">Product Tags</h3>
-                    <div className="h-px w-full bg-border/40" />
+                    <h3 className="font-bold text-sm text-secondary dark:text-white">Product Tags</h3>
+                    <div className="h-px w-full bg-border/60" />
                 </div>
 
                 <Popover open={open} onOpenChange={setOpen}>
@@ -83,34 +83,34 @@ export function TagSelector({ selectedTagIds, onTagsChange }: TagSelectorProps) 
                             variant="outline"
                             role="combobox"
                             aria-expanded={open}
-                            className="h-7 text-[9px] font-bold uppercase tracking-widest border-border/50 bg-transparent text-muted-foreground hover:bg-muted/5 gap-2"
+                            className="h-8 px-4 text-xs font-semibold border-border/50 bg-transparent text-muted-foreground hover:bg-muted/5 gap-2 rounded-xl transition-all"
                         >
                             <Plus className="h-3 w-3" />
                             Select Tags
                         </Button>
                     </PopoverTrigger>
-                    <PopoverContent className="w-[240px] p-0" align="end">
-                        <Command className="border-none shadow-none">
-                            <CommandInput placeholder="Search tags..." className="h-9 text-xs" />
-                            <CommandList>
-                                <CommandEmpty className="py-4 text-[11px] text-muted-foreground text-center">
+                    <PopoverContent className="w-[240px] p-0 shadow-2xl border-border/40 rounded-2xl backdrop-blur-xl bg-background/90" align="end">
+                        <Command className="bg-transparent border-none">
+                            <CommandInput placeholder="Search tags..." className="h-10 text-xs" />
+                            <CommandList className="max-h-[300px]">
+                                <CommandEmpty className="py-6 text-xs text-muted-foreground/40 text-center">
                                     No tags found.
                                 </CommandEmpty>
-                                <CommandGroup heading="Available Tags" className="text-[10px] uppercase font-bold tracking-widest text-muted-foreground/50">
+                                <CommandGroup heading="Available Tags" className="text-[11px] font-semibold text-muted-foreground/40 px-2 py-4">
                                     {tags.map((tag) => (
                                         <CommandItem
                                             key={tag.id}
                                             onSelect={() => toggleTag(tag.id!)}
-                                            className="text-xs py-2 flex items-center justify-between group cursor-pointer"
+                                            className="text-xs py-2.5 px-3 flex items-center justify-between group cursor-pointer rounded-lg hover:bg-primary/5 mb-1 last:mb-0 transition-colors"
                                         >
-                                            <div className="flex items-center gap-2">
+                                            <div className="flex items-center gap-3">
                                                 <div className={cn(
-                                                    "flex h-4 w-4 items-center justify-center rounded-sm border border-primary transition-all",
-                                                    selectedTagIds.includes(tag.id!) ? "bg-primary text-primary-foreground" : "opacity-50"
+                                                    "flex h-4 w-4 items-center justify-center rounded-md border border-primary/30 transition-all",
+                                                    selectedTagIds.includes(tag.id!) ? "bg-primary border-primary text-primary-foreground" : "group-hover:border-primary/60"
                                                 )}>
-                                                    {selectedTagIds.includes(tag.id!) && <Check className="h-3 w-3" />}
+                                                    {selectedTagIds.includes(tag.id!) && <Check className="h-2.5 w-2.5" strokeWidth={3} />}
                                                 </div>
-                                                <span className="font-medium text-secondary">
+                                                <span className="font-medium text-secondary dark:text-foreground/90">
                                                     {tag.name?.[locale] || tag.name?.en}
                                                 </span>
                                             </div>
@@ -118,29 +118,29 @@ export function TagSelector({ selectedTagIds, onTagsChange }: TagSelectorProps) 
                                             <Button
                                                 variant="ghost"
                                                 size="icon"
-                                                className="h-6 w-6 opacity-0 group-hover:opacity-100 transition-all hover:bg-muted/50"
+                                                className="h-7 w-7 opacity-0 group-hover:opacity-100 transition-all hover:bg-muted/50 rounded-full"
                                                 onClick={(e) => {
                                                     e.stopPropagation()
                                                     setEditingTag(tag)
                                                     setTagModalOpen(true)
                                                 }}
                                             >
-                                                <Settings2 className="h-3 w-3 text-muted-foreground" />
+                                                <Settings2 className="h-3.5 w-3.5 text-muted-foreground/50" />
                                             </Button>
                                         </CommandItem>
                                     ))}
                                 </CommandGroup>
-                                <CommandSeparator />
-                                <CommandGroup>
+                                <CommandSeparator className="bg-border/40" />
+                                <CommandGroup className="px-2 py-2">
                                     <CommandItem
                                         onSelect={() => {
                                             setEditingTag(null)
                                             setTagModalOpen(true)
                                             setOpen(false)
                                         }}
-                                        className="text-xs py-2 text-primary font-bold uppercase tracking-wider cursor-pointer flex items-center gap-2"
+                                        className="text-xs py-2.5 px-3 text-primary font-semibold cursor-pointer flex items-center gap-2 rounded-lg hover:bg-primary/5 transition-colors"
                                     >
-                                        <Plus className="h-3.5 w-3.5" />
+                                        <Plus className="h-4 w-4" />
                                         Create New Tag
                                     </CommandItem>
                                 </CommandGroup>
@@ -152,22 +152,22 @@ export function TagSelector({ selectedTagIds, onTagsChange }: TagSelectorProps) 
 
             <div className="flex flex-wrap gap-2">
                 {selectedTags.length === 0 ? (
-                    <div className="w-full py-8 border border-dashed border-border/40 rounded-xl flex flex-col items-center justify-center bg-muted/5 group hover:bg-muted/10 transition-colors">
-                        <p className="text-[9px] font-bold text-muted-foreground/30 uppercase tracking-widest">No tags selected</p>
+                    <div className="w-full py-8 border-2 border-dashed border-border/40 rounded-2xl flex flex-col items-center justify-center bg-muted/5 group hover:border-primary/20 transition-all duration-500">
+                        <p className="text-xs font-semibold text-muted-foreground/30">No tags selected</p>
                     </div>
                 ) : (
                     selectedTags.map((tag) => (
                         <Badge
                             key={tag.id}
                             variant="secondary"
-                            className="h-7 px-3 flex items-center gap-2 bg-muted/20 hover:bg-muted/30 text-secondary border-none transition-all rounded-full"
+                            className="h-8 px-4 flex items-center gap-3 bg-muted/20 hover:bg-muted/30 text-secondary dark:text-foreground/80 border-none transition-all rounded-xl"
                         >
-                            <span className="text-[10px] font-bold uppercase tracking-wider">
+                            <span className="text-xs font-semibold">
                                 {tag.name?.[locale] || tag.name?.en}
                             </span>
                             <button
                                 onClick={() => removeTag(tag.id!)}
-                                className="hover:text-destructive transition-colors p-0.5"
+                                className="hover:text-destructive transition-colors p-1"
                             >
                                 <X className="h-3 w-3" />
                             </button>

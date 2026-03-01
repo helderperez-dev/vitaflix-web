@@ -36,7 +36,7 @@
         "activeUsers": "Usuarios Activos",
         "activeSubs": "Subs Activas",
         "inventory": "Inventario",
-        "recipes": "Recetas",
+        "meals": "Comidas",
         "systemIntegrity": "Integridad del Sistema",
         "maintenanceMode": "Modo Mantenimiento",
         "deployScan": "Desplegar Escaneo",
@@ -75,14 +75,14 @@
             "status": "Estado"
         }
     },
-    "Recipes": {
-        "title": "Recetas",
+    "Meals": {
+        "title": "Comidas",
         "description": "Gestionar base de datos culinaria y traducciones.",
-        "newRecipe": "Nueva Receta",
-        "editRecipe": "Editar Receta",
-        "addRecipe": "Nueva Receta",
+        "newMeal": "Nueva Comida",
+        "editMeal": "Editar Comida",
+        "addMeal": "Nueva Comida",
         "culinaryManagement": "Gestión Culinaria",
-        "recipeAuthoring": "Creación de Recetas",
+        "mealAuthoring": "Creación de Comidas",
         "prepTime": "Tiempo Prep",
         "satietyIndex": "Índice Saciedad",
         "categorization": "Categorización",
@@ -91,7 +91,7 @@
         "preparationMode": "Modo de Preparación",
         "prepPlaceholder": "Describa el proceso culinario...",
         "table": {
-            "name": "Nombre de la Receta",
+            "name": "Nombre de la Comida",
             "cookTime": "Tiempo Cocción",
             "categories": "Categorías",
             "satiety": "Saciedad"
@@ -121,7 +121,7 @@
     "Navigation": {
         "dashboard": "Panel",
         "products": "Productos",
-        "recipes": "Recetas",
+        "meals": "Comidas",
         "users": "Usuarios",
         "settings": "Ajustes",
         "logout": "Cerrar sesión",
