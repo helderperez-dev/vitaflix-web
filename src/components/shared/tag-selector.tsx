@@ -1,7 +1,8 @@
 "use client"
 
 import * as React from "react"
-import { Check, ChevronsUpDown, Plus, Settings2, X, Loader2 } from "lucide-react"
+import { ChevronsUpDown, Plus, Settings2, X, Loader2 } from "lucide-react"
+import { Checkbox } from "@/components/ui/checkbox"
 import { cn } from "@/lib/utils"
 import { Button } from "@/components/ui/button"
 import {
@@ -73,7 +74,7 @@ export function TagSelector({ selectedTagIds, onTagsChange }: TagSelectorProps) 
         <div className="space-y-4">
             <div className="flex items-center justify-between gap-4">
                 <div className="flex items-center gap-2 flex-1">
-                    <h3 className="font-bold text-sm text-secondary dark:text-white">Product Tags</h3>
+                    <h3 className="font-bold text-xs text-secondary dark:text-white whitespace-nowrap">Product Tags</h3>
                     <div className="h-px w-full bg-border/60" />
                 </div>
 
@@ -83,7 +84,7 @@ export function TagSelector({ selectedTagIds, onTagsChange }: TagSelectorProps) 
                             variant="outline"
                             role="combobox"
                             aria-expanded={open}
-                            className="h-8 px-4 text-xs font-semibold border-border/50 bg-transparent text-muted-foreground hover:bg-muted/5 gap-2 rounded-xl transition-all"
+                            className="h-8 w-[140px] justify-start px-4 text-xs font-semibold border-border/50 bg-transparent text-muted-foreground hover:bg-muted/5 gap-2 rounded-xl transition-all"
                         >
                             <Plus className="h-3 w-3" />
                             Select Tags
@@ -104,12 +105,10 @@ export function TagSelector({ selectedTagIds, onTagsChange }: TagSelectorProps) 
                                             className="text-xs py-2.5 px-3 flex items-center justify-between group cursor-pointer rounded-lg hover:bg-primary/5 mb-1 last:mb-0 transition-colors"
                                         >
                                             <div className="flex items-center gap-3">
-                                                <div className={cn(
-                                                    "flex h-4 w-4 items-center justify-center rounded-md border border-primary/30 transition-all",
-                                                    selectedTagIds.includes(tag.id!) ? "bg-primary border-primary text-primary-foreground" : "group-hover:border-primary/60"
-                                                )}>
-                                                    {selectedTagIds.includes(tag.id!) && <Check className="h-2.5 w-2.5" strokeWidth={3} />}
-                                                </div>
+                                                <Checkbox
+                                                    checked={selectedTagIds.includes(tag.id!)}
+                                                    className="pointer-events-none translate-y-[1px]"
+                                                />
                                                 <span className="font-medium text-secondary dark:text-foreground/90">
                                                     {tag.name?.[locale] || tag.name?.en}
                                                 </span>

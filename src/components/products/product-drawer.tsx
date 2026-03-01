@@ -137,7 +137,7 @@ export function ProductDrawer({ open, onOpenChange, product }: ProductDrawerProp
                                 {/* Nutritional Values */}
                                 <div className="space-y-8">
                                     <div className="flex items-center gap-2">
-                                        <h3 className="font-bold text-sm text-secondary dark:text-white">{t("mediaGallery")}</h3>
+                                        <h3 className="font-bold text-xs text-secondary dark:text-white whitespace-nowrap">{t("mediaGallery")}</h3>
                                         <div className="h-px flex-1 bg-border/60 ml-2" />
                                     </div>
                                     <ImageUploader
@@ -150,7 +150,7 @@ export function ProductDrawer({ open, onOpenChange, product }: ProductDrawerProp
                                 {/* Nutritional Values */}
                                 <div className="space-y-8">
                                     <div className="flex items-center gap-2">
-                                        <h3 className="font-bold text-sm text-secondary dark:text-white">{t("nutritionalValues")} <span className="text-[10px] font-normal lowercase opacity-50 ml-1">({t("per100g")})</span></h3>
+                                        <h3 className="font-bold text-xs text-secondary dark:text-white whitespace-nowrap">{t("nutritionalValues")} <span className="text-[10px] font-normal lowercase opacity-50 ml-1">({t("per100g")})</span></h3>
                                         <div className="h-px flex-1 bg-border/60 ml-2" />
                                     </div>
                                     <div className="grid grid-cols-2 gap-x-12 gap-y-8">
@@ -231,7 +231,7 @@ export function ProductDrawer({ open, onOpenChange, product }: ProductDrawerProp
                                 {/* System Settings */}
                                 <div className="space-y-8">
                                     <div className="flex items-center gap-2">
-                                        <h3 className="font-bold text-sm text-secondary dark:text-white">{t("organization")}</h3>
+                                        <h3 className="font-bold text-xs text-secondary dark:text-white whitespace-nowrap">{t("organization")}</h3>
                                         <div className="h-px flex-1 bg-border/60 ml-2" />
                                     </div>
                                     <div className="grid grid-cols-1 gap-8">

@@ -1,7 +1,8 @@
 "use client"
 
 import * as React from "react"
-import { Check, Plus, Settings2, X, Loader2 } from "lucide-react"
+import { Plus, Settings2, X, Loader2 } from "lucide-react"
+import { Checkbox } from "@/components/ui/checkbox"
 import { cn } from "@/lib/utils"
 import { Button } from "@/components/ui/button"
 import {
@@ -73,8 +74,8 @@ export function BrandSelector({ selectedBrandIds, onBrandsChange }: BrandSelecto
         <div className="space-y-4">
             <div className="flex items-center justify-between gap-4">
                 <div className="flex items-center gap-2 flex-1">
-                    <h3 className="font-bold text-[10px] text-muted-foreground uppercase tracking-widest whitespace-nowrap">Associated Brands</h3>
-                    <div className="h-px w-full bg-border/40" />
+                    <h3 className="font-bold text-xs text-secondary dark:text-white whitespace-nowrap">Associated Brands</h3>
+                    <div className="h-px w-full bg-border/60" />
                 </div>
 
                 <Popover open={open} onOpenChange={setOpen}>
@@ -83,39 +84,37 @@ export function BrandSelector({ selectedBrandIds, onBrandsChange }: BrandSelecto
                             variant="outline"
                             role="combobox"
                             aria-expanded={open}
-                            className="h-7 text-[9px] font-bold uppercase tracking-widest border-border/50 bg-transparent text-muted-foreground hover:bg-muted/5 gap-2"
+                            className="h-8 w-[140px] justify-start px-4 text-xs font-semibold border-border/50 bg-transparent text-muted-foreground hover:bg-muted/5 gap-2 rounded-xl transition-all"
                         >
                             <Plus className="h-3 w-3" />
                             Select Brands
                         </Button>
                     </PopoverTrigger>
-                    <PopoverContent className="w-[240px] p-0" align="end">
-                        <Command className="border-none shadow-none">
-                            <CommandInput placeholder="Search brands..." className="h-9 text-xs" />
-                            <CommandList>
-                                <CommandEmpty className="py-4 text-[11px] text-muted-foreground text-center">
+                    <PopoverContent className="w-[240px] p-0 shadow-2xl border-border/40 rounded-2xl backdrop-blur-xl bg-background/90" align="end">
+                        <Command className="bg-transparent border-none">
+                            <CommandInput placeholder="Search brands..." className="h-10 text-xs" />
+                            <CommandList className="max-h-[300px]">
+                                <CommandEmpty className="py-6 text-xs text-muted-foreground/40 text-center">
                                     No brands found.
                                 </CommandEmpty>
-                                <CommandGroup heading="Available Brands" className="text-[10px] uppercase font-bold tracking-widest text-muted-foreground/50">
+                                <CommandGroup heading="Available Brands" className="text-[11px] font-semibold text-muted-foreground/40 px-2 py-4">
                                     {brands.map((brand) => (
                                         <CommandItem
                                             key={brand.id}
                                             onSelect={() => toggleBrand(brand.id!)}
-                                            className="text-xs py-2 flex items-center justify-between group cursor-pointer"
+                                            className="text-xs py-2.5 px-3 flex items-center justify-between group cursor-pointer rounded-lg hover:bg-primary/5 mb-1 last:mb-0 transition-colors"
                                         >
-                                            <div className="flex items-center gap-2">
-                                                <div className={cn(
-                                                    "flex h-4 w-4 items-center justify-center rounded-sm border border-primary transition-all",
-                                                    selectedBrandIds.includes(brand.id!) ? "bg-primary text-primary-foreground" : "opacity-50"
-                                                )}>
-                                                    {selectedBrandIds.includes(brand.id!) && <Check className="h-3 w-3" />}
-                                                </div>
+                                            <div className="flex items-center gap-3">
+                                                <Checkbox
+                                                    checked={selectedBrandIds.includes(brand.id!)}
+                                                    className="pointer-events-none translate-y-[1px]"
+                                                />
                                                 {brand.logoUrl && (
                                                     <div className="h-6 w-6 rounded-md overflow-hidden bg-muted border border-border/40 flex-shrink-0">
                                                         <img src={brand.logoUrl} alt="" className="h-full w-full object-cover" />
                                                     </div>
                                                 )}
-                                                <span className="font-medium text-secondary">
+                                                <span className="font-medium text-secondary dark:text-foreground/90">
                                                     {brand.name?.[locale] || brand.name?.en}
                                                 </span>
                                             </div>
@@ -123,29 +122,29 @@ export function BrandSelector({ selectedBrandIds, onBrandsChange }: BrandSelecto
                                             <Button
                                                 variant="ghost"
                                                 size="icon"
-                                                className="h-6 w-6 opacity-0 group-hover:opacity-100 transition-all hover:bg-muted/50"
+                                                className="h-7 w-7 opacity-0 group-hover:opacity-100 transition-all hover:bg-muted/50 rounded-full"
                                                 onClick={(e) => {
                                                     e.stopPropagation()
                                                     setEditingBrand(brand)
                                                     setBrandModalOpen(true)
                                                 }}
                                             >
-                                                <Settings2 className="h-3 w-3 text-muted-foreground" />
+                                                <Settings2 className="h-3.5 w-3.5 text-muted-foreground/50" />
                                             </Button>
                                         </CommandItem>
                                     ))}
                                 </CommandGroup>
-                                <CommandSeparator />
-                                <CommandGroup>
+                                <CommandSeparator className="bg-border/40" />
+                                <CommandGroup className="px-2 py-2">
                                     <CommandItem
                                         onSelect={() => {
                                             setEditingBrand(null)
                                             setBrandModalOpen(true)
                                             setOpen(false)
                                         }}
-                                        className="text-xs py-2 text-primary font-bold uppercase tracking-wider cursor-pointer flex items-center gap-2"
+                                        className="text-xs py-2.5 px-3 text-primary font-semibold cursor-pointer flex items-center gap-2 rounded-lg hover:bg-primary/5 transition-colors"
                                     >
-                                        <Plus className="h-3.5 w-3.5" />
+                                        <Plus className="h-4 w-4" />
                                         Create New Brand
                                     </CommandItem>
                                 </CommandGroup>
@@ -157,27 +156,27 @@ export function BrandSelector({ selectedBrandIds, onBrandsChange }: BrandSelecto
 
             <div className="flex flex-wrap gap-2">
                 {selectedBrands.length === 0 ? (
-                    <div className="w-full py-8 border border-dashed border-border/40 rounded-xl flex flex-col items-center justify-center bg-muted/5 group hover:bg-muted/10 transition-colors">
-                        <p className="text-[9px] font-bold text-muted-foreground/30 uppercase tracking-widest">No brands selected</p>
+                    <div className="w-full py-8 border-2 border-dashed border-border/40 rounded-2xl flex flex-col items-center justify-center bg-muted/5 group hover:border-primary/20 transition-all duration-500">
+                        <p className="text-xs font-semibold text-muted-foreground/30">No brands selected</p>
                     </div>
                 ) : (
                     selectedBrands.map((brand) => (
                         <Badge
                             key={brand.id}
                             variant="secondary"
-                            className="h-7 px-3 flex items-center gap-2 bg-muted/20 hover:bg-muted/30 text-secondary border-none transition-all rounded-full"
+                            className="h-8 px-4 flex items-center gap-3 bg-muted/20 hover:bg-muted/30 text-secondary dark:text-foreground/80 border-none transition-all rounded-xl"
                         >
                             {brand.logoUrl && (
                                 <div className="h-5 w-5 rounded-md overflow-hidden bg-muted border border-border/40 flex-shrink-0">
                                     <img src={brand.logoUrl} alt="" className="h-full w-full object-cover" />
                                 </div>
                             )}
-                            <span className="text-[10px] font-bold uppercase tracking-wider">
+                            <span className="text-xs font-semibold">
                                 {brand.name?.[locale] || brand.name?.en}
                             </span>
                             <button
                                 onClick={() => removeBrand(brand.id!)}
-                                className="hover:text-destructive transition-colors p-0.5"
+                                className="hover:text-destructive transition-colors p-1"
                             >
                                 <X className="h-3 w-3" />
                             </button>
