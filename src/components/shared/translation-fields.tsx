@@ -83,7 +83,7 @@ export function TranslationFields({
         <div className="space-y-6">
             <div className="flex items-center justify-between gap-4">
                 <div className="flex items-center gap-3 flex-1">
-                    <h3 className="font-bold text-sm text-secondary dark:text-white">{label}</h3>
+                    <h3 className="font-bold text-xs text-secondary dark:text-white whitespace-nowrap">{label}</h3>
                     <div className="h-px w-full bg-border/60" />
                 </div>
 
@@ -92,8 +92,7 @@ export function TranslationFields({
                         <PopoverTrigger asChild>
                             <Button
                                 variant="outline"
-                                size="sm"
-                                className="h-8 px-4 text-xs font-semibold border-border hover:bg-muted/10 transition-colors gap-2 rounded-xl"
+                                className="h-8 w-[140px] justify-start px-4 text-xs font-semibold border-border/50 bg-transparent text-muted-foreground hover:bg-muted/5 gap-2 rounded-xl transition-all"
                             >
                                 <Plus className="h-3 w-3" />
                                 <span>{t("addLocalization")}</span>

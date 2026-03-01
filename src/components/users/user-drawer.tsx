@@ -129,7 +129,7 @@ export function UserDrawer({ open, onOpenChange, user }: UserDrawerProps) {
                                 {/* Identity & Authentication */}
                                 <div className="space-y-8">
                                     <div className="flex items-center gap-2">
-                                        <h3 className="font-bold text-sm text-secondary dark:text-white">{t("identityManagement")}</h3>
+                                        <h3 className="font-bold text-xs text-secondary dark:text-white whitespace-nowrap">{t("identityManagement")}</h3>
                                         <div className="h-px flex-1 bg-border/60 ml-2" />
                                     </div>
                                     <div className="grid grid-cols-1 md:grid-cols-2 gap-x-12 gap-y-8">
@@ -186,7 +186,7 @@ export function UserDrawer({ open, onOpenChange, user }: UserDrawerProps) {
                                 {/* Physiological Baseline */}
                                 <div className="space-y-8">
                                     <div className="flex items-center gap-2">
-                                        <h3 className="font-bold text-sm text-secondary dark:text-white">{t("physiologicalBaseline")}</h3>
+                                        <h3 className="font-bold text-xs text-secondary dark:text-white whitespace-nowrap">{t("physiologicalBaseline")}</h3>
                                         <div className="h-px flex-1 bg-border/60 ml-2" />
                                     </div>
                                     <div className="grid grid-cols-2 gap-x-12 gap-y-8">
@@ -276,7 +276,7 @@ export function UserDrawer({ open, onOpenChange, user }: UserDrawerProps) {
                                 {/* System Configuration */}
                                 <div className="space-y-8 pb-6">
                                     <div className="flex items-center gap-2">
-                                        <h3 className="font-bold text-sm text-secondary dark:text-white">{t("systemCompliance")}</h3>
+                                        <h3 className="font-bold text-xs text-secondary dark:text-white whitespace-nowrap">{t("systemCompliance")}</h3>
                                         <div className="h-px flex-1 bg-border/60 ml-2" />
                                     </div>
                                     <div className="p-4 rounded-lg bg-muted/20 border border-border transition-colors hover:bg-muted/30 group">

@@ -125,7 +125,7 @@ export function MealDrawer({ open, onOpenChange, meal }: MealDrawerProps) {
                                 {/* Culinary Metrics */}
                                 <div className="space-y-8">
                                     <div className="flex items-center gap-2">
-                                        <h3 className="font-bold text-sm text-secondary dark:text-white">{t("culinaryManagement")}</h3>
+                                        <h3 className="font-bold text-xs text-secondary dark:text-white whitespace-nowrap">{t("culinaryManagement")}</h3>
                                         <div className="h-px flex-1 bg-border/60 ml-2" />
                                     </div>
                                     <div className="grid grid-cols-2 gap-x-12 gap-y-8">
@@ -171,7 +171,7 @@ export function MealDrawer({ open, onOpenChange, meal }: MealDrawerProps) {
                                 {/* Categorization */}
                                 <div className="space-y-8">
                                     <div className="flex items-center gap-2">
-                                        <h3 className="font-bold text-sm text-secondary dark:text-white">{t("categorization")}</h3>
+                                        <h3 className="font-bold text-xs text-secondary dark:text-white whitespace-nowrap">{t("categorization")}</h3>
                                         <div className="h-px flex-1 bg-border/60 ml-2" />
                                     </div>
                                     <div className="grid grid-cols-1 md:grid-cols-2 gap-x-12 gap-y-8">
