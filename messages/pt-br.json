@@ -47,9 +47,11 @@
         "signIn": "Entrar",
         "signingIn": "Entrando...",
         "error": "E-mail ou senha inválidos",
-        "quote": "A melhor maneira de gerenciar conteúdo e variações calóricas perfeitamente.",
-        "quoteAuthor": "Sistema Interno Vitaflix",
-        "quoteTitle": "Comando Administrativo Unificado"
+        "quote1": "Alimente o seu corpo, eleve sua mente e abrace a jornada para uma vida mais saudável.",
+        "quote2": "O bem-estar não é um destino, é uma jornada contínua de autoaperfeiçoamento.",
+        "quote3": "Transforme seu estilo de vida por meio de escolhas conscientes e dedicação.",
+        "quoteAuthor": "Conceito de Bem-Estar Vitaflix",
+        "quoteTitle": "Sua dose diária de vitalidade"
     },
     "Dashboard": {
         "title": "Painel",

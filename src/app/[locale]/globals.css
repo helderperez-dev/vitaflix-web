@@ -103,7 +103,7 @@
 
   /* Primary: #13A57E in Dark Mode */
   --primary: oklch(0.61 0.13 168);
-  --primary-foreground: oklch(0.18 0.03 240);
+  --primary-foreground: oklch(1 0 0);
 
   --secondary: oklch(0.3 0.04 240);
   --secondary-foreground: oklch(0.985 0 0);
@@ -134,6 +134,29 @@
   --sidebar-ring: oklch(0.61 0.13 168);
 }
 
+/* Always-dark override for the login page — independent of next-themes / system preference */
+.login-dark {
+  color-scheme: dark;
+  --background: oklch(0.18 0.03 240);
+  --foreground: oklch(0.985 0 0);
+  --card: oklch(0.22 0.04 240);
+  --card-foreground: oklch(0.985 0 0);
+  --popover: oklch(0.22 0.04 240);
+  --popover-foreground: oklch(0.985 0 0);
+  --primary: oklch(0.61 0.13 168);
+  --primary-foreground: oklch(1 0 0);
+  --secondary: oklch(0.3 0.04 240);
+  --secondary-foreground: oklch(0.985 0 0);
+  --muted: oklch(0.26 0.04 240);
+  --muted-foreground: oklch(0.7 0 0);
+  --accent: oklch(0.26 0.04 240);
+  --accent-foreground: oklch(0.985 0 0);
+  --destructive: oklch(0.704 0.191 22.216);
+  --border: oklch(1 0 0 / 10%);
+  --input: oklch(1 0 0 / 15%);
+  --ring: oklch(0.61 0.13 168);
+}
+
 @layer base {
   * {
     @apply border-border outline-ring/50;
@@ -141,6 +164,19 @@
 
   body {
     @apply bg-background text-foreground antialiased selection:bg-primary/20 selection:text-primary;
+  }
+
+  /* Fix for webkit autofill background — background-color is ignored by browsers;
+     the only reliable override is a large inset box-shadow that paints over the autofill color.
+     Color is rgba approximation of bg-background/40 dark composited over card + video. */
+  input:-webkit-autofill,
+  input:-webkit-autofill:hover,
+  input:-webkit-autofill:focus,
+  input:-webkit-autofill:active {
+    -webkit-text-fill-color: rgba(245, 248, 255, 1) !important;
+    -webkit-box-shadow: 0 0 0 1000px rgba(26, 32, 47, 1) inset !important;
+    box-shadow: 0 0 0 1000px rgba(26, 32, 47, 1) inset !important;
+    transition: background-color 5000s ease-in-out 0s;
   }
 }
 

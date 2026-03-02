@@ -41,15 +41,17 @@
     },
     "Auth": {
         "welcome": "Welcome back",
-        "description": "Enter your credentials to access the administrative panel.",
+        "description": "Please sign in to your account.",
         "email": "Email",
         "password": "Password",
         "signIn": "Sign In",
         "signingIn": "Signing in...",
         "error": "Invalid email or password",
-        "quote": "The best way to manage content and caloric variations seamlessly.",
-        "quoteAuthor": "Vitaflix Internal System",
-        "quoteTitle": "Unified Administrative Command"
+        "quote1": "Fuel your body, elevate your mind, and embrace the journey to a healthier you.",
+        "quote2": "Wellness is not a destination, it is a continuous journey of self-improvement.",
+        "quote3": "Transform your lifestyle through mindful choices and consistent dedication.",
+        "quoteAuthor": "Vitaflix Wellness Concept",
+        "quoteTitle": "Your daily dose of vitality"
     },
     "Dashboard": {
         "title": "Dashboard",

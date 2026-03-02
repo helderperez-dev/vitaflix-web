@@ -2,6 +2,7 @@
 
 import { createClient } from "@/lib/supabase/server"
 import { redirect } from "@/i18n/routing"
+import { getLocale } from 'next-intl/server'
 
 
 export async function loginAction(data: { email: string; password: string; locale: string }) {
@@ -42,5 +43,6 @@ export async function loginAction(data: { email: string; password: string; local
 export async function logoutAction() {
     const supabase = await createClient()
     await supabase.auth.signOut()
-    redirect({ href: "/" } as any)
+    const locale = await getLocale()
+    redirect({ href: "/", locale } as any)
 }
