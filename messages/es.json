@@ -16,7 +16,22 @@
         "status": "Estado",
         "addLocalization": "Añadir localización",
         "noResults": "Sin resultados",
-        "translationsRequired": "Traducciones requeridas"
+        "translationsRequired": "Traducciones requeridas",
+        "selectTags": "Seleccionar Etiquetas",
+        "selectMealCategories": "Seleccionar Categorías",
+        "selectDietaryTags": "Seleccionar Etiquetas Dietéticas",
+        "searchTags": "Buscar etiquetas...",
+        "searchMealCategories": "Buscar categorías...",
+        "searchDietaryTags": "Buscar etiquetas dietéticas...",
+        "availableTags": "Etiquetas Disponibles",
+        "availableMealCategories": "Categorías Disponibles",
+        "availableDietaryTags": "Etiquetas Dietéticas Disponibles",
+        "createNewTag": "Crear Nueva Etiqueta",
+        "createNewMealCategory": "Crear Nueva Categoría",
+        "createNewDietaryTag": "Crear Etiqueta Dietética",
+        "noTagsFound": "No se encontraron etiquetas.",
+        "noMealCategoriesFound": "No se encontraron categorías.",
+        "noDietaryTagsFound": "No se encontraron etiquetas dietéticas."
     },
     "Auth": {
         "welcome": "Bienvenido de nuevo",

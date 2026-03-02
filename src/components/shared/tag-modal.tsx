@@ -18,16 +18,17 @@ import { Form } from "@/components/ui/form"
 import { Button } from "@/components/ui/button"
 import { TranslationFields } from "./translation-fields"
 import { tagSchema, type Tag } from "@/shared-schemas/tag"
-import { upsertTag, deleteTag } from "@/app/actions/tags"
+import { upsertTag, deleteTag, type TagTable } from "@/app/actions/tags"
 
 interface TagModalProps {
     open: boolean
     onOpenChange: (open: boolean) => void
     tag?: Tag | null
     onSuccess?: () => void
+    table?: TagTable
 }
 
-export function TagModal({ open, onOpenChange, tag, onSuccess }: TagModalProps) {
+export function TagModal({ open, onOpenChange, tag, onSuccess, table = "tags" }: TagModalProps) {
     const [isSubmitting, setIsSubmitting] = React.useState(false)
     const [isDeleting, setIsDeleting] = React.useState(false)
 
@@ -54,7 +55,7 @@ export function TagModal({ open, onOpenChange, tag, onSuccess }: TagModalProps) 
     async function onSubmit(values: Tag) {
         setIsSubmitting(true)
         try {
-            const result = await upsertTag(values)
+            const result = await upsertTag(values, table)
             if (result?.error) {
                 toast.error(result.error)
             } else {
@@ -75,7 +76,7 @@ export function TagModal({ open, onOpenChange, tag, onSuccess }: TagModalProps) 
 
         setIsDeleting(true)
         try {
-            const result = await deleteTag(tag.id)
+            const result = await deleteTag(tag.id, table)
             if (result?.error) {
                 toast.error(result.error)
             } else {

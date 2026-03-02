@@ -6,7 +6,7 @@ This document defines the standard design patterns and component usages for the 
 
 | Name | Role | HEX | OKLCH |
 | :--- | :--- | :--- | :--- |
-| **Primary** | Actions, Highlights | `#3AD49F` | `oklch(0.78 0.15 160)` |
+| **Primary** | Actions, Highlights | `#13A57E` | `oklch(0.61 0.13 168)` |
 | **Secondary** | Headings, Navigation | `#192A3F` | `oklch(0.24 0.05 240)` |
 | **Background** | Page Surfaces | `#FFFFFF` | `oklch(1 0 0)` |
 | **Dark BG** | Dark Mode Surfaces | `#181C26` | `oklch(0.18 0.03 240)` |

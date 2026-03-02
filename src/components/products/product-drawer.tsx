@@ -237,6 +237,7 @@ export function ProductDrawer({ open, onOpenChange, product }: ProductDrawerProp
                                     <div className="grid grid-cols-1 gap-8">
                                         <div className="space-y-4">
                                             <TagSelector
+                                                title={t("tags")}
                                                 selectedTagIds={form.watch("tagIds") || []}
                                                 onTagsChange={(tagIds) => form.setValue("tagIds", tagIds, { shouldDirty: true })}
                                             />

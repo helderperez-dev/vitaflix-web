@@ -16,7 +16,22 @@
         "status": "Status",
         "addLocalization": "Add localization",
         "noResults": "No results",
-        "translationsRequired": "Translations required"
+        "translationsRequired": "Translations required",
+        "selectTags": "Select Tags",
+        "selectMealCategories": "Select Categories",
+        "selectDietaryTags": "Select Dietary Tags",
+        "searchTags": "Search tags...",
+        "searchMealCategories": "Search categories...",
+        "searchDietaryTags": "Search dietary...",
+        "availableTags": "Available Tags",
+        "availableMealCategories": "Available Categories",
+        "availableDietaryTags": "Available Dietary Tags",
+        "createNewTag": "Create New Tag",
+        "createNewMealCategory": "Create New Category",
+        "createNewDietaryTag": "Create Dietary Tag",
+        "noTagsFound": "No tags found.",
+        "noMealCategoriesFound": "No categories found.",
+        "noDietaryTagsFound": "No dietary tags found."
     },
     "Auth": {
         "welcome": "Welcome back",
@@ -81,6 +96,7 @@
         "newMeal": "New Meal",
         "editMeal": "Edit Meal",
         "addMeal": "New Meal",
+        "noMeals": "No meals found.",
         "culinaryManagement": "Culinary Management",
         "mealAuthoring": "Meal Authoring",
         "prepTime": "Prep Time",
@@ -94,6 +110,7 @@
             "name": "Meal Name",
             "cookTime": "Cook Time",
             "categories": "Categories",
+            "dietaryTags": "Dietary Tags",
             "satiety": "Satiety"
         }
     },

@@ -1,7 +1,7 @@
 "use client"
 
 import * as React from "react"
-import { Plus } from "lucide-react"
+import { Plus, Trash2, Clock } from "lucide-react"
 import { Button } from "@/components/ui/button"
 import { Badge } from "@/components/ui/badge"
 import { type Meal } from "@/shared-schemas/meal"
@@ -10,51 +10,91 @@ import { MealActions } from "./meal-actions"
 import { useLocale, useTranslations } from "next-intl"
 import { DataTable, SortableHeader } from "@/components/ui/data-table"
 import { useQueryState } from "nuqs"
+import { toast } from "sonner"
+import {
+    AlertDialog,
+    AlertDialogAction,
+    AlertDialogCancel,
+    AlertDialogContent,
+    AlertDialogDescription,
+    AlertDialogFooter,
+    AlertDialogHeader,
+    AlertDialogTitle,
+} from "@/components/ui/alert-dialog"
+import { updateUserPreferences } from "@/app/actions/users"
+import { bulkDeleteMeals } from "@/app/actions/meals"
+import { getTags } from "@/app/actions/tags"
+import { type Tag } from "@/shared-schemas/tag"
 import type { ColumnDef } from "@tanstack/react-table"
 
 interface MealTableWrapperProps {
     initialMeals: any[]
+    userProfile?: any
 }
 
-export function MealTableWrapper({ initialMeals }: MealTableWrapperProps) {
+export function MealTableWrapper({ initialMeals, userProfile }: MealTableWrapperProps) {
     const locale = useLocale()
     const t = useTranslations("Meals")
     const commonT = useTranslations("Common")
-    const [open, setOpen] = React.useState(false)
+    const [drawerOpen, setDrawerOpen] = React.useState(false)
     const [selectedMeal, setSelectedMeal] = React.useState<Meal | null>(null)
+    const [deleteModalOpen, setDeleteModalOpen] = React.useState(false)
+    const [rowsToDelete, setRowsToDelete] = React.useState<any[]>([])
+    const [clearSelectionRef, setClearSelectionRef] = React.useState<{ fn: () => void } | null>(null)
     const [searchQuery, setSearchQuery] = useQueryState("search", { defaultValue: "" })
     const [idParam, setIdParam] = useQueryState("id")
+    const [allTags, setAllTags] = React.useState<Tag[]>([])
 
-    const data = React.useMemo<Meal[]>(() => {
+    React.useEffect(() => {
+        const fetchTags = async () => {
+            const categories = await getTags('meal_categories')
+            const dietary = await getTags('dietary_tags')
+            setAllTags([...(categories || []), ...(dietary || [])])
+        }
+        fetchTags()
+    }, [])
+
+    const data = React.useMemo(() => {
         return initialMeals.map(m => ({
-            id: m.id,
-            name: m.name,
-            mealTypes: m.meal_types || [],
-            cookTime: m.cook_time || 0,
-            preparationMode: m.preparation_mode,
-            satiety: m.satiety || 0,
-            restrictions: m.restrictions || [],
-            publishOn: m.publish_on,
+            ...m,
+            mappedMeal: {
+                id: m.id,
+                name: m.name,
+                mealTypes: m.meal_types || [],
+                cookTime: m.cook_time || 0,
+                preparationMode: m.preparation_mode,
+                satiety: m.satiety || 0,
+                restrictions: m.restrictions || [],
+                publishOn: m.publish_on,
+            } as Meal,
+            nameLocale: m.name?.[locale] || m.name?.en || "Unnamed Meal",
         }))
-    }, [initialMeals])
+    }, [initialMeals, locale])
 
 
-    const columns = React.useMemo<ColumnDef<Meal>[]>(() => [
+    const columns = React.useMemo<ColumnDef<any>[]>(() => [
         {
-            accessorKey: "name",
+            accessorKey: "nameLocale",
             header: ({ column }) => <SortableHeader column={column} title={t("table.name")} />,
             cell: ({ row }) => (
-                <span className="font-medium text-foreground text-sm">
-                    {row.original.name?.[locale] || row.original.name?.en || "Unnamed Meal"}
-                </span>
+                <div className="flex items-center gap-3">
+                    <div className="h-10 w-10 rounded-md overflow-hidden bg-primary/10 flex items-center justify-center border border-primary/20 shrink-0">
+                        <span className="text-primary text-sm font-bold uppercase">
+                            {(row.getValue("nameLocale") as string).slice(0, 2)}
+                        </span>
+                    </div>
+                    <div className="font-semibold text-sm truncate">{row.getValue("nameLocale")}</div>
+                </div>
             ),
-            size: 300,
+            size: 260,
+            enableHiding: false,
         },
         {
             accessorKey: "cookTime",
             header: ({ column }) => <SortableHeader column={column} title={t("table.cookTime")} />,
             cell: ({ row }) => (
-                <Badge variant="outline" className="font-mono text-[10px]">
+                <Badge variant="outline" className="font-mono text-[11px] h-6 px-2 bg-slate-50/50 dark:bg-white/5 border-slate-200 dark:border-white/10 text-muted-foreground flex items-center gap-1.5 w-fit">
+                    <Clock className="h-3 w-3" />
                     {row.getValue("cookTime")} min
                 </Badge>
             ),
@@ -64,18 +104,45 @@ export function MealTableWrapper({ initialMeals }: MealTableWrapperProps) {
             accessorKey: "mealTypes",
             header: ({ column }) => <SortableHeader column={column} title={t("table.categories")} />,
             cell: ({ row }) => {
-                const types = row.original.mealTypes || []
+                const ids = row.original.mappedMeal.mealTypes || []
                 return (
-                    <div className="flex flex-wrap gap-1.5 max-w-[200px]">
-                        {types.map((type) => (
-                            <Badge key={type} variant="secondary" className="px-2 py-0 h-5 text-[10px] font-semibold">
-                                {type}
-                            </Badge>
-                        ))}
+                    <div className="flex flex-wrap gap-1.5 max-w-[180px]">
+                        {ids.map((id: string) => {
+                            const tag = allTags.find(t => t.id === id)
+                            if (!tag) return null
+                            return (
+                                <Badge key={id} variant="secondary" className="px-2 py-0 h-5 text-[10px] font-bold bg-slate-800 text-white dark:bg-white/10 dark:text-white border-none rounded-full">
+                                    {tag.name?.[locale] || tag.name?.en}
+                                </Badge>
+                            )
+                        })}
+                        {ids.length === 0 && <span className="text-xs text-muted-foreground/40 italic">None</span>}
                     </div>
                 )
             },
-            size: 200,
+            size: 150,
+        },
+        {
+            accessorKey: "restrictions",
+            header: ({ column }) => <SortableHeader column={column} title={t("table.dietaryTags")} />,
+            cell: ({ row }) => {
+                const ids = row.original.mappedMeal.restrictions || []
+                return (
+                    <div className="flex flex-wrap gap-1.5 max-w-[180px]">
+                        {ids.map((id: string) => {
+                            const tag = allTags.find(t => t.id === id)
+                            if (!tag) return null
+                            return (
+                                <Badge key={id} variant="secondary" className="px-1.5 h-5 text-[10px] font-semibold bg-primary/10 text-primary border-none rounded-md">
+                                    {tag.name?.[locale] || tag.name?.en}
+                                </Badge>
+                            )
+                        })}
+                        {ids.length === 0 && <span className="text-xs text-muted-foreground/40 italic">None</span>}
+                    </div>
+                )
+            },
+            size: 150,
         },
         {
             accessorKey: "satiety",
@@ -83,14 +150,14 @@ export function MealTableWrapper({ initialMeals }: MealTableWrapperProps) {
             cell: ({ row }) => {
                 const satiety = row.getValue("satiety") as number
                 return (
-                    <div className="flex items-center gap-2">
-                        <div className="h-2 w-16 bg-muted rounded-full overflow-hidden">
+                    <div className="flex items-center gap-3">
+                        <div className="h-2 w-16 bg-slate-100 dark:bg-white/5 rounded-full overflow-hidden shrink-0 border border-slate-200/50 dark:border-white/5">
                             <div
                                 className="h-full bg-primary"
                                 style={{ width: `${(satiety || 0) * 10}%` }}
                             />
                         </div>
-                        <span className="text-[10px] font-bold">{satiety}/10</span>
+                        <span className="text-[11px] font-bold text-muted-foreground dark:text-white/60">{satiety}/10</span>
                     </div>
                 )
             },
@@ -102,22 +169,28 @@ export function MealTableWrapper({ initialMeals }: MealTableWrapperProps) {
             cell: ({ row }) => (
                 <div onClick={(e) => e.stopPropagation()} className="flex justify-end pr-2">
                     <MealActions
-                        meal={row.original}
-                        onEdit={(meal) => {
-                            setSelectedMeal(meal)
-                            setOpen(true)
+                        meal={row.original.mappedMeal}
+                        onEdit={() => {
+                            setSelectedMeal(row.original.mappedMeal)
+                            setDrawerOpen(true)
                         }}
                     />
                 </div>
             ),
             size: 50,
+            enableResizing: false,
+            enableHiding: false,
         },
-    ], [locale])
+    ], [locale, t, allTags])
 
-    function handleAdd() {
-        setSelectedMeal(null)
-        setOpen(true)
-    }
+    const handlePreferencesChange = React.useCallback((newPrefs: any) => {
+        if (!userProfile?.id) return
+        const fullPrefs = {
+            ...userProfile.preferences,
+            mealTable: newPrefs
+        }
+        updateUserPreferences(userProfile.id, fullPrefs)
+    }, [userProfile?.id, userProfile?.preferences])
 
     return (
         <div className="h-full flex flex-col">
@@ -138,7 +211,10 @@ export function MealTableWrapper({ initialMeals }: MealTableWrapperProps) {
                     </p>
                 </div>
 
-                <Button onClick={handleAdd} className="bg-primary hover:bg-primary/95 text-white font-semibold transition-all active:scale-95 shadow-sm h-10 px-6 rounded-xl text-xs flex items-center gap-2 group/add">
+                <Button
+                    onClick={() => { setSelectedMeal(null); setDrawerOpen(true); }}
+                    className="bg-primary hover:bg-primary/95 text-white font-semibold transition-all active:scale-95 shadow-sm h-10 px-6 rounded-xl text-xs flex items-center gap-2 group/add"
+                >
                     <div className="p-0.5 rounded-md bg-white/20 transition-transform group-hover/add:rotate-90">
                         <Plus className="h-3.5 w-3.5" />
                     </div>
@@ -152,16 +228,75 @@ export function MealTableWrapper({ initialMeals }: MealTableWrapperProps) {
                 globalFilter={searchQuery}
                 onGlobalFilterChange={setSearchQuery}
                 className="flex-1"
+                enableRowSelection={true}
+                initialPreferences={userProfile?.preferences?.mealTable}
+                onPreferencesChange={handlePreferencesChange}
                 onRowClick={(row) => {
-                    setSelectedMeal(row)
-                    setOpen(true)
+                    setSelectedMeal(row.mappedMeal)
+                    setDrawerOpen(true)
                 }}
+                selectionActions={(selectedRows, clearSelection) => (
+                    <div className="flex items-center gap-6 w-full">
+                        <div className="h-4 w-px bg-slate-200 dark:bg-white/10 shrink-0 ml-auto" />
+
+                        <Button
+                            variant="ghost"
+                            className="h-9 px-4 text-[11px] font-semibold hover:bg-slate-100 dark:hover:bg-white/5 text-muted-foreground dark:text-white/80 hover:text-foreground dark:hover:text-white transition-all shrink-0"
+                            onClick={() => {
+                                setRowsToDelete(selectedRows)
+                                setClearSelectionRef({ fn: clearSelection })
+                                setDeleteModalOpen(true)
+                            }}
+                        >
+                            <Trash2 className="h-4 w-4 mr-2" />
+                            Delete ({selectedRows.length})
+                        </Button>
+                    </div>
+                )}
+                emptyStateText={t("noMeals")}
             />
 
+            <AlertDialog open={deleteModalOpen} onOpenChange={setDeleteModalOpen}>
+                <AlertDialogContent className="rounded-2xl border-sidebar-border/50 shadow-2xl">
+                    <AlertDialogHeader>
+                        <AlertDialogTitle>Are you absolutely sure?</AlertDialogTitle>
+                        <AlertDialogDescription>
+                            This will permanently delete {rowsToDelete.length} {rowsToDelete.length === 1 ? 'meal' : 'meals'}.
+                            This action cannot be undone and will remove all associated data.
+                        </AlertDialogDescription>
+                    </AlertDialogHeader>
+                    <AlertDialogFooter className="gap-2">
+                        <AlertDialogCancel className="rounded-xl font-semibold text-xs h-9">
+                            Cancel
+                        </AlertDialogCancel>
+                        <AlertDialogAction
+                            onClick={async () => {
+                                try {
+                                    const ids = rowsToDelete.map(r => r.id)
+                                    const result = await bulkDeleteMeals(ids)
+
+                                    if (result.success) {
+                                        toast.success(`Deleted ${ids.length} meals`)
+                                        clearSelectionRef?.fn()
+                                    } else {
+                                        toast.error(result.error || "Failed to delete meals")
+                                    }
+                                } finally {
+                                    setDeleteModalOpen(false)
+                                }
+                            }}
+                            className="bg-primary hover:bg-primary/90 text-white rounded-xl font-semibold text-xs h-9 px-6"
+                        >
+                            Confirm Deletion
+                        </AlertDialogAction>
+                    </AlertDialogFooter>
+                </AlertDialogContent>
+            </AlertDialog>
+
             <MealDrawer
-                open={open}
+                open={drawerOpen}
                 onOpenChange={(val) => {
-                    setOpen(val)
+                    setDrawerOpen(val)
                     if (!val) {
                         setSelectedMeal(null)
                         setIdParam(null)

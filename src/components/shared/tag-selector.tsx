@@ -20,29 +20,60 @@ import {
     PopoverTrigger,
 } from "@/components/ui/popover"
 import { Badge } from "@/components/ui/badge"
-import { getTags } from "@/app/actions/tags"
+import { getTags, type TagTable } from "@/app/actions/tags"
 import { type Tag } from "@/shared-schemas/tag"
 import { TagModal } from "@/components/shared/tag-modal"
-import { useLocale } from "next-intl"
+import { useLocale, useTranslations } from "next-intl"
 
 interface TagSelectorProps {
+    title?: string
     selectedTagIds: string[]
     onTagsChange: (tagIds: string[]) => void
+    table?: TagTable
 }
 
-export function TagSelector({ selectedTagIds, onTagsChange }: TagSelectorProps) {
+export function TagSelector({ title = "Tags", selectedTagIds, onTagsChange, table = "tags" }: TagSelectorProps) {
     const locale = useLocale()
+    const t = useTranslations("Common")
     const [open, setOpen] = React.useState(false)
     const [tags, setTags] = React.useState<Tag[]>([])
     const [loading, setLoading] = React.useState(true)
     const [tagModalOpen, setTagModalOpen] = React.useState(false)
     const [editingTag, setEditingTag] = React.useState<Tag | null>(null)
 
+    const labels = React.useMemo(() => {
+        if (table === 'meal_categories') {
+            return {
+                select: t("selectMealCategories"),
+                search: t("searchMealCategories"),
+                available: t("availableMealCategories"),
+                create: t("createNewMealCategory"),
+                empty: t("noMealCategoriesFound")
+            }
+        }
+        if (table === 'dietary_tags') {
+            return {
+                select: t("selectDietaryTags"),
+                search: t("searchDietaryTags"),
+                available: t("availableDietaryTags"),
+                create: t("createNewDietaryTag"),
+                empty: t("noDietaryTagsFound")
+            }
+        }
+        return {
+            select: t("selectTags"),
+            search: t("searchTags"),
+            available: t("availableTags"),
+            create: t("createNewTag"),
+            empty: t("noTagsFound")
+        }
+    }, [table, t])
+
     const fetchTags = React.useCallback(async () => {
-        const data = await getTags()
+        const data = await getTags(table)
         setTags(data || [])
         setLoading(false)
-    }, [])
+    }, [table])
 
     React.useEffect(() => {
         fetchTags()
@@ -74,7 +105,7 @@ export function TagSelector({ selectedTagIds, onTagsChange }: TagSelectorProps) 
         <div className="space-y-4">
             <div className="flex items-center justify-between gap-4">
                 <div className="flex items-center gap-2 flex-1">
-                    <h3 className="font-bold text-xs text-secondary dark:text-white whitespace-nowrap">Product Tags</h3>
+                    <h3 className="font-bold text-xs text-secondary dark:text-white whitespace-nowrap">{title}</h3>
                     <div className="h-px w-full bg-border/60" />
                 </div>
 
@@ -84,20 +115,24 @@ export function TagSelector({ selectedTagIds, onTagsChange }: TagSelectorProps) 
                             variant="outline"
                             role="combobox"
                             aria-expanded={open}
-                            className="h-8 w-[140px] justify-start px-4 text-xs font-semibold border-border/50 bg-transparent text-muted-foreground hover:bg-muted/5 gap-2 rounded-xl transition-all"
+                            className="h-8 w-auto min-w-[140px] justify-start px-4 text-xs font-semibold border-border/50 bg-transparent text-muted-foreground hover:bg-muted/5 gap-2 rounded-xl transition-all"
                         >
                             <Plus className="h-3 w-3" />
-                            Select Tags
+                            {labels.select}
                         </Button>
                     </PopoverTrigger>
                     <PopoverContent className="w-[240px] p-0 shadow-2xl border-border/40 rounded-2xl backdrop-blur-xl bg-background/90" align="end">
                         <Command className="bg-transparent border-none">
-                            <CommandInput placeholder="Search tags..." className="h-10 text-xs" />
-                            <CommandList className="max-h-[300px]">
+                            <CommandInput placeholder={labels.search} className="h-10 text-xs" />
+                            <CommandList
+                                className="max-h-[180px] overflow-y-auto custom-scrollbar"
+                                onWheel={(e) => e.stopPropagation()}
+                                onTouchMove={(e) => e.stopPropagation()}
+                            >
                                 <CommandEmpty className="py-6 text-xs text-muted-foreground/40 text-center">
-                                    No tags found.
+                                    {labels.empty}
                                 </CommandEmpty>
-                                <CommandGroup heading="Available Tags" className="text-[11px] font-semibold text-muted-foreground/40 px-2 py-4">
+                                <CommandGroup heading={labels.available} className="text-[11px] font-semibold text-muted-foreground/40 px-2 py-4">
                                     {tags.map((tag) => (
                                         <CommandItem
                                             key={tag.id}
@@ -129,21 +164,22 @@ export function TagSelector({ selectedTagIds, onTagsChange }: TagSelectorProps) 
                                         </CommandItem>
                                     ))}
                                 </CommandGroup>
-                                <CommandSeparator className="bg-border/40" />
-                                <CommandGroup className="px-2 py-2">
-                                    <CommandItem
-                                        onSelect={() => {
-                                            setEditingTag(null)
-                                            setTagModalOpen(true)
-                                            setOpen(false)
-                                        }}
-                                        className="text-xs py-2.5 px-3 text-primary font-semibold cursor-pointer flex items-center gap-2 rounded-lg hover:bg-primary/5 transition-colors"
-                                    >
-                                        <Plus className="h-4 w-4" />
-                                        Create New Tag
-                                    </CommandItem>
-                                </CommandGroup>
                             </CommandList>
+                            <CommandSeparator className="bg-border/40" />
+                            <div className="p-2">
+                                <Button
+                                    variant="ghost"
+                                    onClick={() => {
+                                        setEditingTag(null)
+                                        setTagModalOpen(true)
+                                        setOpen(false)
+                                    }}
+                                    className="w-full justify-start text-xs py-2.5 px-3 text-primary font-semibold flex items-center gap-2 rounded-lg hover:bg-primary/5 transition-colors h-auto"
+                                >
+                                    <Plus className="h-4 w-4" />
+                                    {labels.create}
+                                </Button>
+                            </div>
                         </Command>
                     </PopoverContent>
                 </Popover>
@@ -178,6 +214,7 @@ export function TagSelector({ selectedTagIds, onTagsChange }: TagSelectorProps) 
             <TagModal
                 open={tagModalOpen}
                 tag={editingTag}
+                table={table}
                 onOpenChange={setTagModalOpen}
                 onSuccess={() => {
                     fetchTags()

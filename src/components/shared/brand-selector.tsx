@@ -84,7 +84,7 @@ export function BrandSelector({ selectedBrandIds, onBrandsChange }: BrandSelecto
                             variant="outline"
                             role="combobox"
                             aria-expanded={open}
-                            className="h-8 w-[140px] justify-start px-4 text-xs font-semibold border-border/50 bg-transparent text-muted-foreground hover:bg-muted/5 gap-2 rounded-xl transition-all"
+                            className="h-8 w-auto min-w-[140px] justify-start px-4 text-xs font-semibold border-border/50 bg-transparent text-muted-foreground hover:bg-muted/5 gap-2 rounded-xl transition-all"
                         >
                             <Plus className="h-3 w-3" />
                             Select Brands
@@ -93,7 +93,11 @@ export function BrandSelector({ selectedBrandIds, onBrandsChange }: BrandSelecto
                     <PopoverContent className="w-[240px] p-0 shadow-2xl border-border/40 rounded-2xl backdrop-blur-xl bg-background/90" align="end">
                         <Command className="bg-transparent border-none">
                             <CommandInput placeholder="Search brands..." className="h-10 text-xs" />
-                            <CommandList className="max-h-[300px]">
+                            <CommandList
+                                className="max-h-[200px] overflow-y-auto custom-scrollbar"
+                                onWheel={(e) => e.stopPropagation()}
+                                onTouchMove={(e) => e.stopPropagation()}
+                            >
                                 <CommandEmpty className="py-6 text-xs text-muted-foreground/40 text-center">
                                     No brands found.
                                 </CommandEmpty>
@@ -134,21 +138,22 @@ export function BrandSelector({ selectedBrandIds, onBrandsChange }: BrandSelecto
                                         </CommandItem>
                                     ))}
                                 </CommandGroup>
-                                <CommandSeparator className="bg-border/40" />
-                                <CommandGroup className="px-2 py-2">
-                                    <CommandItem
-                                        onSelect={() => {
-                                            setEditingBrand(null)
-                                            setBrandModalOpen(true)
-                                            setOpen(false)
-                                        }}
-                                        className="text-xs py-2.5 px-3 text-primary font-semibold cursor-pointer flex items-center gap-2 rounded-lg hover:bg-primary/5 transition-colors"
-                                    >
-                                        <Plus className="h-4 w-4" />
-                                        Create New Brand
-                                    </CommandItem>
-                                </CommandGroup>
                             </CommandList>
+                            <CommandSeparator className="bg-border/40" />
+                            <div className="p-2">
+                                <Button
+                                    variant="ghost"
+                                    onClick={() => {
+                                        setEditingBrand(null)
+                                        setBrandModalOpen(true)
+                                        setOpen(false)
+                                    }}
+                                    className="w-full justify-start text-xs py-2.5 px-3 text-primary font-semibold flex items-center gap-2 rounded-lg hover:bg-primary/5 transition-colors h-auto"
+                                >
+                                    <Plus className="h-4 w-4" />
+                                    Create New Brand
+                                </Button>
+                            </div>
                         </Command>
                     </PopoverContent>
                 </Popover>

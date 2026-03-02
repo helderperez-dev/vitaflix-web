@@ -32,6 +32,7 @@ import { Badge } from "@/components/ui/badge"
 import { mealSchema, type Meal } from "@/shared-schemas/meal"
 import { upsertMeal } from "@/app/actions/meals"
 import { TranslationFields } from "@/components/shared/translation-fields"
+import { TagSelector } from "@/components/shared/tag-selector"
 import { Stepper } from "@/components/ui/stepper"
 
 interface MealDrawerProps {
@@ -174,42 +175,24 @@ export function MealDrawer({ open, onOpenChange, meal }: MealDrawerProps) {
                                         <h3 className="font-bold text-xs text-secondary dark:text-white whitespace-nowrap">{t("categorization")}</h3>
                                         <div className="h-px flex-1 bg-border/60 ml-2" />
                                     </div>
-                                    <div className="grid grid-cols-1 md:grid-cols-2 gap-x-12 gap-y-8">
-                                        <FormField
-                                            control={form.control}
-                                            name="mealTypes"
-                                            render={({ field }) => (
-                                                <FormItem>
-                                                    <FormLabel className="text-xs font-semibold text-muted-foreground/70">{t("mealCategories")}</FormLabel>
-                                                    <FormControl>
-                                                        <Input
-                                                            placeholder="Lunch, Dinner..."
-                                                            value={field.value?.join(", ") || ""}
-                                                            onChange={(e) => field.onChange(e.target.value.split(",").map(s => s.trim()).filter(Boolean))}
-                                                        />
-                                                    </FormControl>
-                                                    <FormMessage className="text-[10px]" />
-                                                </FormItem>
-                                            )}
-                                        />
+                                    <div className="grid grid-cols-1 gap-8">
+                                        <div className="space-y-4">
+                                            <TagSelector
+                                                title={t("mealCategories")}
+                                                selectedTagIds={form.watch("mealTypes") || []}
+                                                onTagsChange={(tagIds) => form.setValue("mealTypes", tagIds, { shouldDirty: true })}
+                                                table="meal_categories"
+                                            />
+                                        </div>
 
-                                        <FormField
-                                            control={form.control}
-                                            name="restrictions"
-                                            render={({ field }) => (
-                                                <FormItem>
-                                                    <FormLabel className="text-xs font-semibold text-muted-foreground/70">{t("dietaryTags")}</FormLabel>
-                                                    <FormControl>
-                                                        <Input
-                                                            placeholder="Vegan, Low-carb..."
-                                                            value={field.value?.join(", ") || ""}
-                                                            onChange={(e) => field.onChange(e.target.value.split(",").map(s => s.trim()).filter(Boolean))}
-                                                        />
-                                                    </FormControl>
-                                                    <FormMessage className="text-[10px]" />
-                                                </FormItem>
-                                            )}
-                                        />
+                                        <div className="space-y-4">
+                                            <TagSelector
+                                                title={t("dietaryTags")}
+                                                selectedTagIds={form.watch("restrictions") || []}
+                                                onTagsChange={(tagIds) => form.setValue("restrictions", tagIds, { shouldDirty: true })}
+                                                table="dietary_tags"
+                                            />
+                                        </div>
                                     </div>
                                 </div>
 

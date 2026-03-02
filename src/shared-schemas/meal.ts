@@ -4,11 +4,11 @@ import { localizedStringSchema } from "./product";
 export const mealSchema = z.object({
     id: z.string().uuid().optional(),
     name: localizedStringSchema,
-    mealTypes: z.array(z.string()),
+    mealTypes: z.array(z.string().uuid()),
     cookTime: z.number().int().min(0).optional(),
     preparationMode: localizedStringSchema,
     satiety: z.number().min(0).max(10).optional(),
-    restrictions: z.array(z.string()).optional(),
+    restrictions: z.array(z.string().uuid()).optional(),
     publishOn: z.string().datetime().optional().nullable(),
 });
 

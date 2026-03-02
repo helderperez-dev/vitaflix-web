@@ -92,7 +92,7 @@ export function TranslationFields({
                         <PopoverTrigger asChild>
                             <Button
                                 variant="outline"
-                                className="h-8 w-[140px] justify-start px-4 text-xs font-semibold border-border/50 bg-transparent text-muted-foreground hover:bg-muted/5 gap-2 rounded-xl transition-all"
+                                className="h-8 w-auto min-w-[140px] justify-start px-4 text-xs font-semibold border-border/50 bg-transparent text-muted-foreground hover:bg-muted/5 gap-2 rounded-xl transition-all"
                             >
                                 <Plus className="h-3 w-3" />
                                 <span>{t("addLocalization")}</span>
@@ -101,7 +101,11 @@ export function TranslationFields({
                         <PopoverContent className="w-[220px] p-1.5 shadow-2xl border-border/40 rounded-2xl backdrop-blur-xl bg-background/90" align="end">
                             <Command className="bg-transparent border-none">
                                 <CommandInput placeholder={`${t("search")}...`} className="h-9 text-xs" />
-                                <CommandList className="max-h-[240px]">
+                                <CommandList
+                                    className="max-h-[240px] overflow-y-auto custom-scrollbar"
+                                    onWheel={(e) => e.stopPropagation()}
+                                    onTouchMove={(e) => e.stopPropagation()}
+                                >
                                     <CommandEmpty className="py-4 text-xs font-semibold text-center text-muted-foreground/40">{t("noResults")}</CommandEmpty>
                                     <CommandGroup>
                                         {remainingLanguages.map((lang) => (
