@@ -1,8 +1,8 @@
 "use client"
 
-import * as React from "react"
-import { MoreHorizontal, Edit, Trash, Loader2 } from "lucide-react"
-import { toast } from "sonner"
+import * as React from"react"
+import { MoreHorizontal, Edit, Trash, Loader2 } from"lucide-react"
+import { toast } from"sonner"
 
 import {
     DropdownMenu,
@@ -11,10 +11,10 @@ import {
     DropdownMenuLabel,
     DropdownMenuSeparator,
     DropdownMenuTrigger,
-} from "@/components/ui/dropdown-menu"
-import { Button } from "@/components/ui/button"
-import { deleteProduct } from "@/app/actions/products"
-import type { Product } from "@/shared-schemas/product"
+} from"@/components/ui/dropdown-menu"
+import { Button } from"@/components/ui/button"
+import { deleteProduct } from"@/app/actions/products"
+import type { Product } from"@/shared-schemas/product"
 
 interface ProductActionsProps {
     product: Product
@@ -46,18 +46,18 @@ export function ProductActions({ product, onEdit }: ProductActionsProps) {
     return (
         <DropdownMenu>
             <DropdownMenuTrigger asChild>
-                <Button variant="ghost" className="h-8 w-8 p-0" disabled={isDeleting}>
+                <Button variant="ghost"className="h-8 w-8 p-0"disabled={isDeleting}>
                     <span className="sr-only">Open menu</span>
-                    {isDeleting ? <Loader2 className="h-4 w-4 animate-spin" /> : <MoreHorizontal className="h-4 w-4" />}
+                    {isDeleting ? <Loader2 className="h-4 w-4 animate-spin"/> : <MoreHorizontal className="h-4 w-4"/>}
                 </Button>
             </DropdownMenuTrigger>
             <DropdownMenuContent align="end">
                 <DropdownMenuItem onClick={() => onEdit(product)}>
-                    <Edit className="mr-2 h-4 w-4" />
+                    <Edit className="mr-2 h-4 w-4"/>
                     Edit Details
                 </DropdownMenuItem>
                 <DropdownMenuItem onClick={onDelete}>
-                    <Trash className="mr-2 h-4 w-4" />
+                    <Trash className="mr-2 h-4 w-4"/>
                     Delete Product
                 </DropdownMenuItem>
             </DropdownMenuContent>

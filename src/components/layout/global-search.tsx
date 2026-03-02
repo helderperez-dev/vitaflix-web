@@ -1,21 +1,21 @@
 "use client"
 
-import * as React from "react"
-import { Search, Loader2, X, Apple, Utensils, Users, Tag, Store, type LucideIcon } from "lucide-react"
-import { useRouter } from "next/navigation"
-import { usePathname } from "@/i18n/routing"
-import { useLocale } from "next-intl"
-import { useDebounce } from "use-debounce"
-import { globalSearch, type SearchResult } from "@/app/actions/search"
+import * as React from"react"
+import { Search, Loader2, X, Apple, Utensils, Users, Tag, Store, type LucideIcon } from"lucide-react"
+import { useRouter } from"next/navigation"
+import { usePathname } from"@/i18n/routing"
+import { useLocale } from"next-intl"
+import { useDebounce } from"use-debounce"
+import { globalSearch, type SearchResult } from"@/app/actions/search"
 
-import { cn } from "@/lib/utils"
+import { cn } from"@/lib/utils"
 
 const sectionConfig: Record<string, { label: string; icon: LucideIcon }> = {
-    product: { label: "Products", icon: Apple },
-    meal: { label: "Meals", icon: Utensils },
-    user: { label: "Users", icon: Users },
-    brand: { label: "Brands", icon: Store },
-    tag: { label: "Tags", icon: Tag },
+    product: { label:"Products", icon: Apple },
+    meal: { label:"Meals", icon: Utensils },
+    user: { label:"Users", icon: Users },
+    brand: { label:"Brands", icon: Store },
+    tag: { label:"Tags", icon: Tag },
 }
 
 export function GlobalSearch() {
@@ -44,7 +44,7 @@ export function GlobalSearch() {
     // ⌘K shortcut
     React.useEffect(() => {
         const down = (e: KeyboardEvent) => {
-            if (e.key === "k" && (e.metaKey || e.ctrlKey)) {
+            if (e.key ==="k"&& (e.metaKey || e.ctrlKey)) {
                 e.preventDefault()
                 inputRef.current?.focus()
             }
@@ -145,21 +145,21 @@ export function GlobalSearch() {
         // or if the current tags don't belong to this page
         if (selectionPathRef.current && pathname !== selectionPathRef.current) return
 
-        const supportedPaths = ["/products", "/meals", "/users"]
+        const supportedPaths = ["/products","/meals","/users"]
         const isSupported = supportedPaths.some(p => pathname.endsWith(p))
         if (!isSupported) return
 
         const currentParams = new URLSearchParams(window.location.search)
-        const oldSearch = currentParams.get("search") || ""
+        const oldSearch = currentParams.get("search") ||""
 
         const tagTerms = selectedItems
-            .filter(s => ["product", "meal", "user"].includes(s.type))
+            .filter(s => ["product","meal","user"].includes(s.type))
             .map(s => s.title)
 
         const allTerms = [...tagTerms]
         if (debouncedQuery.trim()) allTerms.push(debouncedQuery.trim())
 
-        const newSearch = allTerms.join(" ")
+        const newSearch = allTerms.join("")
 
         if (newSearch !== oldSearch) {
             if (newSearch) {
@@ -168,12 +168,12 @@ export function GlobalSearch() {
                 currentParams.delete("search")
             }
             const searchStr = currentParams.toString()
-            router.replace(`${pathname}${searchStr ? `?${searchStr}` : ""}`, { scroll: false })
+            router.replace(`${pathname}${searchStr ? `?${searchStr}` :""}`, { scroll: false })
         }
     }, [debouncedQuery, selectedItems, pathname, router])
 
     function handleSelect(item: SearchResult) {
-        const itemUrl = new URL(item.url, "http://dummy")
+        const itemUrl = new URL(item.url,"http://dummy")
         const basePath = itemUrl.pathname
 
         // Use the current pathname to detect if we need a screen jump
@@ -185,16 +185,16 @@ export function GlobalSearch() {
         const finalParams = new URLSearchParams()
 
         const searchTerms = newSelected
-            .filter(s => ["product", "meal", "user"].includes(s.type))
+            .filter(s => ["product","meal","user"].includes(s.type))
             .map(s => s.title)
 
         if (searchTerms.length > 0) {
-            finalParams.set("search", searchTerms.join(" "))
+            finalParams.set("search", searchTerms.join(""))
         }
 
         newSelected.forEach(s => {
-            if (["brand", "tag"].includes(s.type)) {
-                const sUrl = new URL(s.url, "http://dummy")
+            if (["brand","tag"].includes(s.type)) {
+                const sUrl = new URL(s.url,"http://dummy")
                 sUrl.searchParams.forEach((v, k) => finalParams.set(k, v))
             }
         })
@@ -209,12 +209,12 @@ export function GlobalSearch() {
         setResults([])
 
         const searchStr = finalParams.toString()
-        router.push(`/${locale}${basePath}${searchStr ? `?${searchStr}` : ""}`)
+        router.push(`/${locale}${basePath}${searchStr ? `?${searchStr}` :""}`)
     }
 
     function handleRemoveTag(item: SearchResult) {
         const remainingItems = selectedItems.filter((s) => !(s.id === item.id && s.type === item.type))
-        const itemUrl = new URL(item.url, "http://dummy")
+        const itemUrl = new URL(item.url,"http://dummy")
         const basePath = itemUrl.pathname
 
         // Update ref before state to avoid effect race
@@ -227,22 +227,22 @@ export function GlobalSearch() {
             const finalParams = new URLSearchParams()
 
             const searchTerms = remainingItems
-                .filter(s => ["product", "meal", "user"].includes(s.type))
+                .filter(s => ["product","meal","user"].includes(s.type))
                 .map(s => s.title)
 
             if (searchTerms.length > 0) {
-                finalParams.set("search", searchTerms.join(" "))
+                finalParams.set("search", searchTerms.join(""))
             }
 
             remainingItems.forEach(s => {
-                if (["brand", "tag"].includes(s.type)) {
-                    const sUrl = new URL(s.url, "http://dummy")
+                if (["brand","tag"].includes(s.type)) {
+                    const sUrl = new URL(s.url,"http://dummy")
                     sUrl.searchParams.forEach((v, k) => finalParams.set(k, v))
                 }
             })
 
             const searchStr = finalParams.toString()
-            router.push(`/${locale}${basePath}${searchStr ? `?${searchStr}` : ""}`)
+            router.push(`/${locale}${basePath}${searchStr ? `?${searchStr}` :""}`)
         }
 
         setTimeout(() => inputRef.current?.focus(), 100)
@@ -250,7 +250,7 @@ export function GlobalSearch() {
 
     function handleKeyDown(e: React.KeyboardEvent) {
         // Backspace on empty input removes last tag
-        if (e.key === "Backspace" && query === "" && selectedItems.length > 0) {
+        if (e.key ==="Backspace"&& query ===""&& selectedItems.length > 0) {
             e.preventDefault()
             handleRemoveTag(selectedItems[selectedItems.length - 1])
             return
@@ -258,20 +258,20 @@ export function GlobalSearch() {
 
         if (!isOpen) return
 
-        if (e.key === "ArrowDown") {
+        if (e.key ==="ArrowDown") {
             e.preventDefault()
             setSelectedIndex((prev) =>
                 prev < flatResults.length - 1 ? prev + 1 : 0
             )
-        } else if (e.key === "ArrowUp") {
+        } else if (e.key ==="ArrowUp") {
             e.preventDefault()
             setSelectedIndex((prev) =>
                 prev > 0 ? prev - 1 : flatResults.length - 1
             )
-        } else if (e.key === "Enter" && selectedIndex >= 0) {
+        } else if (e.key ==="Enter"&& selectedIndex >= 0) {
             e.preventDefault()
             handleSelect(flatResults[selectedIndex])
-        } else if (e.key === "Escape") {
+        } else if (e.key ==="Escape") {
             e.preventDefault()
             setIsFocused(false)
             inputRef.current?.blur()
@@ -299,14 +299,14 @@ export function GlobalSearch() {
             {/* Input trigger with tags */}
             <div
                 className={cn(
-                    "flex h-9 items-center gap-1.5 rounded-lg border bg-background px-2 transition-all duration-200 overflow-hidden",
+                  "flex h-9 items-center gap-1.5 rounded-lg border bg-background px-2 transition-all duration-200 overflow-hidden",
                     isFocused
-                        ? "border-primary/40 ring-2 ring-primary/10 shadow-sm"
-                        : "border-input shadow-xs hover:border-input/80"
+                        ?"border-primary/40 ring-2 ring-primary/10 shadow-sm"
+                        :"border-input shadow-xs hover:border-input/80"
                 )}
                 onClick={() => inputRef.current?.focus()}
             >
-                <Search className="size-4 shrink-0 text-muted-foreground/60 ml-1" />
+                <Search className="size-4 shrink-0 text-muted-foreground/60 ml-1"/>
 
                 <div ref={scrollContainerRef} className="flex-1 flex items-center gap-1.5 overflow-x-auto no-scrollbar scroll-smooth py-1">
                     {/* Selected tags */}
@@ -324,7 +324,7 @@ export function GlobalSearch() {
                                         className="size-4 rounded-sm object-cover shrink-0"
                                     />
                                 ) : (
-                                    <ItemIcon className="size-3 shrink-0 opacity-70" />
+                                    <ItemIcon className="size-3 shrink-0 opacity-70"/>
                                 )}
                                 <span className="truncate max-w-[120px]">{item.title}</span>
                                 <button
@@ -336,7 +336,7 @@ export function GlobalSearch() {
                                     }}
                                     onMouseDown={(e) => e.preventDefault()}
                                 >
-                                    <X className="size-3" />
+                                    <X className="size-3"/>
                                 </button>
                             </span>
                         )
@@ -346,7 +346,7 @@ export function GlobalSearch() {
                     <input
                         ref={inputRef}
                         type="text"
-                        placeholder={hasSelectedItems ? "Add filter..." : "Search anywhere..."}
+                        placeholder={hasSelectedItems ?"Add filter...":"Search anywhere..."}
                         value={query}
                         onChange={(e) => setQuery(e.target.value)}
                         onFocus={() => setIsFocused(true)}
@@ -356,7 +356,7 @@ export function GlobalSearch() {
                 </div>
 
                 {isLoading ? (
-                    <Loader2 className="size-4 shrink-0 animate-spin text-muted-foreground/60 mx-1" />
+                    <Loader2 className="size-4 shrink-0 animate-spin text-muted-foreground/60 mx-1"/>
                 ) : !hasSelectedItems ? (
                     <kbd className="pointer-events-none hidden h-5 select-none items-center gap-0.5 rounded border bg-muted/60 px-1.5 font-mono text-[10px] font-medium text-muted-foreground/70 sm:inline-flex ml-1">
                         <span className="text-xs">⌘</span>K
@@ -374,7 +374,7 @@ export function GlobalSearch() {
                     )}
                     {results.length === 0 && isLoading && (
                         <div className="px-4 py-6 text-center text-sm text-muted-foreground flex items-center justify-center gap-2">
-                            <Loader2 className="size-3.5 animate-spin" />
+                            <Loader2 className="size-3.5 animate-spin"/>
                             Searching...
                         </div>
                     )}
@@ -388,10 +388,10 @@ export function GlobalSearch() {
                                 return (
                                     <div key={type}>
                                         {groupIdx > 0 && (
-                                            <div className="mx-3 my-1 h-px bg-border/50" />
+                                            <div className="mx-3 my-1 h-px bg-border/50"/>
                                         )}
                                         <div className="flex items-center gap-2 px-3 pt-2 pb-1">
-                                            <SectionIcon className="size-3.5 text-muted-foreground/50" />
+                                            <SectionIcon className="size-3.5 text-muted-foreground/50"/>
                                             <span className="text-[11px] font-semibold text-muted-foreground/60 tracking-tight">
                                                 {config.label}
                                             </span>
@@ -405,10 +405,10 @@ export function GlobalSearch() {
                                                     key={`${item.type}-${item.id}`}
                                                     type="button"
                                                     className={cn(
-                                                        "flex w-full items-center gap-3 px-3 py-2 text-left text-sm transition-colors cursor-pointer",
+                                                      "flex w-full items-center gap-3 px-3 py-2 text-left text-sm transition-colors cursor-pointer",
                                                         selectedIndex === currentIndex
-                                                            ? "bg-accent text-accent-foreground"
-                                                            : "hover:bg-accent/50"
+                                                            ?"bg-accent text-accent-foreground"
+                                                            :"hover:bg-accent/50"
                                                     )}
                                                     onMouseEnter={() => setSelectedIndex(currentIndex)}
                                                     onMouseDown={(e) => {
@@ -426,7 +426,7 @@ export function GlobalSearch() {
                                                         </div>
                                                     ) : (
                                                         <div className="flex size-8 shrink-0 items-center justify-center rounded-md bg-muted/60 dark:bg-muted/30">
-                                                            <ItemIcon className="size-3.5 text-muted-foreground/70" />
+                                                            <ItemIcon className="size-3.5 text-muted-foreground/70"/>
                                                         </div>
                                                     )}
                                                     <div className="flex flex-col min-w-0">

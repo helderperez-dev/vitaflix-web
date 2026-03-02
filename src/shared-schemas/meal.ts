@@ -1,18 +1,5 @@
 import { z } from "zod";
-import { localizedStringSchema } from "./product";
-
-export const mealSchema = z.object({
-    id: z.string().uuid().optional(),
-    name: localizedStringSchema,
-    mealTypes: z.array(z.string().uuid()),
-    cookTime: z.number().int().min(0).optional(),
-    preparationMode: localizedStringSchema,
-    satiety: z.number().min(0).max(10).optional(),
-    restrictions: z.array(z.string().uuid()).optional(),
-    publishOn: z.string().datetime().optional().nullable(),
-});
-
-export type Meal = z.infer<typeof mealSchema>;
+import { localizedStringSchema, productImageSchema } from "./product";
 
 export const mealOptionSchema = z.object({
     id: z.string().uuid().optional(),
@@ -21,7 +8,12 @@ export const mealOptionSchema = z.object({
         productId: z.string().uuid(),
         quantity: z.number().positive(),
         unit: z.string(),
-    })),
+        substitutions: z.array(z.object({
+            productId: z.string().uuid(),
+            quantity: z.number().positive(),
+            unit: z.string(),
+        })).default([]),
+    })).default([]),
     kcal: z.number().int().positive(),
     isDefault: z.boolean().default(false),
     macros: z.object({
@@ -29,6 +21,23 @@ export const mealOptionSchema = z.object({
         fat: z.number().min(0),
         carbs: z.number().min(0),
     }).optional(),
+    substitutionNotes: localizedStringSchema.optional(),
+    images: z.array(productImageSchema).default([]),
 });
 
 export type MealOption = z.infer<typeof mealOptionSchema>;
+
+export const mealSchema = z.object({
+    id: z.string().uuid().optional(),
+    name: localizedStringSchema,
+    mealTypes: z.array(z.string().uuid()),
+    cookTime: z.number().int().min(0).optional(),
+    preparationMode: z.array(localizedStringSchema).default([]),
+    satiety: z.number().min(0).max(10).optional(),
+    restrictions: z.array(z.string().uuid()).optional(),
+    publishOn: z.string().datetime().optional().nullable(),
+    images: z.array(productImageSchema).default([]),
+    options: z.array(mealOptionSchema).default([]),
+});
+
+export type Meal = z.infer<typeof mealSchema>;

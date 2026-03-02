@@ -2,7 +2,7 @@
 
 import { createClient } from "@/lib/supabase/server"
 import { revalidatePath } from "next/cache"
-import { mealSchema, type Meal } from "@/shared-schemas/meal"
+import { mealSchema, type Meal, mealOptionSchema, type MealOption } from "@/shared-schemas/meal"
 
 export async function upsertMeal(data: Meal) {
     const supabase = await createClient()
@@ -22,6 +22,7 @@ export async function upsertMeal(data: Meal) {
             preparation_mode: data.preparationMode,
             satiety: data.satiety,
             publish_on: data.publishOn,
+            images: data.images,
             updated_at: new Date().toISOString()
         })
         .select('id')
@@ -52,6 +53,36 @@ export async function upsertMeal(data: Meal) {
             dietary_tag_id: dietaryTagId
         }))
         await supabase.from("meal_dietary_tags").insert(restrictionLinks)
+    }
+
+    // Sync Meal Options
+    // Note: In a production app, we should probably do a diff to preserve IDs if needed, 
+    // but for now, we'll follow the pattern of the other many-to-many links.
+    // However, meal_options is a primary table, so we use upsert logic if IDs are present.
+    if (data.options && data.options.length > 0) {
+        const optionsToUpsert = data.options.map(opt => ({
+            id: opt.id || undefined,
+            associated_meal_id: mealId,
+            ingredients: opt.ingredients,
+            kcal: opt.kcal,
+            is_default: opt.isDefault,
+            macros: opt.macros,
+            substitution_notes: opt.substitutionNotes,
+            images: opt.images,
+            updated_at: new Date().toISOString()
+        }))
+
+        // Remove options that are no longer in the list
+        const currentOptionIds = data.options.filter(o => o.id).map(o => o.id)
+        if (currentOptionIds.length > 0) {
+            await supabase.from("meal_options").delete().eq("associated_meal_id", mealId).not("id", "in", `(${currentOptionIds.join(',')})`)
+        } else {
+            await supabase.from("meal_options").delete().eq("associated_meal_id", mealId)
+        }
+
+        await supabase.from("meal_options").upsert(optionsToUpsert)
+    } else {
+        await supabase.from("meal_options").delete().eq("associated_meal_id", mealId)
     }
 
     revalidatePath("/", "layout")
@@ -85,6 +116,80 @@ export async function bulkDeleteMeals(ids: string[]) {
 
     if (error) {
         console.error('Error deleting meals:', error)
+        return { error: error.message }
+    }
+
+    revalidatePath("/", "layout")
+    return { success: true }
+}
+
+export async function getMealOptions(mealId: string) {
+    const supabase = await createClient()
+
+    const { data: options, error } = await supabase
+        .from('meal_options')
+        .select('*')
+        .eq('associated_meal_id', mealId)
+        .order('created_at', { ascending: true })
+
+    if (error) {
+        console.error('Error fetching meal options:', error)
+        return []
+    }
+
+    return options.map(opt => ({
+        id: opt.id,
+        associatedMealId: opt.associated_meal_id,
+        ingredients: opt.ingredients || [],
+        kcal: opt.kcal,
+        isDefault: opt.is_default,
+        macros: opt.macros,
+        substitutionNotes: opt.substitution_notes,
+        images: opt.images || [],
+    })) as MealOption[]
+}
+
+export async function upsertMealOption(data: MealOption) {
+    const supabase = await createClient()
+
+    const result = mealOptionSchema.safeParse(data)
+    if (!result.success) {
+        return { error: result.error.issues[0].message }
+    }
+
+    const { error } = await supabase
+        .from('meal_options')
+        .upsert({
+            id: data.id || undefined,
+            associated_meal_id: data.associatedMealId,
+            ingredients: data.ingredients,
+            kcal: data.kcal,
+            is_default: data.isDefault,
+            macros: data.macros,
+            substitution_notes: data.substitutionNotes,
+            images: data.images,
+            updated_at: new Date().toISOString()
+        })
+
+    if (error) {
+        console.error('Error upserting meal option:', error)
+        return { error: error.message }
+    }
+
+    revalidatePath("/", "layout")
+    return { success: true }
+}
+
+export async function deleteMealOption(id: string) {
+    const supabase = await createClient()
+
+    const { error } = await supabase
+        .from('meal_options')
+        .delete()
+        .eq('id', id)
+
+    if (error) {
+        console.error('Error deleting meal option:', error)
         return { error: error.message }
     }
 

@@ -1,15 +1,15 @@
 "use client"
 
-import * as React from "react"
-import { useForm } from "react-hook-form"
-import { useTranslations } from "next-intl"
-import { zodResolver } from "@hookform/resolvers/zod"
+import * as React from"react"
+import { useForm } from"react-hook-form"
+import { useTranslations } from"next-intl"
+import { zodResolver } from"@hookform/resolvers/zod"
 import {
     Loader2
-} from "lucide-react"
-import { toast } from "sonner"
+} from"lucide-react"
+import { toast } from"sonner"
 
-import { Button } from "@/components/ui/button"
+import { Button } from"@/components/ui/button"
 import {
     Form,
     FormControl,
@@ -18,15 +18,15 @@ import {
     FormItem,
     FormLabel,
     FormMessage,
-} from "@/components/ui/form"
-import { Input } from "@/components/ui/input"
+} from"@/components/ui/form"
+import { Input } from"@/components/ui/input"
 import {
     Select,
     SelectContent,
     SelectItem,
     SelectTrigger,
     SelectValue,
-} from "@/components/ui/select"
+} from"@/components/ui/select"
 import {
     Sheet,
     SheetContent,
@@ -34,12 +34,12 @@ import {
     SheetHeader,
     SheetTitle,
     SheetFooter,
-} from "@/components/ui/sheet"
-import { Switch } from "@/components/ui/switch"
-import { Badge } from "@/components/ui/badge"
-import { userProfileSchema, type UserProfile } from "@/shared-schemas/user"
-import { upsertUser } from "@/app/actions/users"
-import { Stepper } from "@/components/ui/stepper"
+} from"@/components/ui/sheet"
+import { Switch } from"@/components/ui/switch"
+import { Badge } from"@/components/ui/badge"
+import { userProfileSchema, type UserProfile } from"@/shared-schemas/user"
+import { upsertUser } from"@/app/actions/users"
+import { Stepper } from"@/components/ui/stepper"
 
 interface UserDrawerProps {
     open: boolean
@@ -55,13 +55,13 @@ export function UserDrawer({ open, onOpenChange, user }: UserDrawerProps) {
     const form = useForm({
         resolver: zodResolver(userProfileSchema),
         defaultValues: {
-            email: "",
-            displayName: "",
-            role: "user",
-            genre: "other",
+            email:"",
+            displayName:"",
+            role:"user",
+            genre:"other",
             height: 170,
             weight: 70,
-            objective: "maintain",
+            objective:"maintain",
             extraDataComplete: false,
         },
     }) as any
@@ -70,21 +70,21 @@ export function UserDrawer({ open, onOpenChange, user }: UserDrawerProps) {
         if (user) {
             form.reset({
                 ...user,
-                displayName: user.displayName || "",
-                genre: user.genre || "other",
-                objective: user.objective || "maintain",
+                displayName: user.displayName ||"",
+                genre: user.genre ||"other",
+                objective: user.objective ||"maintain",
                 height: user.height ?? 170,
                 weight: user.weight ?? 70,
             })
         } else {
             form.reset({
-                email: "",
-                displayName: "",
-                role: "user",
-                genre: "other",
+                email:"",
+                displayName:"",
+                role:"user",
+                genre:"other",
                 height: 170,
                 weight: 70,
-                objective: "maintain",
+                objective:"maintain",
                 extraDataComplete: false,
             })
         }
@@ -110,12 +110,12 @@ export function UserDrawer({ open, onOpenChange, user }: UserDrawerProps) {
     return (
         <Sheet open={open} onOpenChange={onOpenChange}>
             <SheetContent className="sm:max-w-xl p-0 flex flex-col bg-background border-l border-border">
-                {/* Minimalist Top Accent */}
-                <div className="h-1 w-full bg-primary" />
+                {/* High-End Ambient Glow */}
+                <div className="absolute top-0 left-0 right-0 h-[560px] bg-gradient-to-b from-primary/15 via-primary/[0.02] to-transparent pointer-events-none"/>
 
                 <div className="flex-1 flex flex-col min-h-0 overflow-hidden">
                     <SheetHeader className="px-8 py-8 space-y-2">
-                        <SheetTitle className="text-2xl font-bold tracking-tight text-secondary dark:text-foreground">
+                        <SheetTitle className="text-2xl font-semibold tracking-tight text-secondary dark:text-foreground">
                             {user ? t("title") : t("title")}
                         </SheetTitle>
                         <SheetDescription className="text-sm">
@@ -125,12 +125,12 @@ export function UserDrawer({ open, onOpenChange, user }: UserDrawerProps) {
 
                     <div className="flex-1 overflow-y-auto px-8 py-4 custom-scrollbar">
                         <Form {...form}>
-                            <form id="user-form" onSubmit={form.handleSubmit(onSubmit)} className="space-y-12">
+                            <form id="user-form"onSubmit={form.handleSubmit(onSubmit)} className="space-y-12">
                                 {/* Identity & Authentication */}
                                 <div className="space-y-8">
                                     <div className="flex items-center gap-2">
-                                        <h3 className="font-bold text-xs text-secondary dark:text-white whitespace-nowrap">{t("identityManagement")}</h3>
-                                        <div className="h-px flex-1 bg-border/60 ml-2" />
+                                        <h3 className="font-semibold text-xs text-secondary dark:text-white whitespace-nowrap">{t("identityManagement")}</h3>
+                                        <div className="h-px flex-1 bg-border/60 ml-2"/>
                                     </div>
                                     <div className="grid grid-cols-1 md:grid-cols-2 gap-x-12 gap-y-8">
                                         <FormField
@@ -140,9 +140,9 @@ export function UserDrawer({ open, onOpenChange, user }: UserDrawerProps) {
                                                 <FormItem>
                                                     <FormLabel className="text-xs font-semibold text-muted-foreground/70">E-mail</FormLabel>
                                                     <FormControl>
-                                                        <Input disabled={!!user} placeholder="user@example.com" {...field} />
+                                                        <Input disabled={!!user} placeholder="user@example.com"{...field} />
                                                     </FormControl>
-                                                    <FormMessage className="text-[10px]" />
+                                                    <FormMessage className="text-[10px]"/>
                                                 </FormItem>
                                             )}
                                         />
@@ -153,9 +153,9 @@ export function UserDrawer({ open, onOpenChange, user }: UserDrawerProps) {
                                                 <FormItem>
                                                     <FormLabel className="text-xs font-semibold text-muted-foreground/70">Nome Completo</FormLabel>
                                                     <FormControl>
-                                                        <Input placeholder="John Doe" {...field} />
+                                                        <Input placeholder="John Doe"{...field} />
                                                     </FormControl>
-                                                    <FormMessage className="text-[10px]" />
+                                                    <FormMessage className="text-[10px]"/>
                                                 </FormItem>
                                             )}
                                         />
@@ -168,7 +168,7 @@ export function UserDrawer({ open, onOpenChange, user }: UserDrawerProps) {
                                                     <Select onValueChange={field.onChange} defaultValue={field.value}>
                                                         <FormControl>
                                                             <SelectTrigger>
-                                                                <SelectValue placeholder="Select access level" />
+                                                                <SelectValue placeholder="Select access level"/>
                                                             </SelectTrigger>
                                                         </FormControl>
                                                         <SelectContent>
@@ -176,7 +176,7 @@ export function UserDrawer({ open, onOpenChange, user }: UserDrawerProps) {
                                                             <SelectItem value="admin">System Administrator</SelectItem>
                                                         </SelectContent>
                                                     </Select>
-                                                    <FormMessage className="text-[10px]" />
+                                                    <FormMessage className="text-[10px]"/>
                                                 </FormItem>
                                             )}
                                         />
@@ -186,8 +186,8 @@ export function UserDrawer({ open, onOpenChange, user }: UserDrawerProps) {
                                 {/* Physiological Baseline */}
                                 <div className="space-y-8">
                                     <div className="flex items-center gap-2">
-                                        <h3 className="font-bold text-xs text-secondary dark:text-white whitespace-nowrap">{t("physiologicalBaseline")}</h3>
-                                        <div className="h-px flex-1 bg-border/60 ml-2" />
+                                        <h3 className="font-semibold text-xs text-secondary dark:text-white whitespace-nowrap">{t("physiologicalBaseline")}</h3>
+                                        <div className="h-px flex-1 bg-border/60 ml-2"/>
                                     </div>
                                     <div className="grid grid-cols-2 gap-x-12 gap-y-8">
                                         <FormField
@@ -199,7 +199,7 @@ export function UserDrawer({ open, onOpenChange, user }: UserDrawerProps) {
                                                     <Select onValueChange={field.onChange} defaultValue={field.value}>
                                                         <FormControl>
                                                             <SelectTrigger>
-                                                                <SelectValue placeholder="Select" />
+                                                                <SelectValue placeholder="Select"/>
                                                             </SelectTrigger>
                                                         </FormControl>
                                                         <SelectContent>
@@ -208,7 +208,7 @@ export function UserDrawer({ open, onOpenChange, user }: UserDrawerProps) {
                                                             <SelectItem value="other">Other</SelectItem>
                                                         </SelectContent>
                                                     </Select>
-                                                    <FormMessage className="text-[10px]" />
+                                                    <FormMessage className="text-[10px]"/>
                                                 </FormItem>
                                             )}
                                         />
@@ -221,7 +221,7 @@ export function UserDrawer({ open, onOpenChange, user }: UserDrawerProps) {
                                                     <Select onValueChange={field.onChange} defaultValue={field.value}>
                                                         <FormControl>
                                                             <SelectTrigger>
-                                                                <SelectValue placeholder="Goal" />
+                                                                <SelectValue placeholder="Goal"/>
                                                             </SelectTrigger>
                                                         </FormControl>
                                                         <SelectContent>
@@ -230,7 +230,7 @@ export function UserDrawer({ open, onOpenChange, user }: UserDrawerProps) {
                                                             <SelectItem value="maintain">Maintenance</SelectItem>
                                                         </SelectContent>
                                                     </Select>
-                                                    <FormMessage className="text-[10px]" />
+                                                    <FormMessage className="text-[10px]"/>
                                                 </FormItem>
                                             )}
                                         />
@@ -248,7 +248,7 @@ export function UserDrawer({ open, onOpenChange, user }: UserDrawerProps) {
                                                             unit="CM"
                                                         />
                                                     </FormControl>
-                                                    <FormMessage className="text-[10px]" />
+                                                    <FormMessage className="text-[10px]"/>
                                                 </FormItem>
                                             )}
                                         />
@@ -266,7 +266,7 @@ export function UserDrawer({ open, onOpenChange, user }: UserDrawerProps) {
                                                             unit="KG"
                                                         />
                                                     </FormControl>
-                                                    <FormMessage className="text-[10px]" />
+                                                    <FormMessage className="text-[10px]"/>
                                                 </FormItem>
                                             )}
                                         />
@@ -276,8 +276,8 @@ export function UserDrawer({ open, onOpenChange, user }: UserDrawerProps) {
                                 {/* System Configuration */}
                                 <div className="space-y-8 pb-6">
                                     <div className="flex items-center gap-2">
-                                        <h3 className="font-bold text-xs text-secondary dark:text-white whitespace-nowrap">{t("systemCompliance")}</h3>
-                                        <div className="h-px flex-1 bg-border/60 ml-2" />
+                                        <h3 className="font-semibold text-xs text-secondary dark:text-white whitespace-nowrap">{t("systemCompliance")}</h3>
+                                        <div className="h-px flex-1 bg-border/60 ml-2"/>
                                     </div>
                                     <div className="p-4 rounded-lg bg-muted/20 border border-border transition-colors hover:bg-muted/30 group">
                                         <FormField
@@ -286,7 +286,7 @@ export function UserDrawer({ open, onOpenChange, user }: UserDrawerProps) {
                                             render={({ field }) => (
                                                 <FormItem className="flex flex-row items-center justify-between">
                                                     <div className="space-y-0.5">
-                                                        <FormLabel className="text-sm font-bold text-secondary dark:text-white">{t("profileStatus")}</FormLabel>
+                                                        <FormLabel className="text-sm font-semibold text-secondary dark:text-white">{t("profileStatus")}</FormLabel>
                                                         <FormDescription className="text-[11px] leading-relaxed">
                                                             {t("profileStatusDesc")}
                                                         </FormDescription>
@@ -323,7 +323,7 @@ export function UserDrawer({ open, onOpenChange, user }: UserDrawerProps) {
                             disabled={isSubmiting}
                         >
                             {isSubmiting ? (
-                                <Loader2 className="mr-2 h-4 w-4 animate-spin" />
+                                <Loader2 className="mr-2 h-4 w-4 animate-spin"/>
                             ) : null}
                             {commonT("save")}
                         </Button>

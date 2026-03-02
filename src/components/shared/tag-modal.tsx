@@ -1,10 +1,10 @@
 "use client"
 
-import * as React from "react"
-import { useForm } from "react-hook-form"
-import { zodResolver } from "@hookform/resolvers/zod"
-import { Loader2, Trash2 } from "lucide-react"
-import { toast } from "sonner"
+import * as React from"react"
+import { useForm } from"react-hook-form"
+import { zodResolver } from"@hookform/resolvers/zod"
+import { Loader2, Trash2 } from"lucide-react"
+import { toast } from"sonner"
 
 import {
     Dialog,
@@ -13,12 +13,12 @@ import {
     DialogFooter,
     DialogHeader,
     DialogTitle,
-} from "@/components/ui/dialog"
-import { Form } from "@/components/ui/form"
-import { Button } from "@/components/ui/button"
-import { TranslationFields } from "./translation-fields"
-import { tagSchema, type Tag } from "@/shared-schemas/tag"
-import { upsertTag, deleteTag, type TagTable } from "@/app/actions/tags"
+} from"@/components/ui/dialog"
+import { Form } from"@/components/ui/form"
+import { Button } from"@/components/ui/button"
+import { TranslationFields } from"./translation-fields"
+import { tagSchema, type Tag } from"@/shared-schemas/tag"
+import { upsertTag, deleteTag, type TagTable } from"@/app/actions/tags"
 
 interface TagModalProps {
     open: boolean
@@ -28,7 +28,7 @@ interface TagModalProps {
     table?: TagTable
 }
 
-export function TagModal({ open, onOpenChange, tag, onSuccess, table = "tags" }: TagModalProps) {
+export function TagModal({ open, onOpenChange, tag, onSuccess, table ="tags"}: TagModalProps) {
     const [isSubmitting, setIsSubmitting] = React.useState(false)
     const [isDeleting, setIsDeleting] = React.useState(false)
 
@@ -59,7 +59,7 @@ export function TagModal({ open, onOpenChange, tag, onSuccess, table = "tags" }:
             if (result?.error) {
                 toast.error(result.error)
             } else {
-                toast.success(tag ? "Tag updated successfully" : "Tag created successfully")
+                toast.success(tag ?"Tag updated successfully":"Tag created successfully")
                 onSuccess?.()
                 onOpenChange(false)
             }
@@ -99,22 +99,22 @@ export function TagModal({ open, onOpenChange, tag, onSuccess, table = "tags" }:
                 onPointerDownOutside={(e) => e.preventDefault()}
             >
                 {/* Visual Accent */}
-                <div className="h-1 w-full bg-primary" />
+                <div className="h-1 w-full bg-primary"/>
 
                 <div className="p-8 space-y-8">
-                    <DialogHeader className=" space-y-2">
+                    <DialogHeader className="space-y-2">
                         <DialogTitle className="text-xl font-semibold tracking-tight text-secondary dark:text-foreground">
-                            {tag ? "Edit Tag" : "New Tag"}
+                            {tag ?"Edit Tag":"New Tag"}
                         </DialogTitle>
                         <DialogDescription className="text-xs text-muted-foreground leading-relaxed">
                             {tag
-                                ? "Update the multilingual names for this organizational tag."
-                                : "Create a new tag to group and filter your content across languages."}
+                                ?"Update the multilingual names for this organizational tag."
+                                :"Create a new tag to group and filter your content across languages."}
                         </DialogDescription>
                     </DialogHeader>
 
                     <Form {...form}>
-                        <form id="tag-form" onSubmit={form.handleSubmit(onSubmit)} className="space-y-8">
+                        <form id="tag-form"onSubmit={form.handleSubmit(onSubmit)} className="space-y-8">
                             <TranslationFields
                                 form={form}
                                 namePrefix="name"
@@ -135,7 +135,7 @@ export function TagModal({ open, onOpenChange, tag, onSuccess, table = "tags" }:
                                 disabled={isSubmitting || isDeleting}
                                 className="h-9 px-3 text-xs font-semibold text-muted-foreground/40 hover:text-destructive hover:bg-destructive/5 transition-colors gap-2"
                             >
-                                <Trash2 className="h-3.5 w-3.5" />
+                                <Trash2 className="h-3.5 w-3.5"/>
                                 Delete Tag
                             </Button>
                         )}
@@ -157,7 +157,7 @@ export function TagModal({ open, onOpenChange, tag, onSuccess, table = "tags" }:
                             disabled={isSubmitting || isDeleting}
                         >
                             {isSubmitting ? (
-                                <Loader2 className="mr-2 h-4 w-4 animate-spin" />
+                                <Loader2 className="mr-2 h-4 w-4 animate-spin"/>
                             ) : null}
                             Save
                         </Button>

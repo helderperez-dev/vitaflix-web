@@ -1,15 +1,15 @@
 "use client"
 
-import * as React from "react"
-import { useForm } from "react-hook-form"
-import { zodResolver } from "@hookform/resolvers/zod"
-import { useTranslations } from "next-intl"
+import * as React from"react"
+import { useForm } from"react-hook-form"
+import { zodResolver } from"@hookform/resolvers/zod"
+import { useTranslations } from"next-intl"
 import {
     Loader2
-} from "lucide-react"
-import { toast } from "sonner"
+} from"lucide-react"
+import { toast } from"sonner"
 
-import { Button } from "@/components/ui/button"
+import { Button } from"@/components/ui/button"
 import {
     Form,
     FormControl,
@@ -18,8 +18,8 @@ import {
     FormItem,
     FormLabel,
     FormMessage,
-} from "@/components/ui/form"
-import { Input } from "@/components/ui/input"
+} from"@/components/ui/form"
+import { Input } from"@/components/ui/input"
 import {
     Sheet,
     SheetContent,
@@ -27,16 +27,16 @@ import {
     SheetHeader,
     SheetTitle,
     SheetFooter,
-} from "@/components/ui/sheet"
-import { Switch } from "@/components/ui/switch"
-import { Badge } from "@/components/ui/badge"
-import { productSchema, type Product } from "@/shared-schemas/product"
-import { upsertProduct } from "@/app/actions/products"
-import { TranslationFields } from "@/components/shared/translation-fields"
-import { TagSelector } from "@/components/shared/tag-selector"
-import { BrandSelector } from "@/components/shared/brand-selector"
-import { ImageUploader } from "@/components/shared/image-uploader"
-import { Stepper } from "@/components/ui/stepper"
+} from"@/components/ui/sheet"
+import { Switch } from"@/components/ui/switch"
+import { Badge } from"@/components/ui/badge"
+import { productSchema, type Product } from"@/shared-schemas/product"
+import { upsertProduct } from"@/app/actions/products"
+import { TranslationFields } from"@/components/shared/translation-fields"
+import { TagSelector } from"@/components/shared/tag-selector"
+import { BrandSelector } from"@/components/shared/brand-selector"
+import { ImageUploader } from"@/components/shared/image-uploader"
+import { Stepper } from"@/components/ui/stepper"
 
 interface ProductDrawerProps {
     open: boolean
@@ -97,7 +97,7 @@ export function ProductDrawer({ open, onOpenChange, product }: ProductDrawerProp
             if (result?.error) {
                 toast.error(result.error)
             } else {
-                toast.success(product ? "Product updated successfully" : "Product created successfully")
+                toast.success(product ?"Product updated successfully":"Product created successfully")
                 onOpenChange(false)
             }
         } catch (error) {
@@ -110,12 +110,12 @@ export function ProductDrawer({ open, onOpenChange, product }: ProductDrawerProp
     return (
         <Sheet open={open} onOpenChange={onOpenChange}>
             <SheetContent className="sm:max-w-2xl p-0 flex flex-col bg-background border-l border-border">
-                {/* Minimalist Top Accent */}
-                <div className="h-1 w-full bg-primary" />
+                {/* High-End Ambient Glow */}
+                <div className="absolute top-0 left-0 right-0 h-[500px] bg-gradient-to-b from-primary/15 via-primary/[0.02] to-transparent pointer-events-none"/>
 
                 <div className="flex-1 flex flex-col min-h-0 overflow-hidden">
                     <SheetHeader className="px-8 py-8 space-y-2">
-                        <SheetTitle className="text-2xl font-bold tracking-tight text-secondary dark:text-foreground">
+                        <SheetTitle className="text-2xl font-semibold tracking-tight text-secondary dark:text-foreground">
                             {product ? t("editProduct") : t("newProduct")}
                         </SheetTitle>
                         <SheetDescription className="text-sm">
@@ -125,7 +125,7 @@ export function ProductDrawer({ open, onOpenChange, product }: ProductDrawerProp
 
                     <div className="flex-1 overflow-y-auto px-8 py-4 custom-scrollbar">
                         <Form {...form}>
-                            <form id="product-form" onSubmit={form.handleSubmit(onSubmit)} className="space-y-12">
+                            <form id="product-form"onSubmit={form.handleSubmit(onSubmit)} className="space-y-12">
                                 {/* Product Names */}
                                 <TranslationFields
                                     form={form}
@@ -137,8 +137,8 @@ export function ProductDrawer({ open, onOpenChange, product }: ProductDrawerProp
                                 {/* Nutritional Values */}
                                 <div className="space-y-8">
                                     <div className="flex items-center gap-2">
-                                        <h3 className="font-bold text-xs text-secondary dark:text-white whitespace-nowrap">{t("mediaGallery")}</h3>
-                                        <div className="h-px flex-1 bg-border/60 ml-2" />
+                                        <h3 className="font-semibold text-xs text-secondary dark:text-white whitespace-nowrap">{t("mediaGallery")}</h3>
+                                        <div className="h-px flex-1 bg-border/60 ml-2"/>
                                     </div>
                                     <ImageUploader
                                         folder={`products/${currentId}`}
@@ -150,8 +150,8 @@ export function ProductDrawer({ open, onOpenChange, product }: ProductDrawerProp
                                 {/* Nutritional Values */}
                                 <div className="space-y-8">
                                     <div className="flex items-center gap-2">
-                                        <h3 className="font-bold text-xs text-secondary dark:text-white whitespace-nowrap">{t("nutritionalValues")} <span className="text-[10px] font-normal lowercase opacity-50 ml-1">({t("per100g")})</span></h3>
-                                        <div className="h-px flex-1 bg-border/60 ml-2" />
+                                        <h3 className="font-semibold text-xs text-secondary dark:text-white whitespace-nowrap">{t("nutritionalValues")} <span className="text-[10px] font-normal lowercase opacity-50 ml-1">({t("per100g")})</span></h3>
+                                        <div className="h-px flex-1 bg-border/60 ml-2"/>
                                     </div>
                                     <div className="grid grid-cols-2 gap-x-12 gap-y-8">
                                         <FormField
@@ -167,7 +167,7 @@ export function ProductDrawer({ open, onOpenChange, product }: ProductDrawerProp
                                                             unit="KCAL"
                                                         />
                                                     </FormControl>
-                                                    <FormMessage className="text-[10px]" />
+                                                    <FormMessage className="text-[10px]"/>
                                                 </FormItem>
                                             )}
                                         />
@@ -185,7 +185,7 @@ export function ProductDrawer({ open, onOpenChange, product }: ProductDrawerProp
                                                             unit="G"
                                                         />
                                                     </FormControl>
-                                                    <FormMessage className="text-[10px]" />
+                                                    <FormMessage className="text-[10px]"/>
                                                 </FormItem>
                                             )}
                                         />
@@ -203,7 +203,7 @@ export function ProductDrawer({ open, onOpenChange, product }: ProductDrawerProp
                                                             unit="G"
                                                         />
                                                     </FormControl>
-                                                    <FormMessage className="text-[10px]" />
+                                                    <FormMessage className="text-[10px]"/>
                                                 </FormItem>
                                             )}
                                         />
@@ -221,7 +221,7 @@ export function ProductDrawer({ open, onOpenChange, product }: ProductDrawerProp
                                                             unit="G"
                                                         />
                                                     </FormControl>
-                                                    <FormMessage className="text-[10px]" />
+                                                    <FormMessage className="text-[10px]"/>
                                                 </FormItem>
                                             )}
                                         />
@@ -231,8 +231,8 @@ export function ProductDrawer({ open, onOpenChange, product }: ProductDrawerProp
                                 {/* System Settings */}
                                 <div className="space-y-8">
                                     <div className="flex items-center gap-2">
-                                        <h3 className="font-bold text-xs text-secondary dark:text-white whitespace-nowrap">{t("organization")}</h3>
-                                        <div className="h-px flex-1 bg-border/60 ml-2" />
+                                        <h3 className="font-semibold text-xs text-secondary dark:text-white whitespace-nowrap">{t("organization")}</h3>
+                                        <div className="h-px flex-1 bg-border/60 ml-2"/>
                                     </div>
                                     <div className="grid grid-cols-1 gap-8">
                                         <div className="space-y-4">
@@ -259,7 +259,7 @@ export function ProductDrawer({ open, onOpenChange, product }: ProductDrawerProp
                                                 render={({ field }) => (
                                                     <FormItem className="flex flex-row items-center justify-between">
                                                         <div className="space-y-0.5">
-                                                            <FormLabel className="text-sm font-bold text-secondary dark:text-white">{t("globalVisibility")}</FormLabel>
+                                                            <FormLabel className="text-sm font-semibold text-secondary dark:text-white">{t("globalVisibility")}</FormLabel>
                                                             <FormDescription className="text-[11px] leading-relaxed">
                                                                 {t("visibilityDesc")}
                                                             </FormDescription>
@@ -297,7 +297,7 @@ export function ProductDrawer({ open, onOpenChange, product }: ProductDrawerProp
                             disabled={isSubmitting}
                         >
                             {isSubmitting ? (
-                                <Loader2 className="mr-2 h-4 w-4 animate-spin" />
+                                <Loader2 className="mr-2 h-4 w-4 animate-spin"/>
                             ) : null}
                             {commonT("save")}
                         </Button>

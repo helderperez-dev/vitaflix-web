@@ -121,3 +121,42 @@ export async function bulkDeleteProducts(ids: string[]) {
     revalidatePath("/", "layout")
     return { success: true }
 }
+export async function getProducts(query?: string) {
+    const supabase = await createClient()
+
+    let q = supabase.from("products").select("*").order("created_at", { ascending: false })
+
+    if (query) {
+        // Since name is JSONB, we might need a more complex search if searching translations,
+        // but for a simple product selector, we can start with a basic check or just fetch all
+        // if the list is small, or use a RPC/full-text search if needed.
+        // For now, let's just fetch all and filter in client or use a simple ILIKE on a text field if available.
+        // Actually, name->>'pt' or name->>'en' could be used.
+        q = q.or(`name->>en.ilike.%${query}%,name->>pt.ilike.%${query}%`)
+    }
+
+    const { data, error } = await q.limit(20)
+
+    if (error) {
+        console.error("Error fetching products:", error)
+        return []
+    }
+
+    return data || []
+}
+
+export async function getProductsByIds(ids: string[]) {
+    const supabase = await createClient()
+
+    const { data, error } = await supabase
+        .from("products")
+        .select("*")
+        .in("id", ids)
+
+    if (error) {
+        console.error("Error fetching products by ids:", error)
+        return []
+    }
+
+    return data || []
+}

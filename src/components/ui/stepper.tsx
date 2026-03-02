@@ -1,9 +1,9 @@
 "use client"
 
-import * as React from "react"
-import { ChevronDown, ChevronUp } from "lucide-react"
-import { cn } from "@/lib/utils"
-import { Button } from "./button"
+import * as React from"react"
+import { ChevronDown, ChevronUp } from"lucide-react"
+import { cn } from"@/lib/utils"
+import { Button } from"./button"
 
 interface StepperProps {
     value: number
@@ -51,18 +51,18 @@ export function Stepper({
     }
 
     return (
-        <div className={cn(
-            "relative flex h-10 w-full items-center rounded-lg border border-input bg-background px-2 transition-all hover:border-accent focus-within:border-primary focus-within:ring-4 focus-within:ring-primary/10 dark:bg-muted/5",
-            className
-        )}>
-            {/* Value Square */}
-            <div
-                className="flex h-7 min-w-[2.75rem] px-2 items-center justify-center rounded-md bg-primary text-sm font-black text-white shadow-md shadow-primary/20 cursor-text select-none active:scale-[0.98] transition-transform"
-                onClick={() => {
-                    setIsEditing(true)
-                    setTimeout(() => inputRef.current?.focus(), 0)
-                }}
-            >
+        <div
+            className={cn(
+              "relative flex h-9 w-full items-center rounded-lg border border-border/40 bg-muted/5 px-1.5 transition-all focus-within:border-primary/30 focus-within:ring-4 focus-within:ring-primary/5 cursor-text select-none",
+                className
+            )}
+            onClick={() => {
+                setIsEditing(true)
+                setTimeout(() => inputRef.current?.focus(), 0)
+            }}
+        >
+            {/* Value Badge */}
+            <div className="flex h-6 min-w-[2.5rem] px-2.5 items-center justify-center rounded-md bg-primary text-[11px] font-semibold text-white active:scale-[0.98] transition-transform">
                 {isEditing ? (
                     <input
                         ref={inputRef}
@@ -76,38 +76,42 @@ export function Stepper({
                                 inputRef.current?.blur()
                             }
                         }}
+                        onClick={(e) => e.stopPropagation()}
                     />
                 ) : (
                     <span>{value}</span>
                 )}
             </div>
 
-            <div className="flex-1" />
+            <div className="flex-1"/>
 
             {/* Custom Control Arrows */}
-            <div className="flex items-center gap-1.5 mr-2 px-1.5 py-1 rounded-md bg-muted/30 border border-border/5 group-hover:bg-muted/50 transition-colors">
+            <div
+                className="flex items-center gap-1.5 mr-1.5 px-1 py-1 rounded-md bg-background/50 border border-border/20 cursor-default"
+                onClick={(e) => e.stopPropagation()}
+            >
                 <button
                     type="button"
                     onClick={onDecrement}
                     disabled={value <= min}
-                    className="flex h-5 w-5 items-center justify-center rounded-sm transition-all hover:bg-primary/10 hover:text-primary active:scale-[0.9] text-muted-foreground/60 disabled:opacity-10 disabled:hover:bg-transparent"
+                    className="flex h-4 w-4 items-center justify-center rounded-sm transition-all hover:bg-primary/10 hover:text-primary active:scale-[0.9] text-muted-foreground/40 disabled:opacity-5 disabled:hover:bg-transparent"
                 >
-                    <ChevronDown className="h-3.5 w-3.5 stroke-[3]" />
+                    <ChevronDown className="h-3 w-3 stroke-[3]"/>
                 </button>
-                <div className="w-px h-3 bg-border/40" />
+                <div className="w-px h-2.5 bg-border/40"/>
                 <button
                     type="button"
                     onClick={onIncrement}
                     disabled={value >= max}
-                    className="flex h-5 w-5 items-center justify-center rounded-sm transition-all hover:bg-primary/10 hover:text-primary active:scale-[0.9] text-muted-foreground/60 disabled:opacity-10 disabled:hover:bg-transparent"
+                    className="flex h-4 w-4 items-center justify-center rounded-sm transition-all hover:bg-primary/10 hover:text-primary active:scale-[0.9] text-muted-foreground/40 disabled:opacity-5 disabled:hover:bg-transparent"
                 >
-                    <ChevronUp className="h-3.5 w-3.5 stroke-[3]" />
+                    <ChevronUp className="h-3 w-3 stroke-[3]"/>
                 </button>
             </div>
 
             {/* Unit */}
             {unit && (
-                <span className="text-[10px] font-black uppercase tracking-[0.15em] text-muted-foreground/30 pr-2 select-none whitespace-nowrap">
+                <span className="text-[9px] font-semibold text-muted-foreground/30 pr-1.5 whitespace-nowrap">
                     {unit}
                 </span>
             )}

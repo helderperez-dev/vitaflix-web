@@ -1,15 +1,14 @@
 "use client"
 
-import * as React from "react"
-import { useForm } from "react-hook-form"
-import { zodResolver } from "@hookform/resolvers/zod"
-import {
-    Loader2
-} from "lucide-react"
-import { toast } from "sonner"
-import { useTranslations } from "next-intl"
+import * as React from"react"
+import { useForm } from"react-hook-form"
+import { zodResolver } from"@hookform/resolvers/zod"
+import { Loader2, FileText, Layers } from"lucide-react"
+import { motion, AnimatePresence } from"framer-motion"
+import { toast } from"sonner"
+import { useTranslations } from"next-intl"
 
-import { Button } from "@/components/ui/button"
+import { Button } from"@/components/ui/button"
 import {
     Form,
     FormControl,
@@ -18,8 +17,8 @@ import {
     FormItem,
     FormLabel,
     FormMessage,
-} from "@/components/ui/form"
-import { Input } from "@/components/ui/input"
+} from"@/components/ui/form"
+import { Input } from"@/components/ui/input"
 import {
     Sheet,
     SheetContent,
@@ -27,13 +26,20 @@ import {
     SheetHeader,
     SheetTitle,
     SheetFooter,
-} from "@/components/ui/sheet"
-import { Badge } from "@/components/ui/badge"
-import { mealSchema, type Meal } from "@/shared-schemas/meal"
-import { upsertMeal } from "@/app/actions/meals"
-import { TranslationFields } from "@/components/shared/translation-fields"
-import { TagSelector } from "@/components/shared/tag-selector"
-import { Stepper } from "@/components/ui/stepper"
+} from"@/components/ui/sheet"
+import { Badge } from"@/components/ui/badge"
+import { mealSchema, type Meal } from"@/shared-schemas/meal"
+import { upsertMeal } from"@/app/actions/meals"
+import { TranslationFields } from"@/components/shared/translation-fields"
+import { TagSelector } from"@/components/shared/tag-selector"
+import { Stepper } from"@/components/ui/stepper"
+import { PreparationSteps } from"@/components/shared/preparation-steps"
+import { ImageUploader } from"@/components/shared/image-uploader"
+import { MealOptionsList } from"./meal-options-list"
+import { getMealOptions } from"@/app/actions/meals"
+import { cn } from"@/lib/utils"
+
+type DrawerView ="details"|"variations"
 
 interface MealDrawerProps {
     open: boolean
@@ -45,6 +51,9 @@ export function MealDrawer({ open, onOpenChange, meal }: MealDrawerProps) {
     const t = useTranslations("Meals")
     const commonT = useTranslations("Common")
     const [isSubmitting, setIsSubmitting] = React.useState(false)
+    const [formId] = React.useState(() => crypto.randomUUID())
+    const [activeView, setActiveView] = React.useState<DrawerView>("details")
+    const [isEditingOption, setIsEditingOption] = React.useState(false)
 
     const form = useForm({
         resolver: zodResolver(mealSchema),
@@ -52,32 +61,51 @@ export function MealDrawer({ open, onOpenChange, meal }: MealDrawerProps) {
             name: {},
             mealTypes: [],
             cookTime: 0,
-            preparationMode: {},
+            preparationMode: [],
             satiety: 5,
             restrictions: [],
             publishOn: null,
+            images: [],
+            id: formId,
+            options: [],
         },
     }) as any
 
     React.useEffect(() => {
-        if (meal) {
-            form.reset({
-                ...meal,
-                name: meal.name || {},
-                preparationMode: meal.preparationMode || {}
-            })
-        } else {
-            form.reset({
-                name: {},
-                mealTypes: [],
-                cookTime: 0,
-                preparationMode: {},
-                satiety: 5,
-                restrictions: [],
-                publishOn: null,
-            })
+        async function initData() {
+            if (meal && meal.id) {
+                const options = await getMealOptions(meal.id)
+                form.reset({
+                    ...meal,
+                    name: meal.name || {},
+                    preparationMode: meal.preparationMode || [],
+                    options: options || []
+                })
+            } else {
+                form.reset({
+                    name: {},
+                    mealTypes: [],
+                    cookTime: 0,
+                    preparationMode: [],
+                    satiety: 5,
+                    restrictions: [],
+                    publishOn: null,
+                    images: [],
+                    id: crypto.randomUUID(),
+                    options: []
+                })
+            }
         }
-    }, [meal, form])
+        initData()
+    }, [meal, form, open])
+
+    // Reset to details view when the drawer opens
+    React.useEffect(() => {
+        if (open) {
+            setActiveView("details")
+            setIsEditingOption(false)
+        }
+    }, [open])
 
     async function onSubmit(values: Meal) {
         setIsSubmitting(true)
@@ -86,151 +114,263 @@ export function MealDrawer({ open, onOpenChange, meal }: MealDrawerProps) {
             if (result?.error) {
                 toast.error(result.error)
             } else {
-                toast.success(meal ? "Meal updated successfully" : "Meal created successfully")
+                toast.success(meal ? commonT("updatedSuccessfully") : commonT("createdSuccessfully"))
                 onOpenChange(false)
             }
         } catch (error) {
-            toast.error("Failed to save meal")
+            toast.error(commonT("errorSaving"))
         } finally {
             setIsSubmitting(false)
         }
     }
 
+    const optionsCount = (form.watch("options") || []).length
+
     return (
         <Sheet open={open} onOpenChange={onOpenChange}>
             <SheetContent className="sm:max-w-2xl p-0 flex flex-col bg-background border-l border-border">
-                {/* Minimalist Top Accent */}
-                <div className="h-1 w-full bg-primary" />
+                {/* High-End Ambient Glow */}
+                <div className="absolute top-0 left-0 right-0 h-[500px] bg-gradient-to-b from-primary/15 via-primary/[0.02] to-transparent pointer-events-none"/>
 
                 <div className="flex-1 flex flex-col min-h-0 overflow-hidden">
-                    <SheetHeader className="px-8 py-8 space-y-2">
-                        <SheetTitle className="text-2xl font-bold tracking-tight text-secondary dark:text-foreground">
-                            {meal ? t("editMeal") : t("newMeal")}
-                        </SheetTitle>
-                        <SheetDescription className="text-sm">
-                            {t("description")}
-                        </SheetDescription>
-                    </SheetHeader>
+                    {!isEditingOption && (
+                        <SheetHeader className="px-8 py-6 space-y-3">
+                            <div>
+                                <SheetTitle className="text-2xl font-semibold tracking-tight text-secondary dark:text-foreground">
+                                    {meal ? t("editMeal") : t("newMeal")}
+                                </SheetTitle>
+                                <SheetDescription className="text-sm">
+                                    {t("description")}
+                                </SheetDescription>
+                            </div>
 
-                    <div className="flex-1 overflow-y-auto px-8 py-4 custom-scrollbar">
+                            {/* Minimalist Tabs with Sliding Highlight */}
+                            <div className="flex items-center gap-10 border-b border-border/40 mt-2">
+                                <button
+                                    type="button"
+                                    onClick={() => setActiveView("details")}
+                                    className={cn(
+                                      "relative pb-4 text-[11px] font-semibold transition-all duration-300",
+                                        activeView ==="details"
+                                            ?"text-secondary dark:text-foreground"
+                                            :"text-muted-foreground/30 hover:text-muted-foreground/60"
+                                    )}
+                                >
+                                    {t("mealDetails")}
+                                    {activeView ==="details"&& (
+                                        <motion.div
+                                            layoutId="activeTabUnderline"
+                                            className="absolute -bottom-px left-0 right-0 h-px bg-primary z-10"
+                                            transition={{ type:"spring", bounce: 0.2, duration: 0.6 }}
+                                        />
+                                    )}
+                                </button>
+                                <button
+                                    type="button"
+                                    onClick={() => setActiveView("variations")}
+                                    className={cn(
+                                      "relative pb-4 text-[11px] font-semibold transition-all duration-300 flex items-center gap-2",
+                                        activeView ==="variations"
+                                            ?"text-secondary dark:text-foreground"
+                                            :"text-muted-foreground/30 hover:text-muted-foreground/60"
+                                    )}
+                                >
+                                    {t("mealVariations")}
+                                    <AnimatePresence mode="popLayout">
+                                        {optionsCount > 0 && (
+                                            <motion.span
+                                                initial={{ opacity: 0, scale: 0.8 }}
+                                                animate={{ opacity: 1, scale: 1 }}
+                                                exit={{ opacity: 0, scale: 0.8 }}
+                                                className={cn(
+                                                  "inline-flex items-center justify-center h-4.5 min-w-[18px] px-1 rounded-full text-[9px] font-semibold transition-all",
+                                                    activeView ==="variations"
+                                                        ?"bg-primary text-white shadow-sm shadow-primary/20"
+                                                        :"bg-muted-foreground/10 text-muted-foreground/40 group-hover:bg-muted-foreground/20"
+                                                )}
+                                            >
+                                                {optionsCount}
+                                            </motion.span>
+                                        )}
+                                    </AnimatePresence>
+                                    {activeView ==="variations"&& (
+                                        <motion.div
+                                            layoutId="activeTabUnderline"
+                                            className="absolute -bottom-px left-0 right-0 h-px bg-primary z-10"
+                                            transition={{ type:"spring", bounce: 0.2, duration: 0.6 }}
+                                        />
+                                    )}
+                                </button>
+                            </div>
+                        </SheetHeader>
+                    )}
+
+                    <div className={cn(
+                      "flex-1 custom-scrollbar min-h-0",
+                        !isEditingOption ?"px-8 py-4 overflow-y-auto":"p-0 overflow-hidden h-full"
+                    )}>
                         <Form {...form}>
-                            <form id="meal-form" onSubmit={form.handleSubmit(onSubmit)} className="space-y-12">
-                                {/* Meal Name */}
-                                <TranslationFields
-                                    form={form}
-                                    namePrefix="name"
-                                    label={t("table.name")}
-                                    placeholder="e.g. Classic Burgers"
-                                />
-
-                                {/* Culinary Metrics */}
-                                <div className="space-y-8">
-                                    <div className="flex items-center gap-2">
-                                        <h3 className="font-bold text-xs text-secondary dark:text-white whitespace-nowrap">{t("culinaryManagement")}</h3>
-                                        <div className="h-px flex-1 bg-border/60 ml-2" />
-                                    </div>
-                                    <div className="grid grid-cols-2 gap-x-12 gap-y-8">
-                                        <FormField
-                                            control={form.control}
-                                            name="cookTime"
-                                            render={({ field }) => (
-                                                <FormItem>
-                                                    <FormLabel className="text-xs font-semibold text-muted-foreground/70">{t("prepTime")}</FormLabel>
-                                                    <FormControl>
-                                                        <Stepper
-                                                            value={field.value ?? 0}
-                                                            onChange={field.onChange}
-                                                            unit="MIN"
-                                                        />
-                                                    </FormControl>
-                                                    <FormMessage className="text-[10px]" />
-                                                </FormItem>
-                                            )}
+                            <form
+                                id="meal-form"
+                                onSubmit={form.handleSubmit(onSubmit)}
+                                className={cn("flex flex-col min-h-0", isEditingOption ?"h-full":"")}
+                            >
+                                {/* Details View */}
+                                <div className={cn(
+                                  "transition-opacity duration-200",
+                                    activeView ==="details"?"block":"hidden"
+                                )}>
+                                    <div className="space-y-12">
+                                        <TranslationFields
+                                            form={form}
+                                            namePrefix="name"
+                                            label={t("table.name")}
+                                            placeholder={t("namePlaceholder")}
                                         />
-                                        <FormField
-                                            control={form.control}
-                                            name="satiety"
-                                            render={({ field }) => (
-                                                <FormItem>
-                                                    <FormLabel className="text-xs font-semibold text-muted-foreground/70">{t("satietyIndex")}</FormLabel>
-                                                    <FormControl>
-                                                        <Stepper
-                                                            value={field.value ?? 0}
-                                                            onChange={field.onChange}
-                                                            min={0}
-                                                            max={10}
-                                                            unit="/ 10"
-                                                        />
-                                                    </FormControl>
-                                                    <FormMessage className="text-[10px]" />
-                                                </FormItem>
-                                            )}
-                                        />
-                                    </div>
-                                </div>
 
-                                {/* Categorization */}
-                                <div className="space-y-8">
-                                    <div className="flex items-center gap-2">
-                                        <h3 className="font-bold text-xs text-secondary dark:text-white whitespace-nowrap">{t("categorization")}</h3>
-                                        <div className="h-px flex-1 bg-border/60 ml-2" />
-                                    </div>
-                                    <div className="grid grid-cols-1 gap-8">
-                                        <div className="space-y-4">
-                                            <TagSelector
-                                                title={t("mealCategories")}
-                                                selectedTagIds={form.watch("mealTypes") || []}
-                                                onTagsChange={(tagIds) => form.setValue("mealTypes", tagIds, { shouldDirty: true })}
-                                                table="meal_categories"
+                                        {/* Media Gallery */}
+                                        <div className="space-y-8">
+                                            <div className="flex items-center gap-3">
+                                                <div className="flex flex-col">
+                                                    <h3 className="font-semibold text-xs text-secondary dark:text-white">{t("mediaGallery")}</h3>
+                                                    <p className="text-[10px] text-muted-foreground/60">{t("mediaGalleryDescription")}</p>
+                                                </div>
+                                                <div className="h-px flex-1 bg-border/60 ml-4"/>
+                                            </div>
+                                            <ImageUploader
+                                                folder={`meals/${form.watch("id") || formId}`}
+                                                value={form.watch("images") || []}
+                                                onChange={(images) => form.setValue("images", images, { shouldDirty: true })}
                                             />
                                         </div>
 
-                                        <div className="space-y-4">
-                                            <TagSelector
-                                                title={t("dietaryTags")}
-                                                selectedTagIds={form.watch("restrictions") || []}
-                                                onTagsChange={(tagIds) => form.setValue("restrictions", tagIds, { shouldDirty: true })}
-                                                table="dietary_tags"
+                                        {/* Culinary Metrics */}
+                                        <div className="space-y-10">
+                                            <div className="flex items-center gap-3">
+                                                <div className="flex flex-col">
+                                                    <h3 className="font-semibold text-xs text-secondary dark:text-white">{t("culinaryManagement")}</h3>
+                                                    <p className="text-[10px] text-muted-foreground/60">{t("culinaryDescription")}</p>
+                                                </div>
+                                                <div className="h-px flex-1 bg-border/60 ml-4"/>
+                                            </div>
+                                            <div className="grid grid-cols-2 gap-x-12 gap-y-10 pl-2">
+                                                <FormField
+                                                    control={form.control}
+                                                    name="cookTime"
+                                                    render={({ field }) => (
+                                                        <FormItem className="space-y-3">
+                                                            <FormLabel className="text-[10px] font-semibold text-muted-foreground/40">{t("prepTime")}</FormLabel>
+                                                            <FormControl>
+                                                                <Stepper
+                                                                    value={field.value ?? 0}
+                                                                    onChange={field.onChange}
+                                                                    unit="MIN"
+                                                                />
+                                                            </FormControl>
+                                                            <FormMessage className="text-[10px]"/>
+                                                        </FormItem>
+                                                    )}
+                                                />
+                                                <FormField
+                                                    control={form.control}
+                                                    name="satiety"
+                                                    render={({ field }) => (
+                                                        <FormItem className="space-y-3">
+                                                            <FormLabel className="text-[10px] font-semibold text-muted-foreground/40">{t("satietyIndex")}</FormLabel>
+                                                            <FormControl>
+                                                                <Stepper
+                                                                    value={field.value ?? 0}
+                                                                    onChange={field.onChange}
+                                                                    min={0}
+                                                                    max={10}
+                                                                    unit="/ 10"
+                                                                />
+                                                            </FormControl>
+                                                            <FormMessage className="text-[10px]"/>
+                                                        </FormItem>
+                                                    )}
+                                                />
+                                            </div>
+                                        </div>
+
+                                        {/* Categorization */}
+                                        <div className="space-y-10">
+                                            <div className="flex items-center gap-3">
+                                                <div className="flex flex-col">
+                                                    <h3 className="font-semibold text-xs text-secondary dark:text-white">{t("categorization")}</h3>
+                                                    <p className="text-[10px] text-muted-foreground/60">{t("categorizationDescription")}</p>
+                                                </div>
+                                                <div className="h-px flex-1 bg-border/60 ml-4"/>
+                                            </div>
+                                            <div className="grid grid-cols-1 gap-10 pl-2">
+                                                <TagSelector
+                                                    title={t("mealCategories")}
+                                                    selectedTagIds={form.watch("mealTypes") || []}
+                                                    onTagsChange={(tagIds) => form.setValue("mealTypes", tagIds, { shouldDirty: true })}
+                                                    table="meal_categories"
+                                                />
+                                                <TagSelector
+                                                    title={t("dietaryTags")}
+                                                    selectedTagIds={form.watch("restrictions") || []}
+                                                    onTagsChange={(tagIds) => form.setValue("restrictions", tagIds, { shouldDirty: true })}
+                                                    table="dietary_tags"
+                                                />
+                                            </div>
+                                        </div>
+
+                                        {/* Preparation Mode */}
+                                        <div className="pt-4">
+                                            <PreparationSteps
+                                                form={form}
+                                                namePrefix="preparationMode"
+                                                label={t("preparationMode")}
                                             />
                                         </div>
                                     </div>
                                 </div>
 
-                                {/* Preparation Mode */}
-                                <TranslationFields
-                                    form={form}
-                                    namePrefix="preparationMode"
-                                    label={t("preparationMode")}
-                                    type="textarea"
-                                    placeholder={t("prepPlaceholder")}
-                                />
+                                <div className={cn(
+                                  "transition-opacity duration-200",
+                                    activeView ==="variations"? (isEditingOption ?"flex-1 min-h-0 h-full flex flex-col":"block") :"hidden"
+                                )}>
+                                    <div className={cn("min-h-0", isEditingOption &&"h-full flex flex-col")}>
+                                        <MealOptionsList
+                                            mealId={form.watch("id") || formId}
+                                            options={form.watch("options") || []}
+                                            onOptionsChange={(options) => form.setValue("options", options, { shouldDirty: true })}
+                                            onEditingChange={setIsEditingOption}
+                                        />
+                                    </div>
+                                </div>
                             </form>
                         </Form>
                     </div>
 
-                    <SheetFooter className="px-8 py-8 border-t flex flex-row items-center justify-end gap-3 bg-muted/5">
-                        <Button
-                            variant="outline"
-                            className="h-10 px-6 font-semibold text-xs border-border hover:bg-muted/30 transition-colors"
-                            onClick={() => onOpenChange(false)}
-                            disabled={isSubmitting}
-                        >
-                            {commonT("cancel")}
-                        </Button>
-                        <Button
-                            type="submit"
-                            form="meal-form"
-                            className="h-10 px-8 bg-primary hover:bg-primary/90 text-white font-semibold text-xs shadow-sm shadow-primary/5 transition-all active:scale-[0.98]"
-                            disabled={isSubmitting}
-                        >
-                            {isSubmitting ? (
-                                <Loader2 className="mr-2 h-4 w-4 animate-spin" />
-                            ) : null}
-                            {commonT("save")}
-                        </Button>
-                    </SheetFooter>
+                    {!isEditingOption && (
+                        <SheetFooter className="px-8 py-8 border-t flex flex-row items-center justify-end gap-3 bg-muted/5">
+                            <Button
+                                variant="outline"
+                                className="h-10 px-6 font-semibold text-xs border-border hover:bg-muted/30 transition-colors"
+                                onClick={() => onOpenChange(false)}
+                                disabled={isSubmitting}
+                            >
+                                {commonT("cancel")}
+                            </Button>
+                            <Button
+                                type="submit"
+                                form="meal-form"
+                                className="h-10 px-8 bg-primary hover:bg-primary/90 text-white font-semibold text-xs shadow-sm shadow-primary/5 transition-all active:scale-[0.98]"
+                                disabled={isSubmitting}
+                            >
+                                {isSubmitting ? (
+                                    <Loader2 className="mr-2 h-4 w-4 animate-spin"/>
+                                ) : null}
+                                {commonT("save")}
+                            </Button>
+                        </SheetFooter>
+                    )}
                 </div>
             </SheetContent>
-        </Sheet>
+        </Sheet >
     )
 }
