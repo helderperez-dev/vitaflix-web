@@ -16,7 +16,6 @@
         "status": "Estado",
         "addLocalization": "Añadir localización",
         "noResults": "Sin resultados",
-        "translationsRequired": "Traducciones requeridas",
         "selectTags": "Seleccionar Etiquetas",
         "selectMealCategories": "Seleccionar Categorías",
         "selectDietaryTags": "Seleccionar Etiquetas Dietéticas",
@@ -35,7 +34,10 @@
         "updatedSuccessfully": "Actualizado correctamente",
         "createdSuccessfully": "Creado correctamente",
         "errorSaving": "Error al guardar",
-        "noTagsSelected": "No hay etiquetas seleccionadas"
+        "noTagsSelected": "No hay etiquetas seleccionadas",
+        "pleaseCheckForm": "Por favor, revise el formulario para corregir errores",
+        "invalidFormat": "Por favor, revise esta sección para corregir errores.",
+        "translationsRequired": "Se requiere al menos una traducción"
     },
     "Auth": {
         "welcome": "Bienvenido de nuevo",
@@ -92,7 +94,9 @@
             "c": "C",
             "f": "G",
             "status": "Estado"
-        }
+        },
+        "errorKcalPositive": "Las calorías deben ser un número entero positivo",
+        "errorMacrosPositive": "Los macros deben ser un número positivo"
     },
     "Meals": {
         "title": "Comidas",
@@ -101,6 +105,7 @@
         "editMeal": "Editar Comida",
         "addMeal": "Nueva Comida",
         "noMeals": "No se encontraron comidas.",
+        "atLeastOneCategory": "Se requiere al menos una categoría",
         "culinaryManagement": "Gestión Culinaria",
         "culinaryDescription": "Defina el tiempo de preparación y el índice de saciedad.",
         "mealAuthoring": "Creación de Comidas",

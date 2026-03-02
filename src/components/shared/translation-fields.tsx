@@ -1,52 +1,53 @@
 "use client"
 
-import * as React from"react"
-import { X, Plus, Check, Loader2 } from"lucide-react"
-import { useTranslations } from"next-intl"
-import { FormField, FormItem, FormLabel, FormControl, FormMessage } from"@/components/ui/form"
-import { Input } from"@/components/ui/input"
-import { Textarea } from"@/components/ui/textarea"
-import { Button } from"@/components/ui/button"
-import { Popover, PopoverContent, PopoverTrigger } from"@/components/ui/popover"
-import { Command, CommandEmpty, CommandGroup, CommandInput, CommandItem, CommandList } from"@/components/ui/command"
-import { getSupportedLanguages } from"@/app/actions/settings"
-import { cn } from"@/lib/utils"
-import { useWatch } from"react-hook-form"
+import * as React from "react"
+import { X, Plus, Check, Loader2 } from "lucide-react"
+import { useTranslations } from "next-intl"
+import { FormField, FormItem, FormLabel, FormControl, FormMessage } from "@/components/ui/form"
+import { Input } from "@/components/ui/input"
+import { Textarea } from "@/components/ui/textarea"
+import { Button } from "@/components/ui/button"
+import { Popover, PopoverContent, PopoverTrigger } from "@/components/ui/popover"
+import { Command, CommandEmpty, CommandGroup, CommandInput, CommandItem, CommandList } from "@/components/ui/command"
+import { getSupportedLanguages } from "@/app/actions/settings"
+import { cn } from "@/lib/utils"
+import { useWatch } from "react-hook-form"
 
 interface TranslationFieldsProps {
     form: any
     namePrefix: string
     label: string
-    type?:"input"|"textarea"
+    type?: "input" | "textarea"
     placeholder?: string
 }
 
 const LANGUAGE_NAMES: Record<string, string> = {
-  "en":"English",
-  "es":"Spanish",
-  "pt-pt":"Portuguese (PT)",
-  "pt-br":"Portuguese (BR)",
+    "en": "English",
+    "es": "Spanish",
+    "pt-pt": "Portuguese (PT)",
+    "pt-br": "Portuguese (BR)",
 }
 
 export function TranslationFields({
     form,
     namePrefix,
     label,
-    type ="input",
-    placeholder ="Enter translation..."
+    type = "input",
+    placeholder = "Enter translation..."
 }: TranslationFieldsProps) {
-    const t = useTranslations("Common")
+    const commonT = useTranslations("Common")
+    const mealsT = useTranslations("Meals")
+    const productsT = useTranslations("Products")
+
     const [availableLanguages, setAvailableLanguages] = React.useState<string[]>([])
     const [loading, setLoading] = React.useState(true)
     const [open, setOpen] = React.useState(false)
 
-    // Watch the values of the translations to see which ones are currently added
     const currentTranslations = useWatch({
         control: form.control,
         name: namePrefix,
     }) || {}
 
-    // Get active keys
     const activeKeys = Object.keys(currentTranslations).filter(k => currentTranslations[k] !== undefined)
 
     React.useEffect(() => {
@@ -61,7 +62,7 @@ export function TranslationFields({
     const remainingLanguages = availableLanguages.filter(lang => !activeKeys.includes(lang))
 
     const addLanguage = (lang: string) => {
-        form.setValue(`${namePrefix}.${lang}`,"")
+        form.setValue(`${namePrefix}.${lang}`, "")
         setOpen(false)
     }
 
@@ -71,10 +72,18 @@ export function TranslationFields({
         form.setValue(namePrefix, newTranslations)
     }
 
+    const translateErrorMessage = (message: string | undefined) => {
+        if (!message) return null
+        if (message === "Common.translationsRequired") return commonT("translationsRequired")
+        if (message === "Meals.atLeastOneCategory") return mealsT("atLeastOneCategory")
+        if (message === "Products.errorKcalPositive") return productsT("errorKcalPositive")
+        return message
+    }
+
     if (loading) {
         return (
             <div className="flex flex-col items-center justify-center py-12">
-                <Loader2 className="h-8 w-8 text-primary animate-spin"/>
+                <Loader2 className="h-8 w-8 text-primary animate-spin" />
             </div>
         )
     }
@@ -84,7 +93,7 @@ export function TranslationFields({
             <div className="flex items-center justify-between gap-4">
                 <div className="flex items-center gap-3 flex-1">
                     <h3 className="font-semibold text-xs text-secondary dark:text-white whitespace-nowrap">{label}</h3>
-                    <div className="h-px w-full bg-border/60 min-w-4"/>
+                    <div className="h-px w-full bg-border/60 min-w-4" />
                 </div>
 
                 {remainingLanguages.length > 0 && (
@@ -94,19 +103,19 @@ export function TranslationFields({
                                 variant="outline"
                                 className="h-8 w-auto min-w-[140px] justify-start px-4 text-xs font-semibold border-border/50 bg-transparent text-muted-foreground hover:bg-muted/5 gap-2 rounded-xl transition-all"
                             >
-                                <Plus className="h-3 w-3"/>
-                                <span>{t("addLocalization")}</span>
+                                <Plus className="h-3 w-3" />
+                                <span>{commonT("addLocalization")}</span>
                             </Button>
                         </PopoverTrigger>
-                        <PopoverContent className="w-[220px] p-1.5 shadow-2xl border-border/40 rounded-2xl backdrop-blur-xl bg-background/90"align="end">
+                        <PopoverContent className="w-[220px] p-1.5 shadow-2xl border-border/40 rounded-2xl backdrop-blur-xl bg-background/90" align="end">
                             <Command className="bg-transparent border-none">
-                                <CommandInput placeholder={`${t("search")}...`} className="h-9 text-xs"/>
+                                <CommandInput placeholder={`${commonT("search")}...`} className="h-9 text-xs" />
                                 <CommandList
                                     className="max-h-[240px] overflow-y-auto custom-scrollbar"
                                     onWheel={(e) => e.stopPropagation()}
                                     onTouchMove={(e) => e.stopPropagation()}
                                 >
-                                    <CommandEmpty className="py-4 text-xs font-semibold text-center text-muted-foreground/40">{t("noResults")}</CommandEmpty>
+                                    <CommandEmpty className="py-4 text-xs font-semibold text-center text-muted-foreground/40">{commonT("noResults")}</CommandEmpty>
                                     <CommandGroup>
                                         {remainingLanguages.map((lang) => (
                                             <CommandItem
@@ -130,12 +139,25 @@ export function TranslationFields({
             </div>
 
             <div className="space-y-6">
+                <FormField
+                    control={form.control}
+                    name={namePrefix}
+                    render={({ fieldState: { error } }) => (
+                        <FormItem>
+                            {error && (
+                                <p className="text-[10px] font-semibold text-destructive px-1 animate-in fade-in slide-in-from-top-1 duration-200">
+                                    {translateErrorMessage(error.message)}
+                                </p>
+                            )}
+                        </FormItem>
+                    )}
+                />
                 {activeKeys.length === 0 ? (
                     <div className="py-10 border-2 border-dashed border-border/40 rounded-3xl flex flex-col items-center justify-center bg-muted/5 group hover:border-primary/20 transition-colors duration-500">
                         <div className="p-3 rounded-2xl bg-muted/10 text-muted-foreground/20 group-hover:text-primary/20 group-hover:scale-110 transition-all duration-500">
-                            <Plus className="h-6 w-6"/>
+                            <Plus className="h-6 w-6" />
                         </div>
-                        <p className="mt-3 text-xs font-semibold text-muted-foreground/40">{t("translationsRequired")}</p>
+                        <p className="mt-3 text-xs font-semibold text-muted-foreground/40">{commonT("translationsRequired")}</p>
                     </div>
                 ) : (
                     activeKeys.map((lang) => (
@@ -147,7 +169,7 @@ export function TranslationFields({
                                     <FormItem className="space-y-2">
                                         <div className="flex items-center justify-between px-1">
                                             <FormLabel className="text-[11px] font-semibold text-muted-foreground flex items-center gap-2">
-                                                <span className="h-1.5 w-1.5 rounded-full bg-primary/40"/>
+                                                <span className="h-1.5 w-1.5 rounded-full bg-primary/40" />
                                                 {LANGUAGE_NAMES[lang] || lang}
                                             </FormLabel>
                                             <Button
@@ -157,12 +179,12 @@ export function TranslationFields({
                                                 onClick={() => removeLanguage(lang)}
                                                 className="h-6 w-6 rounded-full text-muted-foreground/0 group-hover:text-muted-foreground/40 group-hover:hover:text-destructive group-hover:hover:bg-destructive/10 transition-all duration-300"
                                             >
-                                                <X className="h-3 w-3"/>
+                                                <X className="h-3 w-3" />
                                             </Button>
                                         </div>
                                         <FormControl>
                                             <div className="relative group/input">
-                                                {type ==="textarea"? (
+                                                {type === "textarea" ? (
                                                     <Textarea
                                                         placeholder={`${placeholder} (${lang.toUpperCase()})`}
                                                         className="resize-none min-h-[140px] bg-muted/5 focus:bg-background transition-all duration-300 rounded-lg border-border/40 focus:ring-4 ring-primary/5 p-4 text-sm font-medium leading-relaxed"
@@ -177,7 +199,7 @@ export function TranslationFields({
                                                 )}
                                             </div>
                                         </FormControl>
-                                        <FormMessage className="text-[10px] font-semibold text-destructive px-1"/>
+                                        <FormMessage className="text-[10px] font-semibold text-destructive px-1" />
                                     </FormItem>
                                 )}
                             />

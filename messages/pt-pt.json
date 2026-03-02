@@ -16,7 +16,6 @@
         "status": "Estado",
         "addLocalization": "Adicionar localização",
         "noResults": "Sem resultados",
-        "translationsRequired": "Traduções obrigatórias",
         "selectTags": "Selecionar Etiquetas",
         "selectMealCategories": "Selecionar Categorias",
         "selectDietaryTags": "Selecionar Etiquetas Dietéticas",
@@ -35,7 +34,10 @@
         "updatedSuccessfully": "Atualizado com sucesso",
         "createdSuccessfully": "Criado com sucesso",
         "errorSaving": "Erro ao salvar",
-        "noTagsSelected": "Nenhuma etiqueta selecionada"
+        "noTagsSelected": "Nenhuma etiqueta selecionada",
+        "pleaseCheckForm": "Por favor, verifique o formulário para erros",
+        "invalidFormat": "Por favor, verifique esta secção para encontrar erros.",
+        "translationsRequired": "Pelo menos uma tradução é obrigatória"
     },
     "Auth": {
         "welcome": "Bem-vindo de volta",
@@ -92,7 +94,9 @@
             "c": "C",
             "f": "G",
             "status": "Estado"
-        }
+        },
+        "errorKcalPositive": "As calorias devem ser um número inteiro positivo",
+        "errorMacrosPositive": "Os macros devem ser um número positivo"
     },
     "Meals": {
         "title": "Refeições",
@@ -101,6 +105,7 @@
         "editMeal": "Editar Refeição",
         "addMeal": "Nova Refeição",
         "noMeals": "Nenhuma refeição encontrada.",
+        "atLeastOneCategory": "Pelo menos uma categoria é obrigatória",
         "culinaryManagement": "Gestão Culinária",
         "culinaryDescription": "Defina o tempo de preparação e o índice de saciedade.",
         "mealAuthoring": "Criação de Refeições",

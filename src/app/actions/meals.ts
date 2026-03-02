@@ -21,6 +21,8 @@ export async function upsertMeal(data: Meal) {
             cook_time: data.cookTime,
             preparation_mode: data.preparationMode,
             satiety: data.satiety,
+            meal_types: data.mealTypes,
+            restrictions: data.restrictions,
             publish_on: data.publishOn,
             images: data.images,
             updated_at: new Date().toISOString()
@@ -36,30 +38,46 @@ export async function upsertMeal(data: Meal) {
     const mealId = mealData.id
 
     // Sync categories (mealTypes)
-    await supabase.from("meal_category_links").delete().eq("meal_id", mealId)
+    const { error: catDeleteError } = await supabase.from("meal_category_links").delete().eq("meal_id", mealId)
+    if (catDeleteError) return { error: `Categories error: ${catDeleteError.message}` }
+
     if (data.mealTypes && data.mealTypes.length > 0) {
         const categoryLinks = data.mealTypes.map(categoryId => ({
             meal_id: mealId,
             category_id: categoryId
         }))
-        await supabase.from("meal_category_links").insert(categoryLinks)
+        const { error: catInsertError } = await supabase.from("meal_category_links").insert(categoryLinks)
+        if (catInsertError) return { error: `Categories error: ${catInsertError.message}` }
     }
 
     // Sync dietary tags (restrictions)
-    await supabase.from("meal_dietary_tags").delete().eq("meal_id", mealId)
+    const { error: tagDeleteError } = await supabase.from("meal_dietary_tags").delete().eq("meal_id", mealId)
+    if (tagDeleteError) return { error: `Restrictions error: ${tagDeleteError.message}` }
+
     if (data.restrictions && data.restrictions.length > 0) {
         const restrictionLinks = data.restrictions.map(dietaryTagId => ({
             meal_id: mealId,
             dietary_tag_id: dietaryTagId
         }))
-        await supabase.from("meal_dietary_tags").insert(restrictionLinks)
+        const { error: tagInsertError } = await supabase.from("meal_dietary_tags").insert(restrictionLinks)
+        if (tagInsertError) return { error: `Restrictions error: ${tagInsertError.message}` }
     }
 
     // Sync Meal Options
-    // Note: In a production app, we should probably do a diff to preserve IDs if needed, 
-    // but for now, we'll follow the pattern of the other many-to-many links.
-    // However, meal_options is a primary table, so we use upsert logic if IDs are present.
     if (data.options && data.options.length > 0) {
+        // Remove options that are no longer in the list
+        const currentOptionIds = data.options.filter(o => o.id).map(o => o.id)
+        if (currentOptionIds.length > 0) {
+            const { error: delOptError } = await supabase
+                .from("meal_options")
+                .delete()
+                .eq("associated_meal_id", mealId)
+                .not("id", "in", `(${currentOptionIds.join(',')})`)
+            if (delOptError) return { error: `Options delete error: ${delOptError.message}` }
+        } else {
+            await supabase.from("meal_options").delete().eq("associated_meal_id", mealId)
+        }
+
         const optionsToUpsert = data.options.map(opt => ({
             id: opt.id || undefined,
             associated_meal_id: mealId,
@@ -72,15 +90,8 @@ export async function upsertMeal(data: Meal) {
             updated_at: new Date().toISOString()
         }))
 
-        // Remove options that are no longer in the list
-        const currentOptionIds = data.options.filter(o => o.id).map(o => o.id)
-        if (currentOptionIds.length > 0) {
-            await supabase.from("meal_options").delete().eq("associated_meal_id", mealId).not("id", "in", `(${currentOptionIds.join(',')})`)
-        } else {
-            await supabase.from("meal_options").delete().eq("associated_meal_id", mealId)
-        }
-
-        await supabase.from("meal_options").upsert(optionsToUpsert)
+        const { error: optUpsertError } = await supabase.from("meal_options").upsert(optionsToUpsert)
+        if (optUpsertError) return { error: `Options upsert error: ${optUpsertError.message}` }
     } else {
         await supabase.from("meal_options").delete().eq("associated_meal_id", mealId)
     }

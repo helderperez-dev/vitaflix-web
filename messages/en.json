@@ -16,7 +16,6 @@
         "status": "Status",
         "addLocalization": "Add localization",
         "noResults": "No results",
-        "translationsRequired": "Translations required",
         "selectTags": "Select Tags",
         "selectMealCategories": "Select Categories",
         "selectDietaryTags": "Select Dietary Tags",
@@ -35,7 +34,10 @@
         "updatedSuccessfully": "Updated successfully",
         "createdSuccessfully": "Created successfully",
         "errorSaving": "Failed to save",
-        "noTagsSelected": "No tags selected"
+        "noTagsSelected": "No tags selected",
+        "pleaseCheckForm": "Please check the form for errors",
+        "invalidFormat": "Please check this section for any errors.",
+        "translationsRequired": "At least one translation is required"
     },
     "Auth": {
         "welcome": "Welcome back",
@@ -92,7 +94,9 @@
             "c": "C",
             "f": "F",
             "status": "Status"
-        }
+        },
+        "errorKcalPositive": "Calories must be a positive integer",
+        "errorMacrosPositive": "Macros must be a positive number"
     },
     "Meals": {
         "title": "Meals",
@@ -101,6 +105,7 @@
         "editMeal": "Edit Meal",
         "addMeal": "New Meal",
         "noMeals": "No meals found.",
+        "atLeastOneCategory": "At least one category is required",
         "culinaryManagement": "Culinary Management",
         "culinaryDescription": "Define preparation time and satiety index.",
         "mealAuthoring": "Meal Authoring",

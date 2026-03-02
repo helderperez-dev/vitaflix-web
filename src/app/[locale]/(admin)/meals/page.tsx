@@ -13,9 +13,10 @@ export default async function MealsPage() {
     const { data: rawMeals } = await supabase
         .from("meals")
         .select(`
-            id, name, cook_time, preparation_mode, satiety, publish_on, updated_at, created_at,
+            id, name, cook_time, preparation_mode, satiety, publish_on, updated_at, created_at, images,
             meal_category_links(category_id),
-            meal_dietary_tags(dietary_tag_id)
+            meal_dietary_tags(dietary_tag_id),
+            meal_options(id)
         `)
         .order("name->>en", { ascending: true })
 
