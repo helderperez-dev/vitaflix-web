@@ -1,11 +1,11 @@
-import { AppSidebar } from "@/components/layout/app-sidebar"
-import { SidebarProvider } from "@/components/ui/sidebar"
-import { UserMenu } from "@/components/layout/user-menu"
+import { AppSidebar } from"@/components/layout/app-sidebar"
+import { SidebarProvider } from"@/components/ui/sidebar"
+import { UserMenu } from"@/components/layout/user-menu"
 
-import { createClient } from "@/lib/supabase/server"
-import { redirect } from "next/navigation"
+import { createClient } from"@/lib/supabase/server"
+import { redirect } from"next/navigation"
 
-import { GlobalSearch } from "@/components/layout/global-search"
+import { GlobalSearch } from"@/components/layout/global-search"
 
 export default async function AdminLayout({
     children,
@@ -21,7 +21,7 @@ export default async function AdminLayout({
 
     const userData = {
         id: user.id,
-        email: user.email || "admin@vitaflix.com"
+        email: user.email ||"admin@vitaflix.com"
     }
 
     return (
@@ -33,7 +33,7 @@ export default async function AdminLayout({
                         <div className="flex-1 flex items-center max-w-2xl">
                             <GlobalSearch />
                         </div>
-                        <div className="flex-1" />
+                        <div className="flex-1"/>
                         <UserMenu user={userData} />
                     </header>
                     <div className="flex-1 min-h-0 overflow-hidden">

@@ -2,6 +2,7 @@ import type { Metadata } from "next";
 import { Geist, Geist_Mono } from "next/font/google";
 import "./globals.css";
 import { ThemeProvider } from "@/components/theme-provider";
+import { ThemeColorMeta } from "@/components/theme-color-meta";
 import { TooltipProvider } from "@/components/ui/tooltip";
 import { Toaster } from "@/components/ui/sonner";
 import { NextIntlClientProvider } from 'next-intl';
@@ -23,6 +24,7 @@ const geistMono = Geist_Mono({
 export const metadata: Metadata = {
   title: "Vitaflix Admin",
   description: "Administrative dashboard for Vitaflix",
+  themeColor: "#ffffff",
 };
 
 export function generateStaticParams() {
@@ -62,6 +64,7 @@ export default async function RootLayout({
             enableSystem
             disableTransitionOnChange
           >
+            <ThemeColorMeta />
             <NuqsAdapter>
               <TooltipProvider>
                 {children}

@@ -44,22 +44,30 @@ export function UserActions({ user, onEdit }: UserActionsProps) {
     return (
         <DropdownMenu>
             <DropdownMenuTrigger asChild>
-                <Button variant="ghost" className="h-8 w-8 p-0" disabled={isDeleting}>
+                <Button
+                    variant="ghost"
+                    className="h-9 w-9 p-0 rounded-xl hover:bg-primary/5 hover:text-primary transition-all active:scale-95"
+                    disabled={isDeleting}
+                >
                     <span className="sr-only">Open menu</span>
                     <MoreHorizontal className="h-4 w-4" />
                 </Button>
             </DropdownMenuTrigger>
-            <DropdownMenuContent align="end">
-                <DropdownMenuItem onClick={() => onEdit(user)}>
-                    <Edit className="mr-2 h-4 w-4" />
-                    Edit
+            <DropdownMenuContent
+                align="end"
+                className="w-56 p-1.5 rounded-2xl shadow-2xl border-sidebar-border/50 backdrop-blur-xl bg-background/90 animate-in fade-in-0 zoom-in-95"
+            >
+                <DropdownMenuItem
+                    onClick={() => onEdit(user)}
+                    className="rounded-lg text-[11px] font-semibold py-2.5 px-3 cursor-pointer"
+                >
+                    Edit Details
                 </DropdownMenuItem>
                 <DropdownMenuItem
                     onClick={handleDelete}
-                    className="text-destructive focus:text-destructive"
+                    className="rounded-lg text-[11px] font-semibold py-2.5 px-3 cursor-pointer"
                 >
-                    <Trash2 className="mr-2 h-4 w-4" />
-                    Delete
+                    Delete User
                 </DropdownMenuItem>
             </DropdownMenuContent>
         </DropdownMenu>

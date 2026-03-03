@@ -1,10 +1,11 @@
 "use client"
 
 import * as React from "react"
-import { UserPlus } from "lucide-react"
+
 import { useTranslations } from "next-intl"
 import { Button } from "@/components/ui/button"
 import { Badge } from "@/components/ui/badge"
+import { Plus, Loader2 } from "lucide-react"
 import { Avatar, AvatarFallback } from "@/components/ui/avatar"
 import { type UserProfile } from "@/shared-schemas/user"
 import { UserDrawer } from "./user-drawer"
@@ -55,7 +56,7 @@ export function UserTableWrapper({ initialUsers }: UserTableWrapperProps) {
                 return (
                     <div className="flex items-center gap-3">
                         <Avatar className="h-9 w-9 border border-primary/10">
-                            <AvatarFallback className="bg-primary/10 text-primary text-xs font-bold border border-primary/20">
+                            <AvatarFallback className="bg-primary/10 text-primary text-xs font-semibold border border-primary/20">
                                 {user.displayName?.substring(0, 2).toUpperCase() || user.email.substring(0, 2).toUpperCase()}
                             </AvatarFallback>
                         </Avatar>
@@ -85,7 +86,7 @@ export function UserTableWrapper({ initialUsers }: UserTableWrapperProps) {
                 const goal = row.getValue("objective") as string
                 return (
                     <span className="text-[10px] capitalize font-semibold text-muted-foreground bg-muted/50 px-2 py-0.5 rounded">
-                        {goal?.replace("_", " ") || "No goal"}
+                        {goal?.replace("_", "") || "No goal"}
                     </span>
                 )
             },
@@ -130,8 +131,8 @@ export function UserTableWrapper({ initialUsers }: UserTableWrapperProps) {
         <div className="h-full flex flex-col">
             <div className="flex justify-between items-center shrink-0 px-10 py-8 border-b border-border/40 bg-white dark:bg-background relative overflow-hidden">
                 {/* Premium Background Accent */}
-                <div className="absolute top-0 right-0 w-1/3 h-full bg-gradient-to-l from-primary/5 to-transparent pointer-events-none" />
-                <div className="absolute top-0 left-0 w-64 h-64 bg-primary/5 rounded-full -translate-x-1/2 -translate-y-1/2 blur-[80px] pointer-events-none" />
+                <div className="absolute top-0 left-0 w-full h-10 bg-gradient-to-b from-slate-50 to-white pointer-events-none" />
+
 
                 <div className="flex flex-col relative z-10">
                     <div className="flex items-center gap-3">
@@ -145,10 +146,8 @@ export function UserTableWrapper({ initialUsers }: UserTableWrapperProps) {
                     </p>
                 </div>
 
-                <Button onClick={handleAdd} className="bg-primary hover:bg-primary/95 text-white font-semibold transition-all active:scale-95 shadow-sm shadow-primary/5 h-10 px-6 rounded-xl text-xs flex items-center gap-2 group/add">
-                    <div className="p-0.5 rounded-md bg-white/20 transition-transform group-hover/add:rotate-90">
-                        <UserPlus className="h-3.5 w-3.5" />
-                    </div>
+                <Button onClick={handleAdd} className="bg-primary hover:bg-primary/95 text-white font-semibold transition-all active:scale-95 shadow-sm shadow-primary/5 h-10 px-6 rounded-xl text-xs flex items-center gap-2">
+                    <Plus className="h-4 w-4" />
                     {t("addManual")}
                 </Button>
             </div>

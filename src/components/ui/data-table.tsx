@@ -73,7 +73,7 @@ export interface DataTableProps<TData, TValue> {
     }) => void
     /** Optional: Text for the empty state */
     emptyStateText?: string
-    /** Optional: Footer left side content (e.g., "Total Items") */
+    /** Optional: Footer left side content (e.g.,"Total Items") */
     footerContent?: React.ReactNode
     /** Optional: Callback for row click */
     onRowClick?: (row: TData) => void
@@ -226,7 +226,7 @@ export function DataTable<TData, TValue>({
                     }
                     return ""
                 })
-                .join(" ")
+                .join("")
 
             // AND logic: all terms must match
             return terms.every((term: string) => rowValue.includes(term))
@@ -300,7 +300,7 @@ export function DataTable<TData, TValue>({
                                             <TableHead
                                                 key={header.id}
                                                 className={cn(
-                                                    "h-10 text-xs font-semibold text-muted-foreground transition-all border-b border-border/40 relative group/head bg-muted/40 dark:bg-white/5",
+                                                    "h-10 text-xs font-semibold text-muted-foreground transition-all border-b border-border/40 relative group/head bg-white dark:bg-background",
                                                     !isLast && "border-r border-border/40",
                                                     responsiveClass,
                                                     isFirst && "pl-8 sticky left-0 z-30",
@@ -338,7 +338,7 @@ export function DataTable<TData, TValue>({
                                                                                 checked={column.getIsVisible()}
                                                                                 onCheckedChange={(value) => column.toggleVisibility(!!value)}
                                                                             >
-                                                                                {column.id.replace("_", " ")}
+                                                                                {column.id.replace("_", "")}
                                                                             </DropdownMenuCheckboxItem>
                                                                         ))}
                                                                 </div>
@@ -371,12 +371,13 @@ export function DataTable<TData, TValue>({
                         </TableHeader>
                         <TableBody>
                             {table.getRowModel().rows?.length ? (
-                                table.getRowModel().rows.map((row) => (
+                                table.getRowModel().rows.map((row, rowIndex) => (
                                     <TableRow
                                         key={row.id}
                                         className={cn(
                                             "border-b border-border/20 transition-colors group/row",
-                                            onRowClick && "cursor-pointer"
+                                            onRowClick && "cursor-pointer",
+                                            rowIndex % 2 === 0 ? "bg-white dark:bg-background" : "bg-slate-50/80 dark:bg-white/[0.02]"
                                         )}
                                         onClick={() => onRowClick?.(row.original)}
                                     >
@@ -396,8 +397,9 @@ export function DataTable<TData, TValue>({
                                                 <TableCell
                                                     key={cell.id}
                                                     className={cn(
-                                                        "py-4 border-b border-border/20 bg-card group-hover/row:bg-muted/30 transition-all",
-                                                        row.getIsSelected() && "bg-primary/5 group-hover/row:bg-primary/[0.08]",
+                                                        "py-4 border-b border-border/20 transition-all group-hover/row:bg-primary/[0.04]",
+                                                        rowIndex % 2 === 0 ? "bg-white dark:bg-background" : "bg-slate-50/80 dark:bg-white/[0.02]",
+                                                        row.getIsSelected() && "!bg-primary/5 group-hover/row:!bg-primary/[0.08]",
                                                         responsiveClass,
                                                         isFirst && "pl-8 sticky left-0 z-10",
                                                         isLast && "pr-8 sticky right-0 z-10"

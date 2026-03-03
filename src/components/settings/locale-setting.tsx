@@ -1,12 +1,12 @@
 "use client"
 
-import { useState } from "react"
-import { Card, CardContent, CardDescription, CardHeader, CardTitle, CardFooter } from "@/components/ui/card"
-import { Button } from "@/components/ui/button"
-import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select"
-import { updateDefaultLocale } from "@/app/actions/settings"
-import { toast } from "sonner"
-import { useTranslations } from "next-intl"
+import { useState } from"react"
+import { Card, CardContent, CardDescription, CardHeader, CardTitle, CardFooter } from"@/components/ui/card"
+import { Button } from"@/components/ui/button"
+import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from"@/components/ui/select"
+import { updateDefaultLocale } from"@/app/actions/settings"
+import { toast } from"sonner"
+import { useTranslations } from"next-intl"
 
 interface LocaleSettingProps {
     initialLocale: string
@@ -25,7 +25,7 @@ export function LocaleSetting({ initialLocale }: LocaleSettingProps) {
         if (result.success) {
             toast.success("Default locale updated successfully")
         } else {
-            toast.error(result.error || "Failed to update default locale")
+            toast.error(result.error ||"Failed to update default locale")
         }
     }
 
@@ -40,10 +40,10 @@ export function LocaleSetting({ initialLocale }: LocaleSettingProps) {
             <CardContent className="pt-6 space-y-6">
                 <div className="space-y-4">
                     <div className="grid gap-2">
-                        <label className="text-sm font-semibold text-muted-foreground uppercase tracking-wider">Default Locale</label>
+                        <label className="text-sm font-semibold text-muted-foreground">Default Locale</label>
                         <Select value={locale} onValueChange={setLocale}>
                             <SelectTrigger className="w-full md:w-[300px] h-11 border-primary/20 bg-background/50 backdrop-blur-sm">
-                                <SelectValue placeholder="Select a language" />
+                                <SelectValue placeholder="Select a language"/>
                             </SelectTrigger>
                             <SelectContent className="backdrop-blur-md">
                                 <SelectItem value="en">🇺🇸 English (United States)</SelectItem>
@@ -55,7 +55,7 @@ export function LocaleSetting({ initialLocale }: LocaleSettingProps) {
                     </div>
 
                     <div className="p-4 rounded-xl bg-primary/5 border border-primary/10 space-y-2">
-                        <h4 className="text-xs font-bold text-primary uppercase">Administrative Replication</h4>
+                        <h4 className="text-xs font-semibold text-primary">Administrative Replication</h4>
                         <p className="text-sm text-muted-foreground leading-relaxed">
                             This setting will automatically be replicated to all new users who gain access to the platform without a pre-selected language preference. Existing users will maintain their current preferences.
                         </p>
@@ -66,9 +66,9 @@ export function LocaleSetting({ initialLocale }: LocaleSettingProps) {
                 <Button
                     onClick={handleSave}
                     disabled={isLoading || locale === initialLocale}
-                    className="ml-auto px-8 h-10 font-bold tracking-tight shadow-md hover:shadow-lg transition-transform active:scale-95"
+                    className="ml-auto px-8 h-10 font-semibold tracking-tight shadow-md hover:shadow-lg transition-transform active:scale-95"
                 >
-                    {isLoading ? "Preserving Context..." : "Commit Platform Default"}
+                    {isLoading ?"Preserving Context...":"Commit Platform Default"}
                 </Button>
             </CardFooter>
         </Card>

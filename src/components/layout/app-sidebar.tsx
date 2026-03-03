@@ -153,7 +153,7 @@ export function AppSidebar({ user }: AppSidebarProps) {
                                                             : "text-muted-foreground/70 group-hover/button:text-sidebar-foreground group-hover/button:scale-105"
                                                     )} />
                                                     <span className={cn(
-                                                        "font-semibold text-[13px] tracking-tight transition-colors duration-300 group-data-[collapsible=icon]:hidden",
+                                                        "font-medium text-[13px] tracking-tight transition-colors duration-300 group-data-[collapsible=icon]:hidden",
                                                         isActive ? "text-primary" : "text-sidebar-foreground/80"
                                                     )}>{item.title}</span>
                                                 </Link>
@@ -179,7 +179,7 @@ export function AppSidebar({ user }: AppSidebarProps) {
                                     <Sun className="h-[1.2rem] w-[1.2rem] rotate-0 scale-100 transition-all dark:-rotate-90 dark:scale-0 text-sidebar-foreground/50 group-hover/theme-toggle:text-primary" />
                                     <Moon className="absolute h-[1.2rem] w-[1.2rem] rotate-90 scale-0 transition-all dark:rotate-0 dark:scale-100 text-sidebar-foreground/50 group-hover/theme-toggle:text-primary" />
                                 </div>
-                                <span className="text-[13px] font-semibold text-sidebar-foreground/70 group-hover/theme-toggle:text-sidebar-foreground transition-colors group-data-[collapsible=icon]:hidden">
+                                <span className="text-[13px] font-medium text-sidebar-foreground/70 group-hover/theme-toggle:text-sidebar-foreground transition-colors group-data-[collapsible=icon]:hidden">
                                     {mounted && (theme === "dark" ? t("darkMode") : t("lightMode"))}
                                 </span>
                             </div>
