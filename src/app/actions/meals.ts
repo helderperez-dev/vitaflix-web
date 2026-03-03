@@ -23,6 +23,7 @@ export async function upsertMeal(data: Meal) {
             satiety: data.satiety,
             meal_types: data.mealTypes,
             restrictions: data.restrictions,
+            is_public: data.isPublic,
             publish_on: data.publishOn,
             images: data.images,
             updated_at: new Date().toISOString()
@@ -127,6 +128,23 @@ export async function bulkDeleteMeals(ids: string[]) {
 
     if (error) {
         console.error('Error deleting meals:', error)
+        return { error: error.message }
+    }
+
+    revalidatePath("/", "layout")
+    return { success: true }
+}
+
+export async function bulkUpdateMealStatus(ids: string[], isPublic: boolean) {
+    const supabase = await createClient()
+
+    const { error } = await supabase
+        .from("meals")
+        .update({ is_public: isPublic, updated_at: new Date().toISOString() })
+        .in("id", ids)
+
+    if (error) {
+        console.error('Error updating meals status:', error)
         return { error: error.message }
     }
 

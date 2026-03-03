@@ -1,10 +1,10 @@
 "use client"
 
-import * as React from"react"
-import { Check, ChevronsUpDown, Search, Loader2 } from"lucide-react"
-import { useTranslations, useLocale } from"next-intl"
-import { cn } from"@/lib/utils"
-import { Button } from"@/components/ui/button"
+import * as React from "react"
+import { Check, Plus, Search, Loader2 } from "lucide-react"
+import { useTranslations, useLocale } from "next-intl"
+import { cn } from "@/lib/utils"
+import { Button } from "@/components/ui/button"
 import {
     Command,
     CommandEmpty,
@@ -12,14 +12,14 @@ import {
     CommandInput,
     CommandItem,
     CommandList,
-} from"@/components/ui/command"
+} from "@/components/ui/command"
 import {
     Popover,
     PopoverContent,
     PopoverTrigger,
-} from"@/components/ui/popover"
-import { getProducts } from"@/app/actions/products"
-import { useDebounce } from"../../hooks/use-debounce"
+} from "@/components/ui/popover"
+import { getProducts } from "@/app/actions/products"
+import { useDebounce } from "../../hooks/use-debounce"
 
 interface ProductSelectorProps {
     onSelect: (product: any) => void
@@ -54,13 +54,13 @@ export function ProductSelector({ onSelect, placeholder, className }: ProductSel
                     variant="outline"
                     role="combobox"
                     aria-expanded={open}
-                    className={cn("w-full justify-between", className)}
+                    className={cn("w-full justify-center gap-2", className)}
                 >
+                    <Plus className="h-3.5 w-3.5 opacity-50" />
                     {placeholder || t("selectProduct")}
-                    <ChevronsUpDown className="ml-2 h-4 w-4 shrink-0 opacity-50"/>
                 </Button>
             </PopoverTrigger>
-            <PopoverContent className="w-[320px] p-0 shadow-2xl border-border/40 rounded-2xl backdrop-blur-xl bg-background/90"align="end">
+            <PopoverContent className="w-[320px] p-0 shadow-2xl border-border/40 rounded-2xl backdrop-blur-xl bg-background/90" align="end">
                 <Command shouldFilter={false} className="bg-transparent">
                     <CommandInput
                         placeholder={t("searchProduct")}
@@ -75,7 +75,7 @@ export function ProductSelector({ onSelect, placeholder, className }: ProductSel
                     >
                         {loading && (
                             <div className="flex flex-col items-center justify-center py-10 opacity-40">
-                                <Loader2 className="h-4 w-4 animate-spin text-primary"/>
+                                <Loader2 className="h-4 w-4 animate-spin text-primary" />
                                 <p className="mt-2 text-[10px] font-semibold text-primary">{commonT("loading")}</p>
                             </div>
                         )}
@@ -98,7 +98,7 @@ export function ProductSelector({ onSelect, placeholder, className }: ProductSel
                                 >
                                     <div className="h-10 w-10 rounded-lg bg-muted border border-border/40 flex items-center justify-center overflow-hidden shrink-0 group-hover:border-primary/20 transition-colors">
                                         {product.images?.[0]?.url ? (
-                                            <img src={product.images[0].url} alt=""className="h-full w-full object-cover"/>
+                                            <img src={product.images[0].url} alt="" className="h-full w-full object-cover" />
                                         ) : (
                                             <span className="text-[10px] font-semibold text-muted-foreground/30 italic">P</span>
                                         )}
@@ -112,7 +112,7 @@ export function ProductSelector({ onSelect, placeholder, className }: ProductSel
                                         </span>
                                     </div>
                                     <div className="ml-auto opacity-0 group-hover:opacity-100 transition-opacity">
-                                        <div className="h-1.5 w-1.5 rounded-full bg-primary"/>
+                                        <div className="h-1.5 w-1.5 rounded-full bg-primary" />
                                     </div>
                                 </CommandItem>
                             ))}

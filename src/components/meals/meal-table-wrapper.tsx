@@ -1,7 +1,7 @@
 "use client"
 
 import * as React from "react"
-import { Plus, Trash2, Clock, Maximize2 } from "lucide-react"
+import { Trash2, Clock, Maximize2, Plus, Loader2 } from "lucide-react"
 import { Button } from "@/components/ui/button"
 import { Badge } from "@/components/ui/badge"
 import { type Meal } from "@/shared-schemas/meal"
@@ -11,7 +11,7 @@ import { useLocale, useTranslations } from "next-intl"
 import { DataTable, SortableHeader } from "@/components/ui/data-table"
 import { useQueryState } from "nuqs"
 import { toast } from "sonner"
-import { motion } from "framer-motion"
+import { motion, AnimatePresence } from "framer-motion"
 import { ImageGalleryModal } from "@/components/shared/image-gallery-modal"
 import {
     AlertDialog,
@@ -23,15 +23,96 @@ import {
     AlertDialogHeader,
     AlertDialogTitle,
 } from "@/components/ui/alert-dialog"
+import { Switch } from "@/components/ui/switch"
 import { updateUserPreferences } from "@/app/actions/users"
-import { bulkDeleteMeals } from "@/app/actions/meals"
+import { bulkDeleteMeals, bulkUpdateMealStatus } from "@/app/actions/meals"
 import { getTags } from "@/app/actions/tags"
 import { type Tag } from "@/shared-schemas/tag"
+import { cn } from "@/lib/utils"
 import type { ColumnDef } from "@tanstack/react-table"
 
 interface MealTableWrapperProps {
     initialMeals: any[]
     userProfile?: any
+}
+
+function BulkStatusActions({ selectedRows, clearSelection }: { selectedRows: any[], clearSelection: () => void }) {
+    const commonT = useTranslations("Common")
+    // Determine the consensus status
+    const allPublic = selectedRows.every(r => r.is_public === true || r.is_public === 1)
+
+    const [targetPublic, setTargetPublic] = React.useState(allPublic)
+    const [isDirty, setIsDirty] = React.useState(false)
+    const [isLoading, setIsLoading] = React.useState(false)
+
+    // Reset when selection changes
+    React.useEffect(() => {
+        setTargetPublic(allPublic)
+        setIsDirty(false)
+    }, [allPublic, selectedRows])
+
+    const handleApply = async () => {
+        setIsLoading(true)
+        const ids = selectedRows.map(r => r.id)
+        const result = await bulkUpdateMealStatus(ids, targetPublic)
+
+        if (result.success) {
+            toast.success(`Successfully updated ${ids.length} meals`)
+            clearSelection()
+            setIsDirty(false)
+        } else {
+            toast.error(result.error || "Failed to update meals")
+        }
+        setIsLoading(false)
+    }
+
+    return (
+        <div className="flex items-center ml-auto">
+            <div className={cn(
+                "flex items-center gap-0 bg-slate-100/50 dark:bg-white/5 rounded-xl border border-slate-200 dark:border-white/10 transition-all overflow-hidden",
+                isDirty && "border-primary/30 ring-1 ring-primary/10"
+            )}>
+                <div className="flex items-center gap-3 px-3 py-1.5 border-r border-slate-200 dark:border-white/10">
+                    <span className={cn(
+                        "text-[10px] font-semibold tracking-wide transition-colors w-14 text-center select-none",
+                        targetPublic ? "text-primary" : "text-muted-foreground"
+                    )}>
+                        {targetPublic ? commonT("public") : commonT("private")}
+                    </span>
+                    <Switch
+                        checked={targetPublic}
+                        onCheckedChange={(val) => {
+                            setTargetPublic(val)
+                            setIsDirty(val !== allPublic)
+                        }}
+                        disabled={isLoading}
+                        className="data-[state=checked]:bg-primary"
+                    />
+                </div>
+
+                <AnimatePresence mode="popLayout" initial={false}>
+                    {isDirty && (
+                        <motion.button
+                            key="apply-btn"
+                            initial={{ width: 0, opacity: 0 }}
+                            animate={{ width: "auto", opacity: 1 }}
+                            exit={{ width: 0, opacity: 0 }}
+                            transition={{ duration: 0.2, ease: "easeInOut" }}
+                            onClick={handleApply}
+                            disabled={isLoading}
+                            className="bg-primary hover:bg-primary/90 text-white font-semibold h-9 px-4 text-xs flex items-center justify-center whitespace-nowrap active:scale-95 transition-all disabled:opacity-50"
+                        >
+                            {isLoading ? (
+                                <Loader2 className="h-3 w-3 animate-spin" />
+                            ) : (
+                                "Apply Changes"
+                            )}
+                        </motion.button>
+                    )}
+                </AnimatePresence>
+            </div>
+        </div>
+    )
 }
 
 export function MealTableWrapper({ initialMeals, userProfile }: MealTableWrapperProps) {
@@ -77,6 +158,7 @@ export function MealTableWrapper({ initialMeals, userProfile }: MealTableWrapper
                 restrictions: m.restrictions || [],
                 publishOn: m.publish_on,
                 images: m.images || [],
+                isPublic: m.is_public || false,
                 options: [], // Options are fetched on demand in the drawer
             } as Meal,
             nameLocale: m.name?.[locale] || m.name?.en || "Unnamed Meal",
@@ -220,6 +302,22 @@ export function MealTableWrapper({ initialMeals, userProfile }: MealTableWrapper
             size: 120,
         },
         {
+            accessorKey: "is_public",
+            header: ({ column }) => <SortableHeader column={column} title={t("table.status")} />,
+            cell: ({ row }) => {
+                const isPublic = row.original.mappedMeal.isPublic
+                return (
+                    <Badge variant={isPublic ? "secondary" : "outline"} className={cn(
+                        "capitalize text-[10px] h-5 px-2 border-none",
+                        isPublic ? "bg-emerald-500/10 text-emerald-600 dark:text-emerald-400" : "bg-slate-100 text-slate-600 dark:bg-white/5 dark:text-slate-400"
+                    )}>
+                        {isPublic ? commonT("public") : commonT("private")}
+                    </Badge>
+                )
+            },
+            size: 100,
+        },
+        {
             id: "actions",
             header: "",
             cell: ({ row }) => (
@@ -254,8 +352,8 @@ export function MealTableWrapper({ initialMeals, userProfile }: MealTableWrapper
         <div className="h-full flex flex-col">
             <div className="flex justify-between items-center shrink-0 px-10 py-8 border-b border-border/40 bg-white dark:bg-background relative overflow-hidden">
                 {/* Premium Background Accent */}
-                <div className="absolute top-0 right-0 w-1/3 h-full bg-gradient-to-l from-primary/5 to-transparent pointer-events-none" />
-                <div className="absolute top-0 left-0 w-64 h-64 bg-primary/5 rounded-full -translate-x-1/2 -translate-y-1/2 blur-[80px] pointer-events-none" />
+                <div className="absolute top-0 left-0 w-full h-10 bg-gradient-to-b from-slate-50 to-white pointer-events-none" />
+
 
                 <div className="flex flex-col relative z-10">
                     <div className="flex items-center gap-3">
@@ -271,11 +369,9 @@ export function MealTableWrapper({ initialMeals, userProfile }: MealTableWrapper
 
                 <Button
                     onClick={() => { setSelectedMeal(null); setDrawerOpen(true); }}
-                    className="bg-primary hover:bg-primary/95 text-white font-semibold transition-all active:scale-95 shadow-sm h-10 px-6 rounded-xl text-xs flex items-center gap-2 group/add"
+                    className="bg-primary hover:bg-primary/95 text-white font-semibold transition-all active:scale-95 shadow-sm h-10 px-6 rounded-xl text-xs flex items-center gap-2"
                 >
-                    <div className="p-0.5 rounded-md bg-white/20 transition-transform group-hover/add:rotate-90">
-                        <Plus className="h-3.5 w-3.5" />
-                    </div>
+                    <Plus className="h-4 w-4" />
                     {t("addMeal")}
                 </Button>
             </div>
@@ -295,7 +391,12 @@ export function MealTableWrapper({ initialMeals, userProfile }: MealTableWrapper
                 }}
                 selectionActions={(selectedRows, clearSelection) => (
                     <div className="flex items-center gap-6 w-full">
-                        <div className="h-4 w-px bg-slate-200 dark:bg-white/10 shrink-0 ml-auto" />
+                        <BulkStatusActions
+                            selectedRows={selectedRows}
+                            clearSelection={clearSelection}
+                        />
+
+                        <div className="h-4 w-px bg-slate-200 dark:bg-white/10 shrink-0" />
 
                         <Button
                             variant="ghost"

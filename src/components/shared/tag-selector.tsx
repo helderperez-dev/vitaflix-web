@@ -1,10 +1,10 @@
 "use client"
 
-import * as React from"react"
-import { ChevronsUpDown, Plus, Settings2, X, Loader2 } from"lucide-react"
-import { Checkbox } from"@/components/ui/checkbox"
-import { cn } from"@/lib/utils"
-import { Button } from"@/components/ui/button"
+import * as React from "react"
+import { Plus, Settings2, X, Loader2 } from "lucide-react"
+import { Checkbox } from "@/components/ui/checkbox"
+import { cn } from "@/lib/utils"
+import { Button } from "@/components/ui/button"
 import {
     Command,
     CommandEmpty,
@@ -13,17 +13,17 @@ import {
     CommandItem,
     CommandList,
     CommandSeparator,
-} from"@/components/ui/command"
+} from "@/components/ui/command"
 import {
     Popover,
     PopoverContent,
     PopoverTrigger,
-} from"@/components/ui/popover"
-import { Badge } from"@/components/ui/badge"
-import { getTags, type TagTable } from"@/app/actions/tags"
-import { type Tag } from"@/shared-schemas/tag"
-import { TagModal } from"@/components/shared/tag-modal"
-import { useLocale, useTranslations } from"next-intl"
+} from "@/components/ui/popover"
+import { Badge } from "@/components/ui/badge"
+import { getTags, type TagTable } from "@/app/actions/tags"
+import { type Tag } from "@/shared-schemas/tag"
+import { TagModal } from "@/components/shared/tag-modal"
+import { useLocale, useTranslations } from "next-intl"
 
 interface TagSelectorProps {
     title?: string
@@ -32,7 +32,7 @@ interface TagSelectorProps {
     table?: TagTable
 }
 
-export function TagSelector({ title ="Tags", selectedTagIds, onTagsChange, table ="tags"}: TagSelectorProps) {
+export function TagSelector({ title = "Tags", selectedTagIds, onTagsChange, table = "tags" }: TagSelectorProps) {
     const locale = useLocale()
     const t = useTranslations("Common")
     const [open, setOpen] = React.useState(false)
@@ -96,7 +96,7 @@ export function TagSelector({ title ="Tags", selectedTagIds, onTagsChange, table
     if (loading) {
         return (
             <div className="flex flex-col items-center justify-center py-12">
-                <Loader2 className="h-8 w-8 text-primary animate-spin"/>
+                <Loader2 className="h-8 w-8 text-primary animate-spin" />
             </div>
         )
     }
@@ -106,7 +106,7 @@ export function TagSelector({ title ="Tags", selectedTagIds, onTagsChange, table
             <div className="flex items-center justify-between gap-4">
                 <div className="flex items-center gap-3 flex-1">
                     <h3 className="font-semibold text-xs text-secondary dark:text-white whitespace-nowrap">{title}</h3>
-                    <div className="h-px w-full bg-border/60"/>
+                    <div className="h-px w-full bg-border/60" />
                 </div>
 
                 <Popover open={open} onOpenChange={setOpen}>
@@ -115,15 +115,15 @@ export function TagSelector({ title ="Tags", selectedTagIds, onTagsChange, table
                             variant="outline"
                             role="combobox"
                             aria-expanded={open}
-                            className="h-8 w-auto min-w-[140px] justify-start px-4 text-xs font-semibold border-border/50 bg-transparent text-muted-foreground hover:bg-muted/5 gap-2 rounded-xl transition-all"
+                            className="h-8 w-auto min-w-[80px] justify-center px-4 text-xs font-semibold border-border/50 bg-transparent text-muted-foreground hover:bg-muted/5 rounded-xl transition-all gap-2"
                         >
-                            <Plus className="h-3 w-3"/>
-                            {labels.select}
+                            <Plus className="h-3.5 w-3.5 opacity-50" />
+                            {t("add")}
                         </Button>
                     </PopoverTrigger>
-                    <PopoverContent className="w-[240px] p-0 shadow-2xl border-border/40 rounded-2xl backdrop-blur-xl bg-background/90"align="end">
+                    <PopoverContent className="w-[240px] p-0 shadow-2xl border-border/40 rounded-2xl backdrop-blur-xl bg-background/90" align="end">
                         <Command className="bg-transparent border-none">
-                            <CommandInput placeholder={labels.search} className="h-10 text-xs"/>
+                            <CommandInput placeholder={labels.search} className="h-10 text-xs" />
                             <CommandList
                                 className="max-h-[180px] overflow-y-auto custom-scrollbar"
                                 onWheel={(e) => e.stopPropagation()}
@@ -159,13 +159,13 @@ export function TagSelector({ title ="Tags", selectedTagIds, onTagsChange, table
                                                     setTagModalOpen(true)
                                                 }}
                                             >
-                                                <Settings2 className="h-3.5 w-3.5 text-muted-foreground/50"/>
+                                                <Settings2 className="h-3.5 w-3.5 text-muted-foreground/50" />
                                             </Button>
                                         </CommandItem>
                                     ))}
                                 </CommandGroup>
                             </CommandList>
-                            <CommandSeparator className="bg-border/40"/>
+                            <CommandSeparator className="bg-border/40" />
                             <div className="p-2">
                                 <Button
                                     variant="ghost"
@@ -174,9 +174,8 @@ export function TagSelector({ title ="Tags", selectedTagIds, onTagsChange, table
                                         setTagModalOpen(true)
                                         setOpen(false)
                                     }}
-                                    className="w-full justify-start text-xs py-2.5 px-3 text-primary font-semibold flex items-center gap-2 rounded-lg hover:bg-primary/5 transition-colors h-auto"
+                                    className="w-full justify-start text-xs py-2.5 px-3 text-primary font-semibold rounded-lg hover:bg-primary/5 transition-colors h-auto"
                                 >
-                                    <Plus className="h-4 w-4"/>
                                     {labels.create}
                                 </Button>
                             </div>
@@ -187,8 +186,8 @@ export function TagSelector({ title ="Tags", selectedTagIds, onTagsChange, table
 
             <div className="flex flex-wrap gap-2">
                 {selectedTags.length === 0 ? (
-                    <div className="w-full py-8 border-2 border-dashed border-border/40 rounded-2xl flex flex-col items-center justify-center bg-muted/5 group hover:border-primary/20 transition-all duration-500">
-                        <p className="text-xs font-semibold text-muted-foreground/30">{t("noTagsSelected")}</p>
+                    <div className="w-full py-6 border-2 border-dashed border-border/40 rounded-2xl flex flex-col items-center justify-center bg-muted/5 group hover:border-border/60 transition-all duration-500">
+                        <p className="text-[10px] font-semibold text-muted-foreground/40">{t("noItemAddedYet", { item: title })}</p>
                     </div>
                 ) : (
                     selectedTags.map((tag) => (
@@ -204,7 +203,7 @@ export function TagSelector({ title ="Tags", selectedTagIds, onTagsChange, table
                                 onClick={() => removeTag(tag.id!)}
                                 className="hover:text-destructive transition-colors p-1"
                             >
-                                <X className="h-3 w-3"/>
+                                <X className="h-3 w-3" />
                             </button>
                         </Badge>
                     ))

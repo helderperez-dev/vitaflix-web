@@ -1,11 +1,11 @@
 "use client"
 
-import * as React from"react"
-import { UploadCloud, X, Star, Loader2, GripVertical } from"lucide-react"
-import { toast } from"sonner"
-import type { ProductImage } from"@/shared-schemas/product"
-import { createClient } from"@/lib/supabase/client"
-import { cn } from"@/lib/utils"
+import * as React from "react"
+import { UploadCloud, X, Star, Loader2, GripVertical } from "lucide-react"
+import { toast } from "sonner"
+import type { ProductImage } from "@/shared-schemas/product"
+import { createClient } from "@/lib/supabase/client"
+import { cn } from "@/lib/utils"
 
 interface ImageUploaderProps {
     folder: string
@@ -98,7 +98,7 @@ export function ImageUploader({ folder, value = [], onChange, maxImages = 10 }: 
     // Drag and Drop handlers for reordering
     const handleDragStart = (e: React.DragEvent, index: number) => {
         setDraggedItemIndex(index)
-        e.dataTransfer.effectAllowed ="move"
+        e.dataTransfer.effectAllowed = "move"
     }
 
     const handleDragOver = (e: React.DragEvent, index: number) => {
@@ -131,9 +131,9 @@ export function ImageUploader({ folder, value = [], onChange, maxImages = 10 }: 
                         onDragOver={(e) => handleDragOver(e, index)}
                         onDragEnd={handleDragEnd}
                         className={cn(
-                          "relative group aspect-square rounded-2xl overflow-hidden border-2 bg-muted transition-all cursor-move shadow-sm hover:shadow-md",
-                            image.isDefault ?"border-primary/50 ring-2 ring-primary/10":"border-border/30",
-                            draggedItemIndex === index &&"opacity-50 scale-95"
+                            "relative group aspect-square rounded-2xl overflow-hidden border-2 transition-all cursor-move",
+                            image.isDefault ? "border-white ring-2 ring-black/5" : "border-border/30",
+                            draggedItemIndex === index && "opacity-50 scale-95"
                         )}
                     >
                         <img
@@ -146,14 +146,14 @@ export function ImageUploader({ folder, value = [], onChange, maxImages = 10 }: 
                         <div className="absolute inset-0 bg-black/40 opacity-0 group-hover:opacity-100 transition-opacity flex flex-col justify-between p-2.5">
                             <div className="flex justify-between items-start">
                                 <div className="p-1.5 bg-black/40 rounded-lg text-white/70 backdrop-blur-md">
-                                    <GripVertical className="h-4 w-4"/>
+                                    <GripVertical className="h-4 w-4" />
                                 </div>
                                 <button
                                     type="button"
                                     onClick={() => removeImage(index)}
                                     className="p-1.5 bg-red-500/80 hover:bg-red-500 text-white rounded-lg transition-colors backdrop-blur-md"
                                 >
-                                    <X className="h-3.5 w-3.5"/>
+                                    <X className="h-3.5 w-3.5" />
                                 </button>
                             </div>
                             <div className="flex justify-center">
@@ -161,14 +161,14 @@ export function ImageUploader({ folder, value = [], onChange, maxImages = 10 }: 
                                     type="button"
                                     onClick={() => setDefault(index)}
                                     className={cn(
-                                      "px-3 py-2 rounded-xl text-xs font-semibold flex items-center gap-2 transition-all active:scale-95",
+                                        "px-3 py-2 rounded-xl text-xs font-semibold flex items-center gap-2 transition-all active:scale-95",
                                         image.isDefault
-                                            ?"bg-primary text-primary-foreground shadow-lg shadow-primary/20"
-                                            :"bg-white/20 hover:bg-white/40 text-white backdrop-blur-md"
+                                            ? "bg-primary text-primary-foreground border-primary"
+                                            : "bg-white/20 hover:bg-white/40 text-white backdrop-blur-md"
                                     )}
                                 >
-                                    <Star className={cn("h-3 w-3", image.isDefault &&"fill-current")} />
-                                    {image.isDefault ?"Main Product":"Set as Main"}
+                                    <Star className={cn("h-3 w-3", image.isDefault && "fill-current")} />
+                                    {image.isDefault ? "Master" : "Set as Master"}
                                 </button>
                             </div>
                         </div>
@@ -180,10 +180,10 @@ export function ImageUploader({ folder, value = [], onChange, maxImages = 10 }: 
                     <div
                         onClick={() => !isUploading && fileInputRef.current?.click()}
                         className={cn(
-                          "relative aspect-square rounded-2xl border-2 border-dashed flex flex-col items-center justify-center transition-all cursor-pointer group shadow-sm",
+                            "relative aspect-square rounded-2xl border-2 border-dashed flex flex-col items-center justify-center transition-all cursor-pointer group",
                             isUploading
-                                ?"border-primary bg-primary/5 cursor-not-allowed ring-2 ring-primary/5"
-                                :"border-border/60 hover:border-primary/50 hover:bg-primary/[0.02] bg-muted/5 hover:shadow-md"
+                                ? "border-primary bg-primary/5 cursor-not-allowed ring-2 ring-primary/5"
+                                : "border-border/60 hover:border-primary/50 hover:bg-primary/[0.02] bg-muted/5 font-medium"
                         )}
                     >
                         <input
@@ -199,15 +199,15 @@ export function ImageUploader({ folder, value = [], onChange, maxImages = 10 }: 
                         {isUploading ? (
                             <>
                                 <div className="relative h-12 w-12 flex items-center justify-center mb-2">
-                                    <Loader2 className="absolute h-10 w-10 text-primary animate-spin"/>
-                                    <UploadCloud className="h-5 w-5 text-primary/40"/>
+                                    <Loader2 className="absolute h-10 w-10 text-primary animate-spin" />
+                                    <UploadCloud className="h-5 w-5 text-primary/40" />
                                 </div>
                                 <p className="text-xs font-semibold text-primary text-center px-2">Uploading...</p>
                             </>
                         ) : (
                             <>
-                                <div className="h-12 w-12 rounded-2xl bg-white dark:bg-slate-900 border border-border/50 flex items-center justify-center mb-3 group-hover:scale-110 transition-all shadow-sm group-hover:shadow-primary/10 group-hover:border-primary/30">
-                                    <UploadCloud className="h-6 w-6 text-muted-foreground group-hover:text-primary transition-colors"/>
+                                <div className="h-12 w-12 rounded-2xl bg-white dark:bg-slate-900 border border-border/50 flex items-center justify-center mb-3 group-hover:scale-105 transition-all group-hover:border-primary/30">
+                                    <UploadCloud className="h-6 w-6 text-muted-foreground group-hover:text-primary transition-colors" />
                                 </div>
                                 <p className="text-xs font-semibold text-muted-foreground/60 text-center px-4 group-hover:text-primary/70 transition-colors">
                                     {maxImages === 1 ? 'Add Logo' : 'Add Image'}

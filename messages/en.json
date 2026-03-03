@@ -14,6 +14,7 @@
         "public": "Public",
         "private": "Private",
         "status": "Status",
+        "add": "Add",
         "addLocalization": "Add localization",
         "noResults": "No results",
         "selectTags": "Select Tags",
@@ -37,7 +38,10 @@
         "noTagsSelected": "No tags selected",
         "pleaseCheckForm": "Please check the form for errors",
         "invalidFormat": "Please check this section for any errors.",
-        "translationsRequired": "At least one translation is required"
+        "translationsRequired": "At least one translation is required",
+        "noItemAddedYet": "No {item} added yet",
+        "brand": "Brand",
+        "done": "Done"
     },
     "Auth": {
         "welcome": "Welcome back",
@@ -124,7 +128,8 @@
             "cookTime": "Cook Time",
             "categories": "Categories",
             "dietaryTags": "Dietary Tags",
-            "satiety": "Satiety"
+            "satiety": "Satiety",
+            "status": "Status"
         },
         "kcal": "Kcal",
         "macros": "Macros",
@@ -160,8 +165,8 @@
         "backToVariations": "Back to Variations",
         "saveOption": "Save Option",
         "noSubstitutionsDefined": "No substitutions defined",
-        "syncingMetrics": "Syncing variation metrics",
-        "creatingNewVariation": "Creating new variation",
+        "syncingMetrics": "Customize the ingredients and nutritional values for this meal variation",
+        "creatingNewVariation": "Define specific ingredients and macros for this new meal option",
         "setAsDefaultOptionDescription": "Use this variation as the main reference for this meal",
         "selectProduct": "Select Product",
         "searchProduct": "Search products...",
@@ -172,7 +177,12 @@
         "noPrepSteps": "No preparation steps yet",
         "stepInstructions": "Step Instructions",
         "stepPlaceholder": "e.g. Boil the water and add the pasta...",
-        "addPrepStep": "Add Preparation Step"
+        "addPrepStep": "Add Preparation Step",
+        "visibilityControl": "Visibility Control",
+        "visibilityControlDescription": "Configure where and how this meal is displayed.",
+        "visibility": "Visibility",
+        "visibilityDescription": "Manage if this meal is visible to users across the platform.",
+        "step": "Step"
     },
     "Users": {
         "title": "Users",

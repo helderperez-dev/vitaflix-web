@@ -14,6 +14,7 @@
         "public": "Público",
         "private": "Privado",
         "status": "Estado",
+        "add": "Añadir",
         "addLocalization": "Añadir localización",
         "noResults": "Sin resultados",
         "selectTags": "Seleccionar Etiquetas",
@@ -37,7 +38,10 @@
         "noTagsSelected": "No hay etiquetas seleccionadas",
         "pleaseCheckForm": "Por favor, revise el formulario para corregir errores",
         "invalidFormat": "Por favor, revise esta sección para corregir errores.",
-        "translationsRequired": "Se requiere al menos una traducción"
+        "translationsRequired": "Se requiere al menos una traducción",
+        "noItemAddedYet": "Aún no hay {item}",
+        "brand": "Marca",
+        "done": "Listo"
     },
     "Auth": {
         "welcome": "Bienvenido de nuevo",
@@ -122,7 +126,8 @@
             "cookTime": "Tiempo Cocción",
             "categories": "Categorías",
             "dietaryTags": "Etiquetas Dietéticas",
-            "satiety": "Saciedad"
+            "satiety": "Saciedad",
+            "status": "Estado"
         },
         "kcal": "Kcal",
         "macros": "Macros",
@@ -158,8 +163,8 @@
         "backToVariations": "Volver a Variaciones",
         "saveOption": "Guardar Opción",
         "noSubstitutionsDefined": "No se han definido sustituciones",
-        "syncingMetrics": "Sincronizando métricas de variación",
-        "creatingNewVariation": "Creando nueva variación",
+        "syncingMetrics": "Personalice los ingredientes y valores nutricionales para esta variación de comida",
+        "creatingNewVariation": "Defina ingredientes específicos y macros para esta nueva opción de comida",
         "setAsDefaultOptionDescription": "Utilice esta variación como referencia principal para esta comida",
         "selectProduct": "Seleccionar Producto",
         "searchProduct": "Buscar productos...",
@@ -170,7 +175,12 @@
         "noPrepSteps": "Aún no hay pasos de preparación",
         "stepInstructions": "Instrucciones del paso",
         "stepPlaceholder": "p. ej. Hervir el agua y añadir la pasta...",
-        "addPrepStep": "Añadir Paso de Preparación"
+        "addPrepStep": "Añadir Paso de Preparación",
+        "visibilityControl": "Control de Visibilidad",
+        "visibilityControlDescription": "Configura dónde y cómo se muestra esta comida.",
+        "visibility": "Visibilidad",
+        "visibilityDescription": "Gestiona si esta comida es visible para los usuarios en toda la plataforma.",
+        "step": "Paso"
     },
     "Users": {
         "title": "Usuarios",

@@ -35,6 +35,7 @@ export const mealSchema = z.object({
     preparationMode: z.array(localizedStringSchema).default([]),
     satiety: z.number().min(0).max(10).optional(),
     restrictions: z.array(z.string().uuid()).optional(),
+    isPublic: z.boolean().default(false),
     publishOn: z.string().datetime().optional().nullable(),
     images: z.array(productImageSchema).default([]),
     options: z.array(mealOptionSchema).default([]),

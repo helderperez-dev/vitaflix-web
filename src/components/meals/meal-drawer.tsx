@@ -28,6 +28,7 @@ import {
     SheetFooter,
 } from "@/components/ui/sheet"
 import { Badge } from "@/components/ui/badge"
+import { Switch } from "@/components/ui/switch"
 import { mealSchema, type Meal } from "@/shared-schemas/meal"
 import { upsertMeal } from "@/app/actions/meals"
 import { TranslationFields } from "@/components/shared/translation-fields"
@@ -85,6 +86,7 @@ export function MealDrawer({ open, onOpenChange, meal }: MealDrawerProps) {
             restrictions: [],
             publishOn: null,
             images: [],
+            isPublic: false,
             id: formId,
             options: [],
         },
@@ -110,6 +112,7 @@ export function MealDrawer({ open, onOpenChange, meal }: MealDrawerProps) {
                     mealTypes: ensureArray((meal as any).meal_types || (meal as any).mealTypes),
                     preparationMode: ensureArray((meal as any).preparation_mode || (meal as any).preparationMode),
                     restrictions: ensureArray((meal as any).restrictions || (meal as any).restrictions),
+                    isPublic: (meal as any).is_public ?? (meal as any).isPublic ?? false,
                     options: options || []
                 })
             } else {
@@ -122,6 +125,7 @@ export function MealDrawer({ open, onOpenChange, meal }: MealDrawerProps) {
                     restrictions: [],
                     publishOn: null,
                     images: [],
+                    isPublic: false,
                     id: crypto.randomUUID(),
                     options: []
                 })
@@ -190,9 +194,9 @@ export function MealDrawer({ open, onOpenChange, meal }: MealDrawerProps) {
         <Sheet open={open} onOpenChange={onOpenChange}>
             <SheetContent className="sm:max-w-2xl p-0 flex flex-col bg-background border-l border-border">
                 {/* High-End Ambient Glow */}
-                <div className="absolute top-0 left-0 right-0 h-[500px] bg-gradient-to-b from-primary/15 via-primary/[0.02] to-transparent pointer-events-none" />
+                <div className="absolute top-0 left-0 right-0 h-[500px] bg-gradient-to-b from-slate-50 via-white to-white pointer-events-none -z-10" />
 
-                <div className="flex-1 flex flex-col min-h-0 overflow-hidden">
+                <div className="flex-1 flex flex-col min-h-0 overflow-hidden relative z-10">
                     {!isEditingOption && (
                         <SheetHeader className="px-8 py-6 space-y-3">
                             <div>
@@ -290,12 +294,14 @@ export function MealDrawer({ open, onOpenChange, meal }: MealDrawerProps) {
 
                                         {/* Media Gallery */}
                                         <div className="space-y-8">
-                                            <div className="flex items-center gap-3">
-                                                <div className="flex flex-col">
-                                                    <h3 className="font-semibold text-xs text-secondary dark:text-white">{t("mediaGallery")}</h3>
-                                                    <p className="text-[10px] text-muted-foreground/60">{t("mediaGalleryDescription")}</p>
+                                            <div className="flex items-center justify-between gap-4">
+                                                <div className="flex items-center gap-3 flex-1">
+                                                    <div className="flex flex-col">
+                                                        <h3 className="font-semibold text-xs text-secondary dark:text-white">{t("mediaGallery")}</h3>
+                                                        <p className="text-[10px] text-muted-foreground/60">{t("mediaGalleryDescription")}</p>
+                                                    </div>
+                                                    <div className="h-px flex-1 bg-border/60" />
                                                 </div>
-                                                <div className="h-px flex-1 bg-border/60 ml-4" />
                                             </div>
                                             <ImageUploader
                                                 folder={`meals/${form.watch("id") || formId}`}
@@ -412,6 +418,7 @@ export function MealDrawer({ open, onOpenChange, meal }: MealDrawerProps) {
                                             </div>
                                         </div>
 
+
                                         {/* Preparation Mode */}
                                         <div className="pt-4 space-y-4">
                                             <PreparationSteps
@@ -424,6 +431,42 @@ export function MealDrawer({ open, onOpenChange, meal }: MealDrawerProps) {
                                                     {translateError((form.formState.errors.preparationMode as any).message)}
                                                 </p>
                                             )}
+                                        </div>
+
+                                        {/* Visibility */}
+                                        <div className="space-y-10">
+                                            <div className="flex items-center gap-3">
+                                                <div className="flex flex-col">
+                                                    <h3 className="font-semibold text-xs text-secondary dark:text-white">{t("visibilityControl")}</h3>
+                                                    <p className="text-[10px] text-muted-foreground/60">{t("visibilityControlDescription")}</p>
+                                                </div>
+                                                <div className="h-px flex-1 bg-border/60 ml-4" />
+                                            </div>
+                                            <div className="p-4 rounded-xl bg-muted/20 border border-border/60 group transition-all duration-300 hover:bg-muted/30">
+                                                <FormField
+                                                    control={form.control}
+                                                    name="isPublic"
+                                                    render={({ field }) => (
+                                                        <FormItem className="flex flex-row items-center justify-between space-y-0">
+                                                            <div className="space-y-0.5">
+                                                                <FormLabel className="text-xs font-semibold text-secondary dark:text-white">
+                                                                    {field.value ? commonT("public") : commonT("private")}
+                                                                </FormLabel>
+                                                                <p className="text-[10px] text-muted-foreground/60">
+                                                                    {t("visibilityDescription")}
+                                                                </p>
+                                                            </div>
+                                                            <FormControl>
+                                                                <Switch
+                                                                    checked={field.value}
+                                                                    onCheckedChange={field.onChange}
+                                                                    className="data-[state=checked]:bg-primary"
+                                                                />
+                                                            </FormControl>
+                                                        </FormItem>
+                                                    )}
+                                                />
+                                            </div>
                                         </div>
                                     </div>
                                 </div>
@@ -444,7 +487,7 @@ export function MealDrawer({ open, onOpenChange, meal }: MealDrawerProps) {
                             </div>
 
                             {!isEditingOption && (
-                                <SheetFooter className="px-8 py-8 border-t flex flex-row items-center justify-end gap-3 bg-muted/5">
+                                <SheetFooter className="px-6 py-4 border-t flex flex-row items-center justify-end gap-2 bg-muted/5">
                                     <Button
                                         type="button"
                                         variant="outline"

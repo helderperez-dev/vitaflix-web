@@ -4,7 +4,7 @@ import * as React from "react"
 import { useForm, useFieldArray } from "react-hook-form"
 import { zodResolver } from "@hookform/resolvers/zod"
 import { useTranslations, useLocale } from "next-intl"
-import { Trash2, Scale, Soup, Info, Image as ImageIcon, ChevronLeft, Save, X, Loader2 } from "lucide-react"
+import { Trash2, Soup, Info, Image as ImageIcon, Save, X, Loader2 } from "lucide-react"
 import { mealOptionSchema, type MealOption } from "@/shared-schemas/meal"
 import { Button } from "@/components/ui/button"
 import {
@@ -112,38 +112,31 @@ export function MealOptionForm({
     const locale = useLocale()
 
     return (
-        <div className="flex flex-col h-full animate-in fade-in slide-in-from-right-4 duration-300 bg-background">
-            {/* Minimalist Header */}
-            <div className="px-8 py-8 border-b bg-muted/5 space-y-5">
-                <Button
-                    type="button"
-                    variant="ghost"
-                    size="sm"
-                    onClick={onCancel}
-                    className="h-8 -ml-3 text-muted-foreground/60 hover:text-foreground gap-2 transition-colors rounded-lg group px-3"
-                >
-                    <ChevronLeft className="h-4 w-4 transition-transform group-hover:-translate-x-0.5" />
-                    <span className="text-[10px] font-semibold">{t("backToVariations")}</span>
-                </Button>
+        <div className="flex flex-col h-full bg-background relative overflow-hidden">
+            {/* Ambient Glow */}
+            <div className="absolute top-0 left-0 right-0 h-[500px] bg-gradient-to-b from-slate-50 via-white to-white pointer-events-none -z-10" />
 
-                <div className="space-y-1">
-                    <h3 className="text-xl font-semibold text-secondary dark:text-foreground">
+            {/* Header */}
+            <div className="px-8 py-6 space-y-3 relative z-10">
+                <div>
+                    <h3 className="text-2xl font-semibold tracking-tight text-secondary dark:text-foreground">
                         {initialData?.id ? t("editMealOption") : t("addMealOption")}
                     </h3>
-                    <p className="text-[10px] text-muted-foreground/60   font-semibold">
+                    <p className="text-sm text-muted-foreground font-medium">
                         {initialData?.id ? t("syncingMetrics") : t("creatingNewVariation")}
                     </p>
                 </div>
             </div>
 
-            <div className="flex-1 min-h-0 overflow-y-auto overflow-x-hidden px-8 py-10 custom-scrollbar">
+            <div className="flex-1 min-h-0 overflow-y-auto px-8 py-4 custom-scrollbar relative z-10">
                 <Form {...form}>
-                    <div className="space-y-10 pb-10">
+                    <div className="space-y-14 pb-12">
                         {/* Ingredients Section */}
-                        <div className="space-y-6">
+                        <div className="space-y-8">
                             <div className="flex items-center justify-between gap-4">
-                                <div className="flex items-center gap-3">
-                                    <h3 className="font-semibold text-xs   text-secondary dark:text-foreground">{t("ingredientsAndSubstitutions")}</h3>
+                                <div className="flex items-center gap-2 flex-1">
+                                    <h3 className="font-semibold text-xs text-secondary dark:text-white whitespace-nowrap">{t("ingredientsAndSubstitutions")}</h3>
+                                    <div className="h-px w-full bg-border/60" />
                                 </div>
                                 <ProductSelector
                                     onSelect={(product) => {
@@ -162,8 +155,8 @@ export function MealOptionForm({
                                             }
                                         }))
                                     }}
-                                    placeholder={t("addIngredient")}
-                                    className="h-8 w-auto min-w-[140px] justify-start px-4 text-xs font-semibold border-border/50 bg-transparent text-muted-foreground hover:bg-muted/5 gap-2 rounded-xl transition-all"
+                                    placeholder={commonT("add")}
+                                    className="h-8 w-auto min-w-[80px] justify-center px-4 text-xs font-semibold border-border/50 bg-transparent text-muted-foreground hover:bg-muted/5 rounded-xl transition-all"
                                 />
                             </div>
 
@@ -193,33 +186,23 @@ export function MealOptionForm({
                                     </>
                                 )}
                             </div>
-
-                            <div className="pt-4 border-t border-border/40">
-                                <TranslationFields
-                                    form={form}
-                                    namePrefix="substitutionNotes"
-                                    label={t("substitutionNotes")}
-                                    placeholder={t("substitutionNotesPlaceholder")}
-                                />
-                            </div>
                         </div>
 
-                        <Separator className="bg-border/40" />
-
-                        {/* Nutrition Section */}
-                        <div className="space-y-6">
-                            <div className="flex items-center gap-3">
-                                <h3 className="font-semibold text-xs   text-secondary dark:text-foreground">{t("nutritionalInfo")}</h3>
+                        <div className="space-y-8">
+                            <div className="flex items-center justify-between gap-4">
+                                <div className="flex items-center gap-2 flex-1">
+                                    <h3 className="font-semibold text-xs text-secondary dark:text-white whitespace-nowrap">{t("nutritionalInfo")}</h3>
+                                    <div className="h-px w-full bg-border/60" />
+                                </div>
                             </div>
 
-                            <div className="grid grid-cols-1 md:grid-cols-2 gap-8 bg-muted/5 p-6 rounded-xl border border-border/40">
+                            <div className="grid grid-cols-1 md:grid-cols-2 gap-x-12 gap-y-10 bg-muted/5 p-8 rounded-2xl border border-border/40">
                                 <FormField
                                     control={form.control}
                                     name="kcal"
                                     render={({ field, fieldState }) => (
                                         <FormItem className="col-span-full">
                                             <div className="flex items-center gap-2 mb-2">
-                                                <Scale className="h-3 w-3 text-orange-500/60" />
                                                 <FormLabel className="text-[10px] font-semibold text-muted-foreground/40">{t("totalKcal")}</FormLabel>
                                             </div>
                                             <FormControl>
@@ -308,9 +291,12 @@ export function MealOptionForm({
                         </div>
 
                         {/* Images Section */}
-                        <div className="space-y-6">
-                            <div className="flex items-center gap-3">
-                                <h3 className="font-semibold text-xs   text-secondary dark:text-foreground">{t("optionImages")}</h3>
+                        <div className="space-y-8">
+                            <div className="flex items-center justify-between gap-4">
+                                <div className="flex items-center gap-2 flex-1">
+                                    <h3 className="font-semibold text-xs text-secondary dark:text-white whitespace-nowrap">{t("optionImages")}</h3>
+                                    <div className="h-px w-full bg-border/60" />
+                                </div>
                             </div>
                             <ImageUploader
                                 folder={`meal-options/${initialData?.id || 'new'}`}
@@ -319,34 +305,46 @@ export function MealOptionForm({
                             />
                         </div>
 
-                        <FormField
-                            control={form.control}
-                            name="isDefault"
-                            render={({ field }) => (
-                                <FormItem className="flex flex-row items-center space-x-3 space-y-0 rounded-2xl border border-border/40 p-5 bg-primary/5 shadow-sm shadow-primary/5">
-                                    <FormControl>
-                                        <Checkbox
-                                            checked={field.value}
-                                            onCheckedChange={field.onChange}
-                                            className="h-5 w-5 rounded-md"
-                                        />
-                                    </FormControl>
-                                    <div className="space-y-0.5 leading-none">
-                                        <FormLabel className="text-xs font-semibold text-secondary dark:text-foreground cursor-pointer">
-                                            {t("setAsDefaultOption")}
-                                        </FormLabel>
-                                        <p className="text-[10px] text-muted-foreground/60  tracking-tight font-medium">
-                                            {t("setAsDefaultOptionDescription")}
-                                        </p>
-                                    </div>
-                                </FormItem>
-                            )}
-                        />
+                        {/* Substitution Notes */}
+                        <div className="space-y-8">
+                            <TranslationFields
+                                form={form}
+                                namePrefix="substitutionNotes"
+                                label={t("substitutionNotes")}
+                                placeholder={t("substitutionNotesPlaceholder")}
+                            />
+                        </div>
+
+                        <div className="pt-4">
+                            <FormField
+                                control={form.control}
+                                name="isDefault"
+                                render={({ field }) => (
+                                    <FormItem className="flex flex-row items-center space-x-4 space-y-0 rounded-2xl border border-border/40 p-6 bg-slate-50/30 dark:bg-slate-900/10 shadow-sm shadow-black/5 group transition-colors hover:bg-slate-50/50">
+                                        <FormControl>
+                                            <Checkbox
+                                                checked={field.value}
+                                                onCheckedChange={field.onChange}
+                                                className="h-5 w-5 rounded-md data-[state=checked]:bg-primary data-[state=checked]:border-primary"
+                                            />
+                                        </FormControl>
+                                        <div className="space-y-1 leading-none">
+                                            <FormLabel className="text-sm font-semibold text-secondary dark:text-foreground cursor-pointer">
+                                                {t("setAsDefaultOption")}
+                                            </FormLabel>
+                                            <p className="text-[11px] text-muted-foreground/60 leading-relaxed font-medium">
+                                                {t("setAsDefaultOptionDescription")}
+                                            </p>
+                                        </div>
+                                    </FormItem>
+                                )}
+                            />
+                        </div>
                     </div>
                 </Form>
             </div>
 
-            <div className="shrink-0 px-8 py-8 border-t flex flex-row items-center justify-end gap-3 bg-muted/5 shadow-[0_-1px_3px_rgba(0,0,0,0.05)]">
+            <div className="px-6 py-4 border-t flex flex-row items-center justify-end gap-2 bg-muted/5">
                 <Button
                     type="button"
                     variant="outline"
@@ -358,10 +356,9 @@ export function MealOptionForm({
                 <Button
                     type="button"
                     onClick={form.handleSubmit(handleSubmit)}
-                    className="h-10 px-8 bg-primary hover:bg-primary/90 text-white font-semibold text-xs shadow-sm shadow-primary/5 transition-all active:scale-[0.98] gap-2"
+                    className="h-10 px-8 bg-primary hover:bg-primary/90 text-white font-semibold text-xs shadow-sm shadow-primary/5 transition-all active:scale-[0.98]"
                 >
-                    <Save className="h-4 w-4" />
-                    {t("saveOption")}
+                    {commonT("save")}
                 </Button>
             </div>
         </div>
@@ -376,6 +373,7 @@ function IngredientItem({ index, form, productMap, onRemove, onProductCached }: 
     onProductCached: (p: any) => void;
 }) {
     const t = useTranslations("Meals")
+    const commonT = useTranslations("Common")
 
     const { fields: substitutions, append: appendSub, remove: removeSub } = useFieldArray({
         control: form.control,
@@ -402,7 +400,7 @@ function IngredientItem({ index, form, productMap, onRemove, onProductCached }: 
                 </div>
 
                 <div className="flex-1 min-w-0">
-                    <span className="text-[9px] font-semibold text-muted-foreground/50  transition-colors group-hover:text-primary/60">{t("ingredients")}</span>
+                    <span className="text-[9px] font-semibold text-muted-foreground/50 transition-colors group-hover:text-muted-foreground/70">{t("ingredients")}</span>
                     <h4 className="font-semibold text-xs text-secondary truncate">{productName}</h4>
                 </div>
 
@@ -430,7 +428,7 @@ function IngredientItem({ index, form, productMap, onRemove, onProductCached }: 
             <div className="p-4 bg-muted/2">
                 <div className="flex items-center justify-between mb-4">
                     <div className="flex items-center gap-2">
-                        <span className="text-[9px] font-semibold text-muted-foreground/50  transition-colors group-hover:text-primary/60">{t("substitutions")}</span>
+                        <span className="text-[9px] font-semibold text-muted-foreground/50 transition-colors group-hover:text-muted-foreground/70">{t("substitutions")}</span>
                     </div>
                     <ProductSelector
                         onSelect={(p) => {
@@ -441,8 +439,8 @@ function IngredientItem({ index, form, productMap, onRemove, onProductCached }: 
                             })
                             onProductCached(p)
                         }}
-                        placeholder={t("addSubstitution")}
-                        className="h-8 w-auto min-w-[140px] justify-start px-4 text-xs font-semibold border-border/50 bg-transparent text-muted-foreground hover:bg-muted/5 gap-2 rounded-xl transition-all"
+                        placeholder={commonT("add")}
+                        className="h-8 w-auto min-w-[80px] justify-center px-4 text-xs font-semibold border-border/50 bg-transparent text-muted-foreground hover:bg-muted/5 rounded-xl transition-all"
                     />
                 </div>
 
@@ -455,7 +453,7 @@ function IngredientItem({ index, form, productMap, onRemove, onProductCached }: 
                             const subName = subProduct?.name?.[locale] || subProduct?.name?.en || subProduct?.name?.["pt-br"] || subProduct?.name?.["pt-pt"] || t("unnamedProduct")
 
                             return (
-                                <div key={sub.id} className="flex items-center gap-3 p-2 rounded-lg bg-muted/10 border border-border/20 transition-colors hover:border-primary/20">
+                                <div key={sub.id} className="flex items-center gap-3 p-2 rounded-lg bg-muted/10 border border-border/20 transition-colors">
                                     <div className="h-8 w-8 rounded-md bg-muted border border-border/40 flex items-center justify-center overflow-hidden shrink-0">
                                         {subProduct?.image?.url ? (
                                             <img src={subProduct.image.url} alt={subName} className="h-full w-full object-cover" />

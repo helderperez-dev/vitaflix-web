@@ -14,6 +14,7 @@
         "public": "Público",
         "private": "Privado",
         "status": "Estado",
+        "add": "Adicionar",
         "addLocalization": "Adicionar localização",
         "noResults": "Sem resultados",
         "selectTags": "Selecionar Etiquetas",
@@ -37,7 +38,10 @@
         "noTagsSelected": "Nenhuma etiqueta selecionada",
         "pleaseCheckForm": "Por favor, verifique o formulário para erros",
         "invalidFormat": "Por favor, verifique esta secção para encontrar erros.",
-        "translationsRequired": "Pelo menos uma tradução é obrigatória"
+        "translationsRequired": "Pelo menos uma tradução é obrigatória",
+        "noItemAddedYet": "Ainda não há {item} adicionado",
+        "brand": "Marca",
+        "done": "Concluído"
     },
     "Auth": {
         "welcome": "Bem-vindo de volta",
@@ -124,7 +128,8 @@
             "cookTime": "Tempo de Prep.",
             "categories": "Categorias",
             "dietaryTags": "Etiquetas Dietéticas",
-            "satiety": "Saciedade"
+            "satiety": "Saciedade",
+            "status": "Estado"
         },
         "kcal": "Kcal",
         "macros": "Macros",
@@ -172,7 +177,12 @@
         "noPrepSteps": "Ainda não há passos de preparação",
         "stepInstructions": "Instruções do passo",
         "stepPlaceholder": "ex: Ferva a água e adicione a massa...",
-        "addPrepStep": "Adicionar Passo de Preparação"
+        "addPrepStep": "Adicionar Passo de Preparação",
+        "visibilityControl": "Controlo de Visibilidade",
+        "visibilityControlDescription": "Configure onde e como esta refeição é exibida.",
+        "visibility": "Visibilidade",
+        "visibilityDescription": "Gerencie se esta refeição está visível para os utilizadores em toda a plataforma.",
+        "step": "Passo"
     },
     "Users": {
         "title": "Utilizadores",

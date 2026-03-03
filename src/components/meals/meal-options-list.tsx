@@ -1,20 +1,20 @@
 "use client"
 
-import * as React from"react"
-import { Plus, CheckCircle2, Scale, Soup, MoreHorizontal, Edit2, Trash2, Star, Image as ImageIcon } from"lucide-react"
-import { useTranslations } from"next-intl"
+import * as React from "react"
+import { CheckCircle2, Soup, MoreHorizontal, Edit2, Trash2, Star, Image as ImageIcon, Plus } from "lucide-react"
+import { useTranslations } from "next-intl"
 
-import { Button } from"@/components/ui/button"
+import { Button } from "@/components/ui/button"
 import {
     DropdownMenu,
     DropdownMenuContent,
     DropdownMenuItem,
     DropdownMenuSeparator,
     DropdownMenuTrigger,
-} from"@/components/ui/dropdown-menu"
-import { MealOption } from"@/shared-schemas/meal"
-import { MealOptionForm } from"./meal-option-form"
-import { cn } from"@/lib/utils"
+} from "@/components/ui/dropdown-menu"
+import { MealOption } from "@/shared-schemas/meal"
+import { MealOptionForm } from "./meal-option-form"
+import { cn } from "@/lib/utils"
 
 interface MealOptionsListProps {
     mealId: string
@@ -95,16 +95,16 @@ export function MealOptionsList({ mealId, options, onOptionsChange, onEditingCha
             <div className="flex items-center justify-between gap-4">
                 <div className="flex items-center gap-3 flex-1">
                     <h3 className="font-semibold text-xs text-secondary dark:text-white whitespace-nowrap">{t("mealVariations")}</h3>
-                    <div className="h-px w-full bg-border/60"/>
+                    <div className="h-px w-full bg-border/60" />
                 </div>
                 <Button
                     type="button"
                     variant="outline"
                     onClick={handleAddOption}
-                    className="h-8 w-auto min-w-[140px] justify-start px-4 text-xs font-semibold border-primary/20 bg-transparent text-primary hover:bg-primary/5 gap-2 rounded-xl transition-all"
+                    className="h-8 w-auto min-w-[80px] justify-center px-4 text-xs font-semibold border-border/50 bg-transparent text-muted-foreground hover:bg-muted/5 rounded-xl transition-all gap-2"
                 >
-                    <Plus className="h-3 w-3"/>
-                    <span>{t("addOption")}</span>
+                    <Plus className="h-3.5 w-3.5 opacity-50" />
+                    {commonT("add")}
                 </Button>
             </div>
 
@@ -112,22 +112,23 @@ export function MealOptionsList({ mealId, options, onOptionsChange, onEditingCha
                 {options.length === 0 ? (
                     <div className="flex flex-col items-center justify-center p-12 rounded-3xl border-2 border-dashed border-border/40 bg-muted/5 gap-3 text-center transition-all hover:bg-muted/10">
                         <div className="h-12 w-12 rounded-2xl bg-muted/30 flex items-center justify-center">
-                            <Soup className="h-6 w-6 text-muted-foreground/30"/>
+                            <Soup className="h-6 w-6 text-muted-foreground/30" />
                         </div>
                         <div className="space-y-1">
                             <p className="text-sm font-semibold text-secondary dark:text-foreground">{t("noOptionsYet")}</p>
-                            <p className="text-[10px] text-muted-foreground/60 max-w-[200px] font-medium leading-relaxed">{t("addOptionDescription") ||"Start by adding your first meal variation with custom ingredients."}</p>
+                            <p className="text-[10px] text-muted-foreground/60 max-w-[200px] font-medium leading-relaxed">{t("addOptionDescription") || "Start by adding your first meal variation with custom ingredients."}</p>
                         </div>
                     </div>
                 ) : (
                     options.map((option, index) => (
                         <div
                             key={option.id}
+                            onClick={() => handleEditOption(option)}
                             className={cn(
-                              "relative group overflow-hidden rounded-2xl border transition-all duration-300",
+                                "relative group overflow-hidden rounded-2xl border transition-all duration-300 cursor-pointer hover:shadow-lg hover:shadow-black/5 active:scale-[0.99]",
                                 option.isDefault
-                                    ?"bg-primary/[0.03] border-primary/20 shadow-sm shadow-primary/5"
-                                    :"bg-white dark:bg-slate-900 border-border/40 hover:border-primary/30 hover:shadow-md hover:shadow-black/5"
+                                    ? "bg-slate-50/50 dark:bg-slate-900/50 border-primary/20"
+                                    : "bg-white dark:bg-slate-900 border-border/40 hover:border-border/60"
                             )}
                         >
                             <div className="p-5 flex items-center gap-5">
@@ -135,19 +136,19 @@ export function MealOptionsList({ mealId, options, onOptionsChange, onEditingCha
                                 <div className="flex flex-col items-center gap-2">
                                     <div
                                         className={cn(
-                                          "h-10 w-10 rounded-xl flex items-center justify-center transition-all",
+                                            "h-10 w-10 rounded-xl flex items-center justify-center transition-all border",
                                             option.isDefault
-                                                ?"bg-primary text-white shadow-lg shadow-primary/20"
-                                                :"bg-muted/30 text-muted-foreground/40 group-hover:bg-primary/10 group-hover:text-primary/60"
+                                                ? "bg-primary/5 text-primary border-primary/20 shadow-sm"
+                                                : "bg-muted/30 text-muted-foreground/30 border-transparent group-hover:bg-primary/5 group-hover:text-primary/40"
                                         )}
                                     >
-                                        <CheckCircle2 className={cn("h-5 w-5", option.isDefault ?"animate-in zoom-in-50":"opacity-40")} />
+                                        <CheckCircle2 className={cn("h-5 w-5", option.isDefault ? "animate-in zoom-in-50" : "opacity-30")} />
                                     </div>
                                     <span className={cn(
-                                      "text-[9px] font-semibold   transition-colors",
-                                        option.isDefault ?"text-primary":"text-muted-foreground/30 group-hover:text-primary/40"
+                                        "text-[9px] font-bold tracking-tight transition-colors",
+                                        option.isDefault ? "text-primary/70" : "text-muted-foreground/30 group-hover:text-primary/40"
                                     )}>
-                                        {option.isDefault ? t("default") : `#${index + 1}`}
+                                        {option.isDefault ? t("default").toUpperCase() : `#${index + 1}`}
                                     </span>
                                 </div>
 
@@ -156,9 +157,6 @@ export function MealOptionsList({ mealId, options, onOptionsChange, onEditingCha
                                     {/* Kcal Section */}
                                     <div className="flex flex-col justify-center">
                                         <div className="flex items-center gap-2 mb-1">
-                                            <div className="p-1 rounded-md bg-orange-500/10 text-orange-500">
-                                                <Scale className="h-3 w-3"/>
-                                            </div>
                                             <span className="text-[10px] font-semibold text-muted-foreground/40">{t("kcal")}</span>
                                         </div>
                                         <div className="flex items-baseline gap-1">
@@ -169,18 +167,18 @@ export function MealOptionsList({ mealId, options, onOptionsChange, onEditingCha
                                     {/* Macros Grid */}
                                     <div className="col-span-1 md:col-span-2 flex items-center gap-6">
                                         <div className="flex items-center gap-3">
-                                            <div className="h-8 w-[2px] bg-border/40 rounded-full"/>
+                                            <div className="h-8 w-[2px] bg-border/40 rounded-full" />
                                             <div className="space-y-1">
                                                 <div className="flex items-center gap-1.5">
-                                                    <span className="w-3.5 h-3.5 rounded-sm bg-blue-500/20 flex items-center justify-center text-[8px] font-semibold text-blue-600">P</span>
+                                                    <span className="w-3.5 h-3.5 rounded-sm bg-muted flex items-center justify-center text-[8px] font-bold text-muted-foreground/70">P</span>
                                                     <span className="text-xs font-semibold text-secondary dark:text-foreground">{option.macros?.protein || 0}g</span>
                                                 </div>
                                                 <div className="flex items-center gap-1.5">
-                                                    <span className="w-3.5 h-3.5 rounded-sm bg-emerald-500/20 flex items-center justify-center text-[8px] font-semibold text-emerald-600">C</span>
+                                                    <span className="w-3.5 h-3.5 rounded-sm bg-muted flex items-center justify-center text-[8px] font-bold text-muted-foreground/70">C</span>
                                                     <span className="text-xs font-semibold text-secondary dark:text-foreground">{option.macros?.carbs || 0}g</span>
                                                 </div>
                                                 <div className="flex items-center gap-1.5">
-                                                    <span className="w-3.5 h-3.5 rounded-sm bg-rose-500/20 flex items-center justify-center text-[8px] font-semibold text-rose-600">F</span>
+                                                    <span className="w-3.5 h-3.5 rounded-sm bg-muted flex items-center justify-center text-[8px] font-bold text-muted-foreground/70">F</span>
                                                     <span className="text-xs font-semibold text-secondary dark:text-foreground">{option.macros?.fat || 0}g</span>
                                                 </div>
                                             </div>
@@ -189,15 +187,18 @@ export function MealOptionsList({ mealId, options, onOptionsChange, onEditingCha
                                         {/* Ingredient count & photo indicator */}
                                         <div className="hidden lg:flex flex-col justify-center gap-1.5">
                                             <div className="flex items-center gap-1.5 text-muted-foreground/40">
-                                                <Soup className="h-3.5 w-3.5"/>
+                                                <Soup className="h-3.5 w-3.5" />
                                                 <span className="text-[10px] font-semibold">
-                                                    {(option as any).ingredients?.length || 0} {t("ingredients") ||"Items"}
+                                                    {(option as any).ingredients?.length || 0} {t("ingredients") || "Items"}
                                                 </span>
                                             </div>
                                             {option.images && option.images.length > 0 && (
-                                                <div className="flex items-center gap-1.5 text-primary/60">
-                                                    <ImageIcon className="h-3.5 w-3.5"/>
-                                                    <span className="text-[10px] font-semibold">{t("photoAttached")}</span>
+                                                <div className="h-8 w-8 rounded-lg overflow-hidden border border-border/40 shadow-sm transition-transform group-hover:scale-105">
+                                                    <img
+                                                        src={option.images[0].url}
+                                                        alt="Option Thumbnail"
+                                                        className="h-full w-full object-cover"
+                                                    />
                                                 </div>
                                             )}
                                         </div>
@@ -211,38 +212,36 @@ export function MealOptionsList({ mealId, options, onOptionsChange, onEditingCha
                                                     type="button"
                                                     variant="ghost"
                                                     size="icon"
+                                                    onClick={(e) => e.stopPropagation()}
                                                     className="h-9 w-9 rounded-xl bg-muted/20 hover:bg-muted/40 text-muted-foreground/60 hover:text-foreground transition-all active:scale-95"
                                                 >
-                                                    <MoreHorizontal className="h-4 w-4"/>
+                                                    <MoreHorizontal className="h-4 w-4" />
                                                 </Button>
                                             </DropdownMenuTrigger>
-                                            <DropdownMenuContent align="end"className="w-48 p-1.5 rounded-xl border-border/40 shadow-xl">
+                                            <DropdownMenuContent
+                                                align="end"
+                                                className="w-56 p-1.5 rounded-2xl shadow-2xl border-sidebar-border/50 backdrop-blur-xl bg-background/90 animate-in fade-in-0 zoom-in-95"
+                                            >
                                                 {!option.isDefault && (
                                                     <>
                                                         <DropdownMenuItem
                                                             onClick={() => handleSetDefault(option.id!)}
-                                                            className="rounded-lg text-xs font-semibold   py-2"
+                                                            className="rounded-lg text-[11px] font-semibold py-2.5 px-3 cursor-pointer"
                                                         >
-                                                            <Star className="h-4 w-4 mr-2.5 text-yellow-500/60"/>
                                                             {t("setAsDefaultOption")}
                                                         </DropdownMenuItem>
-                                                        <DropdownMenuSeparator className="my-1.5 opacity-50"/>
                                                     </>
                                                 )}
                                                 <DropdownMenuItem
                                                     onClick={() => handleEditOption(option)}
-                                                    className="rounded-lg text-xs font-semibold   py-2"
+                                                    className="rounded-lg text-[11px] font-semibold py-2.5 px-3 cursor-pointer"
                                                 >
-                                                    <Edit2 className="h-4 w-4 mr-2.5 text-primary/60"/>
                                                     {commonT("edit")}
                                                 </DropdownMenuItem>
-                                                <DropdownMenuSeparator className="my-1.5 opacity-50"/>
                                                 <DropdownMenuItem
-                                                    variant="destructive"
                                                     onClick={() => handleDeleteOption(option.id!)}
-                                                    className="rounded-lg text-xs font-semibold   py-2"
+                                                    className="rounded-lg text-[11px] font-semibold py-2.5 px-3 cursor-pointer"
                                                 >
-                                                    <Trash2 className="h-4 w-4 mr-2.5"/>
                                                     {commonT("delete")}
                                                 </DropdownMenuItem>
                                             </DropdownMenuContent>
@@ -251,8 +250,7 @@ export function MealOptionsList({ mealId, options, onOptionsChange, onEditingCha
                                 </div>
                             </div>
 
-                            {/* Accent line for hovering */}
-                            <div className="absolute left-0 top-0 bottom-0 w-[4px] bg-primary scale-y-0 group-hover:scale-y-100 transition-transform origin-center duration-300"/>
+
                         </div>
                     ))
                 )}

@@ -1,6 +1,6 @@
 "use client"
 
-import * as React from"react"
+import * as React from "react"
 import {
     ColumnDef,
     ColumnFiltersState,
@@ -13,7 +13,7 @@ import {
     getSortedRowModel,
     getFilteredRowModel,
     useReactTable,
-} from"@tanstack/react-table"
+} from "@tanstack/react-table"
 import {
     Table,
     TableBody,
@@ -21,8 +21,8 @@ import {
     TableHead,
     TableHeader,
     TableRow,
-} from"@/components/ui/table"
-import { Button } from"@/components/ui/button"
+} from "@/components/ui/table"
+import { Button } from "@/components/ui/button"
 import {
     DropdownMenu,
     DropdownMenuCheckboxItem,
@@ -30,15 +30,15 @@ import {
     DropdownMenuLabel,
     DropdownMenuSeparator,
     DropdownMenuTrigger,
-} from"@/components/ui/dropdown-menu"
-import { Checkbox } from"@/components/ui/checkbox"
+} from "@/components/ui/dropdown-menu"
+import { Checkbox } from "@/components/ui/checkbox"
 import {
     Select,
     SelectContent,
     SelectItem,
     SelectTrigger,
     SelectValue,
-} from"@/components/ui/select"
+} from "@/components/ui/select"
 import {
     ChevronLeft,
     ChevronRight,
@@ -50,9 +50,9 @@ import {
     ArrowUpDown,
     Trash2,
     X
-} from"lucide-react"
-import { motion, AnimatePresence } from"framer-motion"
-import { cn } from"@/lib/utils"
+} from "lucide-react"
+import { motion, AnimatePresence } from "framer-motion"
+import { cn } from "@/lib/utils"
 
 // --- Global Types ---
 
@@ -102,20 +102,20 @@ export function SortableHeader({ column, title }: SortableHeaderProps) {
     return (
         <Button
             variant="ghost"
-            onClick={() => column.toggleSorting(isSorted ==="asc")}
+            onClick={() => column.toggleSorting(isSorted === "asc")}
             className="flex items-center gap-1.5 h-8 text-xs font-semibold text-muted-foreground group/sort hover:bg-transparent px-0 transition-colors"
         >
             <span className="truncate">{title}</span>
             <div className={cn(
-              "flex items-center justify-center transition-opacity",
-                isSorted ?"opacity-100":"opacity-0 group-sort:opacity-100"
+                "flex items-center justify-center transition-opacity",
+                isSorted ? "opacity-100" : "opacity-0 group-sort:opacity-100"
             )}>
-                {isSorted ==="asc"? (
-                    <ArrowUp className="h-3 w-3 text-primary"/>
-                ) : isSorted ==="desc"? (
-                    <ArrowDown className="h-3 w-3 text-primary"/>
+                {isSorted === "asc" ? (
+                    <ArrowUp className="h-3 w-3 text-primary" />
+                ) : isSorted === "desc" ? (
+                    <ArrowDown className="h-3 w-3 text-primary" />
                 ) : (
-                    <ArrowUpDown className="h-3 w-3 group-hover/sort:text-primary transition-colors"/>
+                    <ArrowUpDown className="h-3 w-3 group-hover/sort:text-primary transition-colors" />
                 )}
             </div>
         </Button>
@@ -130,7 +130,7 @@ export function DataTable<TData, TValue>({
     preferenceKey,
     initialPreferences,
     onPreferencesChange,
-    emptyStateText ="No results found.",
+    emptyStateText = "No results found.",
     footerContent,
     onRowClick,
     enableRowSelection = false,
@@ -145,7 +145,7 @@ export function DataTable<TData, TValue>({
     const [columnVisibility, setColumnVisibility] = React.useState<VisibilityState>(initialPreferences?.columnVisibility || {})
     const [columnSizing, setColumnSizing] = React.useState<ColumnSizingState>(initialPreferences?.columnSizing || {})
     const [rowSelection, setRowSelection] = React.useState({})
-    const [localGlobalFilter, setLocalGlobalFilter] = React.useState(globalFilter ||"")
+    const [localGlobalFilter, setLocalGlobalFilter] = React.useState(globalFilter || "")
 
     // Sync global filter from props
     React.useEffect(() => {
@@ -158,12 +158,12 @@ export function DataTable<TData, TValue>({
         if (!enableRowSelection) return columns
 
         const selectionColumn: ColumnDef<TData, TValue> = {
-            id:"select",
+            id: "select",
             header: ({ table }) => (
                 <Checkbox
                     checked={
                         table.getIsAllPageRowsSelected() ||
-                        (table.getIsSomePageRowsSelected() &&"indeterminate")
+                        (table.getIsSomePageRowsSelected() && "indeterminate")
                     }
                     onCheckedChange={(value) => table.toggleAllPageRowsSelected(!!value)}
                     aria-label="Select all"
@@ -190,7 +190,7 @@ export function DataTable<TData, TValue>({
     const table = useReactTable({
         data,
         columns: allColumns,
-        columnResizeMode:"onChange",
+        columnResizeMode: "onChange",
         onSortingChange: setSorting,
         onColumnFiltersChange: setColumnFilters,
         getCoreRowModel: getCoreRowModel(),
@@ -201,7 +201,7 @@ export function DataTable<TData, TValue>({
         onColumnSizingChange: setColumnSizing,
         onRowSelectionChange: setRowSelection,
         onGlobalFilterChange: (updater) => {
-            const nextFilter = typeof updater ==="function"? updater(localGlobalFilter) : updater;
+            const nextFilter = typeof updater === "function" ? updater(localGlobalFilter) : updater;
             setLocalGlobalFilter(nextFilter as string)
             onGlobalFilterChange?.(nextFilter as string)
         },
@@ -224,7 +224,7 @@ export function DataTable<TData, TValue>({
                         // Check common locale structures like { en: '...', pt: '...' }
                         return JSON.stringify(val).toLowerCase()
                     }
-                    return""
+                    return ""
                 })
                 .join("")
 
@@ -288,27 +288,27 @@ export function DataTable<TData, TValue>({
                                         const isFirst = index === 0
                                         const isLast = index === headerGroup.headers.length - 1
 
-                                        let responsiveClass =""
+                                        let responsiveClass = ""
                                         if (!isFirst && !isLast) {
-                                            if (index === 1 || index === 2) responsiveClass ="hidden sm:table-cell"
-                                            else if (index === 3) responsiveClass ="hidden md:table-cell"
-                                            else if (index === 4) responsiveClass ="hidden lg:table-cell"
-                                            else responsiveClass ="hidden xl:table-cell"
+                                            if (index === 1 || index === 2) responsiveClass = "hidden sm:table-cell"
+                                            else if (index === 3) responsiveClass = "hidden md:table-cell"
+                                            else if (index === 4) responsiveClass = "hidden lg:table-cell"
+                                            else responsiveClass = "hidden xl:table-cell"
                                         }
 
                                         return (
                                             <TableHead
                                                 key={header.id}
                                                 className={cn(
-                                                  "h-10 text-xs font-semibold text-muted-foreground transition-all border-b border-border/40 relative group/head bg-muted/40 dark:bg-white/5",
-                                                    !isLast &&"border-r border-border/40",
+                                                    "h-10 text-xs font-semibold text-muted-foreground transition-all border-b border-border/40 relative group/head bg-white dark:bg-background",
+                                                    !isLast && "border-r border-border/40",
                                                     responsiveClass,
-                                                    isFirst &&"pl-8 sticky left-0 z-30",
-                                                    isLast &&"pr-8 sticky right-0 z-30"
+                                                    isFirst && "pl-8 sticky left-0 z-30",
+                                                    isLast && "pr-8 sticky right-0 z-30"
                                                 )}
                                                 style={{ width: header.getSize() }}
                                             >
-                                                <div className={cn("flex items-center gap-2", isLast &&"justify-end")}>
+                                                <div className={cn("flex items-center gap-2", isLast && "justify-end")}>
                                                     <div className="flex-1 min-w-0">
                                                         {header.isPlaceholder ? null : flexRender(header.column.columnDef.header, header.getContext())}
                                                     </div>
@@ -321,12 +321,12 @@ export function DataTable<TData, TValue>({
                                                                     size="icon"
                                                                     className="h-7 w-7 text-muted-foreground/40 hover:text-primary transition-colors"
                                                                 >
-                                                                    <Settings2 className="h-3.5 w-3.5"/>
+                                                                    <Settings2 className="h-3.5 w-3.5" />
                                                                 </Button>
                                                             </DropdownMenuTrigger>
-                                                            <DropdownMenuContent align="end"className="w-[200px] rounded-xl shadow-2xl border-sidebar-border/50 p-1.5 animate-in slide-in-from-top-1">
+                                                            <DropdownMenuContent align="end" className="w-[200px] rounded-xl shadow-2xl border-sidebar-border/50 p-1.5 animate-in slide-in-from-top-1">
                                                                 <DropdownMenuLabel className="text-[11px] font-semibold text-muted-foreground/70 px-2 py-1.5">Display Columns</DropdownMenuLabel>
-                                                                <DropdownMenuSeparator className="bg-border/30"/>
+                                                                <DropdownMenuSeparator className="bg-border/30" />
                                                                 <div className="max-h-[300px] overflow-auto py-1">
                                                                     {table
                                                                         .getAllColumns()
@@ -338,7 +338,7 @@ export function DataTable<TData, TValue>({
                                                                                 checked={column.getIsVisible()}
                                                                                 onCheckedChange={(value) => column.toggleVisibility(!!value)}
                                                                             >
-                                                                                {column.id.replace("_","")}
+                                                                                {column.id.replace("_", "")}
                                                                             </DropdownMenuCheckboxItem>
                                                                         ))}
                                                                 </div>
@@ -353,13 +353,13 @@ export function DataTable<TData, TValue>({
                                                         onMouseDown={header.getResizeHandler()}
                                                         onTouchStart={header.getResizeHandler()}
                                                         className={cn(
-                                                          "absolute right-[-2px] top-0 h-full w-[4px] cursor-col-resize select-none touch-none z-40 group/resizer transition-opacity",
-                                                            header.column.getIsResizing() ?"opacity-100":"opacity-0 hover:opacity-100"
+                                                            "absolute right-[-2px] top-0 h-full w-[4px] cursor-col-resize select-none touch-none z-40 group/resizer transition-opacity",
+                                                            header.column.getIsResizing() ? "opacity-100" : "opacity-0 hover:opacity-100"
                                                         )}
                                                     >
                                                         <div className={cn(
-                                                          "w-[1.5px] h-full mx-auto transition-colors",
-                                                            header.column.getIsResizing() ?"bg-primary":"bg-primary/60"
+                                                            "w-[1.5px] h-full mx-auto transition-colors",
+                                                            header.column.getIsResizing() ? "bg-primary" : "bg-primary/60"
                                                         )} />
                                                     </div>
                                                 )}
@@ -371,12 +371,13 @@ export function DataTable<TData, TValue>({
                         </TableHeader>
                         <TableBody>
                             {table.getRowModel().rows?.length ? (
-                                table.getRowModel().rows.map((row) => (
+                                table.getRowModel().rows.map((row, rowIndex) => (
                                     <TableRow
                                         key={row.id}
                                         className={cn(
-                                          "border-b border-border/20 transition-colors group/row",
-                                            onRowClick &&"cursor-pointer"
+                                            "border-b border-border/20 transition-colors group/row",
+                                            onRowClick && "cursor-pointer",
+                                            rowIndex % 2 === 0 ? "bg-white dark:bg-background" : "bg-slate-50/80 dark:bg-white/[0.02]"
                                         )}
                                         onClick={() => onRowClick?.(row.original)}
                                     >
@@ -384,26 +385,27 @@ export function DataTable<TData, TValue>({
                                             const isFirst = index === 0
                                             const isLast = index === row.getVisibleCells().length - 1
 
-                                            let responsiveClass =""
+                                            let responsiveClass = ""
                                             if (!isFirst && !isLast) {
-                                                if (index === 1 || index === 2) responsiveClass ="hidden sm:table-cell"
-                                                else if (index === 3) responsiveClass ="hidden md:table-cell"
-                                                else if (index === 4) responsiveClass ="hidden lg:table-cell"
-                                                else responsiveClass ="hidden xl:table-cell"
+                                                if (index === 1 || index === 2) responsiveClass = "hidden sm:table-cell"
+                                                else if (index === 3) responsiveClass = "hidden md:table-cell"
+                                                else if (index === 4) responsiveClass = "hidden lg:table-cell"
+                                                else responsiveClass = "hidden xl:table-cell"
                                             }
 
                                             return (
                                                 <TableCell
                                                     key={cell.id}
                                                     className={cn(
-                                                      "py-4 border-b border-border/20 bg-card group-hover/row:bg-muted/30 transition-all",
-                                                        row.getIsSelected() &&"bg-primary/5 group-hover/row:bg-primary/[0.08]",
+                                                        "py-4 border-b border-border/20 transition-all group-hover/row:bg-primary/[0.04]",
+                                                        rowIndex % 2 === 0 ? "bg-white dark:bg-background" : "bg-slate-50/80 dark:bg-white/[0.02]",
+                                                        row.getIsSelected() && "!bg-primary/5 group-hover/row:!bg-primary/[0.08]",
                                                         responsiveClass,
-                                                        isFirst &&"pl-8 sticky left-0 z-10",
-                                                        isLast &&"pr-8 sticky right-0 z-10"
+                                                        isFirst && "pl-8 sticky left-0 z-10",
+                                                        isLast && "pr-8 sticky right-0 z-10"
                                                     )}
                                                 >
-                                                    <div className={cn("truncate", isLast &&"flex justify-end")}>
+                                                    <div className={cn("truncate", isLast && "flex justify-end")}>
                                                         {flexRender(cell.column.columnDef.cell, cell.getContext())}
                                                     </div>
                                                 </TableCell>
@@ -428,11 +430,11 @@ export function DataTable<TData, TValue>({
                         <div className="text-xs font-semibold text-muted-foreground/40 whitespace-nowrap">
                             {footerContent || (
                                 <>
-                                    {table.getFilteredRowModel().rows.length} {table.getFilteredRowModel().rows.length === 1 ?"Item":"Items"}
+                                    {table.getFilteredRowModel().rows.length} {table.getFilteredRowModel().rows.length === 1 ? "Item" : "Items"}
                                 </>
                             )}
                         </div>
-                        <div className="h-4 w-px bg-border/60 mx-1 hidden sm:block"/>
+                        <div className="h-4 w-px bg-border/60 mx-1 hidden sm:block" />
                         <div className="hidden sm:flex items-center gap-3">
                             <Select
                                 value={table.getState().pagination.pageSize.toString()}
@@ -441,7 +443,7 @@ export function DataTable<TData, TValue>({
                                 <SelectTrigger className="h-8 min-w-[70px] px-2 text-[11px] font-semibold bg-transparent border-border/40 hover:bg-muted/50 shadow-none transition-colors rounded-lg">
                                     <SelectValue placeholder={table.getState().pagination.pageSize} />
                                 </SelectTrigger>
-                                <SelectContent side="top"className="min-w-[75px] rounded-xl">
+                                <SelectContent side="top" className="min-w-[75px] rounded-xl">
                                     {[10, 20, 30, 40, 50].map((pageSize) => (
                                         <SelectItem
                                             key={pageSize}
@@ -467,7 +469,7 @@ export function DataTable<TData, TValue>({
                                 onClick={() => table.previousPage()}
                                 disabled={!table.getCanPreviousPage()}
                             >
-                                <ChevronLeft className="h-3.5 w-3.5"/>
+                                <ChevronLeft className="h-3.5 w-3.5" />
                             </Button>
                             <Button
                                 variant="outline"
@@ -475,7 +477,7 @@ export function DataTable<TData, TValue>({
                                 onClick={() => table.nextPage()}
                                 disabled={!table.getCanNextPage()}
                             >
-                                <ChevronRight className="h-3.5 w-3.5"/>
+                                <ChevronRight className="h-3.5 w-3.5" />
                             </Button>
                         </div>
                     </div>
@@ -486,9 +488,9 @@ export function DataTable<TData, TValue>({
             <AnimatePresence>
                 {Object.keys(rowSelection).length > 0 && (
                     <motion.div
-                        initial={{ opacity: 0, y: 20, x:"-50%"}}
-                        animate={{ opacity: 1, y: 0, x:"-50%"}}
-                        exit={{ opacity: 0, y: 20, x:"-50%"}}
+                        initial={{ opacity: 0, y: 20, x: "-50%" }}
+                        animate={{ opacity: 1, y: 0, x: "-50%" }}
+                        exit={{ opacity: 0, y: 20, x: "-50%" }}
                         className="fixed bottom-10 left-1/2 z-50 flex items-center gap-6 px-6 py-3 bg-white/90 dark:bg-slate-900/95 text-foreground dark:text-white rounded-2xl shadow-[0_20px_50px_-15px_rgba(0,0,0,0.3)] border border-slate-200 dark:border-white/10 backdrop-blur-xl min-w-[400px]"
                     >
                         <div className="flex items-center gap-3 border-r border-slate-200 dark:border-white/10 pr-6">
@@ -498,7 +500,7 @@ export function DataTable<TData, TValue>({
                                 onClick={() => table.resetRowSelection()}
                                 className="h-8 w-8 rounded-full hover:bg-slate-100 dark:hover:bg-white/10 text-muted-foreground hover:text-foreground dark:text-white/70 dark:hover:text-white transition-colors"
                             >
-                                <X className="h-4 w-4"/>
+                                <X className="h-4 w-4" />
                             </Button>
                             <div className="flex flex-col">
                                 <span className="text-sm font-semibold tracking-tight">
@@ -525,7 +527,7 @@ export function DataTable<TData, TValue>({
                                         className="h-9 px-4 text-xs font-semibold hover:bg-slate-100 dark:hover:bg-white/5 text-muted-foreground hover:text-foreground dark:text-white/80 dark:hover:text-white transition-all ml-auto"
                                         onClick={() => console.log("Deleting:", selectedRowsData)}
                                     >
-                                        <Trash2 className="h-4 w-4 mr-2"/>
+                                        <Trash2 className="h-4 w-4 mr-2" />
                                         Delete Forever
                                     </Button>
                                 </>
