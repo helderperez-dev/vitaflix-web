@@ -41,6 +41,7 @@
         "translationsRequired": "Se requiere al menos una traducción",
         "noItemAddedYet": "Aún no hay {item}",
         "brand": "Marca",
+        "date": "Fecha",
         "done": "Listo"
     },
     "Auth": {
@@ -214,6 +215,56 @@
         "language": "Idioma",
         "lightMode": "Modo claro",
         "darkMode": "Modo oscuro",
-        "admin": "Admin"
+        "admin": "Admin",
+        "notifications": "Notificaciones"
+    },
+    "Notifications": {
+        "title": "Notificaciones",
+        "description": "Gestionar grupos de usuarios, campañas manuales y gatillos automáticos.",
+        "tabs": {
+            "broadcast": "Transmisión",
+            "triggers": "Gatillos",
+            "groups": "Grupos de Usuarios"
+        },
+        "broadcastTitle": "Enviar Notificación Manual",
+        "broadcastDescription": "Enviar mensajes directos a los usuarios a través de App, Email, Push o SMS.",
+        "type": "Tipo",
+        "marketing": "Marketing",
+        "transactional": "Transaccional",
+        "channel": "Canal",
+        "channels": {
+            "app": "Notificación In-App",
+            "email": "Email",
+            "push": "Notificación Push",
+            "sms": "SMS"
+        },
+        "subject": "Asunto / Título",
+        "message": "Cuerpo del Mensaje",
+        "mediaUrl": "Media / URL de Imagen",
+        "sendTo": "Enviar a",
+        "everyone": "Todos",
+        "selectGroup": "Seleccionar un grupo específico",
+        "sendNow": "Enviar Ahora",
+        "triggersTitle": "Gatillos Dinámicos",
+        "triggerAction": "Evento de Acción",
+        "sendBroadcast": "Enviar Transmisión",
+        "createTrigger": "Crear Gatillo",
+        "editTrigger": "Editar Gatillo",
+        "groupsTitle": "Grupos de Usuarios",
+        "groupName": "Nombre del Grupo",
+        "createGroup": "Crear Grupo",
+        "editGroup": "Editar Grupo",
+        "usersCount": "Usuarios Activos",
+        "manageMembers": "Gestionar Miembros",
+        "table": {
+            "name": "Nombre",
+            "channels": "Canales",
+            "members": "Miembros"
+        },
+        "noNotifications": "No se encontró historial de transmisión.",
+        "noTriggers": "No se encontraron gatillos automáticos.",
+        "noGroups": "No se encontraron grupos de usuarios.",
+        "viewDetails": "Ver Detalles",
+        "selectTemplate": "Seleccionar de la biblioteca..."
     }
 }

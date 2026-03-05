@@ -14,6 +14,8 @@ export const userProfileSchema = z.object({
     extraDataComplete: z.boolean().default(false),
     role: z.enum(["user", "admin"]).default("user"),
     locale: z.enum(["en", "es", "pt-pt", "pt-br"]).default("en"),
+    phone: z.string().optional().nullable(),
+    pushToken: z.string().optional().nullable(),
     preferences: z.record(z.string(), z.any()).default({}).optional().nullable(),
     createdAt: z.string().optional(),
     updatedAt: z.string().optional(),

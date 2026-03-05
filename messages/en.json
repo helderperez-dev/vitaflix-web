@@ -41,6 +41,7 @@
         "translationsRequired": "At least one translation is required",
         "noItemAddedYet": "No {item} added yet",
         "brand": "Brand",
+        "date": "Date",
         "done": "Done"
     },
     "Auth": {
@@ -205,12 +206,62 @@
             "status": "Status"
         }
     },
+    "Notifications": {
+        "title": "Notifications",
+        "description": "Manage user groups, manual campaigns, and automatic triggers.",
+        "tabs": {
+            "broadcast": "Broadcast",
+            "triggers": "Triggers",
+            "groups": "User Groups"
+        },
+        "broadcastTitle": "Send Manual Notification",
+        "broadcastDescription": "Send direct messages to users via App, Email, Push, or SMS.",
+        "type": "Type",
+        "marketing": "Marketing",
+        "transactional": "Transactional",
+        "channel": "Channel",
+        "channels": {
+            "app": "In-App Notification",
+            "email": "Email",
+            "push": "Push Notification",
+            "sms": "SMS"
+        },
+        "subject": "Subject / Title",
+        "message": "Message Body",
+        "mediaUrl": "Media / Image URL",
+        "sendTo": "Send to",
+        "everyone": "Everyone",
+        "selectGroup": "Select a specific user group",
+        "sendNow": "Send Now",
+        "triggersTitle": "Dynamic Triggers",
+        "triggerAction": "Action Event",
+        "sendBroadcast": "Send Broadcast",
+        "createTrigger": "Create Trigger",
+        "editTrigger": "Edit Trigger",
+        "groupsTitle": "User Groups",
+        "groupName": "Group Name",
+        "createGroup": "Create Group",
+        "editGroup": "Edit Group",
+        "usersCount": "Active Users",
+        "manageMembers": "Manage Members",
+        "table": {
+            "name": "Name",
+            "channels": "Channels",
+            "members": "Members"
+        },
+        "noNotifications": "No broadcast history found.",
+        "noTriggers": "No automated triggers found.",
+        "noGroups": "No user groups found.",
+        "viewDetails": "View Details",
+        "selectTemplate": "Select from library..."
+    },
     "Navigation": {
         "dashboard": "Dashboard",
         "products": "Products",
         "meals": "Meals",
         "users": "Users",
         "settings": "Settings",
+        "notifications": "Notifications",
         "logout": "Log out",
         "adminPanel": "Admin Panel",
         "language": "Language",

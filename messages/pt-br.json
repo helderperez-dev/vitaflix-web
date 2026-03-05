@@ -41,6 +41,7 @@
         "translationsRequired": "Pelo menos uma tradução é obrigatória",
         "noItemAddedYet": "Nenhum {item} adicionado ainda",
         "brand": "Marca",
+        "date": "Data",
         "done": "Pronto"
     },
     "Auth": {
@@ -216,6 +217,56 @@
         "language": "Idioma",
         "lightMode": "Modo claro",
         "darkMode": "Modo escuro",
-        "admin": "Admin"
+        "admin": "Admin",
+        "notifications": "Notificações"
+    },
+    "Notifications": {
+        "title": "Notificações",
+        "description": "Gerenciar grupos de usuários, campanhas manuais e gatilhos automáticos.",
+        "tabs": {
+            "broadcast": "Transmissão",
+            "triggers": "Gatilhos",
+            "groups": "Grupos"
+        },
+        "broadcastTitle": "Enviar Notificação Manual",
+        "broadcastDescription": "Enviar mensagens via App, Email, Push ou SMS.",
+        "type": "Tipo",
+        "marketing": "Marketing",
+        "transactional": "Transacional",
+        "channel": "Canal",
+        "channels": {
+            "app": "App",
+            "email": "Email",
+            "push": "Push",
+            "sms": "SMS"
+        },
+        "subject": "Assunto / Título",
+        "message": "Mensagem",
+        "mediaUrl": "URL da Mídia",
+        "sendTo": "Enviar para",
+        "everyone": "Todos",
+        "selectGroup": "Selecionar Grupo",
+        "sendNow": "Enviar Agora",
+        "triggersTitle": "Gatilhos",
+        "triggerAction": "Ação",
+        "createTrigger": "Criar Gatilho",
+        "editTrigger": "Editar Gatilho",
+        "groupsTitle": "Grupos de Usuários",
+        "groupName": "Nome do Grupo",
+        "createGroup": "Criar Grupo",
+        "editGroup": "Editar Grupo",
+        "usersCount": "Usuários Ativos",
+        "manageMembers": "Gerenciar Membros",
+        "sendBroadcast": "Enviar Transmissão",
+        "table": {
+            "name": "Nome",
+            "channels": "Canais",
+            "members": "Membros"
+        },
+        "noNotifications": "Nenhum histórico de transmissão encontrado.",
+        "noTriggers": "Nenhum gatilho automático encontrado.",
+        "noGroups": "Nenhum grupo de usuários encontrado.",
+        "viewDetails": "Ver Detalhes",
+        "selectTemplate": "Selecionar da biblioteca..."
     }
 }

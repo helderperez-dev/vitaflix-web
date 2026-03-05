@@ -3,6 +3,7 @@
 import { createClient } from "@/lib/supabase/server"
 import { revalidatePath } from "next/cache"
 import { userProfileSchema, type UserProfile } from "@/shared-schemas/user"
+import { triggerAppEvent } from "./notifications"
 
 export async function upsertUser(data: UserProfile) {
     const supabase = await createClient()
@@ -40,6 +41,8 @@ export async function upsertUser(data: UserProfile) {
             extra_data_complete: data.extraDataComplete,
             role: data.role,
             locale: finalLocale,
+            phone: data.phone,
+            push_token: data.pushToken,
             preferences: data.preferences || {},
             updated_at: new Date().toISOString()
         })
@@ -48,6 +51,28 @@ export async function upsertUser(data: UserProfile) {
     if (error) {
         console.error('Error upserting user:', error)
         return { error: error.message }
+    }
+
+    // Fire triggers for new users
+    const isNewUser = !data.id
+    if (isNewUser) {
+        // Try to get the newly created user id by email
+        const { data: newUser } = await supabase
+            .from('users')
+            .select('id')
+            .eq('email', data.email)
+            .single()
+        if (newUser?.id) {
+            await triggerAppEvent('user_signed_up', { userId: newUser.id })
+        }
+    } else if (data.extraDataComplete && data.id) {
+        // Fire profile_complete trigger when onboarding finishes
+        await triggerAppEvent('profile_complete', {
+            userId: data.id,
+            data: {
+                recommended_kcal: String(data.recommendedKcalIntake || '')
+            }
+        })
     }
 
     revalidatePath("/", "layout")

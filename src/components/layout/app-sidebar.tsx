@@ -2,7 +2,7 @@
 
 import * as React from "react"
 import { useTranslations, useLocale } from "next-intl"
-import { Home, Apple, Utensils, Users, Settings, Sun, Moon, PanelLeftClose, PanelLeftOpen } from "lucide-react"
+import { Home, Apple, Utensils, Users, Settings, Sun, Moon, PanelLeftClose, PanelLeftOpen, Bell } from "lucide-react"
 import Image from "next/image"
 import { cn } from "@/lib/utils"
 import { motion, AnimatePresence } from "framer-motion"
@@ -74,6 +74,11 @@ export function AppSidebar({ user }: AppSidebarProps) {
                     title: t("users"),
                     url: "/users",
                     icon: Users,
+                },
+                {
+                    title: t("notifications"),
+                    url: "/notifications",
+                    icon: Bell,
                 },
                 {
                     title: t("settings"),
