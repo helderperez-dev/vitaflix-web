@@ -5,10 +5,12 @@ import { Bell, Check, Trash2 } from "lucide-react"
 import { Popover, PopoverContent, PopoverTrigger } from "@/components/ui/popover"
 import { Button } from "@/components/ui/button"
 import { toast } from "sonner"
+import { useRouter } from "next/navigation"
 import { createClient } from "@/lib/supabase/client"
 import { cn } from "@/lib/utils"
 
 export function NotificationBell({ userId }: { userId: string }) {
+    const router = useRouter()
     const [notifications, setNotifications] = React.useState<any[]>([])
     const [unreadCount, setUnreadCount] = React.useState(0)
     const supabase = createClient()
@@ -84,6 +86,19 @@ export function NotificationBell({ userId }: { userId: string }) {
         }
     }
 
+    const handleNotificationClick = (notif: any) => {
+        if (!notif.read_at) {
+            markAsRead(notif.id)
+        }
+        if (notif.metadata?.action_link) {
+            if (notif.metadata.action_link.startsWith('http')) {
+                window.open(notif.metadata.action_link, '_blank')
+            } else {
+                router.push(notif.metadata.action_link)
+            }
+        }
+    }
+
     return (
         <Popover>
             <PopoverTrigger asChild>
@@ -122,7 +137,7 @@ export function NotificationBell({ userId }: { userId: string }) {
                                 )}
                             >
                                 <div className="flex items-start justify-between gap-4">
-                                    <div className="flex flex-col gap-1 pr-6 cursor-pointer" onClick={() => !notif.read_at && markAsRead(notif.id)}>
+                                    <div className="flex flex-col gap-1 pr-6 cursor-pointer" onClick={() => handleNotificationClick(notif)}>
                                         <h5 className={cn("text-xs font-semibold", !notif.read_at ? "text-foreground" : "text-muted-foreground")}>
                                             {notif.title}
                                             {!notif.read_at && <span className="absolute left-2 top-5 size-1.5 rounded-full bg-primary" />}

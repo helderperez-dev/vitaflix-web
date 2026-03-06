@@ -20,9 +20,17 @@ export default async function AdminLayout({
         redirect("/")
     }
 
+    const { data: dbUser } = await supabase
+        .from('users')
+        .select('*')
+        .eq('id', user.id)
+        .single()
+
     const userData = {
         id: user.id,
-        email: user.email || "admin@vitaflix.com"
+        email: user.email || "admin@vitaflix.com",
+        name: dbUser?.display_name || user.user_metadata?.full_name || "Admin",
+        avatar: (dbUser as any)?.avatar_url || user.user_metadata?.avatar_url || null
     }
 
     return (

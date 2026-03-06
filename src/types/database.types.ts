@@ -62,6 +62,125 @@ export type Database = {
         }
         Relationships: []
       }
+      lead_funnel_steps: {
+        Row: {
+          color: string | null
+          created_at: string
+          funnel_id: string
+          id: string
+          name: string
+          order: number
+          updated_at: string
+        }
+        Insert: {
+          color?: string | null
+          created_at?: string
+          funnel_id: string
+          id?: string
+          name: string
+          order?: number
+          updated_at?: string
+        }
+        Update: {
+          color?: string | null
+          created_at?: string
+          funnel_id?: string
+          id?: string
+          name?: string
+          order?: number
+          updated_at?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "lead_funnel_steps_funnel_id_fkey"
+            columns: ["funnel_id"]
+            isOneToOne: false
+            referencedRelation: "lead_funnels"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      lead_funnels: {
+        Row: {
+          created_at: string
+          description: string | null
+          id: string
+          name: string
+          updated_at: string
+        }
+        Insert: {
+          created_at?: string
+          description?: string | null
+          id?: string
+          name: string
+          updated_at?: string
+        }
+        Update: {
+          created_at?: string
+          description?: string | null
+          id?: string
+          name?: string
+          updated_at?: string
+        }
+        Relationships: []
+      }
+      leads: {
+        Row: {
+          created_at: string
+          email: string | null
+          funnel_id: string | null
+          id: string
+          is_archived: boolean
+          metadata: Json | null
+          name: string
+          phone: string | null
+          source: string | null
+          step_id: string | null
+          updated_at: string
+        }
+        Insert: {
+          created_at?: string
+          email?: string | null
+          funnel_id?: string | null
+          id?: string
+          is_archived?: boolean
+          metadata?: Json | null
+          name: string
+          phone?: string | null
+          source?: string | null
+          step_id?: string | null
+          updated_at?: string
+        }
+        Update: {
+          created_at?: string
+          email?: string | null
+          funnel_id?: string | null
+          id?: string
+          is_archived?: boolean
+          metadata?: Json | null
+          name?: string
+          phone?: string | null
+          source?: string | null
+          step_id?: string | null
+          updated_at?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "leads_funnel_id_fkey"
+            columns: ["funnel_id"]
+            isOneToOne: false
+            referencedRelation: "lead_funnels"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "leads_step_id_fkey"
+            columns: ["step_id"]
+            isOneToOne: false
+            referencedRelation: "lead_funnel_steps"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
       meal_categories: {
         Row: {
           color: string | null
@@ -112,6 +231,41 @@ export type Database = {
             columns: ["meal_id"]
             isOneToOne: false
             referencedRelation: "meals"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      meal_day_configurations: {
+        Row: {
+          category_id: string
+          created_at: string
+          daily_meals_count: number
+          id: string
+          slot_index: number
+          updated_at: string
+        }
+        Insert: {
+          category_id: string
+          created_at?: string
+          daily_meals_count: number
+          id?: string
+          slot_index: number
+          updated_at?: string
+        }
+        Update: {
+          category_id?: string
+          created_at?: string
+          daily_meals_count?: number
+          id?: string
+          slot_index?: number
+          updated_at?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "meal_day_configurations_category_id_fkey"
+            columns: ["category_id"]
+            isOneToOne: false
+            referencedRelation: "meal_categories"
             referencedColumns: ["id"]
           },
         ]
@@ -193,24 +347,54 @@ export type Database = {
           },
         ]
       }
+      meal_plan_sizes: {
+        Row: {
+          created_at: string | null
+          id: string
+          name: Json
+          slug: string | null
+          updated_at: string | null
+        }
+        Insert: {
+          created_at?: string | null
+          id?: string
+          name?: Json
+          slug?: string | null
+          updated_at?: string | null
+        }
+        Update: {
+          created_at?: string | null
+          id?: string
+          name?: Json
+          slug?: string | null
+          updated_at?: string | null
+        }
+        Relationships: []
+      }
       meal_plans: {
         Row: {
           created_at: string
+          daily_meals_count: number | null
           id: string
+          name: string | null
           selected_meals: Json
           updated_at: string
           user_id: string
         }
         Insert: {
           created_at?: string
+          daily_meals_count?: number | null
           id?: string
+          name?: string | null
           selected_meals: Json
           updated_at?: string
           user_id: string
         }
         Update: {
           created_at?: string
+          daily_meals_count?: number | null
           id?: string
+          name?: string | null
           selected_meals?: Json
           updated_at?: string
           user_id?: string
@@ -811,8 +995,33 @@ export type Database = {
         }
         Relationships: []
       }
+      user_roles: {
+        Row: {
+          created_at: string
+          id: string
+          name: Json
+          slug: string
+          updated_at: string
+        }
+        Insert: {
+          created_at?: string
+          id?: string
+          name: Json
+          slug: string
+          updated_at?: string
+        }
+        Update: {
+          created_at?: string
+          id?: string
+          name?: Json
+          slug?: string
+          updated_at?: string
+        }
+        Relationships: []
+      }
       users: {
         Row: {
+          avatar_url: string | null
           birthday: string | null
           created_at: string
           display_name: string | null
@@ -822,7 +1031,7 @@ export type Database = {
           height: number | null
           id: string
           locale: string | null
-          objective: Database["public"]["Enums"]["objective_enum"] | null
+          objective: string | null
           phone: string | null
           preferences: Json | null
           push_token: string | null
@@ -833,6 +1042,7 @@ export type Database = {
           weight: number | null
         }
         Insert: {
+          avatar_url?: string | null
           birthday?: string | null
           created_at?: string
           display_name?: string | null
@@ -842,7 +1052,7 @@ export type Database = {
           height?: number | null
           id: string
           locale?: string | null
-          objective?: Database["public"]["Enums"]["objective_enum"] | null
+          objective?: string | null
           phone?: string | null
           preferences?: Json | null
           push_token?: string | null
@@ -853,6 +1063,7 @@ export type Database = {
           weight?: number | null
         }
         Update: {
+          avatar_url?: string | null
           birthday?: string | null
           created_at?: string
           display_name?: string | null
@@ -862,7 +1073,7 @@ export type Database = {
           height?: number | null
           id?: string
           locale?: string | null
-          objective?: Database["public"]["Enums"]["objective_enum"] | null
+          objective?: string | null
           phone?: string | null
           preferences?: Json | null
           push_token?: string | null
@@ -871,6 +1082,30 @@ export type Database = {
           tmb?: number | null
           updated_at?: string
           weight?: number | null
+        }
+        Relationships: []
+      }
+      wellness_objectives: {
+        Row: {
+          created_at: string
+          id: string
+          name: Json
+          slug: string
+          updated_at: string
+        }
+        Insert: {
+          created_at?: string
+          id?: string
+          name: Json
+          slug: string
+          updated_at?: string
+        }
+        Update: {
+          created_at?: string
+          id?: string
+          name?: Json
+          slug?: string
+          updated_at?: string
         }
         Relationships: []
       }
@@ -1033,3 +1268,4 @@ export const Constants = {
     },
   },
 } as const
+

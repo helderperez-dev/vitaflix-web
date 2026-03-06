@@ -31,6 +31,7 @@ import {
 } from "@/components/ui/alert-dialog"
 import { cn } from "@/lib/utils"
 import type { ColumnDef } from "@tanstack/react-table"
+import { MediaDisplay } from "@/components/shared/media-display"
 
 interface ProductTableWrapperProps {
     initialProducts: any[]
@@ -170,10 +171,10 @@ export function ProductTableWrapper({ initialProducts, userProfile }: ProductTab
                             }}
                             className="h-10 w-10 rounded-md overflow-hidden bg-muted border border-border/40 flex-shrink-0 relative group cursor-pointer"
                         >
-                            <img
+                            <MediaDisplay
                                 src={defaultImage ? defaultImage.url : "/product_placeholder.png"}
                                 alt="Product"
-                                className="w-full h-full object-cover transition-all group-hover:brightness-50"
+                                className="transition-all group-hover:brightness-50"
                             />
                             <div className="absolute inset-0 flex items-center justify-center opacity-0 group-hover:opacity-100 transition-opacity">
                                 <Maximize2 className="h-4 w-4 text-white" />

@@ -225,3 +225,83 @@ export async function deleteMealOption(id: string) {
     revalidatePath("/", "layout")
     return { success: true }
 }
+
+export async function getMealCategories() {
+    const supabase = await createClient()
+
+    const { data, error } = await supabase
+        .from('meal_categories')
+        .select('*')
+        .order('name->>en', { ascending: true })
+
+    if (error) {
+        console.error('Error fetching meal categories:', error)
+        return []
+    }
+
+    return data
+}
+
+export async function getMealsByCategory(categoryId: string) {
+    const supabase = await createClient()
+
+    // Use a direct join: get meals that have a link to this category
+    const { data, error } = await supabase
+        .from('meal_category_links')
+        .select(`
+            meal:meals(
+                id, 
+                name, 
+                images, 
+                cook_time,
+                options:meal_options(*)
+            )
+        `)
+        .eq('category_id', categoryId)
+
+    if (error) {
+        console.error('Error fetching meals by category:', error)
+        return []
+    }
+
+    // Unwrap the nested meal object
+    return (data || [])
+        .map((row: any) => row.meal)
+        .filter(Boolean)
+}
+export async function getMealsByIds(ids: string[]) {
+    const supabase = await createClient()
+
+    const { data, error } = await supabase
+        .from('meals')
+        .select('id, name, images, cook_time, options:meal_options(*)')
+        .in('id', ids)
+
+    if (error) {
+        console.error('Error fetching meals by ids:', error)
+        return []
+    }
+
+    return data || []
+}
+
+export async function getMealOptionsByIds(ids: string[]) {
+    const supabase = await createClient()
+
+    const { data: options, error } = await supabase
+        .from('meal_options')
+        .select('*, meal:meals(id, name, images, cook_time, options:meal_options(*))')
+        .in('id', ids)
+
+    if (error) {
+        console.error('Error fetching meal options by ids:', error)
+        return []
+    }
+
+    return (options || []).map(opt => ({
+        ...opt,
+        associatedMealId: opt.associated_meal_id,
+        isDefault: opt.is_default || false,
+        meal: opt.meal
+    }))
+}

@@ -6,6 +6,7 @@ import { toast } from "sonner"
 import type { ProductImage } from "@/shared-schemas/product"
 import { createClient } from "@/lib/supabase/client"
 import { cn } from "@/lib/utils"
+import { MediaDisplay } from "./media-display"
 
 interface ImageUploaderProps {
     folder: string
@@ -136,10 +137,13 @@ export function ImageUploader({ folder, value = [], onChange, maxImages = 10 }: 
                             draggedItemIndex === index && "opacity-50 scale-95"
                         )}
                     >
-                        <img
+                        <MediaDisplay
                             src={image.url}
                             alt={`Product ${index + 1}`}
                             className="w-full h-full object-cover"
+                            autoPlay={true}
+                            muted={true}
+                            loop={true}
                         />
 
                         {/* Overlay Controls */}
@@ -190,7 +194,7 @@ export function ImageUploader({ folder, value = [], onChange, maxImages = 10 }: 
                             type="file"
                             ref={fileInputRef}
                             className="hidden"
-                            accept="image/*"
+                            accept="image/*,video/mp4,video/webm,video/quicktime"
                             multiple={maxImages > 1}
                             onChange={handleUpload}
                             disabled={isUploading}
@@ -210,13 +214,13 @@ export function ImageUploader({ folder, value = [], onChange, maxImages = 10 }: 
                                     <UploadCloud className="h-6 w-6 text-muted-foreground group-hover:text-primary transition-colors" />
                                 </div>
                                 <p className="text-xs font-semibold text-muted-foreground/60 text-center px-4 group-hover:text-primary/70 transition-colors">
-                                    {maxImages === 1 ? 'Add Logo' : 'Add Image'}
+                                    {maxImages === 1 ? 'Add Media' : 'Add Media'}
                                 </p>
                             </>
                         )}
                     </div>
                 )}
             </div>
-        </div>
+        </div >
     )
 }

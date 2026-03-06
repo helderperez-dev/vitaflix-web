@@ -1,10 +1,11 @@
 "use client"
 
-import * as React from"react"
-import { motion, AnimatePresence } from"framer-motion"
-import { X, ChevronLeft, ChevronRight, Maximize2 } from"lucide-react"
-import { cn } from"@/lib/utils"
-import { Button } from"@/components/ui/button"
+import * as React from "react"
+import { motion, AnimatePresence } from "framer-motion"
+import { X, ChevronLeft, ChevronRight, Maximize2 } from "lucide-react"
+import { cn } from "@/lib/utils"
+import { Button } from "@/components/ui/button"
+import { MediaDisplay } from "./media-display"
 
 interface ImageGalleryModalProps {
     images: { url: string; isDefault?: boolean }[]
@@ -25,21 +26,21 @@ export function ImageGalleryModal({
     React.useEffect(() => {
         const handleKeyDown = (e: KeyboardEvent) => {
             if (!open) return
-            if (e.key ==="ArrowRight") handleNext()
-            if (e.key ==="ArrowLeft") handlePrev()
-            if (e.key ==="Escape") onOpenChange(false)
+            if (e.key === "ArrowRight") handleNext()
+            if (e.key === "ArrowLeft") handlePrev()
+            if (e.key === "Escape") onOpenChange(false)
         }
 
         if (open) {
             window.addEventListener("keydown", handleKeyDown)
             setCurrentIndex(initialIndex)
-            document.body.style.overflow ="hidden"
+            document.body.style.overflow = "hidden"
         } else {
-            document.body.style.overflow ="unset"
+            document.body.style.overflow = "unset"
         }
         return () => {
             window.removeEventListener("keydown", handleKeyDown)
-            document.body.style.overflow ="unset"
+            document.body.style.overflow = "unset"
         }
     }, [open, initialIndex])
 
@@ -93,21 +94,29 @@ export function ImageGalleryModal({
                         {/* Main Image Slider */}
                         <div className="relative w-full h-full overflow-hidden rounded-3xl border border-white/10 shadow-2xl bg-black/20">
                             <AnimatePresence initial={false} custom={direction} mode="popLayout">
-                                <motion.img
+                                <motion.div
                                     key={currentIndex}
-                                    src={images[currentIndex].url}
                                     custom={direction}
                                     variants={variants}
                                     initial="enter"
                                     animate="center"
                                     exit="exit"
                                     transition={{
-                                        x: { type:"spring", stiffness: 300, damping: 30 },
+                                        x: { type: "spring", stiffness: 300, damping: 30 },
                                         opacity: { duration: 0.2 },
                                         scale: { duration: 0.4 },
                                     }}
-                                    className="absolute inset-0 w-full h-full object-contain pointer-events-none"
-                                />
+                                    className="absolute inset-0 w-full h-full overflow-hidden flex items-center justify-center p-2"
+                                >
+                                    <MediaDisplay
+                                        src={images[currentIndex].url}
+                                        alt={`Gallery image ${currentIndex + 1}`}
+                                        className="w-full h-full object-contain"
+                                        showControls={true}
+                                        autoPlay={true}
+                                        muted={false} // Gallery usually wants sound if user clicked
+                                    />
+                                </motion.div>
                             </AnimatePresence>
 
                             {/* Controls Overlay */}
@@ -119,7 +128,7 @@ export function ImageGalleryModal({
                                         onClick={handlePrev}
                                         className="h-10 w-10 rounded-full bg-white/5 border-white/10 hover:bg-white/10 hover:border-white/20 text-white transition-all"
                                     >
-                                        <ChevronLeft className="h-5 w-5"/>
+                                        <ChevronLeft className="h-5 w-5" />
                                     </Button>
                                     <Button
                                         variant="outline"
@@ -127,7 +136,7 @@ export function ImageGalleryModal({
                                         onClick={handleNext}
                                         className="h-10 w-10 rounded-full bg-white/5 border-white/10 hover:bg-white/10 hover:border-white/20 text-white transition-all"
                                     >
-                                        <ChevronRight className="h-5 w-5"/>
+                                        <ChevronRight className="h-5 w-5" />
                                     </Button>
                                 </div>
                             </div>
@@ -143,8 +152,8 @@ export function ImageGalleryModal({
                                         setCurrentIndex(i)
                                     }}
                                     className={cn(
-                                      "h-1 transition-all duration-300 rounded-full",
-                                        i === currentIndex ?"w-8 bg-primary":"w-2 bg-white/20 hover:bg-white/40"
+                                        "h-1 transition-all duration-300 rounded-full",
+                                        i === currentIndex ? "w-8 bg-primary" : "w-2 bg-white/20 hover:bg-white/40"
                                     )}
                                 />
                             ))}
@@ -158,7 +167,7 @@ export function ImageGalleryModal({
                                 onClick={() => onOpenChange(false)}
                                 className="h-10 w-10 rounded-full bg-white/5 border-white/10 hover:bg-white/10 hover:border-white/20 text-white transition-all"
                             >
-                                <X className="h-5 w-5"/>
+                                <X className="h-5 w-5" />
                             </Button>
                         </div>
                     </div>

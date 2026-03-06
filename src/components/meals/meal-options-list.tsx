@@ -15,6 +15,7 @@ import {
 import { MealOption } from "@/shared-schemas/meal"
 import { MealOptionForm } from "./meal-option-form"
 import { cn } from "@/lib/utils"
+import { MediaDisplay } from "@/components/shared/media-display"
 
 interface MealOptionsListProps {
     mealId: string
@@ -194,10 +195,9 @@ export function MealOptionsList({ mealId, options, onOptionsChange, onEditingCha
                                             </div>
                                             {option.images && option.images.length > 0 && (
                                                 <div className="h-8 w-8 rounded-lg overflow-hidden border border-border/40 shadow-sm transition-transform group-hover:scale-105">
-                                                    <img
+                                                    <MediaDisplay
                                                         src={option.images[0].url}
                                                         alt="Option Thumbnail"
-                                                        className="h-full w-full object-cover"
                                                     />
                                                 </div>
                                             )}

@@ -2,6 +2,7 @@
     "Common": {
         "save": "Guardar",
         "edit": "Editar",
+        "editDetails": "Editar Detalles",
         "delete": "Eliminar",
         "actions": "Acciones",
         "loading": "Cargando...",
@@ -42,7 +43,9 @@
         "noItemAddedYet": "Aún no hay {item}",
         "brand": "Marca",
         "date": "Fecha",
-        "done": "Listo"
+        "done": "Listo",
+        "profile": "Perfil",
+        "email": "Correo electrónico"
     },
     "Auth": {
         "welcome": "Bienvenido de nuevo",
@@ -197,10 +200,25 @@
         "systemCompliance": "Cumplimiento del Sistema",
         "profileStatus": "Estado del Perfil",
         "profileStatusDesc": "Marca si el usuario finalizó sus datos requeridos.",
+        "identityProtection": "Gestión de Credenciales",
+        "externalRecovery": "Link de Restablecimiento de Contraseña",
+        "externalRecoveryDesc": "Envíe un correo electrónico seguro para que el usuario possa restablecer su propia contraseña.",
+        "initiateReset": "Enviar Correo",
+        "adminOverride": "Actualización Manual de Contraseña",
+        "adminOverrideDesc": "Establezca directamente una nueva contraseña para este usuario si no pode acceder a su correo electrónico.",
+        "overrideKey": "Actualizar Contraseña",
+        "newMasterCredential": "Ingrese la nueva contraseña",
+        "tabs": {
+            "profile": "Perfil",
+            "security": "Seguridad",
+            "subscription": "Suscripción",
+            "plan": "Plan de Comidas",
+            "activity": "Actividad"
+        },
         "table": {
             "user": "Usuario",
             "role": "Rol",
-            "goal": "Meta",
+            "goal": "Objetivo",
             "status": "Estado"
         }
     },
@@ -208,6 +226,7 @@
         "dashboard": "Panel",
         "products": "Productos",
         "meals": "Comidas",
+        "leads": "Leads",
         "users": "Usuarios",
         "settings": "Ajustes",
         "logout": "Cerrar sesión",
@@ -215,8 +234,26 @@
         "language": "Idioma",
         "lightMode": "Modo claro",
         "darkMode": "Modo oscuro",
-        "admin": "Admin",
-        "notifications": "Notificaciones"
+        "admin": "Administrador",
+        "notifications": "Notificaciones",
+        "plansSettings": "Ajustes de Planes"
+    },
+    "Plans": {
+        "createNewPlan": "Crear Nuevo Plan",
+        "createPlanDescription": "Configure una secuencia estructurada de comidas. Puede configurar los tipos específicos de comidas para cada cantidad diaria en los ajustes del sistema.",
+        "labelPlanName": "Nombre del Plan",
+        "placeholderPlanName": "ej: Semana Intensiva de Verano",
+        "labelMealQuantity": "Comidas Diarias",
+        "selectQuantity": "Seleccione la cantidad diaria",
+        "mealsLabel": "comidas por día",
+        "cancel": "Cancelar",
+        "createPlan": "Crear Plan",
+        "creating": "Creando...",
+        "successCreated": "Plan de comidas creado con éxito",
+        "errorNameRequired": "El nombre del plan es obligatorio",
+        "emptyTitle": "Sin Planes Activos",
+        "emptyDescription": "Este usuario aún no tiene planes de comidas estructurados.",
+        "addFirst": "Crear Primer Plan"
     },
     "Notifications": {
         "title": "Notificaciones",
@@ -266,5 +303,37 @@
         "noGroups": "No se encontraron grupos de usuarios.",
         "viewDetails": "Ver Detalles",
         "selectTemplate": "Seleccionar de la biblioteca..."
+    },
+    "Leads": {
+        "title": "Leads",
+        "description": "Gestione y realice un seguimiento de sus clientes potenciales a través del embudo de ventas.",
+        "addLead": "Agregar Lead",
+        "editLead": "Editar Lead",
+        "personalInfo": "Información Personal",
+        "pipelineInfo": "Información del Embudo",
+        "tableName": "Nombre",
+        "tablePhone": "Teléfono",
+        "tableSource": "Origen",
+        "funnel": "Embudo",
+        "status": "Estado",
+        "selectFunnel": "Seleccionar Embudo",
+        "selectStatus": "Seleccionar Estado",
+        "unassigned": "Sin asignar",
+        "sourcePlaceholder": "Facebook, Recomendación, etc.",
+        "noLeads": "No se encontraron leads.",
+        "kanban": "Kanban",
+        "datagrid": "Cuadrícula de Datos",
+        "createFunnel": "Crear Embudo",
+        "noFunnels": "No se encontraron Embudos",
+        "noFunnelsDesc": "Cree un embudo y defina sus pasos de flujo de trabajo para comenzar a gestionar leads.",
+        "searchLeads": "Buscar leads...",
+        "manageFunnels": "Gestionar Embudos",
+        "contact": "Contacto",
+        "noContactInfo": "Sin información de contacto",
+        "direct": "Directo",
+        "created": "Creado",
+        "pipelineStep": "Etapa del Embudo",
+        "newLead": "Nuevo Lead",
+        "dropLeadsHere": "Arrastra leads aquí"
     }
 }

@@ -16,6 +16,7 @@ import {
 import { motion, AnimatePresence } from "framer-motion"
 import { toast } from "sonner"
 import { useTranslations } from "next-intl"
+import { MediaDisplay } from "@/components/shared/media-display"
 
 import { Button } from "@/components/ui/button"
 import {
@@ -94,6 +95,7 @@ export function NotificationDrawer({ open, onOpenChange, mode, groups, users, ed
             body: editingData?.body || "",
             html: editingData?.html || "",
             css: editingData?.css || "",
+            action_link: editingData?.metadata?.action_link || "",
             attachments: editingData?.attachments || [],
         }
     })
@@ -132,6 +134,7 @@ export function NotificationDrawer({ open, onOpenChange, mode, groups, users, ed
                 body: editingData?.body || "",
                 html: editingData?.html || "",
                 css: editingData?.css || "",
+                action_link: editingData?.metadata?.action_link || "",
                 attachments: editingData?.attachments || [],
             })
             triggerForm.reset({
@@ -660,6 +663,21 @@ export function NotificationDrawer({ open, onOpenChange, mode, groups, users, ed
 
                         <FormField
                             control={form.control}
+                            name="action_link"
+                            render={({ field }) => (
+                                <FormItem className="space-y-3">
+                                    <div className="flex items-center justify-between">
+                                        <FormLabel className="text-[10px] font-semibold text-muted-foreground/40 uppercase tracking-wider">Action Link <span className="normal-case opacity-50 ml-1 font-normal">(Optional)</span></FormLabel>
+                                    </div>
+                                    <FormControl>
+                                        <Input {...field} placeholder="https://..." className="h-10 rounded-xl border-border/40 bg-muted/5 focus:bg-background px-4 text-sm font-medium transition-all" />
+                                    </FormControl>
+                                </FormItem>
+                            )}
+                        />
+
+                        <FormField
+                            control={form.control}
                             name="attachments"
                             render={({ field }) => (
                                 <FormItem className="flex flex-col gap-2">
@@ -1163,7 +1181,7 @@ export function NotificationDrawer({ open, onOpenChange, mode, groups, users, ed
 
                             {editingData?.media_url && (
                                 <div className="mt-4 rounded-xl overflow-hidden border border-border/40 aspect-video relative group">
-                                    <img src={editingData.media_url} alt="Notification media" className="w-full h-full object-cover transition-transform duration-500 group-hover:scale-105" />
+                                    <MediaDisplay src={editingData.media_url} alt="Notification media" className="transition-transform duration-500 group-hover:scale-105" />
                                 </div>
                             )}
                         </div>

@@ -14,6 +14,7 @@ export async function sendBroadcastAction(formData: FormData) {
     const html = formData.get("html") as string
     const attachments = formData.getAll("attachments") as string[]
     const media_url = formData.get("media_url") as string
+    const action_link = formData.get("action_link") as string
 
     if (!title || !body || !channel) {
         return { success: false, error: "Missing required fields." }
@@ -89,6 +90,7 @@ export async function sendBroadcastAction(formData: FormData) {
             attachments: attachments || [],
             channel: channel as any,
             media_url: media_url || null,
+            metadata: action_link ? { action_link } : null,
             status: "pending" as any
         }))
 

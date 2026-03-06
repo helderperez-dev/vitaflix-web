@@ -2,6 +2,7 @@
     "Common": {
         "save": "Salvar",
         "edit": "Editar",
+        "editDetails": "Editar Detalhes",
         "delete": "Excluir",
         "actions": "Ações",
         "loading": "Carregando...",
@@ -42,7 +43,9 @@
         "noItemAddedYet": "Nenhum {item} adicionado ainda",
         "brand": "Marca",
         "date": "Data",
-        "done": "Pronto"
+        "done": "Pronto",
+        "profile": "Perfil",
+        "email": "E-mail"
     },
     "Auth": {
         "welcome": "Bem-vindo de volta",
@@ -199,6 +202,21 @@
         "systemCompliance": "Conformidade do Sistema",
         "profileStatus": "Status do Perfil",
         "profileStatusDesc": "Indica se o usuário finalizou os dados obrigatórios.",
+        "identityProtection": "Gestão de Credenciais",
+        "externalRecovery": "Link de Redefinição de Senha",
+        "externalRecoveryDesc": "Envie um e-mail seguro para que o usuário possa redefinir sua própria senha.",
+        "initiateReset": "Enviar E-mail",
+        "adminOverride": "Atualização Manual de Senha",
+        "adminOverrideDesc": "Defina diretamente uma nova senha para este usuário se ele não conseguir acessar o e-mail.",
+        "overrideKey": "Atualizar Senha",
+        "newMasterCredential": "Digite a nova senha",
+        "tabs": {
+            "profile": "Perfil",
+            "security": "Segurança",
+            "subscription": "Assinatura",
+            "plan": "Plano Alimentar",
+            "activity": "Atividade"
+        },
         "table": {
             "user": "Usuário",
             "role": "Função",
@@ -210,6 +228,7 @@
         "dashboard": "Painel",
         "products": "Produtos",
         "meals": "Refeições",
+        "leads": "Leads",
         "users": "Usuários",
         "settings": "Configurações",
         "logout": "Sair",
@@ -218,7 +237,25 @@
         "lightMode": "Modo claro",
         "darkMode": "Modo escuro",
         "admin": "Admin",
-        "notifications": "Notificações"
+        "notifications": "Notificações",
+        "plansSettings": "Configurações do Plano"
+    },
+    "Plans": {
+        "createNewPlan": "Criar Novo Plano",
+        "createPlanDescription": "Configure uma sequência estruturada de refeições. Você pode configurar os tipos específicos de refeições para cada quantidade diária nas configurações do sistema.",
+        "labelPlanName": "Nome do Plano",
+        "placeholderPlanName": "ex: Semana Intensiva de Verão",
+        "labelMealQuantity": "Refeições Diárias",
+        "selectQuantity": "Selecione a quantidade diária",
+        "mealsLabel": "refeições por dia",
+        "cancel": "Cancelar",
+        "createPlan": "Criar Plano",
+        "creating": "Criando...",
+        "successCreated": "Plano de refeições criado com sucesso",
+        "errorNameRequired": "O nome do plano é obrigatório",
+        "emptyTitle": "Sem Planos Ativos",
+        "emptyDescription": "Este usuário ainda não possui planos de refeições estruturados.",
+        "addFirst": "Criar Primeiro Plano"
     },
     "Notifications": {
         "title": "Notificações",
@@ -268,5 +305,37 @@
         "noGroups": "Nenhum grupo de usuários encontrado.",
         "viewDetails": "Ver Detalhes",
         "selectTemplate": "Selecionar da biblioteca..."
+    },
+    "Leads": {
+        "title": "Leads",
+        "description": "Gerencie e acompanhe seus leads através do funil de vendas.",
+        "addLead": "Adicionar Lead",
+        "editLead": "Editar Lead",
+        "personalInfo": "Informação Pessoal",
+        "pipelineInfo": "Informação do Funil",
+        "tableName": "Nome",
+        "tablePhone": "Telefone",
+        "tableSource": "Origem",
+        "funnel": "Funil",
+        "status": "Status",
+        "selectFunnel": "Selecionar Funil",
+        "selectStatus": "Selecionar Status",
+        "unassigned": "Não atribuído",
+        "sourcePlaceholder": "Facebook, Recomendação, etc.",
+        "noLeads": "Nenhum lead encontrado.",
+        "kanban": "Kanban",
+        "datagrid": "Grelha de Dados",
+        "createFunnel": "Criar Funil",
+        "noFunnels": "Nenhum Funil Encontrado",
+        "noFunnelsDesc": "Crie um funil e defina as etapas do fluxo de trabalho para começar a gerenciar leads.",
+        "searchLeads": "Pesquisar leads...",
+        "manageFunnels": "Gerenciar Funis",
+        "contact": "Contato",
+        "noContactInfo": "Sem info. de contato",
+        "direct": "Direto",
+        "created": "Criado",
+        "pipelineStep": "Etapa do Funil",
+        "newLead": "Novo Lead",
+        "dropLeadsHere": "Arraste leads aqui"
     }
 }
