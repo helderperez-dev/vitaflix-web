@@ -2,7 +2,7 @@
 
 import * as React from "react"
 import { useTranslations, useLocale } from "next-intl"
-import { Home, Apple, Utensils, Users, Settings, Sun, Moon, PanelLeftClose, PanelLeftOpen } from "lucide-react"
+import { Home, Apple, Utensils, Users, Settings, Sun, Moon, PanelLeftClose, PanelLeftOpen, Bell, Handshake } from "lucide-react"
 import Image from "next/image"
 import { cn } from "@/lib/utils"
 import { motion, AnimatePresence } from "framer-motion"
@@ -65,6 +65,11 @@ export function AppSidebar({ user }: AppSidebarProps) {
                     url: "/meals",
                     icon: Utensils,
                 },
+                {
+                    title: t("leads"),
+                    url: "/leads",
+                    icon: Handshake,
+                },
             ]
         },
         {
@@ -74,6 +79,11 @@ export function AppSidebar({ user }: AppSidebarProps) {
                     title: t("users"),
                     url: "/users",
                     icon: Users,
+                },
+                {
+                    title: t("notifications"),
+                    url: "/notifications",
+                    icon: Bell,
                 },
                 {
                     title: t("settings"),
@@ -172,7 +182,7 @@ export function AppSidebar({ user }: AppSidebarProps) {
                         <SidebarMenuButton
                             onClick={() => setTheme(theme === "dark" ? "light" : "dark")}
                             className="h-10 rounded-lg hover:bg-sidebar-accent/50 transition-all duration-300 group/theme-toggle"
-                            tooltip={mounted && theme === "dark" ? t("lightMode") : t("darkMode")}
+                            tooltip={mounted ? (theme === "dark" ? t("lightMode") : t("darkMode")) : t("darkMode")}
                         >
                             <div className="flex items-center gap-3 px-3 w-full group-data-[collapsible=icon]:justify-center group-data-[collapsible=icon]:!px-0">
                                 <div className="relative size-5 flex items-center justify-center shrink-0">
@@ -180,7 +190,7 @@ export function AppSidebar({ user }: AppSidebarProps) {
                                     <Moon className="absolute h-[1.2rem] w-[1.2rem] rotate-90 scale-0 transition-all dark:rotate-0 dark:scale-100 text-sidebar-foreground/50 group-hover/theme-toggle:text-primary" />
                                 </div>
                                 <span className="text-[13px] font-medium text-sidebar-foreground/70 group-hover/theme-toggle:text-sidebar-foreground transition-colors group-data-[collapsible=icon]:hidden">
-                                    {mounted && (theme === "dark" ? t("darkMode") : t("lightMode"))}
+                                    {mounted ? (theme === "dark" ? t("darkMode") : t("lightMode")) : t("darkMode")}
                                 </span>
                             </div>
                         </SidebarMenuButton>

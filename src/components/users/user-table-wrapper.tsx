@@ -6,7 +6,7 @@ import { useTranslations } from "next-intl"
 import { Button } from "@/components/ui/button"
 import { Badge } from "@/components/ui/badge"
 import { Plus, Loader2 } from "lucide-react"
-import { Avatar, AvatarFallback } from "@/components/ui/avatar"
+import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar"
 import { type UserProfile } from "@/shared-schemas/user"
 import { UserDrawer } from "./user-drawer"
 import { UserActions } from "./user-actions"
@@ -41,6 +41,7 @@ export function UserTableWrapper({ initialUsers }: UserTableWrapperProps) {
             extraDataComplete: u.extra_data_complete || false,
             role: u.role || 'user',
             locale: u.locale || 'en',
+            avatarUrl: u.avatar_url,
             createdAt: u.created_at,
             updatedAt: u.updated_at,
         }))
@@ -56,6 +57,9 @@ export function UserTableWrapper({ initialUsers }: UserTableWrapperProps) {
                 return (
                     <div className="flex items-center gap-3">
                         <Avatar className="h-9 w-9 border border-primary/10">
+                            {user.avatarUrl ? (
+                                <AvatarImage src={user.avatarUrl} alt={user.displayName || ""} className="object-cover" />
+                            ) : null}
                             <AvatarFallback className="bg-primary/10 text-primary text-xs font-semibold border border-primary/20">
                                 {user.displayName?.substring(0, 2).toUpperCase() || user.email.substring(0, 2).toUpperCase()}
                             </AvatarFallback>

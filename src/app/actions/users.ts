@@ -1,8 +1,10 @@
 'use server'
 
 import { createClient } from "@/lib/supabase/server"
+import { createAdminClient } from "@/lib/supabase/admin"
 import { revalidatePath } from "next/cache"
 import { userProfileSchema, type UserProfile } from "@/shared-schemas/user"
+import { triggerAppEvent } from "./notifications"
 
 export async function upsertUser(data: UserProfile) {
     const supabase = await createClient()
@@ -30,6 +32,7 @@ export async function upsertUser(data: UserProfile) {
             id: data.id || undefined,
             email: data.email,
             display_name: data.displayName,
+            avatar_url: data.avatarUrl,
             genre: data.genre,
             height: data.height,
             weight: data.weight,
@@ -40,6 +43,8 @@ export async function upsertUser(data: UserProfile) {
             extra_data_complete: data.extraDataComplete,
             role: data.role,
             locale: finalLocale,
+            phone: data.phone,
+            push_token: data.pushToken,
             preferences: data.preferences || {},
             updated_at: new Date().toISOString()
         })
@@ -50,6 +55,28 @@ export async function upsertUser(data: UserProfile) {
         return { error: error.message }
     }
 
+    // Fire triggers for new users
+    const isNewUser = !data.id
+    if (isNewUser) {
+        // Try to get the newly created user id by email
+        const { data: newUser } = await supabase
+            .from('users')
+            .select('id')
+            .eq('email', data.email)
+            .single()
+        if (newUser?.id) {
+            await triggerAppEvent('user_signed_up', { userId: newUser.id })
+        }
+    } else if (data.extraDataComplete && data.id) {
+        // Fire profile_complete trigger when onboarding finishes
+        await triggerAppEvent('profile_complete', {
+            userId: data.id,
+            data: {
+                recommended_kcal: String(data.recommendedKcalIntake || '')
+            }
+        })
+    }
+
     revalidatePath("/", "layout")
     return { success: true }
 }
@@ -57,7 +84,6 @@ export async function upsertUser(data: UserProfile) {
 export async function deleteUser(id: string) {
     const supabase = await createClient()
 
-    // In a real app, you might also want to delete from auth.users via admin API
     const { error } = await supabase
         .from('users')
         .delete()
@@ -69,6 +95,36 @@ export async function deleteUser(id: string) {
     }
 
     revalidatePath("/", "layout")
+    return { success: true }
+}
+
+export async function requestPasswordReset(email: string) {
+    const supabase = await createClient()
+
+    const { error } = await supabase.auth.resetPasswordForEmail(email, {
+        redirectTo: `${process.env.NEXT_PUBLIC_APP_URL}/auth/reset-password`,
+    })
+
+    if (error) {
+        console.error('Error requesting password reset:', error)
+        return { error: error.message }
+    }
+
+    return { success: true }
+}
+
+export async function adminUpdatePassword(userId: string, newPassword: string) {
+    const admin = createAdminClient()
+
+    const { error } = await admin.auth.admin.updateUserById(userId, {
+        password: newPassword
+    })
+
+    if (error) {
+        console.error('Error updating user password:', error)
+        return { error: error.message }
+    }
+
     return { success: true }
 }
 
@@ -103,4 +159,41 @@ export async function updateUserPreferences(userId: string, preferences: any) {
 
     revalidatePath("/", "layout")
     return { success: true }
+}
+
+export async function getUserRelatedData(userId: string) {
+    const supabase = await createClient()
+
+    const [
+        { data: subscriptions },
+        { data: mealPlans },
+        { data: shoppingLists },
+        { data: notifications }
+    ] = await Promise.all([
+        supabase.from('subscriptions').select('*').eq('user_id', userId).order('created_at', { ascending: false }),
+        supabase.from('meal_plans').select('*').eq('user_id', userId).order('created_at', { ascending: false }).limit(5),
+        supabase.from('shopping_lists').select('*').eq('user_id', userId).order('created_at', { ascending: false }).limit(5),
+        supabase.from('notifications').select('*').eq('user_id', userId).order('created_at', { ascending: false }).limit(10)
+    ])
+
+    // If there are subscriptions, fetch their transactions
+    let transactions: any[] = []
+    if (subscriptions && subscriptions.length > 0) {
+        const subIds = subscriptions.map(s => s.id)
+        const { data: transData } = await supabase
+            .from('transactions')
+            .select('*')
+            .in('subscription_id', subIds)
+            .order('created_at', { ascending: false })
+            .limit(20)
+        transactions = transData || []
+    }
+
+    return {
+        subscriptions: subscriptions || [],
+        mealPlans: mealPlans || [],
+        shoppingLists: shoppingLists || [],
+        notifications: notifications || [],
+        transactions
+    }
 }

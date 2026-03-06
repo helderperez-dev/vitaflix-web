@@ -13,6 +13,7 @@ import { useQueryState } from "nuqs"
 import { toast } from "sonner"
 import { motion, AnimatePresence } from "framer-motion"
 import { ImageGalleryModal } from "@/components/shared/image-gallery-modal"
+import { MediaDisplay } from "@/components/shared/media-display"
 import {
     AlertDialog,
     AlertDialogAction,
@@ -190,10 +191,10 @@ export function MealTableWrapper({ initialMeals, userProfile }: MealTableWrapper
                             }}
                             className="h-10 w-10 rounded-md overflow-hidden bg-muted border border-border/40 flex-shrink-0 relative group cursor-pointer"
                         >
-                            <img
+                            <MediaDisplay
                                 src={defaultImage ? defaultImage.url : "/product_placeholder.png"}
                                 alt={name}
-                                className="w-full h-full object-cover transition-all group-hover:brightness-50"
+                                className="transition-all group-hover:brightness-50"
                             />
                             <div className="absolute inset-0 flex items-center justify-center opacity-0 group-hover:opacity-100 transition-opacity">
                                 <Maximize2 className="h-4 w-4 text-white" />

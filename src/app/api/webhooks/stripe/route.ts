@@ -1,6 +1,7 @@
 import { NextResponse } from "next/server"
 import Stripe from "stripe"
 import { createClient } from "@supabase/supabase-js"
+import { triggerAppEvent } from "@/app/actions/notifications"
 
 // Initialize Stripe and Supabase clients
 const stripe = new Stripe(process.env.STRIPE_SECRET_KEY as string, {
@@ -34,15 +35,12 @@ export async function POST(req: Request) {
     switch (event.type) {
         case "customer.subscription.created":
         case "customer.subscription.updated":
-        case "customer.subscription.deleted":
+        case "customer.subscription.deleted": {
             const subscription = event.data.object as Stripe.Subscription
             const status = subscription.status
 
             console.log(`Subscription ${subscription.id} status changed to ${status}`)
 
-            // Look up User ID via Stripe Customer ID mapped in Supabase, 
-            // or metadata attached to the subscription.
-            // Example assumes UserId is stored in subscription metadata upon Mobile app checkout.
             const userId = subscription.metadata.userId
 
             if (!userId) {
@@ -66,13 +64,20 @@ export async function POST(req: Request) {
                 console.error("Error upserting subscription:", subError)
             }
 
-            break
+            // Fire notification triggers based on subscription status
+            if (status === "active" && event.type === "customer.subscription.created") {
+                await triggerAppEvent("subscription_activated", { userId })
+            } else if (status === "canceled") {
+                await triggerAppEvent("subscription_cancelled", { userId })
+            }
 
-        case "invoice.payment_succeeded":
+            break
+        }
+
+        case "invoice.payment_succeeded": {
             // eslint-disable-next-line @typescript-eslint/no-explicit-any
             const invoice = event.data.object as any
             if (invoice.subscription) {
-                // Query our DB for the subscription ID
                 const { data: dbSub } = await supabase
                     .from("subscriptions")
                     .select("id")
@@ -90,6 +95,7 @@ export async function POST(req: Request) {
                 }
             }
             break
+        }
 
         default:
             console.log(`Unhandled event type: ${event.type}`)

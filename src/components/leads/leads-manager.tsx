@@ -1,0 +1,242 @@
+"use client"
+
+import * as React from "react"
+import { useTranslations } from "next-intl"
+import { Button } from "@/components/ui/button"
+import { Input } from "@/components/ui/input"
+import { Plus, LayoutGrid, Kanban, Search, Settings2, Loader2 } from "lucide-react"
+import { Link } from "@/i18n/routing"
+import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select"
+import { Database } from "@/types/database.types"
+import { getLeadsAction } from "@/app/actions/leads"
+import { toast } from "sonner"
+import { KanbanBoard } from "@/components/leads/kanban-board"
+import { LeadsDatagrid } from "@/components/leads/leads-datagrid"
+import { LeadDrawer } from "@/components/leads/lead-drawer"
+import { Tabs, TabsList, TabsTrigger } from "@/components/ui/tabs"
+import {
+    DropdownMenu,
+    DropdownMenuContent,
+    DropdownMenuItem,
+    DropdownMenuTrigger,
+    DropdownMenuSeparator,
+    DropdownMenuLabel,
+} from "@/components/ui/dropdown-menu"
+import { useQueryState } from "nuqs"
+import { cn } from "@/lib/utils"
+
+type Funnel = Database['public']['Tables']['lead_funnels']['Row'] & {
+    lead_funnel_steps: Database['public']['Tables']['lead_funnel_steps']['Row'][]
+}
+type Lead = Database['public']['Tables']['leads']['Row']
+
+interface LeadsManagerProps {
+    initialFunnels: Funnel[]
+    initialLeads: Lead[]
+}
+
+export function LeadsManager({ initialFunnels, initialLeads }: LeadsManagerProps) {
+    const tLeads = useTranslations("Leads")
+    const [funnels, setFunnels] = React.useState<Funnel[]>(initialFunnels)
+    const [leads, setLeads] = React.useState<Lead[]>(initialLeads)
+    const [activeFunnelId, setActiveFunnelId] = React.useState<string>('all')
+    const [viewMode, setViewMode] = React.useState<"kanban" | "datagrid">("kanban")
+    const [searchQuery, setSearchQuery] = useQueryState("search", { defaultValue: "" })
+    const [isLoading, setIsLoading] = React.useState(false)
+
+    // Drawer state
+    const [isDrawerOpen, setIsDrawerOpen] = React.useState(false)
+    const [selectedLead, setSelectedLead] = React.useState<Lead | null>(null)
+
+    const activeFunnel = funnels.find(f => f.id === activeFunnelId)
+    // For Kanban, if 'all' is selected, default to showing the first funnel's pipeline
+    const kanbanFunnel = activeFunnel || funnels[0]
+
+    const handleAddLead = () => {
+        setSelectedLead(null)
+        setIsDrawerOpen(true)
+    }
+
+    const handleEditLead = (lead: Lead) => {
+        setSelectedLead(lead)
+        setIsDrawerOpen(true)
+    }
+
+    // Refresh leads when funnel changes
+    React.useEffect(() => {
+        let isMounted = true;
+
+        async function fetchLeads() {
+            setIsLoading(true);
+            // Pass undefined to get all leads when 'all' is selected
+            const { leads: newLeads, success, error } = await getLeadsAction(activeFunnelId === 'all' ? undefined : activeFunnelId);
+            if (isMounted) {
+                if (success) {
+                    setLeads(newLeads || []);
+                } else {
+                    toast.error(error || "Failed to load leads");
+                }
+                setIsLoading(false);
+            }
+        }
+
+        fetchLeads();
+
+        return () => { isMounted = false };
+    }, [activeFunnelId]);
+
+    const filteredLeads = React.useMemo(() => {
+        if (!searchQuery) return leads
+        return leads.filter(l =>
+            l.name.toLowerCase().includes(searchQuery.toLowerCase()) ||
+            l.email?.toLowerCase().includes(searchQuery.toLowerCase()) ||
+            l.phone?.includes(searchQuery)
+        )
+    }, [leads, searchQuery])
+
+    const handleLeadStepChange = (leadId: string, stepId: string) => {
+        setLeads(prev => prev.map(l => l.id === leadId ? { ...l, step_id: stepId === 'unassigned' ? null : stepId } : l))
+    }
+
+    // Only show empty state when there are no funnels at all
+    if (funnels.length === 0) {
+        return (
+            <div className="flex flex-col items-center justify-center p-12 text-center h-[50vh]">
+                <Settings2 className="size-12 text-muted-foreground/30 mb-4" />
+                <h3 className="text-xl font-bold tracking-tight">{tLeads("noFunnels")}</h3>
+                <p className="text-sm text-muted-foreground mt-2 max-w-sm mb-6">
+                    {tLeads("noFunnelsDesc")}
+                </p>
+                <Link href="/leads/funnels">
+                    <Button className="rounded-xl">
+                        <Plus className="size-4 mr-2" />
+                        {tLeads("createFunnel")}
+                    </Button>
+                </Link>
+            </div>
+        )
+    }
+
+    return (
+        <div className="flex flex-col h-full">
+            {/* Header with Premium Style */}
+            <div className="flex justify-between items-center shrink-0 px-10 py-8 border-b border-border/40 bg-white dark:bg-background relative overflow-hidden">
+                {/* Premium Background Accent */}
+                <div className="absolute top-0 left-0 w-full h-10 bg-gradient-to-b from-slate-50 to-white dark:from-white/[0.02] dark:to-transparent pointer-events-none" />
+
+                <div className="flex flex-col relative z-10">
+                    <div className="flex items-center gap-3">
+                        <div className="w-1 h-6 bg-primary rounded-full opacity-80" />
+                        <h2 className="text-3xl font-semibold tracking-tight text-foreground dark:text-white leading-none">
+                            {tLeads("title")}
+                        </h2>
+                    </div>
+                    <p className="text-[11px] font-medium text-muted-foreground/70 dark:text-white/40 mt-2.5 ml-4">
+                        {tLeads("description")}
+                    </p>
+                </div>
+
+                <div className="flex items-center gap-4 relative z-10">
+                    <DropdownMenu>
+                        <DropdownMenuTrigger asChild>
+                            <Button variant="outline" className="h-10 rounded-xl px-4 border-border/40 bg-white dark:bg-slate-900 font-semibold text-xs shadow-sm hover:bg-slate-50 transition-all flex items-center gap-2">
+                                <Settings2 className="size-3.5 text-muted-foreground" />
+                                <span>{activeFunnel?.name || "All Leads"}</span>
+                            </Button>
+                        </DropdownMenuTrigger>
+                        <DropdownMenuContent align="end" className="w-56 p-1.5 rounded-2xl shadow-2xl border-border/40 backdrop-blur-xl bg-background/90 animate-in fade-in-0 zoom-in-95">
+                            <DropdownMenuLabel className="text-[10px] uppercase font-bold tracking-widest text-muted-foreground/60 px-3 py-2">
+                                Pipeline Filter
+                            </DropdownMenuLabel>
+                            <DropdownMenuItem
+                                onClick={() => setActiveFunnelId('all')}
+                                className={cn(
+                                    "rounded-lg text-[11px] font-semibold py-2.5 px-3 cursor-pointer transition-colors",
+                                    activeFunnelId === 'all' ? "bg-primary/5 text-primary" : "text-foreground"
+                                )}
+                            >
+                                <LayoutGrid className="size-3.5 mr-2 opacity-60" />
+                                All Leads
+                            </DropdownMenuItem>
+                            <DropdownMenuSeparator className="bg-border/40 mx-1.5 my-1" />
+                            <DropdownMenuLabel className="text-[10px] uppercase font-bold tracking-widest text-muted-foreground/60 px-3 py-2">
+                                Active Funnels
+                            </DropdownMenuLabel>
+                            {funnels.map(f => (
+                                <DropdownMenuItem
+                                    key={f.id}
+                                    onClick={() => setActiveFunnelId(f.id)}
+                                    className={cn(
+                                        "rounded-lg text-[11px] font-semibold py-2.5 px-3 cursor-pointer transition-colors",
+                                        activeFunnelId === f.id ? "bg-primary/5 text-primary" : "text-foreground"
+                                    )}
+                                >
+                                    <div className="size-2 rounded-full mr-2" style={{ backgroundColor: f.lead_funnel_steps[0]?.color || '#primary' }} />
+                                    {f.name}
+                                </DropdownMenuItem>
+                            ))}
+                            <DropdownMenuSeparator className="bg-border/40 mx-1.5 my-1" />
+                            <Link href="/leads/funnels" className="w-full">
+                                <DropdownMenuItem className="rounded-lg text-[11px] font-semibold py-2.5 px-3 cursor-pointer text-primary bg-primary/5 hover:bg-primary/10">
+                                    <Settings2 className="size-3.5 mr-2" />
+                                    {tLeads("manageFunnels")}
+                                </DropdownMenuItem>
+                            </Link>
+                        </DropdownMenuContent>
+                    </DropdownMenu>
+
+                    <div className="h-6 w-px bg-border/40 mx-1" />
+
+                    <Tabs value={viewMode} onValueChange={(v: any) => setViewMode(v)} className="h-10">
+                        <TabsList className="bg-slate-100/50 dark:bg-white/[0.05] border border-border/40 p-1 h-10 rounded-xl">
+                            <TabsTrigger value="kanban" className="rounded-lg px-3 text-[11px] font-bold uppercase transition-all data-[state=active]:bg-white dark:data-[state=active]:bg-white/10 data-[state=active]:text-primary data-[state=active]:shadow-sm">
+                                <Kanban className="size-3.5 mr-1.5" />
+                                {tLeads("kanban")}
+                            </TabsTrigger>
+                            <TabsTrigger value="datagrid" className="rounded-lg px-3 text-[11px] font-bold uppercase transition-all data-[state=active]:bg-white dark:data-[state=active]:bg-white/10 data-[state=active]:text-primary data-[state=active]:shadow-sm">
+                                <LayoutGrid className="size-3.5 mr-1.5" />
+                                {tLeads("datagrid")}
+                            </TabsTrigger>
+                        </TabsList>
+                    </Tabs>
+
+                    <Button className="h-10 rounded-xl bg-primary hover:bg-primary/95 text-white font-semibold text-xs transition-all active:scale-95 shadow-md shadow-primary/10 px-6 flex items-center gap-2.5" onClick={handleAddLead}>
+                        <Plus className="size-4" />
+                        <span>{tLeads("addLead")}</span>
+                    </Button>
+                </div>
+            </div>
+
+            <div className="flex-1 overflow-hidden relative flex flex-col">
+                {/* Background decorative elements to match premium feel */}
+                <div className="absolute top-0 left-0 w-full h-20 bg-gradient-to-b from-slate-50/50 dark:from-white/[0.02] to-transparent pointer-events-none" />
+                {isLoading ? (
+                    <div className="h-full flex items-center justify-center">
+                        <Loader2 className="h-8 w-8 text-primary animate-spin" />
+                    </div>
+                ) : viewMode === "kanban" && kanbanFunnel ? (
+                    <KanbanBoard
+                        funnel={kanbanFunnel}
+                        leads={filteredLeads}
+                        onLeadStepChange={handleLeadStepChange}
+                        onLeadClick={handleEditLead}
+                    />
+                ) : (
+                    <LeadsDatagrid
+                        funnels={funnels}
+                        activeFunnelId={activeFunnelId}
+                        leads={filteredLeads}
+                        onRowClick={handleEditLead}
+                    />
+                )}
+            </div>
+
+            <LeadDrawer
+                open={isDrawerOpen}
+                onOpenChange={setIsDrawerOpen}
+                lead={selectedLead}
+                funnels={funnels}
+            />
+        </div>
+    )
+}

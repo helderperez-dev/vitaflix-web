@@ -22,6 +22,7 @@ import { ProductSelector } from "@/components/shared/product-selector"
 import { Separator } from "@/components/ui/separator"
 import { Checkbox } from "@/components/ui/checkbox"
 import { cn } from "@/lib/utils"
+import { MediaDisplay } from "@/components/shared/media-display"
 
 interface MealOptionFormProps {
     initialData?: Partial<MealOption>
@@ -391,7 +392,7 @@ function IngredientItem({ index, form, productMap, onRemove, onProductCached }: 
             <div className="flex items-center gap-4 p-4 bg-muted/5">
                 <div className="h-12 w-12 rounded-lg bg-muted border border-border/40 flex items-center justify-center overflow-hidden shrink-0">
                     {product?.image?.url ? (
-                        <img src={product.image.url} alt={productName} className="h-full w-full object-cover" />
+                        <MediaDisplay src={product.image.url} alt={productName} />
                     ) : (
                         <div className="h-full w-full bg-muted/20 flex items-center justify-center">
                             <span className="text-[10px] font-semibold text-muted-foreground/20 italic">PHOTO</span>
@@ -456,7 +457,7 @@ function IngredientItem({ index, form, productMap, onRemove, onProductCached }: 
                                 <div key={sub.id} className="flex items-center gap-3 p-2 rounded-lg bg-muted/10 border border-border/20 transition-colors">
                                     <div className="h-8 w-8 rounded-md bg-muted border border-border/40 flex items-center justify-center overflow-hidden shrink-0">
                                         {subProduct?.image?.url ? (
-                                            <img src={subProduct.image.url} alt={subName} className="h-full w-full object-cover" />
+                                            <MediaDisplay src={subProduct.image.url} alt={subName} />
                                         ) : (
                                             <div className="text-[8px] font-semibold text-muted-foreground/40">S</div>
                                         )}
