@@ -81,12 +81,12 @@
   --chart-4: oklch(0.828 0.189 84.429);
   --chart-5: oklch(0.769 0.188 70.08);
 
-  /* Sidebar: Refined slate-gray to contrast with pure white content */
-  --sidebar: oklch(0.98 0.005 240);
+  /* Sidebar: Pure white for a clean, professional look */
+  --sidebar: oklch(1 0 0);
   --sidebar-foreground: oklch(0.24 0.05 240);
   --sidebar-primary: oklch(0.61 0.13 168);
   --sidebar-primary-foreground: oklch(1 0 0);
-  --sidebar-accent: oklch(0.61 0.13 168 / 8%);
+  --sidebar-accent: oklch(0.96 0.01 240);
   --sidebar-accent-foreground: oklch(0.61 0.13 168);
   --sidebar-border: oklch(0.92 0.01 240);
   --sidebar-ring: oklch(0.61 0.13 168);

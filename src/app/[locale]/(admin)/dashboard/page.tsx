@@ -39,7 +39,7 @@ export default async function DashboardPage({ params }: { params: { locale: stri
 
     const stats = [
         {
-            title: "Active users",
+            title: t("activeUsers"),
             value: userCount || 0,
             icon: Users,
             trend: "+12.5%",
@@ -47,7 +47,7 @@ export default async function DashboardPage({ params }: { params: { locale: stri
             bg: "bg-primary/5"
         },
         {
-            title: "Active subs",
+            title: t("activeSubs"),
             value: activeSubCount || 0,
             icon: CreditCard,
             trend: "+5.2%",
@@ -55,7 +55,7 @@ export default async function DashboardPage({ params }: { params: { locale: stri
             bg: "bg-primary/5"
         },
         {
-            title: "Inventory",
+            title: t("products"),
             value: productCount || 0,
             icon: Apple,
             trend: "+18%",
@@ -63,7 +63,7 @@ export default async function DashboardPage({ params }: { params: { locale: stri
             bg: "bg-primary/5"
         },
         {
-            title: "Meals",
+            title: t("meals"),
             value: mealCount || 0,
             icon: Utensils,
             trend: "+24%",

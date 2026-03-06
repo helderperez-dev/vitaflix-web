@@ -95,7 +95,7 @@ export function AppSidebar({ user }: AppSidebarProps) {
     ]
 
     return (
-        <Sidebar collapsible="icon" className="border-r border-sidebar-border/50 sidebar-gradient">
+        <Sidebar collapsible="icon" className="border-r border-sidebar-border/50 bg-sidebar">
             <SidebarHeader className="flex flex-row items-center justify-between pl-7 pr-4 pt-5 pb-4 transition-all duration-300 group-data-[collapsible=icon]:flex-col group-data-[collapsible=icon]:items-center group-data-[collapsible=icon]:justify-center group-data-[collapsible=icon]:px-0 group-data-[collapsible=icon]:pt-5">
                 <div className="flex items-center gap-3">
                     <div className="relative">
