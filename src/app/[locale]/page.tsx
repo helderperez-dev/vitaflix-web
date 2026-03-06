@@ -8,7 +8,7 @@ export default function LandingPage() {
     return (
         <div className="min-h-screen bg-background text-foreground font-sans selection:bg-primary/30">
             {/* Navigation (Optional minimalist nav could go here) */}
-            <header className="absolute top-0 inset-x-0 z-50 h-20 flex items-center justify-between px-6 lg:px-12 backdrop-blur-md border-b border-border/40">
+            <header className="fixed top-0 inset-x-0 z-50 h-20 flex items-center justify-between px-6 lg:px-12 bg-white/95 backdrop-blur-md border-b border-border/40 shadow-sm">
                 <div className="flex items-center gap-2">
                     <img src="/vitaflix_logo_dark_mode.png" alt="Vitaflix" className="h-8 dark:block hidden" />
                     <img src="/vitaflix_logo_light_mode.png" alt="Vitaflix" className="h-8 dark:hidden block" />

@@ -38,7 +38,7 @@ export default async function AdminLayout({
             <div className="flex min-h-screen w-full">
                 <AppSidebar user={userData} />
                 <main className="flex-1 flex flex-col h-screen overflow-hidden bg-background">
-                    <header className="flex h-16 items-center gap-4 px-8 border-b border-border/40 bg-background/80 backdrop-blur-xl sticky top-0 z-30 transition-all duration-300 shrink-0 shadow-sm shadow-primary/[0.02] dark:shadow-none">
+                    <header className="flex h-16 items-center gap-4 px-8 border-b border-border/40 bg-background sticky top-0 z-30 transition-all duration-300 shrink-0 shadow-sm shadow-primary/[0.02] dark:shadow-none">
                         <div className="flex-1 flex items-center max-w-2xl">
                             <GlobalSearch />
                         </div>
