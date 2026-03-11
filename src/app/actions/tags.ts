@@ -73,6 +73,17 @@ export async function upsertTag(tag: Tag, table: TagTable = 'tags') {
 export async function deleteTag(id: string, table: TagTable = 'tags') {
     const supabase = await createClient()
 
+    // Handle logo deletion for brands
+    if (table === 'brands') {
+        const { data: brand } = await supabase.from('brands').select('logo_url').eq('id', id).single()
+        if (brand?.logo_url) {
+            const path = brand.logo_url.split('vitaflix/').pop()
+            if (path) {
+                await supabase.storage.from('vitaflix').remove([path])
+            }
+        }
+    }
+
     const { error } = await supabase
         .from(table)
         .delete()
@@ -80,6 +91,35 @@ export async function deleteTag(id: string, table: TagTable = 'tags') {
 
     if (error) {
         console.error(`Error deleting ${table}:`, error)
+        return { error: error.message }
+    }
+
+    revalidatePath("/", "layout")
+    return { success: true }
+}
+
+export async function deleteTags(ids: string[], table: TagTable = 'tags') {
+    const supabase = await createClient()
+
+    // Handle logo deletion for brands in bulk
+    if (table === 'brands') {
+        const { data: brands } = await supabase.from('brands').select('logo_url').in('id', ids)
+        const paths = brands
+            ?.map(b => b.logo_url?.split('vitaflix/').pop())
+            .filter((p): p is string => !!p)
+
+        if (paths && paths.length > 0) {
+            await supabase.storage.from('vitaflix').remove(paths)
+        }
+    }
+
+    const { error } = await supabase
+        .from(table)
+        .delete()
+        .in('id', ids)
+
+    if (error) {
+        console.error(`Error deleting multiple ${table}:`, error)
         return { error: error.message }
     }
 
