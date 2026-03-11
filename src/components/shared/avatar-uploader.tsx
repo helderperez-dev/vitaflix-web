@@ -106,7 +106,7 @@ export function AvatarUploader({
         <div className={cn("flex flex-col items-center gap-4", !showLabel && "gap-0")}>
             <div className="relative group">
                 <Avatar className={cn(
-                    "shadow-xl bg-background rounded-full overflow-hidden",
+                    "shadow-xl bg-background rounded-lg overflow-hidden",
                     size === "sm" ? "size-16" : size === "md" ? "size-24 border-3 border-white" : "size-32 border-4 border-white"
                 )}>
                     {value ? (
@@ -121,7 +121,7 @@ export function AvatarUploader({
                 </Avatar>
 
                 {isUploading && (
-                    <div className="absolute inset-0 bg-black/40 rounded-full flex items-center justify-center z-10">
+                    <div className="absolute inset-0 bg-black/40 rounded-lg flex items-center justify-center z-10">
                         <Loader2 className="size-8 text-white animate-spin" />
                     </div>
                 )}
@@ -131,7 +131,7 @@ export function AvatarUploader({
                     onClick={() => fileInputRef.current?.click()}
                     disabled={isUploading}
                     className={cn(
-                        "absolute bottom-0 right-0 bg-primary rounded-full border-white flex items-center justify-center text-white shadow-lg transition-all hover:scale-110 active:scale-95 disabled:opacity-50 hover:bg-primary/90",
+                        "absolute bottom-0 right-0 bg-primary rounded-lg border-white flex items-center justify-center text-white shadow-lg transition-all hover:scale-110 active:scale-95 disabled:opacity-50 hover:bg-primary/90",
                         size === "sm" ? "size-6 border-2 bottom-0 right-0" : size === "md" ? "size-8 border-3 bottom-0.5 right-0.5" : "size-10 border-4 bottom-1 right-1"
                     )}
                 >
@@ -143,7 +143,7 @@ export function AvatarUploader({
                         type="button"
                         onClick={removeAvatar}
                         className={cn(
-                            "absolute bg-white rounded-full border border-border flex items-center justify-center text-muted-foreground shadow-md transition-all hover:scale-110 active:scale-95 group-hover:opacity-100 opacity-0 hover:bg-muted",
+                            "absolute bg-white rounded-lg border border-border flex items-center justify-center text-muted-foreground shadow-md transition-all hover:scale-110 active:scale-95 group-hover:opacity-100 opacity-0 hover:bg-muted",
                             size === "sm" ? "size-5 top-0 right-0" : size === "md" ? "size-6 top-0.5 right-0.5" : "size-7 top-1 right-1"
                         )}
                     >
@@ -163,7 +163,7 @@ export function AvatarUploader({
 
             {showLabel && (
                 <div className="text-center">
-                    <p className="text-sm font-bold text-secondary dark:text-white uppercase tracking-wider">{displayName || "Profile Identification"}</p>
+                    <p className="text-sm font-bold text-secondary dark:text-white capitalize tracking-wider">{displayName || "Profile Identification"}</p>
                 </div>
             )}
 

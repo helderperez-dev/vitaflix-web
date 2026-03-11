@@ -18,10 +18,11 @@ import {
     PopoverContent,
     PopoverTrigger,
 } from "@/components/ui/popover"
-import { getTags, type TagTable } from "@/app/actions/tags"
-import { type Tag } from "@/shared-schemas/tag"
+import { getTags } from "@/app/actions/tags"
+import { type Tag, type TagTable } from "@/shared-schemas/tag"
 import { TagModal } from "@/components/shared/tag-modal"
 import { useLocale, useTranslations } from "next-intl"
+
 
 interface DictionarySelectorProps {
     value: string
@@ -31,6 +32,7 @@ interface DictionarySelectorProps {
     label?: string
     allowCreation?: boolean
     returnIdOnly?: boolean
+    className?: string
 }
 
 export function DictionarySelector({
@@ -40,8 +42,10 @@ export function DictionarySelector({
     placeholder,
     label,
     allowCreation = true,
-    returnIdOnly = false
+    returnIdOnly = false,
+    className
 }: DictionarySelectorProps) {
+
     const locale = useLocale()
     const t = useTranslations("Common")
     const [mounted, setMounted] = React.useState(false)
@@ -71,7 +75,7 @@ export function DictionarySelector({
             {label && <label className="text-xs font-semibold text-muted-foreground/70 px-1">{label}</label>}
             <Button
                 variant="outline"
-                className="w-full justify-between h-12 px-4 text-sm font-medium border-border/40 bg-muted/5 rounded-xl gap-2 opacity-50"
+                className={cn("w-full justify-between h-12 px-4 text-sm font-medium border-input bg-muted/5 rounded-lg gap-2 opacity-50", className)}
                 disabled
             >
                 <span className="truncate text-muted-foreground/50">{placeholder || t("select")}</span>
@@ -98,7 +102,7 @@ export function DictionarySelector({
                         variant="outline"
                         role="combobox"
                         aria-expanded={open}
-                        className="w-full justify-between h-12 px-4 text-sm font-medium border-border/40 bg-muted/5 hover:bg-background transition-all rounded-xl gap-2 group"
+                        className={cn("w-full justify-between h-12 px-4 text-sm font-medium border-input bg-muted/5 hover:bg-background transition-all rounded-lg gap-2 group", className)}
                     >
                         <span className={cn("truncate", !value && "text-muted-foreground/50")}>
                             {displayValue}
@@ -106,7 +110,7 @@ export function DictionarySelector({
                         <ChevronDown className="h-4 w-4 shrink-0 opacity-50 group-hover:opacity-100 transition-opacity" />
                     </Button>
                 </PopoverTrigger>
-                <PopoverContent className="w-[300px] p-0 shadow-2xl border-border/40 rounded-2xl backdrop-blur-xl bg-background/90" align="start">
+                <PopoverContent className="w-[300px] p-0 border-input rounded-lg backdrop-blur-xl bg-background/90" align="start">
                     <Command className="bg-transparent border-none">
                         <CommandInput placeholder={t("search")} className="h-10 text-xs" />
                         <CommandList className="max-h-[240px] overflow-y-auto custom-scrollbar">
@@ -122,7 +126,7 @@ export function DictionarySelector({
                                     >
                                         <div className="flex items-center gap-3">
                                             <div className={cn(
-                                                "size-4 rounded-full border border-primary/20 flex items-center justify-center transition-colors",
+                                                "size-4 rounded-lg border border-primary/20 flex items-center justify-center transition-colors",
                                                 (returnIdOnly ? item.id === value : (item.slug === value || item.id === value)) ? "bg-primary border-primary" : "bg-transparent"
                                             )}>
                                                 {(returnIdOnly ? item.id === value : (item.slug === value || item.id === value)) && <Check className="h-2.5 w-2.5 text-white" />}
@@ -136,7 +140,7 @@ export function DictionarySelector({
                                             <Button
                                                 variant="ghost"
                                                 size="icon"
-                                                className="h-7 w-7 opacity-0 group-hover:opacity-100 transition-all hover:bg-muted/50 rounded-full"
+                                                className="h-7 w-7 opacity-0 group-hover:opacity-100 transition-all hover:bg-muted/50 rounded-lg"
                                                 onClick={(e) => {
                                                     e.stopPropagation()
                                                     setEditingItem(item)

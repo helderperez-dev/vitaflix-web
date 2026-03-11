@@ -122,8 +122,8 @@ function SortableStepItem({
             style={style}
             onClick={() => startEditing(index)}
             className={cn(
-                "group relative flex gap-6 p-6 pt-10 rounded-2xl border border-border/30 bg-white dark:bg-slate-900/50 hover:border-border/60 hover:bg-muted/5 hover:shadow-sm transition-all duration-300 cursor-pointer overflow-hidden",
-                isDragging && "shadow-2xl border-primary/20 bg-muted/10 opacity-60 scale-[1.02] rotate-[0.5deg]"
+                "group relative flex gap-6 p-6 pt-10 rounded-lg border border-border/30 bg-white dark:bg-slate-900/50 hover:border-border/60 hover:bg-muted/5 transition-all duration-300 cursor-pointer overflow-hidden",
+                isDragging && "border-primary/20 bg-muted/10 opacity-60 scale-[1.02] rotate-[0.5deg]"
             )}
         >
             {/* Controls - Top Right */}
@@ -150,7 +150,7 @@ function SortableStepItem({
                             <MoreHorizontal className="h-4.5 w-4.5" />
                         </Button>
                     </DropdownMenuTrigger>
-                    <DropdownMenuContent align="end" className="w-32 bg-background/95 backdrop-blur-sm border-border/40 shadow-2xl rounded-xl">
+                    <DropdownMenuContent align="end" className="w-32 bg-background/95 backdrop-blur-sm border-border/40 shadow-2xl rounded-lg">
                         <DropdownMenuItem
                             onClick={(e) => {
                                 e.stopPropagation()
@@ -176,7 +176,7 @@ function SortableStepItem({
                 </DropdownMenu>
             </div>
 
-            <div className="flex-shrink-0 flex items-center justify-center w-8 h-8 rounded-xl bg-muted/40 text-muted-foreground font-semibold text-xs mt-0.5">
+            <div className="flex-shrink-0 flex items-center justify-center w-8 h-8 rounded-lg bg-muted/40 text-muted-foreground font-semibold text-xs mt-0.5">
                 {index + 1}
             </div>
             <div className="flex-1 min-w-0 flex flex-col pt-0.5">
@@ -279,7 +279,7 @@ export function PreparationSteps({ form, namePrefix, label }: PreparationStepsPr
                         type="button"
                         variant="outline"
                         onClick={() => setIsAdding(true)}
-                        className="h-8 w-auto min-w-[80px] justify-center px-4 text-xs font-semibold border-border/50 bg-transparent text-muted-foreground hover:bg-muted/5 rounded-xl transition-all gap-2"
+                        className="h-8 w-auto min-w-[80px] justify-center px-4 text-xs font-semibold border-border/50 bg-transparent text-muted-foreground hover:bg-muted/5 rounded-lg transition-all gap-2"
                     >
                         <Plus className="h-3.5 w-3.5 opacity-50" />
                         {commonT("add")}
@@ -324,7 +324,7 @@ export function PreparationSteps({ form, namePrefix, label }: PreparationStepsPr
                         })}
 
                         {fields.length === 0 && !isAdding && (
-                            <div className="flex flex-col items-center justify-center py-6 px-6 rounded-2xl bg-muted/5 border-2 border-dashed border-border/40">
+                            <div className="flex flex-col items-center justify-center py-6 px-6 rounded-lg bg-muted/5 border-2 border-dashed border-border/40">
                                 <p className="text-[10px] font-semibold text-muted-foreground/40">
                                     {t("noPrepSteps")}
                                 </p>

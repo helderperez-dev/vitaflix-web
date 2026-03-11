@@ -12,6 +12,17 @@ import { updateLeadStepAction, bulkDeleteLeads } from "@/app/actions/leads"
 import { DataTable, SortableHeader } from "@/components/ui/data-table"
 import { LeadActions } from "./lead-actions"
 import { toast } from "sonner"
+import {
+    AlertDialog,
+    AlertDialogAction,
+    AlertDialogCancel,
+    AlertDialogContent,
+    AlertDialogDescription,
+    AlertDialogFooter,
+    AlertDialogHeader,
+    AlertDialogTitle,
+} from "@/components/ui/alert-dialog"
+import { updateUserPreferences } from "@/app/actions/users"
 
 type Funnel = Database['public']['Tables']['lead_funnels']['Row'] & {
     lead_funnel_steps: Database['public']['Tables']['lead_funnel_steps']['Row'][]
@@ -23,12 +34,15 @@ interface LeadsDatagridProps {
     activeFunnelId?: string
     leads: Lead[]
     onRowClick?: (lead: Lead) => void
+    userProfile?: any
 }
 
-export function LeadsDatagrid({ funnels, activeFunnelId, leads, onRowClick }: LeadsDatagridProps) {
-    const t = useTranslations("Common")
+export function LeadsDatagrid({ funnels, activeFunnelId, leads, onRowClick, userProfile }: LeadsDatagridProps) {
     const tLeads = useTranslations("Leads")
     const locale = useLocale()
+    const [deleteModalOpen, setDeleteModalOpen] = React.useState(false)
+    const [rowsToDelete, setRowsToDelete] = React.useState<Lead[]>([])
+    const [clearSelectionRef, setClearSelectionRef] = React.useState<{ fn: () => void } | null>(null)
 
     const handleStepChange = async (leadId: string, stepId: string) => {
         await updateLeadStepAction(leadId, stepId === 'unassigned' ? null : stepId)
@@ -72,7 +86,7 @@ export function LeadsDatagrid({ funnels, activeFunnelId, leads, onRowClick }: Le
             accessorKey: "source",
             header: ({ column }) => <SortableHeader column={column} title={tLeads("tableSource")} />,
             cell: ({ row }) => (
-                <Badge variant="secondary" className="text-[10px] uppercase font-bold tracking-wider rounded-md bg-slate-100 dark:bg-white/5 text-slate-500 dark:text-slate-400 border-none px-2 py-0.5">
+                <Badge variant="secondary" className="text-[10px] capitalize font-bold tracking-wider rounded-md bg-slate-100 dark:bg-white/5 text-slate-500 dark:text-slate-400 border-none px-2 py-0.5">
                     {row.getValue("source") || tLeads("direct")}
                 </Badge>
             ),
@@ -110,10 +124,10 @@ export function LeadsDatagrid({ funnels, activeFunnelId, leads, onRowClick }: Le
                             defaultValue={lead.step_id || "unassigned"}
                             onValueChange={(val) => handleStepChange(lead.id, val)}
                         >
-                            <SelectTrigger className="h-8 w-[160px] bg-white/50 dark:bg-white/5 border-none text-[10px] font-semibold uppercase tracking-wider transition-all hover:bg-white dark:hover:bg-white/10 rounded-lg">
+                            <SelectTrigger className="h-8 w-[160px] bg-white/50 dark:bg-white/5 border-none text-[10px] font-semibold capitalize tracking-wider transition-all hover:bg-white dark:hover:bg-white/10 rounded-lg">
                                 <div className="flex items-center gap-2">
                                     <div
-                                        className="size-1.5 rounded-full shadow-[0_0_8px_rgba(0,0,0,0.1)]"
+                                        className="size-1.5 rounded-lg shadow-[0_0_8px_rgba(0,0,0,0.1)]"
                                         style={{ backgroundColor: currentStep?.color || "#e2e8f0" }}
                                     />
                                     <SelectValue>
@@ -121,16 +135,16 @@ export function LeadsDatagrid({ funnels, activeFunnelId, leads, onRowClick }: Le
                                     </SelectValue>
                                 </div>
                             </SelectTrigger>
-                            <SelectContent className="rounded-xl border-border/40 shadow-xl overflow-hidden p-1.5 min-w-[180px]">
-                                <SelectItem value="unassigned" className="text-[10px] font-bold uppercase rounded-lg py-2 cursor-pointer">{tLeads("unassigned")}</SelectItem>
+                            <SelectContent className="rounded-lg border-border/40 overflow-hidden p-1.5 min-w-[180px]">
+                                <SelectItem value="unassigned" className="text-[10px] font-bold capitalize rounded-lg py-2 cursor-pointer">{tLeads("unassigned")}</SelectItem>
                                 {steps.map((step) => (
                                     <SelectItem
                                         key={step.id}
                                         value={step.id}
-                                        className="text-[10px] font-bold uppercase rounded-lg py-2 cursor-pointer"
+                                        className="text-[10px] font-bold capitalize rounded-lg py-2 cursor-pointer"
                                     >
                                         <div className="flex items-center gap-2">
-                                            <div className="size-1.5 rounded-full" style={{ backgroundColor: step.color || '#primary' }} />
+                                            <div className="size-1.5 rounded-lg" style={{ backgroundColor: step.color || '#primary' }} />
                                             {step.name}
                                         </div>
                                     </SelectItem>
@@ -158,37 +172,81 @@ export function LeadsDatagrid({ funnels, activeFunnelId, leads, onRowClick }: Le
         }
     ], [funnels, activeFunnelId, locale, onRowClick])
 
+    const handlePreferencesChange = React.useCallback((newPrefs: any) => {
+        if (!userProfile?.id) return
+        const fullPrefs = {
+            ...userProfile.preferences,
+            leadsTable: newPrefs
+        }
+        updateUserPreferences(userProfile.id, fullPrefs)
+    }, [userProfile?.id, userProfile?.preferences])
+
     return (
-        <DataTable
-            columns={columns as any}
-            data={leads}
-            className="flex-1"
-            emptyStateText={tLeads("noLeads")}
-            onRowClick={onRowClick}
-            enableRowSelection={true}
-            selectionActions={(selectedRows, clearSelection) => (
-                <div className="flex items-center gap-6 w-full">
-                    <Button
-                        variant="ghost"
-                        className="h-9 px-4 text-[11px] font-semibold hover:bg-slate-100 dark:hover:bg-white/5 text-muted-foreground dark:text-white/80 hover:text-foreground dark:hover:text-white transition-all shrink-0"
-                        onClick={async () => {
-                            if (confirm(`Are you sure you want to delete ${selectedRows.length} leads?`)) {
-                                const result = await bulkDeleteLeads(selectedRows.map(r => r.id))
-                                if (result.success) {
-                                    toast.success(`${selectedRows.length} leads deleted`)
-                                    clearSelection()
-                                } else {
-                                    toast.error(result.error || "Failed to delete leads")
+        <>
+            <DataTable
+                columns={columns as any}
+                data={leads}
+                className="flex-1"
+                emptyStateText={tLeads("noLeads")}
+                onRowClick={onRowClick}
+                enableRowSelection={true}
+                initialPreferences={userProfile?.preferences?.leadsTable}
+                onPreferencesChange={handlePreferencesChange}
+                selectionActions={(selectedRows, clearSelection) => (
+                    <div className="flex items-center gap-6 w-full">
+                        <Button
+                            variant="ghost"
+                            className="h-9 px-4 text-[11px] font-semibold hover:bg-slate-100 dark:hover:bg-white/5 text-muted-foreground dark:text-white/80 hover:text-foreground dark:hover:text-white transition-all shrink-0"
+                            onClick={() => {
+                                setRowsToDelete(selectedRows)
+                                setClearSelectionRef({ fn: clearSelection })
+                                setDeleteModalOpen(true)
+                            }}
+                        >
+                            <Trash2 className="h-4 w-4 mr-2" />
+                            Delete ({selectedRows.length})
+                        </Button>
+                    </div>
+                )}
+            />
+
+            <AlertDialog open={deleteModalOpen} onOpenChange={setDeleteModalOpen}>
+                <AlertDialogContent className="rounded-lg border-sidebar-border/50 shadow-2xl">
+                    <AlertDialogHeader>
+                        <AlertDialogTitle>Are you absolutely sure?</AlertDialogTitle>
+                        <AlertDialogDescription>
+                            This will permanently delete {rowsToDelete.length} {rowsToDelete.length === 1 ? 'lead' : 'leads'}.
+                            This action cannot be undone and will remove all associated information.
+                        </AlertDialogDescription>
+                    </AlertDialogHeader>
+                    <AlertDialogFooter className="gap-2">
+                        <AlertDialogCancel className="rounded-lg font-semibold text-xs h-9">
+                            Cancel
+                        </AlertDialogCancel>
+                        <AlertDialogAction
+                            onClick={async () => {
+                                try {
+                                    const ids = rowsToDelete.map(r => r.id)
+                                    const result = await bulkDeleteLeads(ids)
+
+                                    if (result.success) {
+                                        toast.success(`Deleted ${ids.length} leads`)
+                                        clearSelectionRef?.fn()
+                                    } else {
+                                        toast.error(result.error || "Failed to delete leads")
+                                    }
+                                } finally {
+                                    setDeleteModalOpen(false)
                                 }
-                            }
-                        }}
-                    >
-                        <Trash2 className="h-4 w-4 mr-2" />
-                        Delete ({selectedRows.length})
-                    </Button>
-                </div>
-            )}
-        />
+                            }}
+                            className="bg-primary hover:bg-primary/90 text-white rounded-lg font-semibold text-xs h-9 px-6"
+                        >
+                            Confirm Deletion
+                        </AlertDialogAction>
+                    </AlertDialogFooter>
+                </AlertDialogContent>
+            </AlertDialog>
+        </>
     )
 }
 

@@ -194,7 +194,7 @@ export function MealDrawer({ open, onOpenChange, meal }: MealDrawerProps) {
         <Sheet open={open} onOpenChange={onOpenChange}>
             <SheetContent className="sm:max-w-2xl p-0 flex flex-col bg-background border-l border-border">
                 {/* High-End Ambient Glow */}
-                <div className="absolute top-0 left-0 right-0 h-[500px] bg-gradient-to-b from-slate-50 via-white to-white pointer-events-none -z-10" />
+                <div className="absolute top-0 left-0 right-0 h-[500px] bg-gradient-to-b from-slate-50 via-white to-white dark:from-white/[0.04] dark:via-transparent dark:to-transparent pointer-events-none -z-10" />
 
                 <div className="flex-1 flex flex-col min-h-0 overflow-hidden relative z-10">
                     {!isEditingOption && (
@@ -247,7 +247,7 @@ export function MealDrawer({ open, onOpenChange, meal }: MealDrawerProps) {
                                                 animate={{ opacity: 1, scale: 1 }}
                                                 exit={{ opacity: 0, scale: 0.8 }}
                                                 className={cn(
-                                                    "inline-flex items-center justify-center h-4.5 min-w-[18px] px-1 rounded-full text-[9px] font-semibold transition-all",
+                                                    "inline-flex items-center justify-center h-4.5 min-w-[18px] px-1 rounded-lg text-[9px] font-semibold transition-all",
                                                     activeView === "variations"
                                                         ? "bg-primary text-white shadow-sm shadow-primary/20"
                                                         : "bg-muted-foreground/10 text-muted-foreground/40 group-hover:bg-muted-foreground/20"
@@ -442,7 +442,7 @@ export function MealDrawer({ open, onOpenChange, meal }: MealDrawerProps) {
                                                 </div>
                                                 <div className="h-px flex-1 bg-border/60 ml-4" />
                                             </div>
-                                            <div className="p-4 rounded-xl bg-muted/20 border border-border/60 group transition-all duration-300 hover:bg-muted/30">
+                                            <div className="p-4 rounded-lg bg-muted/20 border border-border/60 group transition-all duration-300 hover:bg-muted/30">
                                                 <FormField
                                                     control={form.control}
                                                     name="isPublic"

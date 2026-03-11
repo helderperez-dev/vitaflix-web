@@ -33,7 +33,7 @@ export function RecentLeadsList({ leads, locale }: RecentLeadsListProps) {
                 leads.slice(0, 5).map((lead) => (
                     <div key={lead.id} className="flex items-center justify-between group">
                         <div className="flex items-center gap-2.5">
-                            <div className="h-7 w-7 rounded-full bg-primary/5 flex items-center justify-center text-primary/60 border border-primary/5">
+                            <div className="h-7 w-7 rounded-lg bg-primary/5 flex items-center justify-center text-primary/60 border border-primary/5">
                                 <User className="h-3.5 w-3.5" />
                             </div>
                             <div className="flex flex-col">

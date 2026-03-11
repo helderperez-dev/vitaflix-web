@@ -1,5 +1,6 @@
 {
     "Common": {
+        "all": "Todos",
         "save": "Guardar",
         "edit": "Editar",
         "editDetails": "Editar Detalhes",
@@ -32,7 +33,12 @@
         "createNewDietaryTag": "Criar Etiqueta Dietética",
         "noTagsFound": "Nenhuma etiqueta encontrada.",
         "noMealCategoriesFound": "Nenhuma categoria encontrada.",
-        "noDietaryTagsFound": "Nenhuma restrição encontrada.",
+        "noDietaryTagsFound": "Nenhuma etiqueta dietética encontrada.",
+        "selectProductGroups": "Selecionar Grupos de Produtos",
+        "searchProductGroups": "Pesquisar grupos...",
+        "availableProductGroups": "Grupos Disponíveis",
+        "createNewProductGroup": "Criar Novo Grupo",
+        "noProductGroupsFound": "Nenhum grupo encontrado.",
         "updatedSuccessfully": "Atualizado com sucesso",
         "createdSuccessfully": "Criado com sucesso",
         "errorSaving": "Erro ao salvar",
@@ -96,6 +102,7 @@
         "visibilityDesc": "Quando ativo, este ingrediente fica visível para todos os utilizadores.",
         "brand": "Marca",
         "tags": "Etiquetas",
+        "group": "Grupo",
         "table": {
             "name": "Nome do Produto",
             "macros": "Macros",

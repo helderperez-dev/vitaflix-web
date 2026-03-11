@@ -198,21 +198,21 @@ export function PlanDetailsView({ plan, onBack, onUpdate }: PlanDetailsViewProps
                     variant="ghost"
                     size="icon"
                     onClick={onBack}
-                    className="rounded-xl hover:bg-muted/10 shrink-0"
+                    className="rounded-lg hover:bg-muted/10 shrink-0"
                 >
                     <ArrowLeft className="size-4" />
                 </Button>
                 <div className="flex-1 min-w-0">
                     <h2 className="text-lg font-bold text-secondary dark:text-white truncate">{plan.name}</h2>
                     <div className="flex items-center gap-3 mt-0.5">
-                        <div className="flex items-center gap-1 text-[10px] text-muted-foreground uppercase tracking-wider font-bold whitespace-nowrap">
+                        <div className="flex items-center gap-1 text-[10px] text-muted-foreground capitalize tracking-wider font-bold whitespace-nowrap">
                             <Calendar className="size-3" />
                             <span suppressHydrationWarning>
                                 {createdAt ? new Date(createdAt).toLocaleDateString() : 'N/A'}
                             </span>
                         </div>
                         <div className="size-1 shrink-0 rounded-full bg-border" />
-                        <div className="flex items-center gap-1 text-[10px] text-muted-foreground uppercase tracking-wider font-bold whitespace-nowrap">
+                        <div className="flex items-center gap-1 text-[10px] text-muted-foreground capitalize tracking-wider font-bold whitespace-nowrap">
                             <Clock className="size-3" />
                             {dailyCount} {t("mealsLabel")}
                         </div>
@@ -223,7 +223,7 @@ export function PlanDetailsView({ plan, onBack, onUpdate }: PlanDetailsViewProps
             {/* Slots List */}
             <div className="space-y-4">
                 <div className="flex items-center gap-2 px-1">
-                    <h3 className="text-[10px] font-bold text-muted-foreground uppercase tracking-widest flex-1">
+                    <h3 className="text-[10px] font-bold text-muted-foreground capitalize tracking-widest flex-1">
                         Daily Meal Sequence
                     </h3>
                     <div className="h-px flex-[2] bg-border/40" />
@@ -235,7 +235,7 @@ export function PlanDetailsView({ plan, onBack, onUpdate }: PlanDetailsViewProps
                         <p className="text-[11px] font-semibold text-secondary">Loading slots...</p>
                     </div>
                 ) : configs.length === 0 ? (
-                    <div className="p-8 text-center rounded-2xl bg-muted/5 border border-dashed border-border/60">
+                    <div className="p-8 text-center rounded-lg bg-muted/5 border border-dashed border-border/60">
                         <p className="text-xs text-muted-foreground">No slots configured for {dailyCount} meals.</p>
                         <p className="text-[10px] text-muted-foreground/60 mt-1 italic">Please configure this in Admin Settings.</p>
                     </div>
@@ -253,7 +253,7 @@ export function PlanDetailsView({ plan, onBack, onUpdate }: PlanDetailsViewProps
                                 <div
                                     key={config.id || idx}
                                     className={cn(
-                                        "group relative overflow-hidden rounded-2xl border transition-all duration-300",
+                                        "group relative overflow-hidden rounded-lg border transition-all duration-300",
                                         selectedOptionId
                                             ? "border-primary/20 bg-primary/5 shadow-sm"
                                             : "border-border/40 bg-white dark:bg-zinc-900/50 hover:border-border/60"
@@ -263,7 +263,7 @@ export function PlanDetailsView({ plan, onBack, onUpdate }: PlanDetailsViewProps
                                         <div className="flex items-center gap-5">
                                             {/* Slot leading image */}
                                             <div className={cn(
-                                                "size-20 rounded-2xl flex items-center justify-center transition-all shrink-0 overflow-hidden border shadow-inner",
+                                                "size-20 rounded-lg flex items-center justify-center transition-all shrink-0 overflow-hidden border shadow-inner",
                                                 selectedOptionId
                                                     ? "border-primary/20 bg-primary/5 shadow-primary/5"
                                                     : "border-border/40 bg-muted/10 text-muted-foreground/30"
@@ -286,7 +286,7 @@ export function PlanDetailsView({ plan, onBack, onUpdate }: PlanDetailsViewProps
                                             {/* Main Content */}
                                             <div className="flex-1 min-w-0 space-y-2">
                                                 <div className="flex items-center justify-between gap-4">
-                                                    <p className="text-[10px] font-bold text-muted-foreground/60 uppercase tracking-[0.2em]">
+                                                    <p className="text-[10px] font-bold text-muted-foreground/60 capitalize tracking-[0.2em]">
                                                         {categoryName}
                                                     </p>
                                                     {selectedOptionId && (
@@ -319,7 +319,7 @@ export function PlanDetailsView({ plan, onBack, onUpdate }: PlanDetailsViewProps
                                                         <button
                                                             className={cn(
                                                                 "w-full flex items-center justify-between gap-3 text-left transition-all active:scale-[0.99] group/trigger",
-                                                                selectedOptionId ? "h-auto py-1" : "h-11 px-4 rounded-xl border border-border/50 bg-white dark:bg-zinc-900/50 hover:border-primary/30"
+                                                                selectedOptionId ? "h-auto py-1" : "h-11 px-4 rounded-lg border border-border/50 bg-white dark:bg-zinc-900/50 hover:border-primary/30"
                                                             )}
                                                         >
                                                             {selectedOptionId ? (
@@ -335,7 +335,7 @@ export function PlanDetailsView({ plan, onBack, onUpdate }: PlanDetailsViewProps
                                                         </button>
                                                     </PopoverTrigger>
                                                     <PopoverContent
-                                                        className="w-[320px] p-0 rounded-2xl border-border/40 shadow-2xl backdrop-blur-xl bg-background/90"
+                                                        className="w-[320px] p-0 rounded-lg border-border/40 shadow-2xl backdrop-blur-xl bg-background/90"
                                                         align="start"
                                                         sideOffset={8}
                                                     >
@@ -348,7 +348,7 @@ export function PlanDetailsView({ plan, onBack, onUpdate }: PlanDetailsViewProps
                                                                 {loadingCategory === config.categoryId ? (
                                                                     <div className="py-12 flex flex-col items-center gap-3 text-muted-foreground/40">
                                                                         <Loader2 className="size-6 animate-spin" />
-                                                                        <span className="text-[11px] font-bold tracking-widest uppercase">Fetching Menu...</span>
+                                                                        <span className="text-[11px] font-bold tracking-widest capitalize">Fetching Menu...</span>
                                                                     </div>
                                                                 ) : (
                                                                     <>
@@ -373,7 +373,7 @@ export function PlanDetailsView({ plan, onBack, onUpdate }: PlanDetailsViewProps
                                                                                             handleSelectMeal(config.slotIndex, meal.options[0].id)
                                                                                         }
                                                                                     }}
-                                                                                    className="flex items-center gap-3 p-2.5 rounded-xl cursor-pointer hover:bg-primary/5 transition-all group"
+                                                                                    className="flex items-center gap-3 p-2.5 rounded-lg cursor-pointer hover:bg-primary/5 transition-all group"
                                                                                 >
                                                                                     <div className="size-10 rounded-lg overflow-hidden border border-border/40 shrink-0 shadow-sm transition-transform group-hover:scale-105">
                                                                                         <MediaDisplay
@@ -406,22 +406,22 @@ export function PlanDetailsView({ plan, onBack, onUpdate }: PlanDetailsViewProps
                                                 {selectedOptionId && detail?.fullMeal && (
                                                     <Popover>
                                                         <PopoverTrigger asChild>
-                                                            <button className="inline-flex items-center gap-2 px-2.5 py-1 rounded-full bg-primary/10 text-primary hover:bg-primary/20 transition-colors active:scale-95 group/variation">
+                                                            <button className="inline-flex items-center gap-2 px-2.5 py-1 rounded-lg bg-primary/10 text-primary hover:bg-primary/20 transition-colors active:scale-95 group/variation">
                                                                 <span className="text-[11px] font-bold tracking-tight">
                                                                     {detail.kcal} kcal variation
                                                                 </span>
                                                                 <ChevronDown className="size-3 opacity-60 group-hover/variation:opacity-100 transition-opacity" />
                                                             </button>
                                                         </PopoverTrigger>
-                                                        <PopoverContent className="w-[280px] p-2 rounded-2xl border-border/40 shadow-2xl bg-background/95 backdrop-blur-md" align="start">
+                                                        <PopoverContent className="w-[280px] p-2 rounded-lg border-border/40 shadow-2xl bg-background/95 backdrop-blur-md" align="start">
                                                             <div className="space-y-1">
-                                                                <p className="px-2 py-1.5 text-[10px] font-bold text-muted-foreground/50 uppercase tracking-widest">Available Variations</p>
+                                                                <p className="px-2 py-1.5 text-[10px] font-bold text-muted-foreground/50 capitalize tracking-widest">Available Variations</p>
                                                                 {(detail.fullMeal.options || []).map((opt: any) => (
                                                                     <button
                                                                         key={opt.id}
                                                                         onClick={() => handleSelectMeal(config.slotIndex, opt.id)}
                                                                         className={cn(
-                                                                            "w-full flex items-center justify-between p-2.5 rounded-xl transition-all text-left",
+                                                                            "w-full flex items-center justify-between p-2.5 rounded-lg transition-all text-left",
                                                                             selectedOptionId === opt.id
                                                                                 ? "bg-primary/10 text-primary shadow-sm"
                                                                                 : "hover:bg-muted/50 text-secondary dark:text-white"
@@ -445,29 +445,29 @@ export function PlanDetailsView({ plan, onBack, onUpdate }: PlanDetailsViewProps
 
                                         {/* Nutrition Footer */}
                                         {selectedOptionId && detail?.macros && (
-                                            <div className="flex items-center justify-between gap-2 p-3 rounded-xl bg-white dark:bg-zinc-900 border border-primary/10 shadow-sm animate-in zoom-in-95 duration-300">
+                                            <div className="flex items-center justify-between gap-2 p-3 rounded-lg bg-white dark:bg-zinc-900 border border-primary/10 shadow-sm animate-in zoom-in-95 duration-300">
                                                 <div className="flex flex-col">
-                                                    <span className="text-[9px] font-bold text-muted-foreground/50 uppercase tracking-widest mb-1">Nutrition Breakdown</span>
+                                                    <span className="text-[9px] font-bold text-muted-foreground/50 capitalize tracking-widest mb-1">Nutrition Breakdown</span>
                                                     <div className="flex items-center gap-4">
                                                         <div className="flex flex-col">
                                                             <span className="text-[10px] font-bold text-secondary dark:text-white tabular-nums">{detail.macros.protein}g</span>
-                                                            <span className="text-[8px] font-semibold text-primary/60 uppercase">Protein</span>
+                                                            <span className="text-[8px] font-semibold text-primary/60 capitalize">Protein</span>
                                                         </div>
                                                         <div className="w-px h-6 bg-border/40" />
                                                         <div className="flex flex-col">
                                                             <span className="text-[10px] font-bold text-secondary dark:text-white tabular-nums">{detail.macros.carbs}g</span>
-                                                            <span className="text-[8px] font-semibold text-amber-500/60 uppercase">Carbs</span>
+                                                            <span className="text-[8px] font-semibold text-amber-500/60 capitalize">Carbs</span>
                                                         </div>
                                                         <div className="w-px h-6 bg-border/40" />
                                                         <div className="flex flex-col">
                                                             <span className="text-[10px] font-bold text-secondary dark:text-white tabular-nums">{detail.macros.fat}g</span>
-                                                            <span className="text-[8px] font-semibold text-rose-500/60 uppercase">Fat</span>
+                                                            <span className="text-[8px] font-semibold text-rose-500/60 capitalize">Fat</span>
                                                         </div>
                                                     </div>
                                                 </div>
                                                 <div className="text-right">
                                                     <p className="text-xs font-bold text-secondary dark:text-white leading-none mb-0.5">{detail.kcal}</p>
-                                                    <p className="text-[8px] font-bold text-muted-foreground/40 uppercase tracking-wider">Total Kcal</p>
+                                                    <p className="text-[8px] font-bold text-muted-foreground/40 capitalize tracking-wider">Total Kcal</p>
                                                 </div>
                                             </div>
                                         )}

@@ -84,7 +84,7 @@ export function CreatePlanModal({ userId, isOpen, onOpenChange, onSuccess }: Cre
 
                 <div className="grid gap-6 py-6 font-medium">
                     <div className="space-y-2">
-                        <Label htmlFor="plan-name" className="text-[11px] uppercase tracking-wider text-muted-foreground ml-1">
+                        <Label htmlFor="plan-name" className="text-[11px] capitalize tracking-wider text-muted-foreground ml-1">
                             {t("labelPlanName")}
                         </Label>
                         <Input
@@ -92,7 +92,7 @@ export function CreatePlanModal({ userId, isOpen, onOpenChange, onSuccess }: Cre
                             placeholder={t("placeholderPlanName")}
                             value={name}
                             onChange={(e) => setName(e.target.value)}
-                            className="h-12 rounded-2xl bg-muted/10 border-border/40 focus:ring-primary/20 focus:border-primary transition-all text-sm px-5"
+                            className="h-12 rounded-lg bg-muted/10 border-border/40 focus:ring-primary/20 focus:border-primary transition-all text-sm px-5"
                         />
                     </div>
                     <div className="space-y-2">
@@ -111,14 +111,14 @@ export function CreatePlanModal({ userId, isOpen, onOpenChange, onSuccess }: Cre
                     <Button
                         variant="ghost"
                         onClick={() => onOpenChange(false)}
-                        className="rounded-2xl font-bold text-[11px] uppercase tracking-wider h-11 px-6 hover:bg-muted/15 transition-colors"
+                        className="rounded-lg font-bold text-[11px] capitalize tracking-wider h-11 px-6 hover:bg-muted/15 transition-colors"
                     >
                         {t("cancel")}
                     </Button>
                     <Button
                         onClick={handleCreate}
                         disabled={isLoading}
-                        className="rounded-2xl bg-primary hover:bg-primary/90 text-white font-bold text-[11px] uppercase tracking-wider shadow-lg shadow-primary/10 h-11 px-8 transition-all active:scale-95 disabled:grayscale"
+                        className="rounded-lg bg-primary hover:bg-primary/90 text-white font-bold text-[11px] capitalize tracking-wider shadow-lg shadow-primary/10 h-11 px-8 transition-all active:scale-95 disabled:grayscale"
                     >
                         {isLoading ? (
                             <>

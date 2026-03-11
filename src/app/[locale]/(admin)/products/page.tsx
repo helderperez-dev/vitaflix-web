@@ -10,7 +10,7 @@ export default async function ProductsPage() {
     // Fetch products
     const { data: products } = await supabase
         .from("products")
-        .select("*, product_tags(tag_id, tags(*)), product_brands(brand_id, brands(*))")
+        .select("*, product_tags(tag_id, tags(*)), product_brands(brand_id, brands(*)), product_group_links(group_id, product_groups(*))")
         .order("name->>en", { ascending: true })
 
     // Fetch user profile for preferences

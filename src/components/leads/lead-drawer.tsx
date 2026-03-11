@@ -142,7 +142,7 @@ export function LeadDrawer({ open, onOpenChange, lead, funnels }: LeadDrawerProp
                             <SheetTitle className="text-2xl font-bold tracking-tight text-foreground dark:text-white">
                                 {lead ? lead.name : t("addLead")}
                             </SheetTitle>
-                            <SheetDescription className="text-[11px] font-medium text-muted-foreground/60 leading-relaxed uppercase tracking-widest">
+                            <SheetDescription className="text-[11px] font-medium text-muted-foreground/60 leading-relaxed capitalize tracking-widest">
                                 {lead ? t("editLead") : t("description")}
                             </SheetDescription>
                         </div>
@@ -153,7 +153,7 @@ export function LeadDrawer({ open, onOpenChange, lead, funnels }: LeadDrawerProp
                                 type="button"
                                 onClick={() => setActiveTab("personal")}
                                 className={cn(
-                                    "relative pb-3.5 text-xs font-bold uppercase tracking-widest transition-all duration-300 flex items-center gap-2",
+                                    "relative pb-3.5 text-xs font-bold capitalize tracking-widest transition-all duration-300 flex items-center gap-2",
                                     activeTab === "personal"
                                         ? "text-primary"
                                         : "text-muted-foreground/30 hover:text-muted-foreground/50"
@@ -162,7 +162,7 @@ export function LeadDrawer({ open, onOpenChange, lead, funnels }: LeadDrawerProp
                                 <User className="size-3.5" />
                                 {t("personalInfo")}
                                 {hasPersonalErrors && (
-                                    <div className="size-1.5 rounded-full bg-destructive animate-pulse" />
+                                    <div className="size-1.5 rounded-lg bg-destructive animate-pulse" />
                                 )}
                                 {activeTab === "personal" && (
                                     <motion.div
@@ -176,7 +176,7 @@ export function LeadDrawer({ open, onOpenChange, lead, funnels }: LeadDrawerProp
                                 type="button"
                                 onClick={() => setActiveTab("pipeline")}
                                 className={cn(
-                                    "relative pb-3.5 text-xs font-bold uppercase tracking-widest transition-all duration-300 flex items-center gap-2",
+                                    "relative pb-3.5 text-xs font-bold capitalize tracking-widest transition-all duration-300 flex items-center gap-2",
                                     activeTab === "pipeline"
                                         ? "text-primary"
                                         : "text-muted-foreground/30 hover:text-muted-foreground/50"
@@ -185,7 +185,7 @@ export function LeadDrawer({ open, onOpenChange, lead, funnels }: LeadDrawerProp
                                 <Kanban className="size-3.5" />
                                 {t("pipelineInfo")}
                                 {hasPipelineErrors && (
-                                    <div className="size-1.5 rounded-full bg-destructive animate-pulse" />
+                                    <div className="size-1.5 rounded-lg bg-destructive animate-pulse" />
                                 )}
                                 {activeTab === "pipeline" && (
                                     <motion.div
@@ -222,11 +222,11 @@ export function LeadDrawer({ open, onOpenChange, lead, funnels }: LeadDrawerProp
                                                         name="name"
                                                         render={({ field }) => (
                                                             <FormItem className="space-y-2">
-                                                                <FormLabel className="text-[10px] font-bold uppercase tracking-widest text-muted-foreground/50 ml-1">{t("tableName")}</FormLabel>
+                                                                <FormLabel className="text-[10px] font-bold capitalize tracking-widest text-muted-foreground/50 ml-1">{t("tableName")}</FormLabel>
                                                                 <FormControl>
                                                                     <div className="relative group">
                                                                         <User className="absolute left-3 top-1/2 -translate-y-1/2 size-4 text-muted-foreground/40 group-focus-within:text-primary transition-colors" />
-                                                                        <Input placeholder="John Doe" {...field} className="pl-10 h-11 border-border/40 bg-white/50 dark:bg-black/20 focus-visible:ring-primary/20 focus-visible:border-primary transition-all rounded-xl text-sm font-medium" />
+                                                                        <Input placeholder="John Doe" {...field} className="pl-10 h-11 border-border/40 bg-white/50 dark:bg-black/20 focus-visible:ring-primary/20 focus-visible:border-primary transition-all rounded-lg text-sm font-medium" />
                                                                     </div>
                                                                 </FormControl>
                                                                 <FormMessage className="text-[10px]" />
@@ -239,11 +239,11 @@ export function LeadDrawer({ open, onOpenChange, lead, funnels }: LeadDrawerProp
                                                             name="email"
                                                             render={({ field }) => (
                                                                 <FormItem className="space-y-2">
-                                                                    <FormLabel className="text-[10px] font-bold uppercase tracking-widest text-muted-foreground/50 ml-1">{commonT("email")}</FormLabel>
+                                                                    <FormLabel className="text-[10px] font-bold capitalize tracking-widest text-muted-foreground/50 ml-1">{commonT("email")}</FormLabel>
                                                                     <FormControl>
                                                                         <div className="relative group">
                                                                             <Mail className="absolute left-3 top-1/2 -translate-y-1/2 size-4 text-muted-foreground/40 group-focus-within:text-primary transition-colors" />
-                                                                            <Input placeholder="john@example.com" {...field} className="pl-10 h-11 border-border/40 bg-white/50 dark:bg-black/20 focus-visible:ring-primary/20 focus-visible:border-primary transition-all rounded-xl text-sm font-medium" />
+                                                                            <Input placeholder="john@example.com" {...field} className="pl-10 h-11 border-border/40 bg-white/50 dark:bg-black/20 focus-visible:ring-primary/20 focus-visible:border-primary transition-all rounded-lg text-sm font-medium" />
                                                                         </div>
                                                                     </FormControl>
                                                                     <FormMessage className="text-[10px]" />
@@ -255,11 +255,11 @@ export function LeadDrawer({ open, onOpenChange, lead, funnels }: LeadDrawerProp
                                                             name="phone"
                                                             render={({ field }) => (
                                                                 <FormItem className="space-y-2">
-                                                                    <FormLabel className="text-[10px] font-bold uppercase tracking-widest text-muted-foreground/50 ml-1">{t("tablePhone")}</FormLabel>
+                                                                    <FormLabel className="text-[10px] font-bold capitalize tracking-widest text-muted-foreground/50 ml-1">{t("tablePhone")}</FormLabel>
                                                                     <FormControl>
                                                                         <div className="relative group">
                                                                             <Phone className="absolute left-3 top-1/2 -translate-y-1/2 size-4 text-muted-foreground/40 group-focus-within:text-primary transition-colors" />
-                                                                            <Input placeholder="+351 900 000 000" {...field} className="pl-10 h-11 border-border/40 bg-white/50 dark:bg-black/20 focus-visible:ring-primary/20 focus-visible:border-primary transition-all rounded-xl text-sm font-medium" />
+                                                                            <Input placeholder="+351 900 000 000" {...field} className="pl-10 h-11 border-border/40 bg-white/50 dark:bg-black/20 focus-visible:ring-primary/20 focus-visible:border-primary transition-all rounded-lg text-sm font-medium" />
                                                                         </div>
                                                                     </FormControl>
                                                                     <FormMessage className="text-[10px]" />
@@ -277,14 +277,14 @@ export function LeadDrawer({ open, onOpenChange, lead, funnels }: LeadDrawerProp
                                                         name="funnel_id"
                                                         render={({ field }) => (
                                                             <FormItem className="space-y-2 text-left">
-                                                                <FormLabel className="text-[10px] font-bold uppercase tracking-widest text-muted-foreground/50 ml-1">{t("funnel")}</FormLabel>
+                                                                <FormLabel className="text-[10px] font-bold capitalize tracking-widest text-muted-foreground/50 ml-1">{t("funnel")}</FormLabel>
                                                                 <Select value={field.value || undefined} onValueChange={field.onChange}>
                                                                     <FormControl>
-                                                                        <SelectTrigger className="h-11 border-border/40 bg-white/50 dark:bg-black/20 focus:ring-primary/20 transition-all rounded-xl text-sm font-medium">
+                                                                        <SelectTrigger className="h-11 border-border/40 bg-white/50 dark:bg-black/20 focus:ring-primary/20 transition-all rounded-lg text-sm font-medium">
                                                                             <SelectValue placeholder={t("selectFunnel")} />
                                                                         </SelectTrigger>
                                                                     </FormControl>
-                                                                    <SelectContent className="rounded-xl border-border/40">
+                                                                    <SelectContent className="rounded-lg border-border/40">
                                                                         {funnels.map(f => (
                                                                             <SelectItem key={f.id} value={f.id} className="text-sm font-medium rounded-lg">{f.name}</SelectItem>
                                                                         ))}
@@ -299,17 +299,17 @@ export function LeadDrawer({ open, onOpenChange, lead, funnels }: LeadDrawerProp
                                                         name="step_id"
                                                         render={({ field }) => (
                                                             <FormItem className="space-y-2 text-left">
-                                                                <FormLabel className="text-[10px] font-bold uppercase tracking-widest text-muted-foreground/50 ml-1">{commonT("status")}</FormLabel>
+                                                                <FormLabel className="text-[10px] font-bold capitalize tracking-widest text-muted-foreground/50 ml-1">{commonT("status")}</FormLabel>
                                                                 <Select
                                                                     value={field.value || "unassigned"}
                                                                     onValueChange={(val) => field.onChange(val === "unassigned" ? null : val)}
                                                                 >
                                                                     <FormControl>
-                                                                        <SelectTrigger className="h-11 border-border/40 bg-white/50 dark:bg-black/20 focus:ring-primary/20 transition-all rounded-xl text-sm font-medium">
+                                                                        <SelectTrigger className="h-11 border-border/40 bg-white/50 dark:bg-black/20 focus:ring-primary/20 transition-all rounded-lg text-sm font-medium">
                                                                             <SelectValue placeholder={t("selectStatus")} />
                                                                         </SelectTrigger>
                                                                     </FormControl>
-                                                                    <SelectContent className="rounded-xl border-border/40">
+                                                                    <SelectContent className="rounded-lg border-border/40">
                                                                         <SelectItem value="unassigned" className="text-sm font-medium rounded-lg">{t("unassigned")}</SelectItem>
                                                                         {steps.map((s: any) => (
                                                                             <SelectItem key={s.id} value={s.id} className="text-sm font-medium rounded-lg">{s.name}</SelectItem>
@@ -326,11 +326,11 @@ export function LeadDrawer({ open, onOpenChange, lead, funnels }: LeadDrawerProp
                                                     name="source"
                                                     render={({ field }) => (
                                                         <FormItem className="space-y-2">
-                                                            <FormLabel className="text-[10px] font-bold uppercase tracking-widest text-muted-foreground/50 ml-1">{t("tableSource")}</FormLabel>
+                                                            <FormLabel className="text-[10px] font-bold capitalize tracking-widest text-muted-foreground/50 ml-1">{t("tableSource")}</FormLabel>
                                                             <FormControl>
                                                                 <div className="relative group">
                                                                     <Info className="absolute left-3 top-1/2 -translate-y-1/2 size-4 text-muted-foreground/40 group-focus-within:text-primary transition-colors" />
-                                                                    <Input placeholder={t("sourcePlaceholder")} {...field} className="pl-10 h-11 border-border/40 bg-white/50 dark:bg-black/20 focus-visible:ring-primary/20 focus-visible:border-primary transition-all rounded-xl text-sm font-medium" />
+                                                                    <Input placeholder={t("sourcePlaceholder")} {...field} className="pl-10 h-11 border-border/40 bg-white/50 dark:bg-black/20 focus-visible:ring-primary/20 focus-visible:border-primary transition-all rounded-lg text-sm font-medium" />
                                                                 </div>
                                                             </FormControl>
                                                             <FormMessage className="text-[10px]" />

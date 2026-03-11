@@ -25,6 +25,7 @@ export const productSchema = z.object({
   fat: z.number().min(0).optional(),
   tagIds: z.array(z.string().uuid()).default([]),
   brandIds: z.array(z.string().uuid()).default([]),
+  groupIds: z.array(z.string().uuid()).default([]),
   images: z.array(productImageSchema).default([]),
   isPublic: z.boolean().default(false),
 });

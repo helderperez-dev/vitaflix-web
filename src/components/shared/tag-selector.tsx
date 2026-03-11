@@ -20,8 +20,8 @@ import {
     PopoverTrigger,
 } from "@/components/ui/popover"
 import { Badge } from "@/components/ui/badge"
-import { getTags, type TagTable } from "@/app/actions/tags"
-import { type Tag } from "@/shared-schemas/tag"
+import { getTags } from "@/app/actions/tags"
+import { type Tag, type TagTable } from "@/shared-schemas/tag"
 import { TagModal } from "@/components/shared/tag-modal"
 import { useLocale, useTranslations } from "next-intl"
 
@@ -58,6 +58,15 @@ export function TagSelector({ title = "Tags", selectedTagIds, onTagsChange, tabl
                 available: t("availableDietaryTags"),
                 create: t("createNewDietaryTag"),
                 empty: t("noDietaryTagsFound")
+            }
+        }
+        if (table === 'product_groups') {
+            return {
+                select: t("selectProductGroups"),
+                search: t("searchProductGroups"),
+                available: t("availableProductGroups"),
+                create: t("createNewProductGroup"),
+                empty: t("noProductGroupsFound")
             }
         }
         return {
@@ -115,13 +124,13 @@ export function TagSelector({ title = "Tags", selectedTagIds, onTagsChange, tabl
                             variant="outline"
                             role="combobox"
                             aria-expanded={open}
-                            className="h-8 w-auto min-w-[80px] justify-center px-4 text-xs font-semibold border-border/50 bg-transparent text-muted-foreground hover:bg-muted/5 rounded-xl transition-all gap-2"
+                            className="h-8 w-auto min-w-[80px] justify-center px-4 text-xs font-semibold border-border/50 bg-transparent text-muted-foreground hover:bg-muted/5 rounded-lg transition-all gap-2"
                         >
                             <Plus className="h-3.5 w-3.5 opacity-50" />
                             {t("add")}
                         </Button>
                     </PopoverTrigger>
-                    <PopoverContent className="w-[240px] p-0 shadow-2xl border-border/40 rounded-2xl backdrop-blur-xl bg-background/90" align="end">
+                    <PopoverContent className="w-[240px] p-0 shadow-2xl border-border/40 rounded-lg backdrop-blur-xl bg-background/90" align="end">
                         <Command className="bg-transparent border-none">
                             <CommandInput placeholder={labels.search} className="h-10 text-xs" />
                             <CommandList
@@ -152,7 +161,7 @@ export function TagSelector({ title = "Tags", selectedTagIds, onTagsChange, tabl
                                             <Button
                                                 variant="ghost"
                                                 size="icon"
-                                                className="h-7 w-7 opacity-0 group-hover:opacity-100 transition-all hover:bg-muted/50 rounded-full"
+                                                className="h-7 w-7 opacity-0 group-hover:opacity-100 transition-all hover:bg-muted/50 rounded-lg"
                                                 onClick={(e) => {
                                                     e.stopPropagation()
                                                     setEditingTag(tag)
@@ -186,7 +195,7 @@ export function TagSelector({ title = "Tags", selectedTagIds, onTagsChange, tabl
 
             <div className="flex flex-wrap gap-2">
                 {selectedTags.length === 0 ? (
-                    <div className="w-full py-6 border-2 border-dashed border-border/40 rounded-2xl flex flex-col items-center justify-center bg-muted/5 group hover:border-border/60 transition-all duration-500">
+                    <div className="w-full py-6 border-2 border-dashed border-border/40 rounded-lg flex flex-col items-center justify-center bg-muted/5 group hover:border-border/60 transition-all duration-500">
                         <p className="text-[10px] font-semibold text-muted-foreground/40">{t("noItemAddedYet", { item: title })}</p>
                     </div>
                 ) : (
@@ -194,7 +203,7 @@ export function TagSelector({ title = "Tags", selectedTagIds, onTagsChange, tabl
                         <Badge
                             key={tag.id}
                             variant="secondary"
-                            className="h-8 px-4 flex items-center gap-3 bg-muted/20 hover:bg-muted/30 text-secondary dark:text-foreground/80 border-none transition-all rounded-xl"
+                            className="h-8 px-4 flex items-center gap-3 bg-muted/20 hover:bg-muted/30 text-secondary dark:text-foreground/80 border-none transition-all rounded-lg"
                         >
                             <span className="text-xs font-semibold">
                                 {tag.name?.[locale] || tag.name?.en}

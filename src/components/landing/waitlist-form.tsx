@@ -66,9 +66,9 @@ export function WaitlistForm() {
             <motion.div
                 initial={{ opacity: 0, scale: 0.95 }}
                 animate={{ opacity: 1, scale: 1 }}
-                className="bg-primary/10 border border-primary/20 rounded-2xl p-6 md:p-8 flex flex-col items-center justify-center text-center max-w-md mx-auto"
+                className="bg-primary/10 border border-primary/20 rounded-lg p-6 md:p-8 flex flex-col items-center justify-center text-center max-w-md mx-auto"
             >
-                <div className="size-12 bg-primary/20 rounded-full flex items-center justify-center mb-4">
+                <div className="size-12 bg-primary/20 rounded-lg flex items-center justify-center mb-4">
                     <CheckCircle2 className="size-6 text-primary" />
                 </div>
                 <h3 className="text-xl font-bold text-foreground mb-2">Lugar Garantido!</h3>
@@ -91,7 +91,7 @@ export function WaitlistForm() {
                                 <FormControl>
                                     <Input
                                         placeholder="O teu nome"
-                                        className="h-12 bg-white/60 dark:bg-white/5 backdrop-blur-md border-white/20 dark:border-white/10 rounded-xl px-4 text-sm"
+                                        className="h-12 bg-white/60 dark:bg-white/5 backdrop-blur-md border-white/20 dark:border-white/10 rounded-lg px-4 text-sm"
                                         {...field}
                                     />
                                 </FormControl>
@@ -107,7 +107,7 @@ export function WaitlistForm() {
                                 <FormControl>
                                     <Input
                                         placeholder="O teu melhor email"
-                                        className="h-12 bg-white/60 dark:bg-white/5 backdrop-blur-md border-white/20 dark:border-white/10 rounded-xl px-4 text-sm"
+                                        className="h-12 bg-white/60 dark:bg-white/5 backdrop-blur-md border-white/20 dark:border-white/10 rounded-lg px-4 text-sm"
                                         {...field}
                                     />
                                 </FormControl>
@@ -118,7 +118,7 @@ export function WaitlistForm() {
                     <Button
                         type="submit"
                         disabled={isSubmitting}
-                        className="h-12 rounded-xl bg-primary text-white font-bold text-base hover:scale-[1.02] active:scale-[0.98] transition-all shadow-xl shadow-primary/25 relative overflow-hidden group w-full"
+                        className="h-12 rounded-lg bg-primary text-white font-bold text-base hover:scale-[1.02] active:scale-[0.98] transition-all shadow-xl shadow-primary/25 relative overflow-hidden group w-full"
                     >
                         <div className="absolute inset-0 bg-white/20 translate-y-full group-hover:translate-y-0 transition-transform duration-300" />
                         <span className="relative flex items-center justify-center gap-2">

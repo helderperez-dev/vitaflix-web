@@ -56,7 +56,7 @@ export function PricingTable() {
                             `}
                         >
                             {plan.tag && (
-                                <div className="absolute top-0 left-1/2 -translate-x-1/2 -translate-y-1/2 bg-primary text-white text-xs font-bold uppercase tracking-wider py-1.5 px-4 rounded-full shadow-md">
+                                <div className="absolute top-0 left-1/2 -translate-x-1/2 -translate-y-1/2 bg-primary text-white text-xs font-bold capitalize tracking-wider py-1.5 px-4 rounded-lg shadow-md">
                                     {plan.tag}
                                 </div>
                             )}
@@ -74,7 +74,7 @@ export function PricingTable() {
                             <div className="space-y-4 flex-1">
                                 {plan.features.map((feature, j) => (
                                     <div key={j} className="flex items-start gap-3">
-                                        <div className="mt-1 size-5 shrink-0 rounded-full bg-primary/10 flex items-center justify-center">
+                                        <div className="mt-1 size-5 shrink-0 rounded-lg bg-primary/10 flex items-center justify-center">
                                             <Check className="size-3 text-primary stroke-[3]" />
                                         </div>
                                         <span className="text-sm font-medium text-muted-foreground">{feature}</span>
@@ -82,7 +82,7 @@ export function PricingTable() {
                                 ))}
                             </div>
 
-                            <button className={`w-full mt-8 py-4 rounded-2xl font-bold transition-all shadow-sm
+                            <button className={`w-full mt-8 py-4 rounded-lg font-bold transition-all shadow-sm
                                 ${plan.highlight
                                     ? 'bg-primary text-white hover:bg-primary/90 hover:shadow-primary/25'
                                     : 'bg-muted/50 text-foreground hover:bg-muted'

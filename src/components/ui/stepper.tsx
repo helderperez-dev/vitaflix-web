@@ -1,9 +1,9 @@
 "use client"
 
-import * as React from"react"
-import { ChevronDown, ChevronUp } from"lucide-react"
-import { cn } from"@/lib/utils"
-import { Button } from"./button"
+import * as React from "react"
+import { ChevronDown, ChevronUp } from "lucide-react"
+import { cn } from "@/lib/utils"
+import { Button } from "./button"
 
 interface StepperProps {
     value: number
@@ -53,7 +53,7 @@ export function Stepper({
     return (
         <div
             className={cn(
-              "relative flex h-9 w-full items-center rounded-lg border border-border/40 bg-muted/5 px-1.5 transition-all focus-within:border-primary/30 focus-within:ring-4 focus-within:ring-primary/5 cursor-text select-none",
+                "relative flex h-9 w-full items-center rounded-lg border border-input bg-muted/5 px-1.5 transition-all focus-within:border-primary/30 focus-within:ring-4 focus-within:ring-primary/5 cursor-text select-none",
                 className
             )}
             onClick={() => {
@@ -83,7 +83,7 @@ export function Stepper({
                 )}
             </div>
 
-            <div className="flex-1"/>
+            <div className="flex-1" />
 
             {/* Custom Control Arrows */}
             <div
@@ -96,16 +96,16 @@ export function Stepper({
                     disabled={value <= min}
                     className="flex h-4 w-4 items-center justify-center rounded-sm transition-all hover:bg-primary/10 hover:text-primary active:scale-[0.9] text-muted-foreground/40 disabled:opacity-5 disabled:hover:bg-transparent"
                 >
-                    <ChevronDown className="h-3 w-3 stroke-[3]"/>
+                    <ChevronDown className="h-3 w-3 stroke-[3]" />
                 </button>
-                <div className="w-px h-2.5 bg-border/40"/>
+                <div className="w-px h-2.5 bg-border/40" />
                 <button
                     type="button"
                     onClick={onIncrement}
                     disabled={value >= max}
                     className="flex h-4 w-4 items-center justify-center rounded-sm transition-all hover:bg-primary/10 hover:text-primary active:scale-[0.9] text-muted-foreground/40 disabled:opacity-5 disabled:hover:bg-transparent"
                 >
-                    <ChevronUp className="h-3 w-3 stroke-[3]"/>
+                    <ChevronUp className="h-3 w-3 stroke-[3]" />
                 </button>
             </div>
 

@@ -58,7 +58,7 @@ export function BroadcastTab({
             cell: ({ row }) => {
                 const channel = row.getValue("channel") as string
                 return (
-                    <div className="flex items-center gap-1.5 text-muted-foreground/80 font-medium text-[11px] uppercase tracking-tight">
+                    <div className="flex items-center gap-1.5 text-muted-foreground/80 font-medium text-[11px] capitalize tracking-tight">
                         {channel === 'app' && <BellRing className="size-3 text-muted-foreground/60" />}
                         {channel === 'push' && <Smartphone className="size-3 text-muted-foreground/60" />}
                         {channel === 'email' && <Mail className="size-3 text-muted-foreground/60" />}
@@ -108,12 +108,12 @@ export function BroadcastTab({
                             <Button
                                 variant="ghost"
                                 size="icon"
-                                className="h-9 w-9 rounded-xl hover:bg-muted transition-all active:scale-95"
+                                className="h-9 w-9 rounded-lg hover:bg-muted transition-all active:scale-95"
                             >
                                 <MoreHorizontal className="size-4" />
                             </Button>
                         </DropdownMenuTrigger>
-                        <DropdownMenuContent align="end" className="rounded-xl border-border/40 p-1.5 min-w-[140px]">
+                        <DropdownMenuContent align="end" className="rounded-lg border-border/40 p-1.5 min-w-[140px]">
                             <DropdownMenuItem
                                 onClick={() => onView?.(row.original)}
                                 className="rounded-lg text-xs font-medium cursor-pointer"

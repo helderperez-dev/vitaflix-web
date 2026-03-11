@@ -4,7 +4,7 @@ import * as React from "react"
 import { useTranslations } from "next-intl"
 import { Button } from "@/components/ui/button"
 import { Input } from "@/components/ui/input"
-import { Plus, LayoutGrid, Kanban, Search, Settings2, Loader2 } from "lucide-react"
+import { Plus, LayoutGrid, Kanban, Search, Filter, Settings2, Loader2, ChevronRight } from "lucide-react"
 import { Link } from "@/i18n/routing"
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select"
 import { Database } from "@/types/database.types"
@@ -13,7 +13,7 @@ import { toast } from "sonner"
 import { KanbanBoard } from "@/components/leads/kanban-board"
 import { LeadsDatagrid } from "@/components/leads/leads-datagrid"
 import { LeadDrawer } from "@/components/leads/lead-drawer"
-import { Tabs, TabsList, TabsTrigger } from "@/components/ui/tabs"
+import { motion } from "framer-motion"
 import {
     DropdownMenu,
     DropdownMenuContent,
@@ -33,9 +33,10 @@ type Lead = Database['public']['Tables']['leads']['Row']
 interface LeadsManagerProps {
     initialFunnels: Funnel[]
     initialLeads: Lead[]
+    userProfile?: any
 }
 
-export function LeadsManager({ initialFunnels, initialLeads }: LeadsManagerProps) {
+export function LeadsManager({ initialFunnels, initialLeads, userProfile }: LeadsManagerProps) {
     const tLeads = useTranslations("Leads")
     const [funnels, setFunnels] = React.useState<Funnel[]>(initialFunnels)
     const [leads, setLeads] = React.useState<Lead[]>(initialLeads)
@@ -43,6 +44,11 @@ export function LeadsManager({ initialFunnels, initialLeads }: LeadsManagerProps
     const [viewMode, setViewMode] = React.useState<"kanban" | "datagrid">("kanban")
     const [searchQuery, setSearchQuery] = useQueryState("search", { defaultValue: "" })
     const [isLoading, setIsLoading] = React.useState(false)
+    const [mounted, setMounted] = React.useState(false)
+
+    React.useEffect(() => {
+        setMounted(true)
+    }, [])
 
     // Drawer state
     const [isDrawerOpen, setIsDrawerOpen] = React.useState(false)
@@ -108,7 +114,7 @@ export function LeadsManager({ initialFunnels, initialLeads }: LeadsManagerProps
                     {tLeads("noFunnelsDesc")}
                 </p>
                 <Link href="/leads/funnels">
-                    <Button className="rounded-xl">
+                    <Button className="">
                         <Plus className="size-4 mr-2" />
                         {tLeads("createFunnel")}
                     </Button>
@@ -126,7 +132,7 @@ export function LeadsManager({ initialFunnels, initialLeads }: LeadsManagerProps
 
                 <div className="flex flex-col relative z-10">
                     <div className="flex items-center gap-3">
-                        <div className="w-1 h-6 bg-primary rounded-full opacity-80" />
+                        <div className="w-1 h-6 bg-primary rounded-lg opacity-80" />
                         <h2 className="text-3xl font-semibold tracking-tight text-foreground dark:text-white leading-none">
                             {tLeads("title")}
                         </h2>
@@ -137,72 +143,101 @@ export function LeadsManager({ initialFunnels, initialLeads }: LeadsManagerProps
                 </div>
 
                 <div className="flex items-center gap-4 relative z-10">
-                    <DropdownMenu>
-                        <DropdownMenuTrigger asChild>
-                            <Button variant="outline" className="h-10 rounded-xl px-4 border-border/40 bg-white dark:bg-slate-900 font-semibold text-xs shadow-sm hover:bg-slate-50 transition-all flex items-center gap-2">
-                                <Settings2 className="size-3.5 text-muted-foreground" />
-                                <span>{activeFunnel?.name || "All Leads"}</span>
-                            </Button>
-                        </DropdownMenuTrigger>
-                        <DropdownMenuContent align="end" className="w-56 p-1.5 rounded-2xl shadow-2xl border-border/40 backdrop-blur-xl bg-background/90 animate-in fade-in-0 zoom-in-95">
-                            <DropdownMenuLabel className="text-[10px] uppercase font-bold tracking-widest text-muted-foreground/60 px-3 py-2">
-                                Pipeline Filter
-                            </DropdownMenuLabel>
-                            <DropdownMenuItem
-                                onClick={() => setActiveFunnelId('all')}
-                                className={cn(
-                                    "rounded-lg text-[11px] font-semibold py-2.5 px-3 cursor-pointer transition-colors",
-                                    activeFunnelId === 'all' ? "bg-primary/5 text-primary" : "text-foreground"
-                                )}
-                            >
-                                <LayoutGrid className="size-3.5 mr-2 opacity-60" />
-                                All Leads
-                            </DropdownMenuItem>
-                            <DropdownMenuSeparator className="bg-border/40 mx-1.5 my-1" />
-                            <DropdownMenuLabel className="text-[10px] uppercase font-bold tracking-widest text-muted-foreground/60 px-3 py-2">
-                                Active Funnels
-                            </DropdownMenuLabel>
-                            {funnels.map(f => (
+                    <div className="flex items-center gap-8 mr-4 border-r border-border/40 pr-8 h-8">
+                        <button
+                            type="button"
+                            onClick={() => setViewMode("kanban")}
+                            className={cn(
+                                "relative pb-1 text-[11px] font-bold transition-all duration-300 flex items-center gap-1",
+                                viewMode === "kanban"
+                                    ? "text-primary"
+                                    : "text-muted-foreground/30 hover:text-muted-foreground/60"
+                            )}
+                        >
+                            {tLeads("kanban")}
+                            {mounted && viewMode === "kanban" && (
+                                <motion.div
+                                    layoutId="leadsViewMode"
+                                    className="absolute -bottom-px left-0 right-0 h-0.5 bg-primary z-10 rounded-lg"
+                                    transition={{ type: "spring", bounce: 0.2, duration: 0.6 }}
+                                />
+                            )}
+                        </button>
+                        <button
+                            type="button"
+                            onClick={() => setViewMode("datagrid")}
+                            className={cn(
+                                "relative pb-1 text-[11px] font-bold transition-all duration-300 flex items-center gap-1",
+                                viewMode === "datagrid"
+                                    ? "text-primary"
+                                    : "text-muted-foreground/30 hover:text-muted-foreground/60"
+                            )}
+                        >
+                            {tLeads("datagrid")}
+                            {mounted && viewMode === "datagrid" && (
+                                <motion.div
+                                    layoutId="leadsViewMode"
+                                    className="absolute -bottom-px left-0 right-0 h-0.5 bg-primary z-10 rounded-lg"
+                                    transition={{ type: "spring", bounce: 0.2, duration: 0.6 }}
+                                />
+                            )}
+                        </button>
+
+                        <DropdownMenu>
+                            <DropdownMenuTrigger asChild>
+                                <Button
+                                    variant="ghost"
+                                    size="icon"
+                                    className="size-8 hover:bg-slate-100 dark:hover:bg-white/5 transition-all text-muted-foreground/40 hover:text-primary active:scale-95"
+                                >
+                                    <Filter className="size-4" />
+                                </Button>
+                            </DropdownMenuTrigger>
+                            <DropdownMenuContent align="end" className="w-56 p-1.5 rounded-lg shadow-2xl border-border/40 backdrop-blur-xl bg-background/90 animate-in fade-in-0 zoom-in-95">
+                                <DropdownMenuLabel className="text-[10px] capitalize font-bold tracking-widest text-muted-foreground/60 px-3 py-2">
+                                    Pipeline Filter
+                                </DropdownMenuLabel>
                                 <DropdownMenuItem
-                                    key={f.id}
-                                    onClick={() => setActiveFunnelId(f.id)}
+                                    onClick={() => setActiveFunnelId('all')}
                                     className={cn(
                                         "rounded-lg text-[11px] font-semibold py-2.5 px-3 cursor-pointer transition-colors",
-                                        activeFunnelId === f.id ? "bg-primary/5 text-primary" : "text-foreground"
+                                        activeFunnelId === 'all' ? "bg-primary/5 text-primary" : "text-foreground"
                                     )}
                                 >
-                                    <div className="size-2 rounded-full mr-2" style={{ backgroundColor: f.lead_funnel_steps[0]?.color || '#primary' }} />
-                                    {f.name}
+                                    <LayoutGrid className="size-3.5 mr-2 opacity-60" />
+                                    {tLeads("allFunnels")}
                                 </DropdownMenuItem>
-                            ))}
-                            <DropdownMenuSeparator className="bg-border/40 mx-1.5 my-1" />
-                            <Link href="/leads/funnels" className="w-full">
-                                <DropdownMenuItem className="rounded-lg text-[11px] font-semibold py-2.5 px-3 cursor-pointer text-primary bg-primary/5 hover:bg-primary/10">
-                                    <Settings2 className="size-3.5 mr-2" />
-                                    {tLeads("manageFunnels")}
-                                </DropdownMenuItem>
-                            </Link>
-                        </DropdownMenuContent>
-                    </DropdownMenu>
+                                <DropdownMenuSeparator className="bg-border/40 mx-1.5 my-1" />
+                                <DropdownMenuLabel className="text-[10px] capitalize font-bold tracking-widest text-muted-foreground/60 px-3 py-2">
+                                    Active Funnels
+                                </DropdownMenuLabel>
+                                {funnels.map(f => (
+                                    <DropdownMenuItem
+                                        key={f.id}
+                                        onClick={() => setActiveFunnelId(f.id)}
+                                        className={cn(
+                                            "rounded-lg text-[11px] font-semibold py-2.5 px-3 cursor-pointer transition-colors",
+                                            activeFunnelId === f.id ? "bg-primary/5 text-primary" : "text-foreground"
+                                        )}
+                                    >
+                                        <div className="size-2 rounded-lg mr-2" style={{ backgroundColor: f.lead_funnel_steps[0]?.color || undefined }} />
+                                        {f.name}
+                                    </DropdownMenuItem>
+                                ))}
+                                <DropdownMenuSeparator className="bg-border/40 mx-1.5 my-1" />
+                                <Link href="/leads/funnels" className="w-full">
+                                    <DropdownMenuItem className="rounded-lg text-[11px] font-semibold py-2.5 px-3 cursor-pointer text-primary bg-primary/5 hover:bg-primary/10">
+                                        <Filter className="size-3.5 mr-2" />
+                                        {tLeads("manageFunnels")}
+                                    </DropdownMenuItem>
+                                </Link>
+                            </DropdownMenuContent>
+                        </DropdownMenu>
+                    </div>
 
-                    <div className="h-6 w-px bg-border/40 mx-1" />
-
-                    <Tabs value={viewMode} onValueChange={(v: any) => setViewMode(v)} className="h-10">
-                        <TabsList className="bg-slate-100/50 dark:bg-white/[0.05] border border-border/40 p-1 h-10 rounded-xl">
-                            <TabsTrigger value="kanban" className="rounded-lg px-3 text-[11px] font-bold uppercase transition-all data-[state=active]:bg-white dark:data-[state=active]:bg-white/10 data-[state=active]:text-primary data-[state=active]:shadow-sm">
-                                <Kanban className="size-3.5 mr-1.5" />
-                                {tLeads("kanban")}
-                            </TabsTrigger>
-                            <TabsTrigger value="datagrid" className="rounded-lg px-3 text-[11px] font-bold uppercase transition-all data-[state=active]:bg-white dark:data-[state=active]:bg-white/10 data-[state=active]:text-primary data-[state=active]:shadow-sm">
-                                <LayoutGrid className="size-3.5 mr-1.5" />
-                                {tLeads("datagrid")}
-                            </TabsTrigger>
-                        </TabsList>
-                    </Tabs>
-
-                    <Button className="h-10 rounded-xl bg-primary hover:bg-primary/95 text-white font-semibold text-xs transition-all active:scale-95 shadow-md shadow-primary/10 px-6 flex items-center gap-2.5" onClick={handleAddLead}>
-                        <Plus className="size-4" />
-                        <span>{tLeads("addLead")}</span>
+                    <Button className="h-10 bg-primary hover:bg-primary/95 text-white font-semibold text-xs transition-all active:scale-95 shadow-none px-6 flex items-center gap-2.5" onClick={handleAddLead}>
+                        <Plus className="h-4 w-4" />
+                        {tLeads("addLead")}
                     </Button>
                 </div>
             </div>
@@ -227,6 +262,7 @@ export function LeadsManager({ initialFunnels, initialLeads }: LeadsManagerProps
                         activeFunnelId={activeFunnelId}
                         leads={filteredLeads}
                         onRowClick={handleEditLead}
+                        userProfile={userProfile}
                     />
                 )}
             </div>

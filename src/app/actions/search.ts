@@ -2,14 +2,7 @@
 
 import { createClient } from "@/lib/supabase/server"
 
-export type SearchResult = {
-    id: string;
-    type: 'product' | 'meal' | 'user' | 'brand' | 'tag';
-    title: string;
-    subtitle?: string;
-    url: string;
-    imageUrl?: string;
-}
+import { type SearchResult } from "@/shared-schemas/search";
 
 export async function globalSearch(query: string): Promise<SearchResult[]> {
     if (!query || query.trim().length < 2) return [];
@@ -19,12 +12,14 @@ export async function globalSearch(query: string): Promise<SearchResult[]> {
     const searchTerm = `%${query.trim()}%`
 
     try {
-        const [productsRes, mealsRes, usersRes, brandsRes, tagsRes] = await Promise.all([
-            supabase.from('products').select('id, name, images').or(`name->>en.ilike.${searchTerm},name->>pt.ilike.${searchTerm}`).limit(5),
-            supabase.from('meals').select('id, name').or(`name->>en.ilike.${searchTerm},name->>pt.ilike.${searchTerm}`).limit(5),
-            supabase.from('users').select('id, email, full_name').or(`email.ilike.${searchTerm},full_name.ilike.${searchTerm}`).limit(5),
-            supabase.from('brands').select('id, name').or(`name->>en.ilike.${searchTerm},name->>pt.ilike.${searchTerm}`).limit(3),
-            supabase.from('tags').select('id, name').or(`name->>en.ilike.${searchTerm},name->>pt.ilike.${searchTerm}`).limit(3),
+        const [productsRes, mealsRes, usersRes, brandsRes, tagsRes, leadsRes, plansRes] = await Promise.all([
+            supabase.from('products').select('id, name, images').or(`name->en.ilike.${searchTerm},name->pt.ilike.${searchTerm}`).limit(5),
+            supabase.from('meals').select('id, name').or(`name->en.ilike.${searchTerm},name->pt.ilike.${searchTerm}`).limit(5),
+            supabase.from('users').select('id, email, display_name, avatar_url, phone').or(`email.ilike.${searchTerm},display_name.ilike.${searchTerm},phone.ilike.${searchTerm}`).limit(5),
+            supabase.from('brands').select('id, name').or(`name->en.ilike.${searchTerm},name->pt.ilike.${searchTerm}`).limit(3),
+            supabase.from('tags').select('id, name').or(`name->en.ilike.${searchTerm},name->pt.ilike.${searchTerm}`).limit(3),
+            supabase.from('leads').select('id, name, email, phone, source').or(`name.ilike.${searchTerm},email.ilike.${searchTerm},phone.ilike.${searchTerm}`).eq('is_archived', false).limit(5),
+            supabase.from('meal_plans').select('id, name, daily_meals_count').ilike('name', searchTerm).limit(5),
         ])
 
         if (productsRes.data) {
@@ -60,9 +55,10 @@ export async function globalSearch(query: string): Promise<SearchResult[]> {
                 results.push({
                     id: u.id,
                     type: 'user',
-                    title: u.full_name || u.email,
-                    subtitle: u.full_name ? u.email : 'User',
-                    url: `/users?search=${encodeURIComponent(query)}`
+                    title: u.display_name || u.email,
+                    subtitle: u.display_name ? u.email : (u.phone || 'User'),
+                    url: `/users?search=${encodeURIComponent(query)}`,
+                    imageUrl: u.avatar_url || undefined,
                 })
             })
         }
@@ -92,6 +88,31 @@ export async function globalSearch(query: string): Promise<SearchResult[]> {
                 })
             })
         }
+
+        if (leadsRes.data) {
+            leadsRes.data.forEach((l: any) => {
+                results.push({
+                    id: l.id,
+                    type: 'lead',
+                    title: l.name || l.email || 'Unknown Lead',
+                    subtitle: l.name ? l.email : (l.phone || l.source || 'Lead'),
+                    url: `/leads?search=${encodeURIComponent(query)}`,
+                })
+            })
+        }
+
+        if (plansRes.data) {
+            plansRes.data.forEach((p: any) => {
+                results.push({
+                    id: p.id,
+                    type: 'plan',
+                    title: p.name || 'Unnamed Plan',
+                    subtitle: p.daily_meals_count ? `${p.daily_meals_count} meals/day` : 'Meal Plan',
+                    url: `/users?search=${encodeURIComponent(query)}`,
+                })
+            })
+        }
+
     } catch (e) {
         console.error("Global search error:", e)
     }

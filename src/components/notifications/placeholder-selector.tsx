@@ -44,9 +44,9 @@ export function PlaceholderSelector({ onSelect, className }: PlaceholderSelector
                     <Braces className="size-4" />
                 </Button>
             </PopoverTrigger>
-            <PopoverContent side="top" align="end" className="w-[280px] p-1 rounded-xl border-border/40 shadow-2xl">
+            <PopoverContent side="top" align="end" className="w-[280px] p-1 rounded-lg border-border/40 shadow-2xl">
                 <div className="p-2 border-b border-border/10">
-                    <h4 className="text-[10px] font-bold uppercase tracking-wider text-muted-foreground/60">Choose Placeholder</h4>
+                    <h4 className="text-[10px] font-bold capitalize tracking-wider text-muted-foreground/60">Choose Placeholder</h4>
                 </div>
                 <div className="max-h-[300px] overflow-y-auto p-1 custom-scrollbar">
                     {PLACEHOLDERS.map((ph) => (

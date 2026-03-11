@@ -190,7 +190,7 @@ export function RichText({ value, onChange, placeholder, className }: RichTextPr
 
     return (
         <div className={cn(
-            "flex flex-col rounded-xl border border-border/40 bg-muted/5 transition-all duration-300 overflow-hidden",
+            "flex flex-col rounded-lg border border-border/40 bg-muted/5 transition-all duration-300 overflow-hidden",
             isFocused && "ring-4 ring-primary/5 border-primary/20 bg-background shadow-md",
             className
         )}>
@@ -203,7 +203,7 @@ export function RichText({ value, onChange, placeholder, className }: RichTextPr
                         size="sm"
                         onClick={() => setMode("visual")}
                         className={cn(
-                            "h-7 px-2 text-[10px] font-bold uppercase tracking-tight rounded-md transition-all",
+                            "h-7 px-2 text-[10px] font-bold capitalize tracking-tight rounded-md transition-all",
                             mode === "visual" ? "bg-white dark:bg-muted shadow-sm text-primary" : "text-muted-foreground/40 hover:text-muted-foreground"
                         )}
                     >
@@ -216,7 +216,7 @@ export function RichText({ value, onChange, placeholder, className }: RichTextPr
                         size="sm"
                         onClick={() => setMode("html")}
                         className={cn(
-                            "h-7 px-2 text-[10px] font-bold uppercase tracking-tight rounded-md transition-all",
+                            "h-7 px-2 text-[10px] font-bold capitalize tracking-tight rounded-md transition-all",
                             mode === "html" ? "bg-white dark:bg-muted shadow-sm text-primary" : "text-muted-foreground/40 hover:text-muted-foreground"
                         )}
                     >

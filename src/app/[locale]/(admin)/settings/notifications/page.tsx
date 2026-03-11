@@ -1,9 +1,10 @@
+
 import { createClient } from "@/lib/supabase/server"
 import { NotificationsWrapper } from "@/components/notifications/notifications-wrapper"
 
 export const dynamic = "force-dynamic"
 
-export default async function NotificationsPage() {
+export default async function NotificationsSettingsPage() {
     const supabase = await createClient()
 
     // Fetch initial groups
@@ -59,6 +60,7 @@ export default async function NotificationsPage() {
             initialTriggers={triggers || []}
             initialNotifications={[...exampleNotifications, ...(notifications || [])]}
             users={(users || []).map(u => ({ id: u.id, email: u.email, display_name: u.display_name }))}
+            isSettingsMode={true}
         />
     )
 }
