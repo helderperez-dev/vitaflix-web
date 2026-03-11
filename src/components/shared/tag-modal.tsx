@@ -18,8 +18,8 @@ import { Form, FormField, FormItem, FormLabel, FormControl, FormMessage } from "
 import { Button } from "@/components/ui/button"
 import { Input } from "@/components/ui/input"
 import { TranslationFields } from "./translation-fields"
-import { tagSchema, type Tag } from "@/shared-schemas/tag"
-import { upsertTag, deleteTag, type TagTable } from "@/app/actions/tags"
+import { tagSchema, type Tag, type TagTable } from "@/shared-schemas/tag"
+import { upsertTag, deleteTag } from "@/app/actions/tags"
 
 interface TagModalProps {
     open: boolean
@@ -63,7 +63,8 @@ export function TagModal({ open, onOpenChange, tag, onSuccess, table = "tags" }:
                 toast.success(
                     table === "user_roles" ? (tag ? "Role updated" : "Role created") :
                         table === "wellness_objectives" ? (tag ? "Objective updated" : "Objective created") :
-                            (tag ? "Tag updated successfully" : "Tag created successfully")
+                            table === "product_groups" ? (tag ? "Product Group updated" : "Product Group created") :
+                                (tag ? "Tag updated successfully" : "Tag created successfully")
                 )
                 onSuccess?.()
                 onOpenChange(false)
@@ -112,13 +113,15 @@ export function TagModal({ open, onOpenChange, tag, onSuccess, table = "tags" }:
                             {table === "user_roles" ? (tag ? "Edit Role" : "New Role") :
                                 table === "wellness_objectives" ? (tag ? "Edit Objective" : "New Objective") :
                                     table === "meal_plan_sizes" ? (tag ? "Edit Config" : "New Config") :
-                                        (tag ? "Edit Tag" : "New Tag")}
+                                        table === "product_groups" ? (tag ? "Edit Product Group" : "New Product Group") :
+                                            (tag ? "Edit Tag" : "New Tag")}
                         </DialogTitle>
                         <DialogDescription className="text-xs text-muted-foreground leading-relaxed">
                             {table === "user_roles" ? (tag ? "Update role configuration" : "Create a new system role") :
                                 table === "wellness_objectives" ? (tag ? "Update wellness objective" : "Create a new system objective") :
                                     table === "meal_plan_sizes" ? (tag ? "Update daily meals configuration" : "Create a configuration for daily meals. Start with the number (e.g. '5 Meals a day')") :
-                                        (tag ? "Update the multilingual names for this organizational tag." : "Create a new tag to group and filter your content across languages.")}
+                                        table === "product_groups" ? (tag ? "Update product group info" : "Create a new product group to organize your products.") :
+                                            (tag ? "Update the multilingual names for this organizational tag." : "Create a new tag to group and filter your content across languages.")}
                         </DialogDescription>
                     </DialogHeader>
 
@@ -127,7 +130,7 @@ export function TagModal({ open, onOpenChange, tag, onSuccess, table = "tags" }:
                             <TranslationFields
                                 form={form}
                                 namePrefix="name"
-                                label={table === "user_roles" ? "Role Name" : table === "wellness_objectives" ? "Objective Name" : table === "meal_plan_sizes" ? "Configuration Name" : "Tag Name"}
+                                label={table === "user_roles" ? "Role Name" : table === "wellness_objectives" ? "Objective Name" : table === "meal_plan_sizes" ? "Configuration Name" : table === "product_groups" ? "Group Name" : "Tag Name"}
                                 placeholder={table === "meal_plan_sizes" ? "e.g. 5 Meals per day" : "Display Name..."}
                             />
                         </form>
@@ -145,7 +148,7 @@ export function TagModal({ open, onOpenChange, tag, onSuccess, table = "tags" }:
                                 className="h-9 px-3 text-xs font-semibold text-muted-foreground/40 hover:text-destructive hover:bg-destructive/5 transition-colors gap-2"
                             >
                                 <Trash2 className="h-3.5 w-3.5" />
-                                {table === "user_roles" ? "Delete Role" : table === "wellness_objectives" ? "Delete Objective" : table === "meal_plan_sizes" ? "Delete Config" : "Delete Tag"}
+                                {table === "user_roles" ? "Delete Role" : table === "wellness_objectives" ? "Delete Objective" : table === "meal_plan_sizes" ? "Delete Config" : table === "product_groups" ? "Delete Product Group" : "Delete Tag"}
                             </Button>
                         )}
                     </div>

@@ -43,11 +43,11 @@ export function SolutionFeatures() {
                     >
                         <div className="absolute inset-0 bg-gradient-to-tr from-primary/20 to-blue-500/20 rounded-[3rem] blur-3xl -z-10" />
                         <div className="relative bg-black/5 dark:bg-white/5 border border-border/50 rounded-[2.5rem] p-4 sm:p-6 shadow-2xl backdrop-blur-sm">
-                            <div className="aspect-[4/5] sm:aspect-square md:aspect-[4/3] w-full rounded-[1.5rem] overflow-hidden bg-white/5 relative border border-white/10 flex flex-col pt-12">
+                            <div className="aspect-[4/5] sm:aspect-square md:aspect-[4/3] w-full rounded-lg overflow-hidden bg-white/5 relative border border-white/10 flex flex-col pt-12">
                                 <div className="absolute top-4 left-4 right-4 flex gap-2">
-                                    <div className="w-8 h-2 bg-primary/20 rounded-full" />
-                                    <div className="w-16 h-2 bg-primary/10 rounded-full" />
-                                    <div className="w-4 h-2 bg-primary/10 rounded-full ml-auto" />
+                                    <div className="w-8 h-2 bg-primary/20 rounded-lg" />
+                                    <div className="w-16 h-2 bg-primary/10 rounded-lg" />
+                                    <div className="w-4 h-2 bg-primary/10 rounded-lg ml-auto" />
                                 </div>
 
                                 <div className="flex-1 w-full bg-cover bg-center rounded-t-2xl shadow-xl shadow-black/10 overflow-hidden relative group" style={{ backgroundImage: "url('https://placekitten.com/1000/1000')" }}>
@@ -77,7 +77,7 @@ export function SolutionFeatures() {
                                     transition={{ duration: 0.4, delay: i * 0.1 }}
                                     viewport={{ once: true }}
                                     key={i}
-                                    className="flex items-start gap-4 p-4 rounded-2xl hover:bg-muted/50 transition-colors"
+                                    className="flex items-start gap-4 p-4 rounded-lg hover:bg-muted/50 transition-colors"
                                 >
                                     <div className="shrink-0 mt-1">
                                         <CheckCircle2 className="size-6 text-primary fill-primary/20" />

@@ -50,7 +50,7 @@ export function SearchableSelect({
                         role="combobox"
                         aria-expanded={open}
                         className={cn(
-                            "w-full justify-between h-10 rounded-xl border-border/40 bg-muted/5 font-medium px-4",
+                            "w-full justify-between h-10 rounded-lg border-border/40 bg-muted/5 font-medium px-4",
                             !value && "text-muted-foreground",
                             className
                         )}
@@ -70,7 +70,7 @@ export function SearchableSelect({
                         <ChevronsUpDown className="ml-2 h-4 w-4 shrink-0 opacity-50" />
                     </Button>
                 </PopoverTrigger>
-                <PopoverContent className="p-0 sm:w-[var(--radix-popover-trigger-width)] rounded-xl border-border/40 shadow-2xl overflow-hidden" align="start">
+                <PopoverContent className="p-0 sm:w-[var(--radix-popover-trigger-width)] rounded-lg border-border/40 shadow-2xl overflow-hidden" align="start">
                     <Command className="border-none">
                         <CommandInput placeholder="Search..." className="h-10 border-none ring-0 focus:ring-0" />
                         <CommandEmpty className="py-4 text-xs text-center text-muted-foreground/60">{emptyMessage}</CommandEmpty>

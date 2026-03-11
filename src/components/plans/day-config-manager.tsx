@@ -71,76 +71,95 @@ export function DayConfigManager({ }: DayConfigManagerProps = {}) {
         setIsSaving(false)
     }
 
+
     return (
-        <Card className="rounded-3xl border-none shadow-xl bg-white dark:bg-zinc-950 overflow-hidden">
-            <CardHeader className="bg-muted/5 border-b border-border/40 p-6">
-                <div className="flex items-center justify-between gap-4">
-                    <div className="space-y-1">
-                        <CardTitle className="text-xl font-bold text-secondary dark:text-white flex items-center gap-2">
-                            <Utensils className="size-5 text-primary" />
-                            Daily Sequence Setup
+        <Card className="border-border/60 bg-card shadow-none overflow-hidden">
+            <CardHeader className="border-b border-border/50 py-5 px-8 bg-muted/5">
+                <div className="flex flex-col md:flex-row md:items-center justify-between gap-6">
+                    <div className="space-y-1.5">
+                        <CardTitle className="text-sm font-bold text-foreground/90 flex items-center gap-2">
+                            <Utensils className="size-4 text-primary/60" />
+                            Daily sequence setup
                         </CardTitle>
-                        <CardDescription>Configure meal slots for plans with {selectedCount} daily meals.</CardDescription>
+                        <CardDescription className="text-xs font-medium text-muted-foreground/60 leading-tight">
+                            Configure the meal category sequence for plans with {selectedCount} daily slots.
+                        </CardDescription>
                     </div>
-                    <div className="w-[200px]">
+                    <div className="w-full md:w-[220px]">
                         <DictionarySelector
                             value={selectedCount}
                             onChange={(val: string) => setSelectedCount(val)}
                             table="meal_plan_sizes"
-                            placeholder="Select quantity"
+                            placeholder="Slots number"
+                            className="h-10 bg-muted/5 border-border/40 hover:bg-background transition-all"
                         />
                     </div>
                 </div>
             </CardHeader>
-            <CardContent className="p-6">
+            <CardContent className="p-8">
                 {isLoading ? (
-                    <div className="py-20 flex flex-col items-center justify-center gap-4 text-muted-foreground/40">
-                        <Loader2 className="size-10 animate-spin" />
-                        <p className="text-sm font-bold uppercase tracking-widest">Synchronizing slots...</p>
+                    <div className="py-24 flex flex-col items-center justify-center gap-4 text-muted-foreground/30">
+                        <Loader2 className="size-10 animate-spin opacity-20" />
+                        <p className="text-[11px] font-bold">Synchronizing slots...</p>
                     </div>
                 ) : (
                     <div className="space-y-4">
                         {configs.map((config, idx) => (
-                            <div key={idx} className="flex items-center gap-4 p-4 rounded-2xl bg-muted/5 border border-border/40 group hover:border-primary/20 hover:bg-primary/5 transition-all">
-                                <div className="size-10 rounded-xl bg-secondary text-white flex items-center justify-center font-bold shrink-0">
+                            <div key={idx} className="flex items-center gap-4 p-4 rounded-lg bg-muted/5 border border-border/40 group hover:border-primary/30 hover:bg-primary/5 transition-all">
+                                <div className="size-9 rounded-lg bg-secondary/80 text-white flex items-center justify-center font-bold text-xs shrink-0 shadow-sm">
                                     {idx + 1}
                                 </div>
-                                <div className="flex-1 max-w-[280px]">
+                                <div className="flex-1 max-w-[320px]">
                                     <DictionarySelector
                                         value={config.categoryId}
                                         onChange={(val: string) => handleUpdateSlot(idx, val)}
                                         table="meal_categories"
-                                        placeholder="Select meal type"
+                                        placeholder="Select category"
                                         returnIdOnly={true}
+                                        className="h-10 bg-transparent border-transparent group-hover:border-border/40 transition-all font-medium text-xs"
                                     />
                                 </div>
+                                <div className="flex-1" />
                                 <Button
                                     variant="ghost"
                                     size="icon"
                                     onClick={() => handleRemoveSlot(idx)}
-                                    className="size-11 rounded-xl text-muted-foreground hover:text-red-500 hover:bg-red-500/10 transition-colors"
+                                    className="size-10 rounded-lg text-muted-foreground hover:text-red-500 hover:bg-red-500/10 transition-colors"
                                 >
                                     <Trash2 className="size-4" />
                                 </Button>
                             </div>
                         ))}
 
-                        <div className="grid grid-cols-2 gap-4 pt-4">
+                        {configs.length === 0 && (
+                            <div className="py-12 flex flex-col items-center justify-center border-2 border-dashed border-border/40 rounded-lg bg-muted/5 gap-3">
+                                <p className="text-xs font-semibold text-muted-foreground/60">No meal slots defined for this configuration.</p>
+                                <Button
+                                    variant="outline"
+                                    onClick={handleAddSlot}
+                                    className="h-9 rounded-lg border-dashed border-primary/20 hover:bg-primary/5 text-primary text-[11px] font-bold transition-all active:scale-95"
+                                >
+                                    Initialize first slot
+                                </Button>
+                            </div>
+                        )}
+
+                        <div className="grid grid-cols-2 gap-6 pt-6">
                             <Button
                                 variant="outline"
                                 onClick={handleAddSlot}
-                                className="h-12 rounded-2xl border-dashed border-border/60 hover:bg-muted/10 font-bold text-[11px] uppercase tracking-wider gap-2"
+                                className="h-11 rounded-lg bg-muted/5 border-border/40 hover:bg-muted/10 font-bold text-[11px] gap-2 transition-all active:scale-95"
                             >
-                                <Plus className="size-4" />
-                                Add Slot
+                                <Plus className="size-4 opacity-60" />
+                                Add meal slot
                             </Button>
                             <Button
                                 onClick={handleSave}
                                 disabled={isSaving || configs.length === 0}
-                                className="h-12 rounded-2xl bg-primary hover:bg-primary/90 text-white font-bold text-[11px] uppercase tracking-wider gap-2 shadow-lg shadow-primary/10 transition-all active:scale-[0.98]"
+                                className="h-11 rounded-lg bg-primary hover:bg-primary/95 text-white font-bold text-[11px] gap-2 shadow-sm transition-all active:scale-95"
                             >
-                                {isSaving ? <Loader2 className="size-4 animate-spin" /> : <Save className="size-4" />}
-                                Save Configuration
+                                {isSaving ? <Loader2 className="size-4 animate-spin" /> : <Save className="size-4 opacity-80" />}
+                                Save sequence
                             </Button>
                         </div>
                     </div>
@@ -149,3 +168,4 @@ export function DayConfigManager({ }: DayConfigManagerProps = {}) {
         </Card>
     )
 }
+

@@ -137,7 +137,7 @@ export default async function DashboardPage({ params }: { params: { locale: stri
                             <CardContent className="px-4 pb-3 pt-0">
                                 <div className="text-lg font-bold tracking-tight tabular-nums flex items-center justify-between">
                                     {stat.value}
-                                    <div className="flex items-center gap-0.5 text-[8px] font-bold text-primary bg-primary/10 px-1.5 py-0.5 rounded-full border border-primary/10 tracking-tight">
+                                    <div className="flex items-center gap-0.5 text-[8px] font-bold text-primary bg-primary/10 px-1.5 py-0.5 rounded-lg border border-primary/10 tracking-tight">
                                         <TrendingUp className="h-2 w-2" />
                                         {stat.trend}
                                     </div>

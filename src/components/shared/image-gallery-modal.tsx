@@ -126,7 +126,7 @@ export function ImageGalleryModal({
                                         variant="outline"
                                         size="icon"
                                         onClick={handlePrev}
-                                        className="h-10 w-10 rounded-full bg-white/5 border-white/10 hover:bg-white/10 hover:border-white/20 text-white transition-all"
+                                        className="h-10 w-10 rounded-lg bg-white/5 border-white/10 hover:bg-white/10 hover:border-white/20 text-white transition-all"
                                     >
                                         <ChevronLeft className="h-5 w-5" />
                                     </Button>
@@ -134,7 +134,7 @@ export function ImageGalleryModal({
                                         variant="outline"
                                         size="icon"
                                         onClick={handleNext}
-                                        className="h-10 w-10 rounded-full bg-white/5 border-white/10 hover:bg-white/10 hover:border-white/20 text-white transition-all"
+                                        className="h-10 w-10 rounded-lg bg-white/5 border-white/10 hover:bg-white/10 hover:border-white/20 text-white transition-all"
                                     >
                                         <ChevronRight className="h-5 w-5" />
                                     </Button>
@@ -152,7 +152,7 @@ export function ImageGalleryModal({
                                         setCurrentIndex(i)
                                     }}
                                     className={cn(
-                                        "h-1 transition-all duration-300 rounded-full",
+                                        "h-1 transition-all duration-300 rounded-lg",
                                         i === currentIndex ? "w-8 bg-primary" : "w-2 bg-white/20 hover:bg-white/40"
                                     )}
                                 />
@@ -165,7 +165,7 @@ export function ImageGalleryModal({
                                 variant="ghost"
                                 size="icon"
                                 onClick={() => onOpenChange(false)}
-                                className="h-10 w-10 rounded-full bg-white/5 border-white/10 hover:bg-white/10 hover:border-white/20 text-white transition-all"
+                                className="h-10 w-10 rounded-lg bg-white/5 border-white/10 hover:bg-white/10 hover:border-white/20 text-white transition-all"
                             >
                                 <X className="h-5 w-5" />
                             </Button>

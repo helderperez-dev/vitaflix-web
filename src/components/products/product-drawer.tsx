@@ -35,6 +35,7 @@ import { upsertProduct } from "@/app/actions/products"
 import { TranslationFields } from "@/components/shared/translation-fields"
 import { TagSelector } from "@/components/shared/tag-selector"
 import { BrandSelector } from "@/components/shared/brand-selector"
+import { GroupSelector } from "@/components/shared/group-selector"
 import { ImageUploader } from "@/components/shared/image-uploader"
 import { Stepper } from "@/components/ui/stepper"
 
@@ -61,6 +62,7 @@ export function ProductDrawer({ open, onOpenChange, product }: ProductDrawerProp
             fat: 0,
             tagIds: [],
             brandIds: [],
+            groupIds: [],
             images: [],
             isPublic: true,
         },
@@ -82,6 +84,7 @@ export function ProductDrawer({ open, onOpenChange, product }: ProductDrawerProp
                 fat: 0,
                 tagIds: [],
                 brandIds: [],
+                groupIds: [],
                 images: [],
                 isPublic: true,
             })
@@ -111,7 +114,7 @@ export function ProductDrawer({ open, onOpenChange, product }: ProductDrawerProp
         <Sheet open={open} onOpenChange={onOpenChange}>
             <SheetContent className="sm:max-w-2xl p-0 flex flex-col bg-background border-l border-border">
                 {/* High-End Ambient Glow */}
-                <div className="absolute top-0 left-0 right-0 h-[500px] bg-gradient-to-b from-slate-50 via-white to-white pointer-events-none -z-10" />
+                <div className="absolute top-0 left-0 right-0 h-[500px] bg-gradient-to-b from-slate-50 via-white to-white dark:from-white/[0.04] dark:via-transparent dark:to-transparent pointer-events-none -z-10" />
 
                 <div className="flex-1 flex flex-col min-h-0 overflow-hidden relative z-10">
                     <SheetHeader className="px-8 py-8 space-y-2">
@@ -255,6 +258,13 @@ export function ProductDrawer({ open, onOpenChange, product }: ProductDrawerProp
                                             <BrandSelector
                                                 selectedBrandIds={form.watch("brandIds") || []}
                                                 onBrandsChange={(brandIds) => form.setValue("brandIds", brandIds, { shouldDirty: true })}
+                                            />
+                                        </div>
+
+                                        <div className="space-y-4">
+                                            <GroupSelector
+                                                selectedGroupIds={form.watch("groupIds") || []}
+                                                onGroupsChange={(groupIds) => form.setValue("groupIds", groupIds, { shouldDirty: true })}
                                             />
                                         </div>
 

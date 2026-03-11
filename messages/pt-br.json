@@ -1,5 +1,6 @@
 {
     "Common": {
+        "all": "Todos",
         "save": "Salvar",
         "edit": "Editar",
         "editDetails": "Editar Detalhes",
@@ -32,7 +33,12 @@
         "createNewDietaryTag": "Criar Tag Dietética",
         "noTagsFound": "Nenhuma tag encontrada.",
         "noMealCategoriesFound": "Nenhuma categoria encontrada.",
-        "noDietaryTagsFound": "Nenhuma restrição encontrada.",
+        "noDietaryTagsFound": "Nenhuma tag dietética encontrada.",
+        "selectProductGroups": "Selecionar Grupos de Produtos",
+        "searchProductGroups": "Pesquisar grupos...",
+        "availableProductGroups": "Grupos Disponíveis",
+        "createNewProductGroup": "Criar Novo Grupo",
+        "noProductGroupsFound": "Nenhum grupo encontrado.",
         "updatedSuccessfully": "Atualizado com sucesso",
         "createdSuccessfully": "Criado com sucesso",
         "errorSaving": "Erro ao salvar",
@@ -96,6 +102,7 @@
         "visibilityDesc": "Quando ativo, este ingrediente fica visível para todos os usuários.",
         "brand": "Marca",
         "tags": "Tags",
+        "group": "Grupo",
         "table": {
             "name": "Nome do Produto",
             "macros": "Macros",
@@ -326,6 +333,7 @@
         "kanban": "Kanban",
         "datagrid": "Grelha de Dados",
         "createFunnel": "Criar Funil",
+        "allFunnels": "Todos os Funis",
         "noFunnels": "Nenhum Funil Encontrado",
         "noFunnelsDesc": "Crie um funil e defina as etapas do fluxo de trabalho para começar a gerenciar leads.",
         "searchLeads": "Pesquisar leads...",

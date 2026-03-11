@@ -70,7 +70,7 @@ function BulkStatusActions({ selectedRows, clearSelection }: { selectedRows: any
     return (
         <div className="flex items-center ml-auto">
             <div className={cn(
-                "flex items-center gap-0 bg-slate-100/50 dark:bg-white/5 rounded-xl border border-slate-200 dark:border-white/10 transition-all overflow-hidden",
+                "flex items-center gap-0 bg-slate-100/50 dark:bg-white/5 rounded-lg border border-slate-200 dark:border-white/10 transition-all overflow-hidden",
                 isDirty && "border-primary/30 ring-1 ring-primary/10"
             )}>
                 <div className="flex items-center gap-3 px-3 py-1.5 border-r border-slate-200 dark:border-white/10">
@@ -248,7 +248,7 @@ export function MealTableWrapper({ initialMeals, userProfile }: MealTableWrapper
                             const tag = allTags.find(t => t.id === id)
                             if (!tag) return null
                             return (
-                                <Badge key={id} variant="secondary" className="px-2 py-0 h-5 text-[10px] font-semibold bg-slate-800 text-white dark:bg-white/10 dark:text-white border-none rounded-full">
+                                <Badge key={id} variant="secondary" className="px-2 py-0 h-5 text-[10px] font-semibold bg-slate-800 text-white dark:bg-white/10 dark:text-white border-none rounded-lg">
                                     {tag.name?.[locale] || tag.name?.en}
                                 </Badge>
                             )
@@ -290,7 +290,7 @@ export function MealTableWrapper({ initialMeals, userProfile }: MealTableWrapper
                 const satiety = row.original.mappedMeal.satiety || 0
                 return (
                     <div className="flex items-center gap-3">
-                        <div className="h-2 w-16 bg-slate-100 dark:bg-white/5 rounded-full overflow-hidden shrink-0 border border-slate-200/50 dark:border-white/5">
+                        <div className="h-2 w-16 bg-slate-100 dark:bg-white/5 rounded-lg overflow-hidden shrink-0 border border-slate-200/50 dark:border-white/5">
                             <div
                                 className="h-full bg-primary"
                                 style={{ width: `${satiety * 10}%` }}
@@ -353,12 +353,12 @@ export function MealTableWrapper({ initialMeals, userProfile }: MealTableWrapper
         <div className="h-full flex flex-col">
             <div className="flex justify-between items-center shrink-0 px-10 py-8 border-b border-border/40 bg-white dark:bg-background relative overflow-hidden">
                 {/* Premium Background Accent */}
-                <div className="absolute top-0 left-0 w-full h-10 bg-gradient-to-b from-slate-50 to-white pointer-events-none" />
+                <div className="absolute top-0 left-0 w-full h-10 bg-gradient-to-b from-slate-50 to-white dark:from-white/[0.03] dark:to-transparent pointer-events-none" />
 
 
                 <div className="flex flex-col relative z-10">
                     <div className="flex items-center gap-3">
-                        <div className="w-1 h-6 bg-primary rounded-full opacity-80" />
+                        <div className="w-1 h-6 bg-primary rounded-lg opacity-80" />
                         <h2 className="text-3xl font-semibold tracking-tight text-foreground dark:text-white leading-none">
                             {t("title")}
                         </h2>
@@ -370,7 +370,7 @@ export function MealTableWrapper({ initialMeals, userProfile }: MealTableWrapper
 
                 <Button
                     onClick={() => { setSelectedMeal(null); setDrawerOpen(true); }}
-                    className="bg-primary hover:bg-primary/95 text-white font-semibold transition-all active:scale-95 shadow-sm h-10 px-6 rounded-xl text-xs flex items-center gap-2"
+                    className="bg-primary hover:bg-primary/95 text-white font-semibold transition-all active:scale-95 shadow-sm h-10 px-6 text-xs flex items-center gap-2"
                 >
                     <Plus className="h-4 w-4" />
                     {t("addMeal")}
@@ -417,7 +417,7 @@ export function MealTableWrapper({ initialMeals, userProfile }: MealTableWrapper
             />
 
             <AlertDialog open={deleteModalOpen} onOpenChange={setDeleteModalOpen}>
-                <AlertDialogContent className="rounded-2xl border-sidebar-border/50 shadow-2xl">
+                <AlertDialogContent className="rounded-lg border-sidebar-border/50 shadow-2xl">
                     <AlertDialogHeader>
                         <AlertDialogTitle>Are you absolutely sure?</AlertDialogTitle>
                         <AlertDialogDescription>
@@ -426,7 +426,7 @@ export function MealTableWrapper({ initialMeals, userProfile }: MealTableWrapper
                         </AlertDialogDescription>
                     </AlertDialogHeader>
                     <AlertDialogFooter className="gap-2">
-                        <AlertDialogCancel className="rounded-xl font-semibold text-xs h-9">
+                        <AlertDialogCancel className="font-semibold text-xs h-9">
                             Cancel
                         </AlertDialogCancel>
                         <AlertDialogAction
@@ -445,7 +445,7 @@ export function MealTableWrapper({ initialMeals, userProfile }: MealTableWrapper
                                     setDeleteModalOpen(false)
                                 }
                             }}
-                            className="bg-primary hover:bg-primary/90 text-white rounded-xl font-semibold text-xs h-9 px-6"
+                            className="bg-primary hover:bg-primary/90 text-white font-semibold text-xs h-9 px-6"
                         >
                             Confirm Deletion
                         </AlertDialogAction>

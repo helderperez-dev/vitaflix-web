@@ -32,6 +32,7 @@ import {
     DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu"
 import { Checkbox } from "@/components/ui/checkbox"
+import { Badge } from "@/components/ui/badge"
 import {
     Select,
     SelectContent,
@@ -39,6 +40,12 @@ import {
     SelectTrigger,
     SelectValue,
 } from "@/components/ui/select"
+import { Input } from "@/components/ui/input"
+import {
+    Popover,
+    PopoverContent,
+    PopoverTrigger,
+} from "@/components/ui/popover"
 import {
     ChevronLeft,
     ChevronRight,
@@ -49,7 +56,10 @@ import {
     ArrowDown,
     ArrowUpDown,
     Trash2,
-    X
+    X,
+    Search,
+    ListFilter,
+    Loader2
 } from "lucide-react"
 import { motion, AnimatePresence } from "framer-motion"
 import { cn } from "@/lib/utils"
@@ -87,6 +97,8 @@ export interface DataTableProps<TData, TValue> {
     globalFilter?: string
     /** Optional: Callback when global filter changes */
     onGlobalFilterChange?: (value: string) => void
+    /** Optional: Show a loading spinner overlay */
+    isLoading?: boolean
     className?: string
 }
 
@@ -138,6 +150,7 @@ export function DataTable<TData, TValue>({
     selectionActions,
     globalFilter,
     onGlobalFilterChange,
+    isLoading = false,
     className,
 }: DataTableProps<TData, TValue>) {
     const [sorting, setSorting] = React.useState<SortingState>([])
@@ -181,7 +194,7 @@ export function DataTable<TData, TValue>({
             ),
             enableSorting: false,
             enableHiding: false,
-            size: 40,
+            size: 60,
         }
 
         return [selectionColumn, ...columns]
@@ -281,7 +294,7 @@ export function DataTable<TData, TValue>({
             <div className="bg-card overflow-hidden flex flex-col flex-1">
                 <div className="w-full flex-1 overflow-x-hidden overflow-y-auto relative custom-scrollbar">
                     <Table className="w-full border-separate border-spacing-0">
-                        <TableHeader className="sticky top-0 z-20 transition-colors">
+                        <TableHeader className="sticky top-0 z-30 transition-colors bg-white dark:bg-background">
                             {table.getHeaderGroups().map((headerGroup) => (
                                 <TableRow key={headerGroup.id} className="hover:bg-transparent">
                                     {headerGroup.headers.map((header, index) => {
@@ -300,11 +313,12 @@ export function DataTable<TData, TValue>({
                                             <TableHead
                                                 key={header.id}
                                                 className={cn(
-                                                    "h-10 text-xs font-semibold text-muted-foreground transition-all border-b border-border/40 relative group/head bg-white dark:bg-background",
-                                                    !isLast && "border-r border-border/40",
+                                                    "sticky top-0 z-30 h-10 text-xs font-semibold text-muted-foreground transition-all border-b border-border/40 relative group/head bg-white dark:bg-background whitespace-nowrap",
+                                                    !isFirst && !isLast && "px-4",
                                                     responsiveClass,
-                                                    isFirst && "pl-8 sticky left-0 z-30",
-                                                    isLast && "pr-8 sticky right-0 z-30"
+                                                    !isLast && "border-r border-border/40",
+                                                    isFirst && "pl-8 pr-6 sticky left-0 z-40 bg-white dark:bg-background",
+                                                    isLast && "px-4 pr-8 sticky right-0 z-40 bg-white dark:bg-background border-l border-border/40"
                                                 )}
                                                 style={{ width: header.getSize() }}
                                             >
@@ -314,36 +328,115 @@ export function DataTable<TData, TValue>({
                                                     </div>
 
                                                     {isLast && (
-                                                        <DropdownMenu>
-                                                            <DropdownMenuTrigger asChild>
-                                                                <Button
-                                                                    variant="ghost"
-                                                                    size="icon"
-                                                                    className="h-7 w-7 text-muted-foreground/40 hover:text-primary transition-colors"
-                                                                >
-                                                                    <Settings2 className="h-3.5 w-3.5" />
-                                                                </Button>
-                                                            </DropdownMenuTrigger>
-                                                            <DropdownMenuContent align="end" className="w-[200px] rounded-xl shadow-2xl border-sidebar-border/50 p-1.5 animate-in slide-in-from-top-1">
-                                                                <DropdownMenuLabel className="text-[11px] font-semibold text-muted-foreground/70 px-2 py-1.5">Display Columns</DropdownMenuLabel>
-                                                                <DropdownMenuSeparator className="bg-border/30" />
-                                                                <div className="max-h-[300px] overflow-auto py-1">
-                                                                    {table
-                                                                        .getAllColumns()
-                                                                        .filter((column) => column.getCanHide())
-                                                                        .map((column) => (
-                                                                            <DropdownMenuCheckboxItem
-                                                                                key={column.id}
-                                                                                className="capitalize text-[11px] font-medium rounded-lg cursor-pointer mx-1 mb-1 focus:bg-primary/5 focus:text-primary"
-                                                                                checked={column.getIsVisible()}
-                                                                                onCheckedChange={(value) => column.toggleVisibility(!!value)}
-                                                                            >
-                                                                                {column.id.replace("_", "")}
-                                                                            </DropdownMenuCheckboxItem>
-                                                                        ))}
-                                                                </div>
-                                                            </DropdownMenuContent>
-                                                        </DropdownMenu>
+                                                        <div className="flex items-center justify-end gap-1">
+                                                            {onGlobalFilterChange !== undefined && (
+                                                                <Popover>
+                                                                    <PopoverTrigger asChild>
+                                                                        <Button
+                                                                            variant="ghost"
+                                                                            size="icon"
+                                                                            className={cn("h-7 w-7 transition-colors", localGlobalFilter ? "text-primary bg-primary/5" : "text-muted-foreground/40 hover:text-primary")}
+                                                                        >
+                                                                            <ListFilter className="h-3.5 w-3.5" />
+                                                                        </Button>
+                                                                    </PopoverTrigger>
+                                                                    <PopoverContent align="end" className="w-[300px] rounded-lg shadow-2xl border-sidebar-border/50 p-0 animate-in slide-in-from-top-1 overflow-hidden">
+                                                                        <div className="p-3 border-b border-border/40 bg-slate-50/30 dark:bg-white/5">
+                                                                            <div className="flex items-center justify-between mb-2">
+                                                                                <span className="text-[11px] font-semibold text-foreground/70 capitalize tracking-wider">Search & Filter</span>
+                                                                                {localGlobalFilter && (
+                                                                                    <Button
+                                                                                        variant="ghost"
+                                                                                        className="h-5 px-2 text-[10px] text-muted-foreground hover:text-foreground shadow-none"
+                                                                                        onClick={() => { setLocalGlobalFilter(""); onGlobalFilterChange?.(""); }}
+                                                                                    >
+                                                                                        Clear all
+                                                                                    </Button>
+                                                                                )}
+                                                                            </div>
+                                                                            <div className="relative flex items-center">
+                                                                                <Search className="absolute left-3 size-4 text-muted-foreground/50" />
+                                                                                <Input
+                                                                                    placeholder="Type keywords to filter..."
+                                                                                    value={localGlobalFilter}
+                                                                                    onChange={(e) => {
+                                                                                        setLocalGlobalFilter(e.target.value);
+                                                                                        onGlobalFilterChange?.(e.target.value);
+                                                                                    }}
+                                                                                    className="h-10 pl-9 w-full text-xs font-medium rounded-lg border-border/40 bg-white dark:bg-background focus-visible:ring-primary/20 transition-all shadow-none"
+                                                                                    autoFocus
+                                                                                />
+                                                                            </div>
+                                                                        </div>
+                                                                        <div className="p-3 bg-white dark:bg-background">
+                                                                            <span className="text-[10px] font-semibold text-muted-foreground/50 capitalize tracking-wider mb-2 block">
+                                                                                {localGlobalFilter.trim().split(/\s+/).filter(Boolean).length > 0 ? "Active filter tags" : "Filter Tags"}
+                                                                            </span>
+                                                                            {localGlobalFilter.trim().split(/\s+/).filter(Boolean).length > 0 ? (
+                                                                                <div className="flex flex-wrap gap-1.5">
+                                                                                    {localGlobalFilter.trim().split(/\s+/).filter(Boolean).map((term, idx) => (
+                                                                                        <Badge
+                                                                                            key={idx}
+                                                                                            variant="secondary"
+                                                                                            className="text-[10px] h-6 px-2 font-semibold flex items-center gap-1 bg-primary/10 text-primary hover:bg-primary/20 border-primary/20 transition-colors"
+                                                                                        >
+                                                                                            {term}
+                                                                                            <span
+                                                                                                className="cursor-pointer ml-0.5 opacity-70 hover:opacity-100 flex items-center justify-center p-0.5 rounded-lg hover:bg-primary/20 transition-colors"
+                                                                                                onClick={(e) => {
+                                                                                                    e.stopPropagation();
+                                                                                                    const terms = localGlobalFilter.trim().split(/\s+/).filter(Boolean);
+                                                                                                    const newTerms = terms.filter((_, i) => i !== idx);
+                                                                                                    const newFilter = newTerms.join(' ');
+                                                                                                    setLocalGlobalFilter(newFilter);
+                                                                                                    onGlobalFilterChange?.(newFilter);
+                                                                                                }}
+                                                                                            >
+                                                                                                <X className="h-3 w-3" />
+                                                                                            </span>
+                                                                                        </Badge>
+                                                                                    ))}
+                                                                                </div>
+                                                                            ) : (
+                                                                                <div className="text-[11px] text-muted-foreground/60 text-center py-2 h-6 flex items-center justify-center italic">
+                                                                                    Type above to create filter tags
+                                                                                </div>
+                                                                            )}
+                                                                        </div>
+                                                                    </PopoverContent>
+                                                                </Popover>
+                                                            )}
+                                                            <DropdownMenu>
+                                                                <DropdownMenuTrigger asChild>
+                                                                    <Button
+                                                                        variant="ghost"
+                                                                        size="icon"
+                                                                        className="h-7 w-7 text-muted-foreground/40 hover:text-primary transition-colors"
+                                                                    >
+                                                                        <Settings2 className="h-3.5 w-3.5" />
+                                                                    </Button>
+                                                                </DropdownMenuTrigger>
+                                                                <DropdownMenuContent align="end" className="w-[200px] rounded-lg shadow-2xl border-sidebar-border/50 p-1.5 animate-in slide-in-from-top-1">
+                                                                    <DropdownMenuLabel className="text-[11px] font-semibold text-muted-foreground/70 px-2 py-1.5">Display Columns</DropdownMenuLabel>
+                                                                    <DropdownMenuSeparator className="bg-border/30" />
+                                                                    <div className="max-h-[300px] overflow-auto py-1 custom-scrollbar">
+                                                                        {table
+                                                                            .getAllColumns()
+                                                                            .filter((column) => column.getCanHide())
+                                                                            .map((column) => (
+                                                                                <DropdownMenuCheckboxItem
+                                                                                    key={column.id}
+                                                                                    className="capitalize text-[11px] font-medium rounded-lg cursor-pointer mx-1 mb-1 focus:bg-primary/5 focus:text-primary"
+                                                                                    checked={column.getIsVisible()}
+                                                                                    onCheckedChange={(value) => column.toggleVisibility(!!value)}
+                                                                                >
+                                                                                    {column.id.replace("_", "")}
+                                                                                </DropdownMenuCheckboxItem>
+                                                                            ))}
+                                                                    </div>
+                                                                </DropdownMenuContent>
+                                                            </DropdownMenu>
+                                                        </div>
                                                     )}
                                                 </div>
 
@@ -377,7 +470,7 @@ export function DataTable<TData, TValue>({
                                         className={cn(
                                             "border-b border-border/20 transition-colors group/row",
                                             onRowClick && "cursor-pointer",
-                                            rowIndex % 2 === 0 ? "bg-white dark:bg-background" : "bg-slate-50/80 dark:bg-white/[0.02]"
+                                            rowIndex % 2 === 0 ? "bg-white dark:bg-background" : "bg-slate-50/40 dark:bg-white/5"
                                         )}
                                         onClick={() => onRowClick?.(row.original)}
                                     >
@@ -397,12 +490,14 @@ export function DataTable<TData, TValue>({
                                                 <TableCell
                                                     key={cell.id}
                                                     className={cn(
-                                                        "py-4 border-b border-border/20 transition-all group-hover/row:bg-primary/[0.04]",
-                                                        rowIndex % 2 === 0 ? "bg-white dark:bg-background" : "bg-slate-50/80 dark:bg-white/[0.02]",
+                                                        "h-14 py-4 transition-all border-b border-border/40 text-[13px] text-foreground/70 relative group transition-colors",
+                                                        !isFirst && !isLast && "px-4",
+                                                        rowIndex % 2 === 0 ? "bg-white dark:bg-background" : "bg-slate-50/40 dark:bg-white/5",
                                                         row.getIsSelected() && "!bg-primary/5 group-hover/row:!bg-primary/[0.08]",
                                                         responsiveClass,
-                                                        isFirst && "pl-8 sticky left-0 z-10",
-                                                        isLast && "pr-8 sticky right-0 z-10"
+                                                        (isFirst || isLast) && "z-10 sticky",
+                                                        isFirst && "pl-8 pr-6 left-0",
+                                                        isLast && "px-4 pr-8 right-0",
                                                     )}
                                                 >
                                                     <div className={cn("truncate", isLast && "flex justify-end")}>
@@ -415,8 +510,15 @@ export function DataTable<TData, TValue>({
                                 ))
                             ) : (
                                 <TableRow>
-                                    <TableCell colSpan={columns.length} className="h-24 text-center text-muted-foreground italic truncate">
-                                        {emptyStateText}
+                                    <TableCell colSpan={allColumns.length} className="h-24 text-center text-muted-foreground italic truncate">
+                                        {isLoading ? (
+                                            <div className="flex items-center justify-center gap-2">
+                                                <Loader2 className="h-4 w-4 animate-spin text-primary" />
+                                                <span className="text-xs font-medium text-muted-foreground/60">Loading...</span>
+                                            </div>
+                                        ) : (
+                                            emptyStateText
+                                        )}
                                     </TableCell>
                                 </TableRow>
                             )}
@@ -443,7 +545,7 @@ export function DataTable<TData, TValue>({
                                 <SelectTrigger className="h-8 min-w-[70px] px-2 text-[11px] font-semibold bg-transparent border-border/40 hover:bg-muted/50 shadow-none transition-colors rounded-lg">
                                     <SelectValue placeholder={table.getState().pagination.pageSize} />
                                 </SelectTrigger>
-                                <SelectContent side="top" className="min-w-[75px] rounded-xl">
+                                <SelectContent side="top" className="min-w-[75px] rounded-lg">
                                     {[10, 20, 30, 40, 50].map((pageSize) => (
                                         <SelectItem
                                             key={pageSize}
@@ -491,14 +593,14 @@ export function DataTable<TData, TValue>({
                         initial={{ opacity: 0, y: 20, x: "-50%" }}
                         animate={{ opacity: 1, y: 0, x: "-50%" }}
                         exit={{ opacity: 0, y: 20, x: "-50%" }}
-                        className="fixed bottom-10 left-1/2 z-50 flex items-center gap-6 px-6 py-3 bg-white/90 dark:bg-slate-900/95 text-foreground dark:text-white rounded-2xl shadow-[0_20px_50px_-15px_rgba(0,0,0,0.3)] border border-slate-200 dark:border-white/10 backdrop-blur-xl min-w-[400px]"
+                        className="fixed bottom-10 left-1/2 z-50 flex items-center gap-6 px-6 py-3 bg-white/95 dark:bg-slate-900/95 text-foreground dark:text-white rounded-lg shadow-none border border-border/40 backdrop-blur-xl min-w-[400px]"
                     >
                         <div className="flex items-center gap-3 border-r border-slate-200 dark:border-white/10 pr-6">
                             <Button
                                 variant="ghost"
                                 size="icon"
                                 onClick={() => table.resetRowSelection()}
-                                className="h-8 w-8 rounded-full hover:bg-slate-100 dark:hover:bg-white/10 text-muted-foreground hover:text-foreground dark:text-white/70 dark:hover:text-white transition-colors"
+                                className="h-8 w-8 rounded-lg hover:bg-slate-100 dark:hover:bg-white/10 text-muted-foreground hover:text-foreground dark:text-white/70 dark:hover:text-white transition-colors"
                             >
                                 <X className="h-4 w-4" />
                             </Button>

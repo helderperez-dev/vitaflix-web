@@ -116,7 +116,7 @@ export function CropModal({ open, onOpenChange, image, onCropComplete }: CropMod
 
                 <div className="p-6 space-y-4">
                     <div className="space-y-2">
-                        <p className="text-[10px] font-bold text-muted-foreground/70 uppercase tracking-wider">Zoom</p>
+                        <p className="text-[10px] font-bold text-muted-foreground/70 capitalize tracking-wider">Zoom</p>
                         <Slider
                             value={[zoom]}
                             min={1}

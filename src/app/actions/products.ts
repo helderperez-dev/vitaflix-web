@@ -54,6 +54,16 @@ export async function upsertProduct(data: Product) {
         await supabase.from("product_brands").insert(brandLinks)
     }
 
+    // Manage groups (Syncing many-to-many)
+    await supabase.from("product_group_links").delete().eq("product_id", productId)
+    if (data.groupIds && data.groupIds.length > 0) {
+        const groupLinks = data.groupIds.map(groupId => ({
+            product_id: productId,
+            group_id: groupId
+        }))
+        await supabase.from("product_group_links").insert(groupLinks)
+    }
+
     revalidatePath("/", "layout")
     return { success: true }
 }
@@ -121,21 +131,36 @@ export async function bulkDeleteProducts(ids: string[]) {
     revalidatePath("/", "layout")
     return { success: true }
 }
-export async function getProducts(query?: string) {
+export async function getProducts(query?: string, groupId?: string) {
     const supabase = await createClient()
 
-    let q = supabase.from("products").select("*").order("created_at", { ascending: false })
+    let q = supabase
+        .from("products")
+        .select("*, product_group_links!left(group_id)")
+        .order("created_at", { ascending: false })
 
     if (query) {
-        // Since name is JSONB, we might need a more complex search if searching translations,
-        // but for a simple product selector, we can start with a basic check or just fetch all
-        // if the list is small, or use a RPC/full-text search if needed.
-        // For now, let's just fetch all and filter in client or use a simple ILIKE on a text field if available.
-        // Actually, name->>'pt' or name->>'en' could be used.
-        q = q.or(`name->>en.ilike.%${query}%,name->>pt.ilike.%${query}%`)
+        q = q.or(`name->>en.ilike.%${query}%,name->>pt.ilike.%${query}%,name->>pt-br.ilike.%${query}%`)
     }
 
-    const { data, error } = await q.limit(20)
+    if (groupId) {
+        // If we filter by group, we use a separate path or ensure the join works correctly
+        // Supabase filter on a joined table with !inner would exclude products without groups
+        // But since we are explicitly asking for a groupId, we WANT the inner join behavior for that specific filter
+        const { data: groupFilteredIds } = await supabase
+            .from("product_group_links")
+            .select("product_id")
+            .eq("group_id", groupId)
+
+        const ids = (groupFilteredIds || []).map(link => link.product_id)
+        if (ids.length > 0) {
+            q = q.in("id", ids)
+        } else {
+            return [] // No products in this group
+        }
+    }
+
+    const { data, error } = await q.limit(50)
 
     if (error) {
         console.error("Error fetching products:", error)

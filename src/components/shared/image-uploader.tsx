@@ -132,7 +132,7 @@ export function ImageUploader({ folder, value = [], onChange, maxImages = 10 }: 
                         onDragOver={(e) => handleDragOver(e, index)}
                         onDragEnd={handleDragEnd}
                         className={cn(
-                            "relative group aspect-square rounded-2xl overflow-hidden border-2 transition-all cursor-move",
+                            "relative group aspect-square rounded-lg overflow-hidden border-2 transition-all cursor-move",
                             image.isDefault ? "border-white ring-2 ring-black/5" : "border-border/30",
                             draggedItemIndex === index && "opacity-50 scale-95"
                         )}
@@ -165,7 +165,7 @@ export function ImageUploader({ folder, value = [], onChange, maxImages = 10 }: 
                                     type="button"
                                     onClick={() => setDefault(index)}
                                     className={cn(
-                                        "px-3 py-2 rounded-xl text-xs font-semibold flex items-center gap-2 transition-all active:scale-95",
+                                        "px-3 py-2 rounded-lg text-xs font-semibold flex items-center gap-2 transition-all active:scale-95",
                                         image.isDefault
                                             ? "bg-primary text-primary-foreground border-primary"
                                             : "bg-white/20 hover:bg-white/40 text-white backdrop-blur-md"
@@ -184,7 +184,7 @@ export function ImageUploader({ folder, value = [], onChange, maxImages = 10 }: 
                     <div
                         onClick={() => !isUploading && fileInputRef.current?.click()}
                         className={cn(
-                            "relative aspect-square rounded-2xl border-2 border-dashed flex flex-col items-center justify-center transition-all cursor-pointer group",
+                            "relative aspect-square rounded-lg border-2 border-dashed flex flex-col items-center justify-center transition-all cursor-pointer group",
                             isUploading
                                 ? "border-primary bg-primary/5 cursor-not-allowed ring-2 ring-primary/5"
                                 : "border-border/60 hover:border-primary/50 hover:bg-primary/[0.02] bg-muted/5 font-medium"
@@ -210,7 +210,7 @@ export function ImageUploader({ folder, value = [], onChange, maxImages = 10 }: 
                             </>
                         ) : (
                             <>
-                                <div className="h-12 w-12 rounded-2xl bg-white dark:bg-slate-900 border border-border/50 flex items-center justify-center mb-3 group-hover:scale-105 transition-all group-hover:border-primary/30">
+                                <div className="h-12 w-12 rounded-lg bg-white dark:bg-slate-900 border border-border/50 flex items-center justify-center mb-3 group-hover:scale-105 transition-all group-hover:border-primary/30">
                                     <UploadCloud className="h-6 w-6 text-muted-foreground group-hover:text-primary transition-colors" />
                                 </div>
                                 <p className="text-xs font-semibold text-muted-foreground/60 text-center px-4 group-hover:text-primary/70 transition-colors">

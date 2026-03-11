@@ -1,12 +1,13 @@
 "use client"
 
 import * as React from "react"
-import { Search, Loader2, X, Apple, Utensils, Users, Tag, Store, type LucideIcon } from "lucide-react"
+import { Search, Loader2, X, Apple, Utensils, Users, Tag, Store, UserCheck, CalendarDays, type LucideIcon } from "lucide-react"
 import { useRouter } from "next/navigation"
 import { usePathname } from "@/i18n/routing"
 import { useLocale } from "next-intl"
 import { useDebounce } from "use-debounce"
-import { globalSearch, type SearchResult } from "@/app/actions/search"
+import { globalSearch } from "@/app/actions/search"
+import { type SearchResult } from "@/shared-schemas/search"
 
 import { cn } from "@/lib/utils"
 import { MediaDisplay } from "@/components/shared/media-display"
@@ -15,6 +16,8 @@ const sectionConfig: Record<string, { label: string; icon: LucideIcon }> = {
     product: { label: "Products", icon: Apple },
     meal: { label: "Meals", icon: Utensils },
     user: { label: "Users", icon: Users },
+    lead: { label: "Leads", icon: UserCheck },
+    plan: { label: "Meal Plans", icon: CalendarDays },
     brand: { label: "Brands", icon: Store },
     tag: { label: "Tags", icon: Tag },
 }
@@ -70,6 +73,10 @@ export function GlobalSearch() {
     React.useEffect(() => {
         if (selectionPathRef.current && pathname !== selectionPathRef.current) {
             setSelectedItems([])
+            selectionPathRef.current = null
+        } else if (selectionPathRef.current && pathname === selectionPathRef.current) {
+            // We arrived at the intended path (e.g. after removing the last tag).
+            // Clear the ref so normal sync can resume without re-triggering navigation.
             selectionPathRef.current = null
         }
     }, [pathname])
@@ -154,7 +161,7 @@ export function GlobalSearch() {
         const oldSearch = currentParams.get("search") || ""
 
         const tagTerms = selectedItems
-            .filter(s => ["product", "meal", "user"].includes(s.type))
+            .filter(s => ["product", "meal", "user", "lead", "plan"].includes(s.type))
             .map(s => s.title)
 
         const allTerms = [...tagTerms]
@@ -186,7 +193,7 @@ export function GlobalSearch() {
         const finalParams = new URLSearchParams()
 
         const searchTerms = newSelected
-            .filter(s => ["product", "meal", "user"].includes(s.type))
+            .filter(s => ["product", "meal", "user", "lead", "plan"].includes(s.type))
             .map(s => s.title)
 
         if (searchTerms.length > 0) {
@@ -218,8 +225,10 @@ export function GlobalSearch() {
         const itemUrl = new URL(item.url, "http://dummy")
         const basePath = itemUrl.pathname
 
-        // Update ref before state to avoid effect race
-        selectionPathRef.current = remainingItems.length > 0 ? basePath : null
+        // Keep selectionPathRef pointing to basePath even when all items are removed.
+        // This prevents the live-sync effect from firing a competing navigation
+        // at the same time as the router.push below (which caused the not-found redirect).
+        selectionPathRef.current = basePath
         setSelectedItems(remainingItems)
 
         if (remainingItems.length === 0) {
@@ -228,7 +237,7 @@ export function GlobalSearch() {
             const finalParams = new URLSearchParams()
 
             const searchTerms = remainingItems
-                .filter(s => ["product", "meal", "user"].includes(s.type))
+                .filter(s => ["product", "meal", "user", "lead", "plan"].includes(s.type))
                 .map(s => s.title)
 
             if (searchTerms.length > 0) {

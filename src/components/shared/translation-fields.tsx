@@ -105,13 +105,13 @@ export function TranslationFields({
                         <PopoverTrigger asChild>
                             <Button
                                 variant="outline"
-                                className="h-8 w-auto min-w-[80px] justify-center px-4 text-xs font-semibold border-border/50 bg-transparent text-muted-foreground hover:bg-muted/10 rounded-xl transition-all gap-2"
+                                className="h-8 w-auto min-w-[80px] justify-center px-4 text-xs font-semibold border-border/50 bg-transparent text-muted-foreground hover:bg-muted/10 rounded-lg transition-all gap-2"
                             >
                                 <Plus className="h-3.5 w-3.5 opacity-50" />
                                 {commonT("add")}
                             </Button>
                         </PopoverTrigger>
-                        <PopoverContent className="w-[220px] p-1.5 shadow-2xl border-border/40 rounded-2xl backdrop-blur-xl bg-background/90" align="end">
+                        <PopoverContent className="w-[220px] p-1.5 shadow-2xl border-border/40 rounded-lg backdrop-blur-xl bg-background/90" align="end">
                             <Command className="bg-transparent border-none">
                                 <CommandInput placeholder={`${commonT("search")}...`} className="h-9 text-xs" />
                                 <CommandList
@@ -157,7 +157,7 @@ export function TranslationFields({
                     )}
                 />
                 {activeKeys.length === 0 ? (
-                    <div className="py-6 border-2 border-dashed border-border/40 rounded-2xl flex flex-col items-center justify-center bg-muted/5 group hover:border-border/60 transition-colors duration-500">
+                    <div className="py-6 border-2 border-dashed border-border/40 rounded-lg flex flex-col items-center justify-center bg-muted/5 group hover:border-border/60 transition-colors duration-500">
                         <p className="text-[10px] font-semibold text-muted-foreground/40">{commonT("noItemAddedYet", { item: label })}</p>
                     </div>
                 ) : (
@@ -177,7 +177,7 @@ export function TranslationFields({
                                                 variant="ghost"
                                                 size="icon"
                                                 onClick={() => removeLanguage(lang)}
-                                                className="h-6 w-6 rounded-full text-muted-foreground/0 group-hover:text-muted-foreground/40 group-hover:hover:text-destructive group-hover:hover:bg-destructive/10 transition-all duration-300"
+                                                className="h-6 w-6 rounded-lg text-muted-foreground/0 group-hover:text-muted-foreground/40 group-hover:hover:text-destructive group-hover:hover:bg-destructive/10 transition-all duration-300"
                                             >
                                                 <X className="h-3 w-3" />
                                             </Button>

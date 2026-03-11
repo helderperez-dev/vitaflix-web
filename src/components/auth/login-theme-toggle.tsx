@@ -20,7 +20,7 @@ export function LoginThemeToggle() {
     return (
         <motion.button
             onClick={() => setTheme(isDark ? "light" : "dark")}
-            className="relative size-9 rounded-2xl bg-white/10 border border-white/20 backdrop-blur-sm flex items-center justify-center hover:bg-white/20 transition-colors duration-300 group"
+            className="relative size-9 rounded-lg bg-white/10 border border-white/20 backdrop-blur-sm flex items-center justify-center hover:bg-white/20 transition-colors duration-300 group"
             whileHover={{ scale: 1.05 }}
             whileTap={{ scale: 0.95 }}
             aria-label="Toggle theme"

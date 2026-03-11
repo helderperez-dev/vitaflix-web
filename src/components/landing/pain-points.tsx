@@ -50,7 +50,7 @@ export function PainPoints() {
                             key={i}
                             className={`p-6 md:p-8 rounded-[2rem] bg-white border border-border/40 shadow-sm hover:shadow-xl hover:-translate-y-1 transition-all duration-300 ${i === pains.length - 1 ? "sm:col-span-2 lg:col-span-1" : ""}`}
                         >
-                            <div className="size-12 rounded-2xl bg-destructive/10 text-destructive flex items-center justify-center mb-6">
+                            <div className="size-12 rounded-lg bg-destructive/10 text-destructive flex items-center justify-center mb-6">
                                 <pain.icon className="size-6" />
                             </div>
                             <h3 className="text-xl font-bold mb-3">{pain.title}</h3>

@@ -208,7 +208,7 @@ export function UserDrawer({ open, onOpenChange, user }: UserDrawerProps) {
                 <div className="flex-1 flex flex-col min-h-0 overflow-hidden relative z-10">
                     <div className="relative w-full bg-white dark:bg-zinc-950 border-b border-border/40 overflow-hidden">
                         {/* High-End Ambient Glow (Slate, not Green) */}
-                        <div className="absolute top-0 left-0 right-0 h-full bg-gradient-to-b from-slate-50 via-background to-background pointer-events-none" />
+                        <div className="absolute top-0 left-0 right-0 h-full bg-gradient-to-b from-slate-50 via-background to-background dark:from-white/[0.04] dark:via-transparent dark:to-transparent pointer-events-none" />
 
                         <div className="relative z-20 px-8 py-8 flex items-center gap-6">
                             <div className="shrink-0">
@@ -229,13 +229,13 @@ export function UserDrawer({ open, onOpenChange, user }: UserDrawerProps) {
                                     <SheetDescription className="text-muted-foreground/70 text-[11px] font-medium flex items-center gap-2">
                                         <span className="lowercase">{user?.email}</span>
                                         <span className="text-muted-foreground/30">•</span>
-                                        <span className="uppercase tracking-widest font-bold text-primary/70">{user?.role || "user"}</span>
+                                        <span className="capitalize tracking-widest font-bold text-primary/70">{user?.role || "user"}</span>
                                     </SheetDescription>
                                 </SheetHeader>
                             </div>
 
                             <div className="flex gap-2">
-                                <Button variant="ghost" size="icon" className="rounded-full size-9" onClick={() => onOpenChange(false)}>
+                                <Button variant="ghost" size="icon" className="size-9" onClick={() => onOpenChange(false)}>
                                     <X className="size-4" />
                                 </Button>
                             </div>
@@ -349,7 +349,7 @@ export function UserDrawer({ open, onOpenChange, user }: UserDrawerProps) {
                                             <div className="space-y-8">
                                                 <div className="flex items-center justify-between gap-4">
                                                     <div className="flex items-center gap-2 flex-1">
-                                                        <h3 className="font-semibold text-[11px] text-secondary dark:text-white uppercase tracking-wider whitespace-nowrap">{t("identityManagement")}</h3>
+                                                        <h3 className="font-semibold text-[11px] text-secondary dark:text-white capitalize tracking-wider whitespace-nowrap">{t("identityManagement")}</h3>
                                                         <div className="h-[1px] w-full bg-border/40" />
                                                     </div>
                                                 </div>
@@ -530,16 +530,16 @@ export function UserDrawer({ open, onOpenChange, user }: UserDrawerProps) {
                                         <div className="space-y-8">
                                             <div className="flex items-center justify-between gap-4">
                                                 <div className="flex items-center gap-2 flex-1">
-                                                    <h3 className="font-semibold text-[11px] text-secondary dark:text-white uppercase tracking-wider whitespace-nowrap">{t("identityProtection")}</h3>
+                                                    <h3 className="font-semibold text-[11px] text-secondary dark:text-white capitalize tracking-wider whitespace-nowrap">{t("identityProtection")}</h3>
                                                     <div className="h-[1px] w-full bg-border/40" />
                                                 </div>
                                             </div>
 
                                             <div className="grid grid-cols-1 gap-6">
-                                                <div className="group p-5 rounded-2xl bg-muted/5 border border-border/40 transition-all hover:bg-muted/10 hover:border-primary/20">
+                                                <div className="group p-5 rounded-lg bg-muted/5 border border-border/40 transition-all hover:bg-muted/10 hover:border-primary/20">
                                                     <div className="flex items-start justify-between gap-4">
                                                         <div className="flex gap-4">
-                                                            <div className="size-10 rounded-xl bg-secondary/10 flex items-center justify-center text-secondary shrink-0 transition-colors group-hover:bg-secondary/20">
+                                                            <div className="size-10 rounded-lg bg-secondary/10 flex items-center justify-center text-secondary shrink-0 transition-colors group-hover:bg-secondary/20">
                                                                 <KeyRound className="size-5" />
                                                             </div>
                                                             <div className="space-y-1">
@@ -555,7 +555,7 @@ export function UserDrawer({ open, onOpenChange, user }: UserDrawerProps) {
                                                             size="sm"
                                                             onClick={handleRequestReset}
                                                             disabled={isResettingPassword}
-                                                            className="h-9 px-4 rounded-xl text-[11px] font-bold border-border/60 hover:bg-white hover:text-primary transition-all active:scale-95"
+                                                            className="h-9 px-4 text-[11px] font-bold border-border/60 hover:bg-white hover:text-primary transition-all active:scale-95"
                                                         >
                                                             {isResettingPassword ? <Loader2 className="size-3 animate-spin mr-1" /> : <ShieldCheck className="size-3 mr-1.5" />}
                                                             {t("initiateReset")}
@@ -563,10 +563,10 @@ export function UserDrawer({ open, onOpenChange, user }: UserDrawerProps) {
                                                     </div>
                                                 </div>
 
-                                                <div className="group p-5 rounded-2xl bg-muted/5 border border-border/40 transition-all hover:bg-muted/10 hover:border-primary/20">
+                                                <div className="group p-5 rounded-lg bg-muted/5 border border-border/40 transition-all hover:bg-muted/10 hover:border-primary/20">
                                                     <div className="flex flex-col gap-5">
                                                         <div className="flex items-start gap-4">
-                                                            <div className="size-10 rounded-xl bg-secondary/10 flex items-center justify-center text-secondary shrink-0 transition-colors group-hover:bg-secondary/20">
+                                                            <div className="size-10 rounded-lg bg-secondary/10 flex items-center justify-center text-secondary shrink-0 transition-colors group-hover:bg-secondary/20">
                                                                 <UserCog className="size-5" />
                                                             </div>
                                                             <div className="space-y-1">
@@ -587,14 +587,14 @@ export function UserDrawer({ open, onOpenChange, user }: UserDrawerProps) {
                                                                     value={newPassword}
                                                                     onChange={(e) => setNewPassword(e.target.value)}
                                                                     autoComplete="new-password"
-                                                                    className="h-10 text-xs rounded-xl bg-white border-border/40 focus:ring-primary/10 focus:border-primary"
+                                                                    className="h-10 text-xs rounded-lg bg-white border-input focus:ring-primary/10 focus:border-primary"
                                                                 />
                                                             </div>
                                                             <Button
                                                                 type="button"
                                                                 onClick={handleDirectUpdate}
                                                                 disabled={isUpdatingPassword || !newPassword}
-                                                                className="h-10 px-6 bg-primary hover:bg-primary/90 text-white rounded-xl text-[11px] font-bold shadow-sm shadow-primary/5 transition-all active:scale-95 disabled:grayscale"
+                                                                className="h-10 px-6 bg-primary hover:bg-primary/90 text-white text-[11px] font-bold transition-all active:scale-95 disabled:grayscale"
                                                             >
                                                                 {isUpdatingPassword ? <Loader2 className="size-3 animate-spin mr-1" /> : <CheckCircle2 className="size-3 mr-1.5" />}
                                                                 {t("overrideKey")}
@@ -609,7 +609,7 @@ export function UserDrawer({ open, onOpenChange, user }: UserDrawerProps) {
                                     <TabsContent value="subscription" className="px-8 pt-6 outline-none m-0 pb-12">
                                         <div className="space-y-8">
                                             <div className="flex items-center gap-2 flex-1">
-                                                <h3 className="font-semibold text-[11px] text-secondary dark:text-white uppercase tracking-wider whitespace-nowrap">Membership & Billing</h3>
+                                                <h3 className="font-semibold text-[11px] text-secondary dark:text-white capitalize tracking-wider whitespace-nowrap">Membership & Billing</h3>
                                                 <div className="h-[1px] w-full bg-border/40" />
                                             </div>
 
@@ -621,7 +621,7 @@ export function UserDrawer({ open, onOpenChange, user }: UserDrawerProps) {
                                             ) : relatedData?.subscriptions?.length > 0 ? (
                                                 <div className="space-y-4">
                                                     {relatedData.subscriptions.map((sub: any) => (
-                                                        <div key={sub.id} className="group p-5 rounded-2xl bg-muted/5 border border-border/40 transition-all hover:bg-muted/10">
+                                                        <div key={sub.id} className="group p-5 rounded-lg bg-muted/5 border border-border/40 transition-all hover:bg-muted/10">
                                                             <div className="flex items-start justify-between mb-6">
                                                                 <div className="space-y-1">
                                                                     <Badge variant={sub.status === 'active' ? 'default' : 'secondary'} className={cn(
@@ -634,20 +634,20 @@ export function UserDrawer({ open, onOpenChange, user }: UserDrawerProps) {
                                                                         {sub.stripe_subscription_id || sub.paypal_subscription_id || 'ID: ' + sub.id.slice(0, 8)}
                                                                     </p>
                                                                 </div>
-                                                                <div className="size-10 rounded-xl bg-secondary/10 flex items-center justify-center text-secondary">
+                                                                <div className="size-10 rounded-lg bg-secondary/10 flex items-center justify-center text-secondary">
                                                                     <CreditCard className="size-5" />
                                                                 </div>
                                                             </div>
 
                                                             <div className="grid grid-cols-2 gap-6 pb-4 border-b border-border/40">
                                                                 <div className="space-y-1">
-                                                                    <p className="text-[10px] uppercase tracking-wider font-bold text-muted-foreground/40">Period Start</p>
+                                                                    <p className="text-[10px] capitalize tracking-wider font-bold text-muted-foreground/40">Period Start</p>
                                                                     <p className="text-sm font-semibold text-secondary dark:text-white" suppressHydrationWarning>
                                                                         {sub.current_period_start ? new Date(sub.current_period_start).toLocaleDateString() : 'N/A'}
                                                                     </p>
                                                                 </div>
                                                                 <div className="space-y-1">
-                                                                    <p className="text-[10px] uppercase tracking-wider font-bold text-muted-foreground/40">Renewal Date</p>
+                                                                    <p className="text-[10px] capitalize tracking-wider font-bold text-muted-foreground/40">Renewal Date</p>
                                                                     <p className="text-sm font-semibold text-secondary dark:text-white" suppressHydrationWarning>
                                                                         {sub.current_period_end ? new Date(sub.current_period_end).toLocaleDateString() : 'N/A'}
                                                                     </p>
@@ -657,7 +657,7 @@ export function UserDrawer({ open, onOpenChange, user }: UserDrawerProps) {
                                                             <div className="flex items-center justify-between pt-4">
                                                                 <div className="flex items-center gap-2">
                                                                     <div className={cn(
-                                                                        "size-2 rounded-full",
+                                                                        "size-2 rounded-lg",
                                                                         sub.status === 'active' ? (sub.cancel_at_period_end ? "bg-amber-500 animate-pulse" : "bg-green-500") : "bg-muted-foreground/40"
                                                                     )} />
                                                                     <p className="text-[10px] font-medium text-muted-foreground">
@@ -672,8 +672,8 @@ export function UserDrawer({ open, onOpenChange, user }: UserDrawerProps) {
                                                     ))}
                                                 </div>
                                             ) : (
-                                                <div className="flex flex-col items-center justify-center py-12 px-6 rounded-2xl bg-muted/5 border border-dashed border-border/60 text-center gap-3">
-                                                    <div className="size-12 rounded-full bg-secondary/5 flex items-center justify-center text-secondary/40">
+                                                <div className="flex flex-col items-center justify-center py-12 px-6 rounded-lg bg-muted/5 border border-dashed border-border/60 text-center gap-3">
+                                                    <div className="size-12 rounded-lg bg-secondary/5 flex items-center justify-center text-secondary/40">
                                                         <CreditCard className="size-6" />
                                                     </div>
                                                     <div className="space-y-1">
@@ -686,12 +686,12 @@ export function UserDrawer({ open, onOpenChange, user }: UserDrawerProps) {
                                             {relatedData?.transactions?.length > 0 && (
                                                 <div className="space-y-6 pt-4">
                                                     <div className="flex items-center gap-2 flex-1">
-                                                        <h3 className="font-semibold text-[11px] text-secondary dark:text-white uppercase tracking-wider whitespace-nowrap">Transaction History</h3>
+                                                        <h3 className="font-semibold text-[11px] text-secondary dark:text-white capitalize tracking-wider whitespace-nowrap">Transaction History</h3>
                                                         <div className="h-[1px] w-full bg-border/40" />
                                                     </div>
                                                     <div className="space-y-2">
                                                         {relatedData.transactions.map((tx: any) => (
-                                                            <div key={tx.id} className="flex items-center justify-between p-3 rounded-xl border border-border/40 bg-muted/5 transition-colors hover:bg-muted/10">
+                                                            <div key={tx.id} className="flex items-center justify-between p-3 rounded-lg border border-border/40 bg-muted/5 transition-colors hover:bg-muted/10">
                                                                 <div className="flex items-center gap-3">
                                                                     <div className="size-8 rounded-lg bg-secondary/10 flex items-center justify-center shrink-0 text-secondary">
                                                                         <CheckCircle2 className="size-4" />
@@ -717,12 +717,12 @@ export function UserDrawer({ open, onOpenChange, user }: UserDrawerProps) {
                                     <TabsContent value="meal-plan" className="px-8 pt-6 outline-none m-0 pb-12">
                                         <div className="space-y-8">
                                             <div className="flex items-center gap-4 flex-1">
-                                                <h3 className="font-semibold text-[11px] text-secondary dark:text-white uppercase tracking-wider whitespace-nowrap">Nutrition & Meal Plans</h3>
+                                                <h3 className="font-semibold text-[11px] text-secondary dark:text-white capitalize tracking-wider whitespace-nowrap">Nutrition & Meal Plans</h3>
                                                 <div className="h-[1px] w-full bg-border/40" />
                                                 <Button
                                                     variant="outline"
                                                     size="sm"
-                                                    className="h-8 rounded-lg text-[10px] font-bold gap-2 px-3 border-primary/20 text-primary hover:bg-primary/5 shrink-0"
+                                                    className="h-8 text-[10px] font-bold gap-2 px-3 border-primary/20 text-primary hover:bg-primary/5 shrink-0"
                                                     onClick={() => setIsCreatePlanOpen(true)}
                                                 >
                                                     <Plus className="size-3" />
@@ -749,7 +749,7 @@ export function UserDrawer({ open, onOpenChange, user }: UserDrawerProps) {
                                                         <div
                                                             key={plan.id}
                                                             onClick={() => setSelectedPlan(plan)}
-                                                            className="p-4 rounded-xl border border-border/40 bg-muted/5 flex items-center justify-between group hover:bg-muted/10 transition-colors cursor-pointer"
+                                                            className="p-4 rounded-lg border border-border/40 bg-muted/5 flex items-center justify-between group hover:bg-muted/10 transition-colors cursor-pointer"
                                                         >
                                                             <div className="flex items-center gap-3">
                                                                 <div className="size-10 rounded-lg bg-secondary/10 flex items-center justify-center text-secondary">
@@ -763,14 +763,14 @@ export function UserDrawer({ open, onOpenChange, user }: UserDrawerProps) {
                                                                         <p className="text-[10px] text-muted-foreground">
                                                                             {plan.daily_meals_count} {tp("mealsLabel")} • <span suppressHydrationWarning>{new Date(plan.created_at).toLocaleDateString()}</span>
                                                                         </p>
-                                                                        <Badge variant="outline" className="h-4 text-[8px] px-1 font-mono uppercase bg-background">
+                                                                        <Badge variant="outline" className="h-4 text-[8px] px-1 font-mono capitalize bg-background">
                                                                             {plan.status || 'Active'}
                                                                         </Badge>
                                                                     </div>
                                                                 </div>
                                                             </div>
                                                             <div className="flex items-center gap-1">
-                                                                <Button variant="ghost" size="icon" className="size-8 rounded-lg opacity-0 group-hover:opacity-100 transition-opacity">
+                                                                <Button variant="ghost" size="icon" className="size-8 opacity-0 group-hover:opacity-100 transition-opacity">
                                                                     <ChevronRight className="size-4" />
                                                                 </Button>
                                                             </div>
@@ -778,8 +778,8 @@ export function UserDrawer({ open, onOpenChange, user }: UserDrawerProps) {
                                                     ))}
                                                 </div>
                                             ) : (
-                                                <div className="flex flex-col items-center justify-center py-12 px-6 rounded-2xl bg-muted/5 border border-dashed border-border/60 text-center gap-3">
-                                                    <div className="size-12 rounded-full bg-secondary/5 flex items-center justify-center text-secondary/40">
+                                                <div className="flex flex-col items-center justify-center py-12 px-6 rounded-lg bg-muted/5 border border-dashed border-border/60 text-center gap-3">
+                                                    <div className="size-12 rounded-lg bg-secondary/5 flex items-center justify-center text-secondary/40">
                                                         <Utensils className="size-6" />
                                                     </div>
                                                     <div className="space-y-1">
@@ -787,7 +787,7 @@ export function UserDrawer({ open, onOpenChange, user }: UserDrawerProps) {
                                                         <p className="text-[11px] text-muted-foreground/60 mb-4">{tp("emptyDescription")}</p>
                                                         <Button
                                                             variant="outline"
-                                                            className="rounded-xl border-primary/20 text-primary hover:bg-primary/5 font-bold text-[10px] uppercase tracking-wider px-6 h-9 transition-all active:scale-95"
+                                                            className="border-primary/20 text-primary hover:bg-primary/5 font-bold text-[10px] capitalize tracking-wider px-6 h-9 transition-all active:scale-95"
                                                             onClick={() => setIsCreatePlanOpen(true)}
                                                         >
                                                             <Plus className="size-3 mr-2" />
@@ -804,20 +804,20 @@ export function UserDrawer({ open, onOpenChange, user }: UserDrawerProps) {
                                         <div className="space-y-8">
                                             <div className="flex items-center justify-between gap-4">
                                                 <div className="flex items-center gap-2 flex-1">
-                                                    <h3 className="font-semibold text-[11px] text-secondary dark:text-white uppercase tracking-wider whitespace-nowrap">Session Stats</h3>
+                                                    <h3 className="font-semibold text-[11px] text-secondary dark:text-white capitalize tracking-wider whitespace-nowrap">Session Stats</h3>
                                                     <div className="h-[1px] w-full bg-border/40" />
                                                 </div>
                                             </div>
 
                                             <div className="grid grid-cols-2 gap-4">
-                                                <div className="p-4 rounded-xl border border-border/40 bg-muted/5 space-y-1">
-                                                    <p className="text-[10px] uppercase tracking-wider font-bold text-muted-foreground/40">Last Sign In</p>
+                                                <div className="p-4 rounded-lg border border-border/40 bg-muted/5 space-y-1">
+                                                    <p className="text-[10px] capitalize tracking-wider font-bold text-muted-foreground/40">Last Sign In</p>
                                                     <p className="text-xs font-semibold text-secondary dark:text-white">
                                                         {(user as any)?.lastSignInAt ? new Date((user as any).lastSignInAt).toLocaleString() : 'Never'}
                                                     </p>
                                                 </div>
-                                                <div className="p-4 rounded-xl border border-border/40 bg-muted/5 space-y-1">
-                                                    <p className="text-[10px] uppercase tracking-wider font-bold text-muted-foreground/40">Registered Since</p>
+                                                <div className="p-4 rounded-lg border border-border/40 bg-muted/5 space-y-1">
+                                                    <p className="text-[10px] capitalize tracking-wider font-bold text-muted-foreground/40">Registered Since</p>
                                                     <p className="text-xs font-semibold text-secondary dark:text-white">
                                                         {user?.createdAt ? new Date(user.createdAt).toLocaleDateString() : 'Unknown'}
                                                     </p>
@@ -825,7 +825,7 @@ export function UserDrawer({ open, onOpenChange, user }: UserDrawerProps) {
                                             </div>
 
                                             <div className="flex items-center gap-2 flex-1 pt-4">
-                                                <h3 className="font-semibold text-[11px] text-secondary dark:text-white uppercase tracking-wider whitespace-nowrap">Activity Logs</h3>
+                                                <h3 className="font-semibold text-[11px] text-secondary dark:text-white capitalize tracking-wider whitespace-nowrap">Activity Logs</h3>
                                                 <div className="h-[1px] w-full bg-border/40" />
                                             </div>
 
@@ -837,8 +837,8 @@ export function UserDrawer({ open, onOpenChange, user }: UserDrawerProps) {
                                             ) : relatedData?.notifications?.length > 0 ? (
                                                 <div className="space-y-3">
                                                     {relatedData.notifications.map((notif: any) => (
-                                                        <div key={notif.id} className="p-4 rounded-xl border border-border/40 bg-muted/5 flex items-start gap-4 transition-colors hover:bg-muted/10">
-                                                            <div className="size-10 rounded-xl bg-secondary/10 flex items-center justify-center text-secondary shrink-0 border border-secondary/20 shadow-sm">
+                                                        <div key={notif.id} className="p-4 rounded-lg border border-border/40 bg-muted/5 flex items-start gap-4 transition-colors hover:bg-muted/10">
+                                                            <div className="size-10 rounded-lg bg-secondary/10 flex items-center justify-center text-secondary shrink-0 border border-secondary/20 shadow-sm">
                                                                 <Bell className="size-5" />
                                                             </div>
                                                             <div className="space-y-1.5 min-w-0 flex-1">
@@ -848,12 +848,12 @@ export function UserDrawer({ open, onOpenChange, user }: UserDrawerProps) {
                                                                 </div>
                                                                 <p className="text-[10px] text-muted-foreground leading-relaxed line-clamp-2">{notif.body}</p>
                                                                 <div className="flex items-center gap-2 pt-1">
-                                                                    <Badge variant="outline" className="h-4 text-[8px] px-1 font-mono uppercase">
+                                                                    <Badge variant="outline" className="h-4 text-[8px] px-1 font-mono capitalize">
                                                                         {notif.channel}
                                                                     </Badge>
-                                                                    <div className="size-1 rounded-full bg-muted-foreground/20" />
+                                                                    <div className="size-1 rounded-lg bg-muted-foreground/20" />
                                                                     <span className={cn(
-                                                                        "text-[8px] font-bold uppercase tracking-widest",
+                                                                        "text-[8px] font-bold capitalize tracking-widest",
                                                                         notif.status === 'sent' ? "text-green-600" : "text-red-600"
                                                                     )}>
                                                                         {notif.status}
@@ -864,8 +864,8 @@ export function UserDrawer({ open, onOpenChange, user }: UserDrawerProps) {
                                                     ))}
                                                 </div>
                                             ) : (
-                                                <div className="flex flex-col items-center justify-center py-12 px-6 rounded-2xl bg-muted/5 border border-dashed border-border/60 text-center gap-3">
-                                                    <div className="size-12 rounded-full bg-muted/10 flex items-center justify-center text-muted-foreground/40">
+                                                <div className="flex flex-col items-center justify-center py-12 px-6 rounded-lg bg-muted/5 border border-dashed border-border/60 text-center gap-3">
+                                                    <div className="size-12 rounded-lg bg-muted/10 flex items-center justify-center text-muted-foreground/40">
                                                         <Bell className="size-6" />
                                                     </div>
                                                     <div className="space-y-1">
@@ -893,7 +893,7 @@ export function UserDrawer({ open, onOpenChange, user }: UserDrawerProps) {
                         <Button
                             type="submit"
                             form="user-form"
-                            className="h-10 px-8 bg-primary hover:bg-primary/90 text-white font-semibold text-xs shadow-sm shadow-primary/5 transition-all active:scale-[0.98]"
+                            className="h-10 px-8 bg-primary hover:bg-primary/90 text-white font-semibold text-xs  transition-all active:scale-[0.98]"
                             disabled={isSubmiting}
                         >
                             {isSubmiting ? (

@@ -58,7 +58,7 @@ export function TriggersTab({
                 return (
                     <div className="flex flex-wrap gap-1.5">
                         {channels.map(ch => (
-                            <Badge key={ch} variant="outline" className="h-5 px-1.5 text-[9px] font-bold uppercase tracking-tight bg-muted/5 text-muted-foreground/60 border-border/40">
+                            <Badge key={ch} variant="outline" className="h-5 px-1.5 text-[9px] font-bold capitalize tracking-tight bg-muted/5 text-muted-foreground/60 border-border/40">
                                 {ch === 'app' && <BellRing className="size-2.5 mr-1" />}
                                 {ch === 'push' && <Smartphone className="size-2.5 mr-1" />}
                                 {ch === 'email' && <Mail className="size-2.5 mr-1" />}
@@ -78,7 +78,7 @@ export function TriggersTab({
                 const isActive = row.getValue("is_active") as boolean
                 return (
                     <Badge variant="outline" className={cn(
-                        "h-5 px-2 text-[9px] font-bold uppercase tracking-tight border-none",
+                        "h-5 px-2 text-[9px] font-bold capitalize tracking-tight border-none",
                         isActive ? "bg-emerald-500/10 text-emerald-600 dark:text-emerald-400" : "bg-muted/10 text-muted-foreground"
                     )}>
                         {isActive ? "Active" : "Inactive"}
@@ -110,12 +110,12 @@ export function TriggersTab({
                             <Button
                                 variant="ghost"
                                 size="icon"
-                                className="h-9 w-9 rounded-xl hover:bg-muted transition-all active:scale-95"
+                                className="h-9 w-9 rounded-lg hover:bg-muted transition-all active:scale-95"
                             >
                                 <MoreHorizontal className="size-4" />
                             </Button>
                         </DropdownMenuTrigger>
-                        <DropdownMenuContent align="end" className="rounded-xl border-border/40 p-1.5 min-w-[140px]">
+                        <DropdownMenuContent align="end" className="rounded-lg border-border/40 p-1.5 min-w-[140px]">
                             <DropdownMenuItem
                                 onClick={() => onEdit?.(row.original)}
                                 className="rounded-lg text-xs font-medium cursor-pointer"

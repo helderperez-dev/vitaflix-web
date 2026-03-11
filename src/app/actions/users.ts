@@ -98,6 +98,23 @@ export async function deleteUser(id: string) {
     return { success: true }
 }
 
+export async function bulkDeleteUsers(ids: string[]) {
+    const supabase = await createClient()
+
+    const { error } = await supabase
+        .from('users')
+        .delete()
+        .in('id', ids)
+
+    if (error) {
+        console.error('Error deleting users:', error)
+        return { error: error.message }
+    }
+
+    revalidatePath("/", "layout")
+    return { success: true }
+}
+
 export async function requestPasswordReset(email: string) {
     const supabase = await createClient()
 

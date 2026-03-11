@@ -105,7 +105,7 @@ export function NotificationBell({ userId }: { userId: string }) {
                 <Button variant="ghost" size="icon" className="relative h-10 w-10 shrink-0 text-muted-foreground hover:bg-muted hover:text-foreground">
                     <Bell className="size-5" />
                     {unreadCount > 0 && (
-                        <span className="absolute top-2 right-2 flex size-2.5 items-center justify-center rounded-full bg-primary text-[8px] font-bold text-primary-foreground border-2 border-background">
+                        <span className="absolute top-2 right-2 flex size-2.5 items-center justify-center rounded-lg bg-primary text-[8px] font-bold text-primary-foreground border-2 border-background">
                             <span className="sr-only">New notifications</span>
                         </span>
                     )}
@@ -115,7 +115,7 @@ export function NotificationBell({ userId }: { userId: string }) {
                 <div className="flex items-center gap-2 p-4 pb-2 border-b border-border/40 bg-muted/20">
                     <span className="font-semibold text-sm">Notifications</span>
                     {unreadCount > 0 && (
-                        <span className="bg-primary/10 text-primary text-[10px] px-1.5 py-0.5 rounded-full font-bold">
+                        <span className="bg-primary/10 text-primary text-[10px] px-1.5 py-0.5 rounded-lg font-bold">
                             {unreadCount} new
                         </span>
                     )}
@@ -140,7 +140,7 @@ export function NotificationBell({ userId }: { userId: string }) {
                                     <div className="flex flex-col gap-1 pr-6 cursor-pointer" onClick={() => handleNotificationClick(notif)}>
                                         <h5 className={cn("text-xs font-semibold", !notif.read_at ? "text-foreground" : "text-muted-foreground")}>
                                             {notif.title}
-                                            {!notif.read_at && <span className="absolute left-2 top-5 size-1.5 rounded-full bg-primary" />}
+                                            {!notif.read_at && <span className="absolute left-2 top-5 size-1.5 rounded-lg bg-primary" />}
                                         </h5>
                                         {/* Simple regex parsing to handle potential HTML if channel is app, though app usually is plain text, let's keep it safe. */}
                                         <p className="text-[11px] text-muted-foreground line-clamp-3 leading-snug break-words" dangerouslySetInnerHTML={{ __html: notif.body }} />

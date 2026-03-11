@@ -2,9 +2,8 @@
 
 import { createClient } from "@/lib/supabase/server"
 import { revalidatePath } from "next/cache"
-import { tagSchema, type Tag } from "@/shared-schemas/tag"
+import { tagSchema, type Tag, type TagTable } from "@/shared-schemas/tag"
 
-export type TagTable = 'tags' | 'meal_categories' | 'dietary_tags' | 'user_roles' | 'wellness_objectives' | 'meal_plan_sizes';
 
 function slugify(text: string) {
     return text
@@ -37,6 +36,7 @@ export async function upsertTag(tag: Tag, table: TagTable = 'tags') {
     const upsertData: any = {
         id: tag.id || undefined,
         name: tag.name,
+        logo_url: tag.logo_url,
         updated_at: new Date().toISOString()
     }
 

@@ -53,3 +53,40 @@ export async function getSupportedLanguages() {
 
     return data.value as string[]
 }
+
+export async function getSystemConfig(key: string, defaultValue: unknown = null) {
+    const supabase = await createClient()
+
+    const { data, error } = await supabase
+        .from('system_settings')
+        .select('value')
+        .eq('key', key)
+        .single()
+
+    if (error || !data) {
+        return defaultValue
+    }
+
+    return data.value
+}
+
+export async function updateSystemConfig(key: string, value: unknown) {
+    const supabase = await createClient()
+
+    const { error } = await supabase
+        .from('system_settings')
+        .upsert({
+            key,
+            value,
+            updated_at: new Date().toISOString()
+        })
+
+    if (error) {
+        console.error(`Error updating system setting ${key}:`, error)
+        return { error: error.message }
+    }
+
+    revalidatePath("/", "layout")
+    return { success: true }
+}
+

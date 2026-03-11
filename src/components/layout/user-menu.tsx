@@ -48,11 +48,11 @@ export function UserMenu({ user }: UserMenuProps) {
                     variant="ghost"
                     className="h-10 px-2 gap-2 hover:bg-primary/5 transition-all duration-300 rounded-lg border border-transparent hover:border-sidebar-border/50 group"
                 >
-                    <Avatar className="h-8 w-8 rounded-full border border-primary/10 transition-all ring-4 ring-primary/[0.03]">
+                    <Avatar className="h-8 w-8 rounded-lg border border-primary/10 transition-all ring-4 ring-primary/[0.03]">
                         {user.avatar ? (
-                            <img src={user.avatar} alt={user.name || "User"} className="h-full w-full object-cover rounded-full" />
+                            <img src={user.avatar} alt={user.name || "User"} className="h-full w-full object-cover rounded-lg" />
                         ) : null}
-                        <AvatarFallback className="rounded-full bg-primary/10 text-primary text-[10px] font-semibold border border-primary/20">
+                        <AvatarFallback className="rounded-lg bg-primary/10 text-primary text-[10px] font-semibold border border-primary/20">
                             {user.name ? user.name.substring(0, 2).toUpperCase() : user.email.substring(0, 2).toUpperCase()}
                         </AvatarFallback>
                     </Avatar>
@@ -64,13 +64,13 @@ export function UserMenu({ user }: UserMenuProps) {
             </DropdownMenuTrigger>
             <DropdownMenuContent
                 align="end"
-                className="w-56 shadow-2xl border-sidebar-border/50 p-1.5 rounded-2xl animate-in fade-in-0 zoom-in-95 backdrop-blur-xl bg-background/90"
+                className="w-56 shadow-2xl border-sidebar-border/50 p-1.5 rounded-lg animate-in fade-in-0 zoom-in-95 backdrop-blur-xl bg-background/90"
             >
                 <div className="px-2 pb-2 mb-2 border-b border-sidebar-border/30">
                     <div className="flex items-center gap-3 p-2 bg-sidebar-accent/20 rounded-lg">
-                        <Avatar className="h-8 w-8 rounded-full border border-sidebar-border/50">
+                        <Avatar className="h-8 w-8 rounded-lg border border-sidebar-border/50">
                             {user.avatar ? (
-                                <img src={user.avatar} alt={user.name || "User"} className="h-full w-full object-cover rounded-full" />
+                                <img src={user.avatar} alt={user.name || "User"} className="h-full w-full object-cover rounded-lg" />
                             ) : null}
                             <AvatarFallback className="bg-primary/10 text-primary text-xs font-semibold">
                                 {user.name ? user.name.substring(0, 2).toUpperCase() : user.email.substring(0, 2).toUpperCase()}
@@ -94,7 +94,7 @@ export function UserMenu({ user }: UserMenuProps) {
                         </div>
                     </DropdownMenuSubTrigger>
                     <DropdownMenuPortal>
-                        <DropdownMenuSubContent className="w-48 shadow-2xl border-sidebar-border/50 p-1.5 rounded-2xl animate-in slide-in-from-left-1 backdrop-blur-xl bg-background/90">
+                        <DropdownMenuSubContent className="w-48 shadow-2xl border-sidebar-border/50 p-1.5 rounded-lg animate-in slide-in-from-left-1 backdrop-blur-xl bg-background/90">
                             <div className="space-y-1">
                                 {[
                                     { code: "en", label: "English" },
@@ -110,7 +110,7 @@ export function UserMenu({ user }: UserMenuProps) {
                                             locale === lang.code ? "bg-primary/10 text-primary font-semibold" : "hover:bg-accent/50"
                                         )}
                                     >
-                                        <div className={cn("size-1.5 rounded-full", locale === lang.code ? "bg-primary animate-pulse" : "bg-transparent")} />
+                                        <div className={cn("size-1.5 rounded-lg", locale === lang.code ? "bg-primary animate-pulse" : "bg-transparent")} />
                                         <span>{lang.label}</span>
                                     </DropdownMenuItem>
                                 ))}

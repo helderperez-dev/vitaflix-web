@@ -51,7 +51,7 @@ export function LeadActions({ lead, onEdit }: LeadActionsProps) {
             <DropdownMenuTrigger asChild>
                 <Button
                     variant="ghost"
-                    className="h-9 w-9 p-0 rounded-xl hover:bg-primary/5 hover:text-primary transition-all active:scale-95 group"
+                    className="h-9 w-9 p-0 rounded-lg hover:bg-primary/5 hover:text-primary transition-all active:scale-95 group"
                     disabled={isDeleting}
                 >
                     <span className="sr-only">Open menu</span>
@@ -60,17 +60,17 @@ export function LeadActions({ lead, onEdit }: LeadActionsProps) {
             </DropdownMenuTrigger>
             <DropdownMenuContent
                 align="end"
-                className="w-48 p-1.5 rounded-2xl shadow-2xl border-sidebar-border/50 backdrop-blur-xl bg-background/90 animate-in fade-in-0 zoom-in-95"
+                className="w-48 p-1.5 rounded-lg shadow-2xl border-sidebar-border/50 backdrop-blur-xl bg-background/90 animate-in fade-in-0 zoom-in-95"
             >
                 <DropdownMenuItem
                     onClick={() => onEdit(lead)}
-                    className="rounded-lg text-[10px] font-bold uppercase tracking-wider py-2.5 px-3 cursor-pointer"
+                    className="rounded-lg text-[10px] font-bold capitalize tracking-wider py-2.5 px-3 cursor-pointer"
                 >
                     {commonT("editDetails") || "Edit Details"}
                 </DropdownMenuItem>
                 <DropdownMenuItem
                     onClick={handleDelete}
-                    className="rounded-lg text-[10px] font-bold uppercase tracking-wider py-2.5 px-3 cursor-pointer"
+                    className="rounded-lg text-[10px] font-bold capitalize tracking-wider py-2.5 px-3 cursor-pointer"
                 >
                     {commonT("delete") || "Delete"}
                 </DropdownMenuItem>

@@ -364,15 +364,15 @@ export function NotificationDrawer({ open, onOpenChange, mode, groups, users, ed
                     <Button
                         variant="outline"
                         className={cn(
-                            "rounded-xl border-border/40 bg-muted/5 focus:bg-background transition-all font-medium justify-between px-4 group shadow-none hover:bg-white",
-                            compact ? "w-[200px] h-10 text-[10px] uppercase font-bold bg-muted/20 border-border/60" : "w-full h-10 text-sm"
+                            "rounded-lg border-border/40 bg-muted/5 focus:bg-background transition-all font-medium justify-between px-4 group shadow-none hover:bg-white",
+                            compact ? "w-[200px] h-10 text-[10px] capitalize font-bold bg-muted/20 border-border/60" : "w-full h-10 text-sm"
                         )}
                     >
                         <div className="flex items-center gap-2 overflow-hidden">
                             <LayoutTemplate className={cn("shrink-0 transition-colors", compact ? "size-3.5" : "size-4 text-muted-foreground/40 group-hover:text-primary")} />
                             <span className={cn(
                                 "transition-colors truncate",
-                                selectedTemplateId ? "text-primary font-bold uppercase tracking-tight" : "text-muted-foreground/60"
+                                selectedTemplateId ? "text-primary font-bold capitalize tracking-tight" : "text-muted-foreground/60"
                             )}>
                                 {selectedTemplateId
                                     ? templates.find(t => t.id === selectedTemplateId)?.name
@@ -383,13 +383,13 @@ export function NotificationDrawer({ open, onOpenChange, mode, groups, users, ed
                         <Search className="size-3.5 text-muted-foreground/20 shrink-0" />
                     </Button>
                 </PopoverTrigger>
-                <PopoverContent className="p-0 w-[300px] rounded-2xl border-border/40 overflow-hidden shadow-2xl" align={compact ? "end" : "start"}>
+                <PopoverContent className="p-0 w-[300px] rounded-lg border-border/40 overflow-hidden shadow-2xl" align={compact ? "end" : "start"}>
                     <Command className="p-0">
                         <CommandInput placeholder="Search templates..." className="h-11 text-[11px] font-medium border-none" />
                         <CommandList className="max-h-[350px] p-2 custom-scrollbar">
                             <CommandEmpty className="py-12 text-center">
                                 <Search className="size-10 mx-auto mb-4 text-muted-foreground/10" />
-                                <div className="text-[10px] uppercase font-bold text-muted-foreground/30 px-6">
+                                <div className="text-[10px] capitalize font-bold text-muted-foreground/30 px-6">
                                     No templates match your search
                                 </div>
                             </CommandEmpty>
@@ -397,25 +397,25 @@ export function NotificationDrawer({ open, onOpenChange, mode, groups, users, ed
                             {templates.length === 0 && (
                                 <div className="py-12 text-center">
                                     <LayoutTemplate className="size-10 mx-auto mb-4 text-muted-foreground/10" />
-                                    <div className="text-[10px] uppercase font-bold text-muted-foreground/30 px-6 leading-relaxed">
+                                    <div className="text-[10px] capitalize font-bold text-muted-foreground/30 px-6 leading-relaxed">
                                         Your template library is empty.<br />Create one in the designer.
                                     </div>
                                 </div>
                             )}
 
                             {recommendedTemplates.length > 0 && (
-                                <CommandGroup heading={<span className="text-[9px] uppercase font-bold tracking-widest text-primary/60 ml-1">Recommended for {currentChannel}</span>}>
+                                <CommandGroup heading={<span className="text-[9px] capitalize font-bold tracking-widest text-primary/60 ml-1">Recommended for {currentChannel}</span>}>
                                     {recommendedTemplates.map((tpl) => (
                                         <CommandItem
                                             key={tpl.id}
                                             value={`${tpl.name} ${tpl.channel}`}
                                             onSelect={() => loadTemplate(tpl)}
-                                            className="rounded-xl py-3 px-4 cursor-pointer group transition-all aria-selected:bg-primary/5 mb-1"
+                                            className="rounded-lg py-3 px-4 cursor-pointer group transition-all aria-selected:bg-primary/5 mb-1"
                                         >
                                             <div className="flex flex-col gap-0.5 w-full">
                                                 <div className="flex items-center justify-between">
-                                                    <span className="text-[11px] font-bold uppercase tracking-tight group-aria-selected:text-primary transition-colors">{tpl.name}</span>
-                                                    <Badge variant="outline" className="text-[8px] font-bold uppercase px-1.5 h-4 bg-primary/10 border-none text-primary/80">
+                                                    <span className="text-[11px] font-bold capitalize tracking-tight group-aria-selected:text-primary transition-colors">{tpl.name}</span>
+                                                    <Badge variant="outline" className="text-[8px] font-bold capitalize px-1.5 h-4 bg-primary/10 border-none text-primary/80">
                                                         {tpl.channel}
                                                     </Badge>
                                                 </div>
@@ -427,18 +427,18 @@ export function NotificationDrawer({ open, onOpenChange, mode, groups, users, ed
                             )}
 
                             {otherTemplates.length > 0 && (
-                                <CommandGroup heading={<span className="text-[9px] uppercase font-bold tracking-widest text-muted-foreground/40 ml-1">Other Templates</span>}>
+                                <CommandGroup heading={<span className="text-[9px] capitalize font-bold tracking-widest text-muted-foreground/40 ml-1">Other Templates</span>}>
                                     {otherTemplates.map((tpl) => (
                                         <CommandItem
                                             key={tpl.id}
                                             value={`${tpl.name} ${tpl.channel}`}
                                             onSelect={() => loadTemplate(tpl)}
-                                            className="rounded-xl py-3 px-4 cursor-pointer group transition-all aria-selected:bg-muted/10 mb-1 opacity-60 hover:opacity-100"
+                                            className="rounded-lg py-3 px-4 cursor-pointer group transition-all aria-selected:bg-muted/10 mb-1 opacity-60 hover:opacity-100"
                                         >
                                             <div className="flex flex-col gap-0.5 w-full">
                                                 <div className="flex items-center justify-between">
-                                                    <span className="text-[11px] font-bold uppercase tracking-tight group-aria-selected:text-foreground transition-colors">{tpl.name}</span>
-                                                    <Badge variant="outline" className="text-[8px] font-bold uppercase px-1.5 h-4 bg-muted/40 border-none text-muted-foreground/60">
+                                                    <span className="text-[11px] font-bold capitalize tracking-tight group-aria-selected:text-foreground transition-colors">{tpl.name}</span>
+                                                    <Badge variant="outline" className="text-[8px] font-bold capitalize px-1.5 h-4 bg-muted/40 border-none text-muted-foreground/60">
                                                         {tpl.channel}
                                                     </Badge>
                                                 </div>
@@ -462,7 +462,7 @@ export function NotificationDrawer({ open, onOpenChange, mode, groups, users, ed
                     <div className="flex flex-col gap-8">
                         {/* Template Selection & Designer Entry */}
                         <div className="flex flex-col gap-3">
-                            <FormLabel className="text-[10px] font-semibold text-muted-foreground/40 uppercase tracking-wider">
+                            <FormLabel className="text-[10px] font-semibold text-muted-foreground/40 capitalize tracking-wider">
                                 Notification Template <span className="normal-case opacity-50 ml-1 font-normal">(Optional)</span>
                             </FormLabel>
                             <div className="flex items-center gap-3">
@@ -473,7 +473,7 @@ export function NotificationDrawer({ open, onOpenChange, mode, groups, users, ed
                                     type="button"
                                     variant="outline"
                                     onClick={() => setIsExpanded(true)}
-                                    className="h-10 px-4 rounded-xl border-border/40 bg-white hover:bg-muted/10 text-primary shadow-sm flex-shrink-0 active:scale-95 transition-all"
+                                    className="h-10 px-4 rounded-lg border-border/40 bg-white hover:bg-muted/10 text-primary shadow-sm flex-shrink-0 active:scale-95 transition-all"
                                     title="Open Template Designer"
                                 >
                                     <LayoutTemplate className="size-4 mr-2" />
@@ -488,14 +488,14 @@ export function NotificationDrawer({ open, onOpenChange, mode, groups, users, ed
                                 name="channel"
                                 render={({ field }) => (
                                     <FormItem className="space-y-3">
-                                        <FormLabel className="text-[10px] font-semibold text-muted-foreground/40 uppercase tracking-wider">{t("channel")}</FormLabel>
+                                        <FormLabel className="text-[10px] font-semibold text-muted-foreground/40 capitalize tracking-wider">{t("channel")}</FormLabel>
                                         <Select onValueChange={field.onChange} defaultValue={field.value}>
                                             <FormControl>
-                                                <SelectTrigger className="h-10 rounded-xl border-border/40 bg-muted/5 focus:bg-background transition-all text-sm font-medium">
+                                                <SelectTrigger className="h-10 rounded-lg border-border/40 bg-muted/5 focus:bg-background transition-all text-sm font-medium">
                                                     <SelectValue />
                                                 </SelectTrigger>
                                             </FormControl>
-                                            <SelectContent className="rounded-xl border-border/40">
+                                            <SelectContent className="rounded-lg border-border/40">
                                                 <SelectItem value="app">
                                                     <span className="flex items-center gap-2 font-medium"><BellRing className="size-4 text-primary" />{t("channels.app")}</span>
                                                 </SelectItem>
@@ -519,14 +519,14 @@ export function NotificationDrawer({ open, onOpenChange, mode, groups, users, ed
                                 name="type"
                                 render={({ field }) => (
                                     <FormItem className="space-y-3">
-                                        <FormLabel className="text-[10px] font-semibold text-muted-foreground/40 uppercase tracking-wider">{t("type")}</FormLabel>
+                                        <FormLabel className="text-[10px] font-semibold text-muted-foreground/40 capitalize tracking-wider">{t("type")}</FormLabel>
                                         <Select onValueChange={field.onChange} defaultValue={field.value}>
                                             <FormControl>
-                                                <SelectTrigger className="h-10 rounded-xl border-border/40 bg-muted/5 focus:bg-background transition-all text-sm font-medium">
+                                                <SelectTrigger className="h-10 rounded-lg border-border/40 bg-muted/5 focus:bg-background transition-all text-sm font-medium">
                                                     <SelectValue />
                                                 </SelectTrigger>
                                             </FormControl>
-                                            <SelectContent className="rounded-xl border-border/40">
+                                            <SelectContent className="rounded-lg border-border/40">
                                                 <SelectItem value="marketing" className="font-medium text-xs">{t("marketing")}</SelectItem>
                                                 <SelectItem value="transactional" className="font-medium text-xs">{t("transactional")}</SelectItem>
                                             </SelectContent>
@@ -537,16 +537,16 @@ export function NotificationDrawer({ open, onOpenChange, mode, groups, users, ed
                         </div>
 
                         <div className="grid grid-cols-1 gap-4">
-                            <FormLabel className="text-[10px] font-semibold text-muted-foreground/40 uppercase tracking-wider">{t("sendTo")}</FormLabel>
+                            <FormLabel className="text-[10px] font-semibold text-muted-foreground/40 capitalize tracking-wider">{t("sendTo")}</FormLabel>
                             <div className="grid grid-cols-2 gap-4">
                                 <Select
                                     value={targetType}
                                     onValueChange={(v: any) => form.setValue("targetType", v)}
                                 >
-                                    <SelectTrigger className="h-10 rounded-xl border-border/40 bg-muted/5 text-sm font-medium">
+                                    <SelectTrigger className="h-10 rounded-lg border-border/40 bg-muted/5 text-sm font-medium">
                                         <SelectValue />
                                     </SelectTrigger>
-                                    <SelectContent className="rounded-xl border-border/40">
+                                    <SelectContent className="rounded-lg border-border/40">
                                         <SelectItem value="everyone" className="font-medium">{t("everyone")}</SelectItem>
                                         <SelectItem value="group" className="font-medium">Specific Group</SelectItem>
                                         <SelectItem value="specific-user" className="font-medium">Specific User</SelectItem>
@@ -581,9 +581,9 @@ export function NotificationDrawer({ open, onOpenChange, mode, groups, users, ed
                                     name="manualEmail"
                                     render={({ field }) => (
                                         <FormItem className="space-y-3">
-                                            <FormLabel className="text-[10px] font-semibold text-muted-foreground/40 uppercase tracking-wider">Email Address</FormLabel>
+                                            <FormLabel className="text-[10px] font-semibold text-muted-foreground/40 capitalize tracking-wider">Email Address</FormLabel>
                                             <FormControl>
-                                                <Input {...field} type="email" placeholder="user@example.com" className="h-10 rounded-xl border-border/40 bg-muted/5 focus:bg-background px-4 text-sm font-medium transition-all" />
+                                                <Input {...field} type="email" placeholder="user@example.com" className="h-10 rounded-lg border-border/40 bg-muted/5 focus:bg-background px-4 text-sm font-medium transition-all" />
                                             </FormControl>
                                         </FormItem>
                                     )}
@@ -593,9 +593,9 @@ export function NotificationDrawer({ open, onOpenChange, mode, groups, users, ed
                                     name="manualPhone"
                                     render={({ field }) => (
                                         <FormItem className="space-y-3">
-                                            <FormLabel className="text-[10px] font-semibold text-muted-foreground/40 uppercase tracking-wider">Phone Number</FormLabel>
+                                            <FormLabel className="text-[10px] font-semibold text-muted-foreground/40 capitalize tracking-wider">Phone Number</FormLabel>
                                             <FormControl>
-                                                <Input {...field} placeholder="+1234567890" className="h-10 rounded-xl border-border/40 bg-muted/5 focus:bg-background px-4 text-sm font-medium transition-all" />
+                                                <Input {...field} placeholder="+1234567890" className="h-10 rounded-lg border-border/40 bg-muted/5 focus:bg-background px-4 text-sm font-medium transition-all" />
                                             </FormControl>
                                         </FormItem>
                                     )}
@@ -609,11 +609,11 @@ export function NotificationDrawer({ open, onOpenChange, mode, groups, users, ed
                             render={({ field }) => (
                                 <FormItem className="space-y-3">
                                     <div className="flex items-center justify-between">
-                                        <FormLabel className="text-[10px] font-semibold text-muted-foreground/40 uppercase tracking-wider">{t("subject")}</FormLabel>
+                                        <FormLabel className="text-[10px] font-semibold text-muted-foreground/40 capitalize tracking-wider">{t("subject")}</FormLabel>
                                         <PlaceholderSelector onSelect={(ph) => insertToInput("title", ph)} />
                                     </div>
                                     <FormControl>
-                                        <Input {...field} required placeholder="e.g. Special Offer!" className="h-10 rounded-xl border-border/40 bg-muted/5 focus:bg-background px-4 text-sm font-medium transition-all" />
+                                        <Input {...field} required placeholder="e.g. Special Offer!" className="h-10 rounded-lg border-border/40 bg-muted/5 focus:bg-background px-4 text-sm font-medium transition-all" />
                                     </FormControl>
                                 </FormItem>
                             )}
@@ -625,9 +625,9 @@ export function NotificationDrawer({ open, onOpenChange, mode, groups, users, ed
                                 name="html"
                                 render={({ field }) => (
                                     <FormItem className="space-y-3">
-                                        <FormLabel className="text-[10px] font-semibold text-muted-foreground/40 uppercase tracking-wider">Email Content (HTML)</FormLabel>
+                                        <FormLabel className="text-[10px] font-semibold text-muted-foreground/40 capitalize tracking-wider">Email Content (HTML)</FormLabel>
                                         <FormControl>
-                                            <div className="rounded-xl border border-border/40 overflow-hidden bg-muted/5">
+                                            <div className="rounded-lg border border-border/40 overflow-hidden bg-muted/5">
                                                 <RichText
                                                     value={field.value}
                                                     onChange={field.onChange}
@@ -645,7 +645,7 @@ export function NotificationDrawer({ open, onOpenChange, mode, groups, users, ed
                                 render={({ field }) => (
                                     <FormItem className="space-y-3">
                                         <div className="flex items-center justify-between">
-                                            <FormLabel className="text-[10px] font-semibold text-muted-foreground/40 uppercase tracking-wider">{t("message")}</FormLabel>
+                                            <FormLabel className="text-[10px] font-semibold text-muted-foreground/40 capitalize tracking-wider">{t("message")}</FormLabel>
                                             <PlaceholderSelector onSelect={(ph) => insertToInput("body", ph)} />
                                         </div>
                                         <FormControl>
@@ -653,7 +653,7 @@ export function NotificationDrawer({ open, onOpenChange, mode, groups, users, ed
                                                 {...field}
                                                 required
                                                 placeholder="Your message content..."
-                                                className="min-h-[150px] rounded-xl border-border/40 bg-muted/5 focus:bg-background p-4 text-sm font-medium resize-none custom-scrollbar transition-all leading-relaxed shadow-none"
+                                                className="min-h-[150px] rounded-lg border-border/40 bg-muted/5 focus:bg-background p-4 text-sm font-medium resize-none custom-scrollbar transition-all leading-relaxed shadow-none"
                                             />
                                         </FormControl>
                                     </FormItem>
@@ -667,10 +667,10 @@ export function NotificationDrawer({ open, onOpenChange, mode, groups, users, ed
                             render={({ field }) => (
                                 <FormItem className="space-y-3">
                                     <div className="flex items-center justify-between">
-                                        <FormLabel className="text-[10px] font-semibold text-muted-foreground/40 uppercase tracking-wider">Action Link <span className="normal-case opacity-50 ml-1 font-normal">(Optional)</span></FormLabel>
+                                        <FormLabel className="text-[10px] font-semibold text-muted-foreground/40 capitalize tracking-wider">Action Link <span className="normal-case opacity-50 ml-1 font-normal">(Optional)</span></FormLabel>
                                     </div>
                                     <FormControl>
-                                        <Input {...field} placeholder="https://..." className="h-10 rounded-xl border-border/40 bg-muted/5 focus:bg-background px-4 text-sm font-medium transition-all" />
+                                        <Input {...field} placeholder="https://..." className="h-10 rounded-lg border-border/40 bg-muted/5 focus:bg-background px-4 text-sm font-medium transition-all" />
                                     </FormControl>
                                 </FormItem>
                             )}
@@ -681,7 +681,7 @@ export function NotificationDrawer({ open, onOpenChange, mode, groups, users, ed
                             name="attachments"
                             render={({ field }) => (
                                 <FormItem className="flex flex-col gap-2">
-                                    <FormLabel className="text-[10px] font-bold uppercase tracking-wider text-muted-foreground/70">Document Attachments <span className="normal-case opacity-50 ml-1 font-normal">(Optional)</span></FormLabel>
+                                    <FormLabel className="text-[10px] font-bold capitalize tracking-wider text-muted-foreground/70">Document Attachments <span className="normal-case opacity-50 ml-1 font-normal">(Optional)</span></FormLabel>
                                     {channel === "email" && (
                                         <FileUploader
                                             folder="notifications/attachments"
@@ -716,7 +716,7 @@ export function NotificationDrawer({ open, onOpenChange, mode, groups, users, ed
                     <div className="flex flex-col gap-8">
                         {/* Template Selection & Designer Entry (Trigger Mode) */}
                         <div className="flex flex-col gap-3">
-                            <FormLabel className="text-[10px] font-semibold text-muted-foreground/40 uppercase tracking-wider">
+                            <FormLabel className="text-[10px] font-semibold text-muted-foreground/40 capitalize tracking-wider">
                                 Notification Template <span className="normal-case opacity-50 ml-1 font-normal">(Optional)</span>
                             </FormLabel>
                             <div className="flex items-center gap-3">
@@ -727,7 +727,7 @@ export function NotificationDrawer({ open, onOpenChange, mode, groups, users, ed
                                     type="button"
                                     variant="outline"
                                     onClick={() => setIsExpanded(true)}
-                                    className="h-10 px-4 rounded-xl border-border/40 bg-white hover:bg-muted/10 text-primary shadow-sm flex-shrink-0 active:scale-95 transition-all"
+                                    className="h-10 px-4 rounded-lg border-border/40 bg-white hover:bg-muted/10 text-primary shadow-sm flex-shrink-0 active:scale-95 transition-all"
                                     title="Open Template Designer"
                                 >
                                     <LayoutTemplate className="size-4 mr-2" />
@@ -742,9 +742,9 @@ export function NotificationDrawer({ open, onOpenChange, mode, groups, users, ed
                                 name="name"
                                 render={({ field }) => (
                                     <FormItem className="space-y-3">
-                                        <FormLabel className="text-[10px] font-semibold text-muted-foreground/40 uppercase tracking-wider">Automation Name</FormLabel>
+                                        <FormLabel className="text-[10px] font-semibold text-muted-foreground/40 capitalize tracking-wider">Automation Name</FormLabel>
                                         <FormControl>
-                                            <Input {...field} required placeholder="e.g. Welcome Series" className="h-10 rounded-xl border-border/40 bg-muted/5 focus:bg-background px-4 text-sm font-medium transition-all" />
+                                            <Input {...field} required placeholder="e.g. Welcome Series" className="h-10 rounded-lg border-border/40 bg-muted/5 focus:bg-background px-4 text-sm font-medium transition-all" />
                                         </FormControl>
                                     </FormItem>
                                 )}
@@ -754,9 +754,9 @@ export function NotificationDrawer({ open, onOpenChange, mode, groups, users, ed
                                 name="action_type"
                                 render={({ field }) => (
                                     <FormItem className="space-y-3">
-                                        <FormLabel className="text-[10px] font-semibold text-muted-foreground/40 uppercase tracking-wider">{t("triggerAction")}</FormLabel>
+                                        <FormLabel className="text-[10px] font-semibold text-muted-foreground/40 capitalize tracking-wider">{t("triggerAction")}</FormLabel>
                                         <FormControl>
-                                            <Input {...field} required placeholder="e.g. user_signed_up" className="h-10 rounded-xl border-border/40 bg-muted/5 focus:bg-background px-4 font-mono text-[10px] transition-all" />
+                                            <Input {...field} required placeholder="e.g. user_signed_up" className="h-10 rounded-lg border-border/40 bg-muted/5 focus:bg-background px-4 font-mono text-[10px] transition-all" />
                                         </FormControl>
                                     </FormItem>
                                 )}
@@ -764,16 +764,16 @@ export function NotificationDrawer({ open, onOpenChange, mode, groups, users, ed
                         </div>
 
                         <div className="flex flex-col gap-4">
-                            <Label className="text-[10px] font-bold uppercase tracking-wider text-muted-foreground/70">Enabled Channels</Label>
+                            <Label className="text-[10px] font-bold capitalize tracking-wider text-muted-foreground/70">Enabled Channels</Label>
                             <div className="grid grid-cols-2 gap-3">
                                 {['app', 'push', 'email', 'sms'].map(ch => (
-                                    <div key={ch} className="flex items-center justify-between p-3 rounded-xl border border-border/40 bg-muted/5 hover:bg-muted/10 transition-colors">
+                                    <div key={ch} className="flex items-center justify-between p-3 rounded-lg border border-border/40 bg-muted/5 hover:bg-muted/10 transition-colors">
                                         <div className="flex items-center gap-3">
                                             {ch === 'app' && <BellRing className="size-4 text-primary" />}
                                             {ch === 'push' && <Smartphone className="size-4 text-primary" />}
                                             {ch === 'email' && <Mail className="size-4 text-primary" />}
                                             {ch === 'sms' && <MessageSquare className="size-4 text-primary" />}
-                                            <label htmlFor={`ch-${ch}`} className="text-xs font-bold uppercase tracking-tight cursor-pointer">
+                                            <label htmlFor={`ch-${ch}`} className="text-xs font-bold capitalize tracking-tight cursor-pointer">
                                                 {ch}
                                             </label>
                                         </div>
@@ -806,9 +806,9 @@ export function NotificationDrawer({ open, onOpenChange, mode, groups, users, ed
                             name="title_template"
                             render={({ field }) => (
                                 <FormItem className="flex flex-col gap-2">
-                                    <FormLabel className="text-[10px] font-bold uppercase tracking-wider text-muted-foreground/70">{t("subject")} Template</FormLabel>
+                                    <FormLabel className="text-[10px] font-bold capitalize tracking-wider text-muted-foreground/70">{t("subject")} Template</FormLabel>
                                     <FormControl>
-                                        <Input {...field} required placeholder="Hi {{name}}, welcome!" className="h-10 rounded-xl border-border/40 bg-muted/5 px-4 font-medium" />
+                                        <Input {...field} required placeholder="Hi {{name}}, welcome!" className="h-10 rounded-lg border-border/40 bg-muted/5 px-4 font-medium" />
                                     </FormControl>
                                 </FormItem>
                             )}
@@ -819,13 +819,13 @@ export function NotificationDrawer({ open, onOpenChange, mode, groups, users, ed
                             name="body_template"
                             render={({ field }) => (
                                 <FormItem className="flex flex-col gap-2">
-                                    <FormLabel className="text-[10px] font-bold uppercase tracking-wider text-muted-foreground/70">{t("message")} Template</FormLabel>
+                                    <FormLabel className="text-[10px] font-bold capitalize tracking-wider text-muted-foreground/70">{t("message")} Template</FormLabel>
                                     <FormControl>
                                         <Textarea
                                             {...field}
                                             required
                                             placeholder="Describe your automated message... Use {{variables}}"
-                                            className="min-h-[120px] rounded-xl border-border/40 bg-muted/5 p-4 font-medium resize-none shadow-none focus-visible:ring-1 focus-visible:ring-primary/20"
+                                            className="min-h-[120px] rounded-lg border-border/40 bg-muted/5 p-4 font-medium resize-none shadow-none focus-visible:ring-1 focus-visible:ring-primary/20"
                                         />
                                     </FormControl>
                                 </FormItem>
@@ -838,7 +838,7 @@ export function NotificationDrawer({ open, onOpenChange, mode, groups, users, ed
                                 name="html_template"
                                 render={({ field }) => (
                                     <FormItem className="flex flex-col gap-2">
-                                        <FormLabel className="text-[10px] font-bold uppercase tracking-wider text-muted-foreground/70">Email HTML Template</FormLabel>
+                                        <FormLabel className="text-[10px] font-bold capitalize tracking-wider text-muted-foreground/70">Email HTML Template</FormLabel>
                                         <FormControl>
                                             <RichText
                                                 value={field.value}
@@ -911,7 +911,7 @@ export function NotificationDrawer({ open, onOpenChange, mode, groups, users, ed
                             type="button"
                             onClick={() => setGroupTab(tab)}
                             className={cn(
-                                "relative py-4 text-[11px] font-bold tracking-wider uppercase transition-all duration-300",
+                                "relative py-4 text-[11px] font-bold tracking-wider capitalize transition-all duration-300",
                                 groupTab === tab
                                     ? "text-primary"
                                     : "text-muted-foreground/30 hover:text-muted-foreground/60"
@@ -921,7 +921,7 @@ export function NotificationDrawer({ open, onOpenChange, mode, groups, users, ed
                             {groupTab === tab && (
                                 <motion.div
                                     layoutId="groupTabUnderline"
-                                    className="absolute bottom-0 left-0 right-0 h-0.5 bg-primary rounded-full"
+                                    className="absolute bottom-0 left-0 right-0 h-0.5 bg-primary rounded-lg"
                                     transition={{ type: "spring", bounce: 0.2, duration: 0.5 }}
                                 />
                             )}
@@ -944,9 +944,9 @@ export function NotificationDrawer({ open, onOpenChange, mode, groups, users, ed
                                     name="name"
                                     render={({ field }) => (
                                         <FormItem className="space-y-3">
-                                            <FormLabel className="text-[10px] font-semibold text-muted-foreground/40 uppercase tracking-wider">{t("groupName")}</FormLabel>
+                                            <FormLabel className="text-[10px] font-semibold text-muted-foreground/40 capitalize tracking-wider">{t("groupName")}</FormLabel>
                                             <FormControl>
-                                                <Input {...field} required placeholder="e.g. Early Adopters, VIPs..." className="h-10 rounded-xl border-border/40 bg-muted/5 focus:bg-background px-4 text-sm font-medium transition-all" />
+                                                <Input {...field} required placeholder="e.g. Early Adopters, VIPs..." className="h-10 rounded-lg border-border/40 bg-muted/5 focus:bg-background px-4 text-sm font-medium transition-all" />
                                             </FormControl>
                                             <FormMessage className="text-[10px] font-bold" />
                                         </FormItem>
@@ -958,12 +958,12 @@ export function NotificationDrawer({ open, onOpenChange, mode, groups, users, ed
                                     name="description"
                                     render={({ field }) => (
                                         <FormItem className="space-y-3">
-                                            <FormLabel className="text-[10px] font-semibold text-muted-foreground/40 uppercase tracking-wider">Description <span className="normal-case opacity-50 ml-1 font-normal">(Optional)</span></FormLabel>
+                                            <FormLabel className="text-[10px] font-semibold text-muted-foreground/40 capitalize tracking-wider">Description <span className="normal-case opacity-50 ml-1 font-normal">(Optional)</span></FormLabel>
                                             <FormControl>
                                                 <Textarea
                                                     {...field}
                                                     placeholder="Short summary of this user cohort..."
-                                                    className="min-h-[120px] rounded-xl border-border/40 bg-muted/5 focus:bg-background p-4 text-sm font-medium resize-none shadow-none transition-all leading-relaxed"
+                                                    className="min-h-[120px] rounded-lg border-border/40 bg-muted/5 focus:bg-background p-4 text-sm font-medium resize-none shadow-none transition-all leading-relaxed"
                                                 />
                                             </FormControl>
                                         </FormItem>
@@ -971,8 +971,8 @@ export function NotificationDrawer({ open, onOpenChange, mode, groups, users, ed
                                 />
 
                                 {!editingData && (
-                                    <div className="p-4 rounded-xl bg-primary/5 border border-primary/10 flex items-start gap-3">
-                                        <div className="size-5 rounded-full bg-primary/20 flex items-center justify-center shrink-0 mt-0.5">
+                                    <div className="p-4 rounded-lg bg-primary/5 border border-primary/10 flex items-start gap-3">
+                                        <div className="size-5 rounded-lg bg-primary/20 flex items-center justify-center shrink-0 mt-0.5">
                                             <Users className="size-3 text-primary" />
                                         </div>
                                         <p className="text-[11px] text-muted-foreground/70 leading-relaxed font-medium">
@@ -999,7 +999,7 @@ export function NotificationDrawer({ open, onOpenChange, mode, groups, users, ed
                                         placeholder="Search users..."
                                         value={memberSearch}
                                         onChange={(e) => setMemberSearch(e.target.value)}
-                                        className="h-10 pl-9 rounded-xl border-border/40 bg-muted/5 text-sm font-medium"
+                                        className="h-10 pl-9 rounded-lg border-border/40 bg-muted/5 text-sm font-medium"
                                     />
                                 </div>
                                 <div className="flex items-center justify-between mt-2">
@@ -1010,7 +1010,7 @@ export function NotificationDrawer({ open, onOpenChange, mode, groups, users, ed
                                         <button
                                             type="button"
                                             onClick={() => setGroupMembers([])}
-                                            className="text-[10px] text-destructive/60 font-bold uppercase tracking-wider hover:text-destructive transition-colors"
+                                            className="text-[10px] text-destructive/60 font-bold capitalize tracking-wider hover:text-destructive transition-colors"
                                         >
                                             Clear all
                                         </button>
@@ -1023,7 +1023,7 @@ export function NotificationDrawer({ open, onOpenChange, mode, groups, users, ed
                                 {filteredUsers.length === 0 ? (
                                     <div className="py-16 text-center">
                                         <Users className="size-10 mx-auto mb-4 text-muted-foreground/10" />
-                                        <p className="text-[11px] font-bold uppercase tracking-wider text-muted-foreground/30">
+                                        <p className="text-[11px] font-bold capitalize tracking-wider text-muted-foreground/30">
                                             {memberSearch ? "No users match your search" : "No users available"}
                                         </p>
                                     </div>
@@ -1043,7 +1043,7 @@ export function NotificationDrawer({ open, onOpenChange, mode, groups, users, ed
                                                     type="button"
                                                     onClick={() => toggleGroupMember(user.id)}
                                                     className={cn(
-                                                        "w-full flex items-center gap-3 p-3 rounded-xl transition-all text-left",
+                                                        "w-full flex items-center gap-3 p-3 rounded-lg transition-all text-left",
                                                         isSelected
                                                             ? "bg-primary/8 border border-primary/20"
                                                             : "hover:bg-muted/10 border border-transparent"
@@ -1051,7 +1051,7 @@ export function NotificationDrawer({ open, onOpenChange, mode, groups, users, ed
                                                 >
                                                     {/* Avatar */}
                                                     <div className={cn(
-                                                        "size-9 rounded-full flex items-center justify-center text-[11px] font-bold shrink-0 transition-all",
+                                                        "size-9 rounded-lg flex items-center justify-center text-[11px] font-bold shrink-0 transition-all",
                                                         isSelected
                                                             ? "bg-primary text-white"
                                                             : "bg-muted/20 text-muted-foreground/60"
@@ -1071,7 +1071,7 @@ export function NotificationDrawer({ open, onOpenChange, mode, groups, users, ed
                                                     </div>
                                                     {/* Check */}
                                                     <div className={cn(
-                                                        "size-5 rounded-full border-2 flex items-center justify-center shrink-0 transition-all",
+                                                        "size-5 rounded-lg border-2 flex items-center justify-center shrink-0 transition-all",
                                                         isSelected
                                                             ? "bg-primary border-primary"
                                                             : "border-border/40"
@@ -1123,10 +1123,10 @@ export function NotificationDrawer({ open, onOpenChange, mode, groups, users, ed
                         {/* Primary Message Display */}
                         <div className="space-y-4">
                             <div className="flex items-center gap-3">
-                                <Badge variant="outline" className="h-5 px-2 text-[10px] font-semibold uppercase tracking-tight border-none bg-primary/10 text-primary rounded-md">
+                                <Badge variant="outline" className="h-5 px-2 text-[10px] font-semibold capitalize tracking-tight border-none bg-primary/10 text-primary rounded-md">
                                     {t(editingData?.type || 'marketing')}
                                 </Badge>
-                                <div className="flex items-center gap-1.5 text-muted-foreground/50 font-semibold text-[10px] uppercase tracking-wider">
+                                <div className="flex items-center gap-1.5 text-muted-foreground/50 font-semibold text-[10px] capitalize tracking-wider">
                                     {editingData?.channel === 'app' && <BellRing className="size-3.5 text-primary" />}
                                     {editingData?.channel === 'push' && <Smartphone className="size-3.5 text-primary" />}
                                     {editingData?.channel === 'email' && <Mail className="size-3.5 text-primary" />}
@@ -1138,13 +1138,13 @@ export function NotificationDrawer({ open, onOpenChange, mode, groups, users, ed
                             <div className="space-y-4">
                                 <h3 className="text-xl font-semibold tracking-tight text-secondary leading-tight">{editingData?.title}</h3>
                                 {editingData?.html ? (
-                                    <div className="rounded-xl border border-border/40 overflow-hidden bg-white shadow-sm">
+                                    <div className="rounded-lg border border-border/40 overflow-hidden bg-white shadow-sm">
                                         <div className="bg-muted/5 border-b px-4 py-2 flex items-center justify-between">
-                                            <span className="text-[10px] font-bold uppercase tracking-wider text-muted-foreground/60">Email Context</span>
+                                            <span className="text-[10px] font-bold capitalize tracking-wider text-muted-foreground/60">Email Context</span>
                                             <div className="flex gap-1.5">
-                                                <div className="size-2 rounded-full bg-border" />
-                                                <div className="size-2 rounded-full bg-border" />
-                                                <div className="size-2 rounded-full bg-border" />
+                                                <div className="size-2 rounded-lg bg-border" />
+                                                <div className="size-2 rounded-lg bg-border" />
+                                                <div className="size-2 rounded-lg bg-border" />
                                             </div>
                                         </div>
                                         <div className="p-6 max-h-[400px] overflow-y-auto custom-scrollbar prose prose-sm max-w-none dark:prose-invert">
@@ -1152,7 +1152,7 @@ export function NotificationDrawer({ open, onOpenChange, mode, groups, users, ed
                                         </div>
                                     </div>
                                 ) : (
-                                    <p className="text-sm leading-relaxed text-muted-foreground/80 font-medium bg-muted/5 p-4 rounded-xl border border-border/40 italic">
+                                    <p className="text-sm leading-relaxed text-muted-foreground/80 font-medium bg-muted/5 p-4 rounded-lg border border-border/40 italic">
                                         "{editingData?.body}"
                                     </p>
                                 )}
@@ -1170,7 +1170,7 @@ export function NotificationDrawer({ open, onOpenChange, mode, groups, users, ed
                                                     className="flex items-center gap-2 px-3 py-2 rounded-lg bg-muted/10 border border-border/40 hover:bg-muted/20 hover:border-primary/30 transition-all group"
                                                 >
                                                     <FileText className="size-3.5 text-primary" />
-                                                    <span className="text-[10px] font-bold uppercase tracking-tight text-muted-foreground group-hover:text-primary">{fileName}</span>
+                                                    <span className="text-[10px] font-bold capitalize tracking-tight text-muted-foreground group-hover:text-primary">{fileName}</span>
                                                     <ExternalLink className="size-3 text-muted-foreground/30" />
                                                 </a>
                                             )
@@ -1180,7 +1180,7 @@ export function NotificationDrawer({ open, onOpenChange, mode, groups, users, ed
                             </div>
 
                             {editingData?.media_url && (
-                                <div className="mt-4 rounded-xl overflow-hidden border border-border/40 aspect-video relative group">
+                                <div className="mt-4 rounded-lg overflow-hidden border border-border/40 aspect-video relative group">
                                     <MediaDisplay src={editingData.media_url} alt="Notification media" className="transition-transform duration-500 group-hover:scale-105" />
                                 </div>
                             )}
@@ -1190,7 +1190,7 @@ export function NotificationDrawer({ open, onOpenChange, mode, groups, users, ed
                         <div className="space-y-6">
                             <div className="flex items-center gap-3">
                                 <div className="flex flex-col">
-                                    <h3 className="font-semibold text-[11px] uppercase tracking-wider text-secondary dark:text-white">Delivery Lifecycle</h3>
+                                    <h3 className="font-semibold text-[11px] capitalize tracking-wider text-secondary dark:text-white">Delivery Lifecycle</h3>
                                     <p className="text-[10px] text-muted-foreground/60">Execution metrics and transit state</p>
                                 </div>
                                 <div className="h-px flex-1 bg-border/40 ml-4" />
@@ -1198,10 +1198,10 @@ export function NotificationDrawer({ open, onOpenChange, mode, groups, users, ed
 
                             <div className="grid grid-cols-2 gap-8 pl-1">
                                 <div className="flex flex-col gap-2">
-                                    <span className="text-[10px] font-bold uppercase tracking-wider text-muted-foreground/40">Status</span>
+                                    <span className="text-[10px] font-bold capitalize tracking-wider text-muted-foreground/40">Status</span>
                                     <div className="flex items-center gap-2">
                                         <Badge className={cn(
-                                            "w-fit border-none px-2 h-5 text-[10px] font-bold uppercase tracking-tight rounded-md",
+                                            "w-fit border-none px-2 h-5 text-[10px] font-bold capitalize tracking-tight rounded-md",
                                             editingData?.status === 'sent' ? "bg-emerald-500/10 text-emerald-600" : "bg-destructive/10 text-destructive"
                                         )}>
                                             {editingData?.status || 'Sent'}
@@ -1211,7 +1211,7 @@ export function NotificationDrawer({ open, onOpenChange, mode, groups, users, ed
                                                 onClick={handleRetry}
                                                 disabled={isRetrying}
                                                 variant="ghost"
-                                                className="h-5 px-2 text-[10px] font-bold uppercase tracking-tight text-primary hover:bg-primary/10 transition-colors flex items-center gap-1.5 rounded-md border border-primary/20"
+                                                className="h-5 px-2 text-[10px] font-bold capitalize tracking-tight text-primary hover:bg-primary/10 transition-colors flex items-center gap-1.5 rounded-md border border-primary/20"
                                             >
                                                 {isRetrying ? <RefreshCcw className="size-3 animate-spin" /> : <RefreshCcw className="size-3" />}
                                                 Retry
@@ -1222,7 +1222,7 @@ export function NotificationDrawer({ open, onOpenChange, mode, groups, users, ed
                                                 onClick={handleRetry}
                                                 disabled={isRetrying}
                                                 variant="ghost"
-                                                className="h-5 px-2 text-[10px] font-bold uppercase tracking-tight text-primary hover:bg-primary/10 transition-colors flex items-center gap-1.5 rounded-md border border-primary/20"
+                                                className="h-5 px-2 text-[10px] font-bold capitalize tracking-tight text-primary hover:bg-primary/10 transition-colors flex items-center gap-1.5 rounded-md border border-primary/20"
                                             >
                                                 {isRetrying && <Loader2 className="size-3 animate-spin" />}
                                                 Resend
@@ -1231,7 +1231,7 @@ export function NotificationDrawer({ open, onOpenChange, mode, groups, users, ed
                                     </div>
                                 </div>
                                 <div className="flex flex-col gap-2">
-                                    <span className="text-[10px] font-bold uppercase tracking-wider text-muted-foreground/40">Timestamp</span>
+                                    <span className="text-[10px] font-bold capitalize tracking-wider text-muted-foreground/40">Timestamp</span>
                                     <span className="text-xs font-semibold text-secondary tracking-tight">
                                         {editingData?.created_at ? new Date(editingData.created_at).toLocaleString('en-US', {
                                             month: 'short',
@@ -1249,13 +1249,13 @@ export function NotificationDrawer({ open, onOpenChange, mode, groups, users, ed
                         <div className="space-y-6">
                             <div className="flex items-center gap-3">
                                 <div className="flex flex-col">
-                                    <h3 className="font-semibold text-[11px] uppercase tracking-wider text-secondary dark:text-white">Recipient Profile</h3>
+                                    <h3 className="font-semibold text-[11px] capitalize tracking-wider text-secondary dark:text-white">Recipient Profile</h3>
                                     <p className="text-[10px] text-muted-foreground/60">Target audience and contact parameters</p>
                                 </div>
                                 <div className="h-px flex-1 bg-border/40 ml-4" />
                             </div>
 
-                            <div className="p-5 rounded-xl bg-muted/10 border border-border/40 space-y-5">
+                            <div className="p-5 rounded-lg bg-muted/10 border border-border/40 space-y-5">
                                 <div className="flex items-center gap-4">
                                     <div className="size-10 rounded-lg bg-white dark:bg-muted/20 border border-border flex items-center justify-center shadow-sm">
                                         <User className="size-5 text-primary" />
@@ -1285,10 +1285,10 @@ export function NotificationDrawer({ open, onOpenChange, mode, groups, users, ed
 
                         {/* Error Contextual Card */}
                         {editingData?.status === 'failed' && (
-                            <div className="p-5 rounded-xl bg-destructive/5 border border-destructive/10 space-y-3">
+                            <div className="p-5 rounded-lg bg-destructive/5 border border-destructive/10 space-y-3">
                                 <div className="flex items-center gap-2">
-                                    <div className="size-1.5 rounded-full bg-destructive" />
-                                    <span className="text-[10px] font-bold uppercase tracking-wider text-destructive/70">Provider Diagnostic</span>
+                                    <div className="size-1.5 rounded-lg bg-destructive" />
+                                    <span className="text-[10px] font-bold capitalize tracking-wider text-destructive/70">Provider Diagnostic</span>
                                 </div>
                                 <p className="text-xs font-medium text-destructive/80 leading-relaxed">
                                     {editingData.error_message || "The notification could not be dispatched due to a carrier rejection or invalid endpoint. Please verify connection strings."}
@@ -1325,14 +1325,14 @@ export function NotificationDrawer({ open, onOpenChange, mode, groups, users, ed
         return (
             <div className="h-full flex flex-col bg-background relative overflow-hidden">
                 {/* Design System Ambient Glow */}
-                <div className="absolute top-0 left-0 right-0 h-[500px] bg-gradient-to-b from-slate-50 via-white to-white pointer-events-none -z-10" />
+                <div className="absolute top-0 left-0 right-0 h-[500px] bg-gradient-to-b from-slate-50 via-white to-white dark:from-white/[0.04] dark:via-transparent dark:to-transparent pointer-events-none -z-10" />
 
                 <SheetHeader className="px-8 py-6 space-y-4 relative z-10 border-b border-border/40">
                     <div className="flex items-center justify-between">
                         <div className="flex items-center gap-5">
                             <div className="flex flex-col">
                                 <SheetTitle className="text-2xl font-bold tracking-tight text-secondary dark:text-foreground">Advanced Designer</SheetTitle>
-                                <SheetDescription className="text-[11px] font-semibold text-muted-foreground/50 tracking-wide uppercase mt-0.5">Notification Crafting Studio</SheetDescription>
+                                <SheetDescription className="text-[11px] font-semibold text-muted-foreground/50 tracking-wide capitalize mt-0.5">Notification Crafting Studio</SheetDescription>
                             </div>
                         </div>
 
@@ -1359,7 +1359,7 @@ export function NotificationDrawer({ open, onOpenChange, mode, groups, users, ed
                                 {tab === "composer" && <FileText className="size-3.5" />}
                                 {tab === "styles" && <Braces className="size-3.5" />}
                                 {tab === "preview" && <Eye className="size-3.5" />}
-                                <span className="uppercase tracking-wider">
+                                <span className="capitalize tracking-wider">
                                     {tab === "composer" ? "Composer" : tab === "styles" ? "Styling" : "Preview"}
                                 </span>
                                 {designerTab === tab && (
@@ -1400,7 +1400,7 @@ export function NotificationDrawer({ open, onOpenChange, mode, groups, users, ed
                                                             : "text-muted-foreground/40 hover:text-muted-foreground/60"
                                                     )}
                                                 >
-                                                    <span className="uppercase">{mode === "html" ? "HTML Designer" : "Plain Text"}</span>
+                                                    <span className="capitalize">{mode === "html" ? "HTML Designer" : "Plain Text"}</span>
                                                     {composerMode === mode && (
                                                         <motion.div
                                                             layoutId="composerModeUnderline"
@@ -1418,14 +1418,14 @@ export function NotificationDrawer({ open, onOpenChange, mode, groups, users, ed
                                             render={({ field }) => (
                                                 <FormItem className="space-y-4">
                                                     <div className="flex items-center justify-between">
-                                                        <FormLabel className="text-[10px] font-semibold text-muted-foreground/40 uppercase tracking-wider">Campaign Subject</FormLabel>
+                                                        <FormLabel className="text-[10px] font-semibold text-muted-foreground/40 capitalize tracking-wider">Campaign Subject</FormLabel>
                                                         <PlaceholderSelector onSelect={(ph) => field.onChange((field.value || "") + ph)} />
                                                     </div>
                                                     <FormControl>
                                                         <Input
                                                             {...field}
                                                             placeholder="Email subject or app notification title..."
-                                                            className="h-12 rounded-xl border-border/40 bg-muted/5 focus:bg-background transition-all duration-300 px-4 text-sm font-medium focus:ring-4 ring-primary/5 shadow-none"
+                                                            className="h-12 rounded-lg border-border/40 bg-muted/5 focus:bg-background transition-all duration-300 px-4 text-sm font-medium focus:ring-4 ring-primary/5 shadow-none"
                                                         />
                                                     </FormControl>
                                                     <FormMessage className="text-[10px] font-bold" />
@@ -1446,12 +1446,12 @@ export function NotificationDrawer({ open, onOpenChange, mode, groups, users, ed
                                                         name={isTrigger ? "body_template" : "body"}
                                                         render={({ field }) => (
                                                             <FormItem className="space-y-4">
-                                                                <FormLabel className="text-[10px] font-semibold text-muted-foreground/40 uppercase tracking-wider">Plain Text Content</FormLabel>
+                                                                <FormLabel className="text-[10px] font-semibold text-muted-foreground/40 capitalize tracking-wider">Plain Text Content</FormLabel>
                                                                 <FormControl>
                                                                     <Textarea
                                                                         {...field}
                                                                         placeholder="Classic text experience for all devices..."
-                                                                        className="min-h-[350px] rounded-2xl border-border/40 bg-muted/5 focus:bg-background transition-all duration-300 p-6 text-sm font-medium resize-none focus:ring-8 ring-primary/5 leading-relaxed shadow-none"
+                                                                        className="min-h-[350px] rounded-lg border-border/40 bg-muted/5 focus:bg-background transition-all duration-300 p-6 text-sm font-medium resize-none focus:ring-8 ring-primary/5 leading-relaxed shadow-none"
                                                                     />
                                                                 </FormControl>
                                                             </FormItem>
@@ -1472,11 +1472,11 @@ export function NotificationDrawer({ open, onOpenChange, mode, groups, users, ed
                                                         render={({ field }) => (
                                                             <FormItem className="space-y-4">
                                                                 <div className="flex items-center justify-between">
-                                                                    <FormLabel className="text-[10px] font-semibold text-muted-foreground/40 uppercase tracking-wider">Rich Text Designer</FormLabel>
+                                                                    <FormLabel className="text-[10px] font-semibold text-muted-foreground/40 capitalize tracking-wider">Rich Text Designer</FormLabel>
                                                                     <PlaceholderSelector onSelect={(ph) => field.onChange((field.value || "") + ph)} />
                                                                 </div>
                                                                 <FormControl>
-                                                                    <div className="rounded-2xl border border-border/60 overflow-hidden shadow-sm bg-background transition-all duration-500 hover:shadow-md">
+                                                                    <div className="rounded-lg border border-border/60 overflow-hidden shadow-sm bg-background transition-all duration-500 hover:shadow-md">
                                                                         <RichText
                                                                             value={field.value}
                                                                             onChange={field.onChange}
@@ -1515,7 +1515,7 @@ export function NotificationDrawer({ open, onOpenChange, mode, groups, users, ed
                                                     <div className="h-px flex-1 bg-border/60 ml-4" />
                                                 </div>
                                                 <FormControl>
-                                                    <div className="relative group overflow-hidden rounded-2xl border border-border/60 shadow-inner">
+                                                    <div className="relative group overflow-hidden rounded-lg border border-border/60 shadow-inner">
                                                         <Textarea
                                                             {...field}
                                                             placeholder=".header { background: #f8fafc; color: #1e293b; padding: 40px; text-align: center; } ..."
@@ -1541,7 +1541,7 @@ export function NotificationDrawer({ open, onOpenChange, mode, groups, users, ed
 
                                     <div className="aspect-[9/16] max-h-[700px] min-h-[550px] rounded-[2.5rem] border-[10px] border-slate-950 bg-white overflow-hidden shadow-2xl flex flex-col relative mx-auto group ring-1 ring-border/20">
                                         <div className="h-6 bg-slate-950 flex items-center justify-center">
-                                            <div className="w-16 h-1 rounded-full bg-slate-800" />
+                                            <div className="w-16 h-1 rounded-lg bg-slate-800" />
                                         </div>
                                         <div className="flex-1 bg-white">
                                             <iframe
@@ -1561,7 +1561,7 @@ export function NotificationDrawer({ open, onOpenChange, mode, groups, users, ed
                                             />
                                         </div>
                                         <div className="h-10 bg-slate-950 flex items-center justify-center">
-                                            <div className="size-8 rounded-full border-2 border-slate-900" />
+                                            <div className="size-8 rounded-lg border-2 border-slate-900" />
                                         </div>
                                     </div>
                                 </motion.div>
@@ -1600,7 +1600,7 @@ export function NotificationDrawer({ open, onOpenChange, mode, groups, users, ed
                 )}
             >
                 {/* High-End Ambient Glow */}
-                <div className="absolute top-0 left-0 right-0 h-[500px] bg-gradient-to-b from-slate-50 via-white to-white pointer-events-none -z-10" />
+                <div className="absolute top-0 left-0 right-0 h-[500px] bg-gradient-to-b from-slate-50 via-white to-white dark:from-white/[0.04] dark:via-transparent dark:to-transparent pointer-events-none -z-10" />
 
                 <div className="flex-1 flex flex-col min-h-0 overflow-hidden relative z-10">
                     {/* Standard View Integration */}

@@ -5,24 +5,42 @@ import * as React from "react"
 import { useTranslations } from "next-intl"
 import { Button } from "@/components/ui/button"
 import { Badge } from "@/components/ui/badge"
-import { Plus, Loader2 } from "lucide-react"
+import { Plus, Loader2, Trash2 } from "lucide-react"
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar"
 import { type UserProfile } from "@/shared-schemas/user"
 import { UserDrawer } from "./user-drawer"
 import { UserActions } from "./user-actions"
 import { DataTable, SortableHeader } from "@/components/ui/data-table"
 import { useQueryState } from "nuqs"
+import { toast } from "sonner"
+import { motion, AnimatePresence } from "framer-motion"
+import {
+    AlertDialog,
+    AlertDialogAction,
+    AlertDialogCancel,
+    AlertDialogContent,
+    AlertDialogDescription,
+    AlertDialogFooter,
+    AlertDialogHeader,
+    AlertDialogTitle,
+} from "@/components/ui/alert-dialog"
+import { bulkDeleteUsers, updateUserPreferences } from "@/app/actions/users"
+import { cn } from "@/lib/utils"
 import type { ColumnDef } from "@tanstack/react-table"
 
 interface UserTableWrapperProps {
     initialUsers: any[]
+    userProfile?: any
 }
 
-export function UserTableWrapper({ initialUsers }: UserTableWrapperProps) {
+export function UserTableWrapper({ initialUsers, userProfile }: UserTableWrapperProps) {
     const t = useTranslations("Users")
     const commonT = useTranslations("Common")
     const [open, setOpen] = React.useState(false)
     const [selectedUser, setSelectedUser] = React.useState<UserProfile | null>(null)
+    const [deleteModalOpen, setDeleteModalOpen] = React.useState(false)
+    const [rowsToDelete, setRowsToDelete] = React.useState<any[]>([])
+    const [clearSelectionRef, setClearSelectionRef] = React.useState<{ fn: () => void } | null>(null)
     const [searchQuery, setSearchQuery] = useQueryState("search", { defaultValue: "" })
     const [idParam, setIdParam] = useQueryState("id")
 
@@ -131,16 +149,25 @@ export function UserTableWrapper({ initialUsers }: UserTableWrapperProps) {
         setOpen(true)
     }
 
+    const handlePreferencesChange = React.useCallback((newPrefs: any) => {
+        if (!userProfile?.id) return
+        const fullPrefs = {
+            ...userProfile.preferences,
+            userTable: newPrefs
+        }
+        updateUserPreferences(userProfile.id, fullPrefs)
+    }, [userProfile?.id, userProfile?.preferences])
+
     return (
         <div className="h-full flex flex-col">
             <div className="flex justify-between items-center shrink-0 px-10 py-8 border-b border-border/40 bg-white dark:bg-background relative overflow-hidden">
                 {/* Premium Background Accent */}
-                <div className="absolute top-0 left-0 w-full h-10 bg-gradient-to-b from-slate-50 to-white pointer-events-none" />
+                <div className="absolute top-0 left-0 w-full h-10 bg-gradient-to-b from-slate-50 to-white dark:from-white/[0.03] dark:to-transparent pointer-events-none" />
 
 
                 <div className="flex flex-col relative z-10">
                     <div className="flex items-center gap-3">
-                        <div className="w-1 h-6 bg-primary rounded-full opacity-80" />
+                        <div className="w-1 h-6 bg-primary rounded-lg opacity-80" />
                         <h2 className="text-3xl font-semibold tracking-tight text-foreground dark:text-white leading-none">
                             {t("title")}
                         </h2>
@@ -150,7 +177,7 @@ export function UserTableWrapper({ initialUsers }: UserTableWrapperProps) {
                     </p>
                 </div>
 
-                <Button onClick={handleAdd} className="bg-primary hover:bg-primary/95 text-white font-semibold transition-all active:scale-95 shadow-sm shadow-primary/5 h-10 px-6 rounded-xl text-xs flex items-center gap-2">
+                <Button onClick={handleAdd} className="bg-primary hover:bg-primary/95 text-white font-semibold transition-all active:scale-95 shadow-sm shadow-primary/5 h-10 px-6 text-xs flex items-center gap-2">
                     <Plus className="h-4 w-4" />
                     {t("addManual")}
                 </Button>
@@ -163,11 +190,65 @@ export function UserTableWrapper({ initialUsers }: UserTableWrapperProps) {
                 onGlobalFilterChange={setSearchQuery}
                 className="flex-1"
                 enableRowSelection={true}
+                initialPreferences={userProfile?.preferences?.userTable}
+                onPreferencesChange={handlePreferencesChange}
                 onRowClick={(row) => {
                     setSelectedUser(row)
                     setOpen(true)
                 }}
+                selectionActions={(selectedRows, clearSelection) => (
+                    <div className="flex items-center gap-6 w-full">
+                        <Button
+                            variant="ghost"
+                            className="h-9 px-4 text-[11px] font-semibold hover:bg-slate-100 dark:hover:bg-white/5 text-muted-foreground dark:text-white/80 hover:text-foreground dark:hover:text-white transition-all shrink-0"
+                            onClick={() => {
+                                setRowsToDelete(selectedRows)
+                                setClearSelectionRef({ fn: clearSelection })
+                                setDeleteModalOpen(true)
+                            }}
+                        >
+                            {commonT("delete")} ({selectedRows.length})
+                        </Button>
+                    </div>
+                )}
             />
+
+            <AlertDialog open={deleteModalOpen} onOpenChange={setDeleteModalOpen}>
+                <AlertDialogContent className="rounded-lg border-sidebar-border/50 shadow-2xl">
+                    <AlertDialogHeader>
+                        <AlertDialogTitle>Are you absolutely sure?</AlertDialogTitle>
+                        <AlertDialogDescription>
+                            This will permanently delete {rowsToDelete.length} {rowsToDelete.length === 1 ? 'user' : 'users'}.
+                            This action cannot be undone and will remove all associated profile data.
+                        </AlertDialogDescription>
+                    </AlertDialogHeader>
+                    <AlertDialogFooter className="gap-2">
+                        <AlertDialogCancel className="font-semibold text-xs h-9">
+                            Cancel
+                        </AlertDialogCancel>
+                        <AlertDialogAction
+                            onClick={async () => {
+                                try {
+                                    const ids = rowsToDelete.map(r => r.id)
+                                    const result = await bulkDeleteUsers(ids)
+
+                                    if (result.success) {
+                                        toast.success(`Deleted ${ids.length} users`)
+                                        clearSelectionRef?.fn()
+                                    } else {
+                                        toast.error(result.error || "Failed to delete users")
+                                    }
+                                } finally {
+                                    setDeleteModalOpen(false)
+                                }
+                            }}
+                            className="bg-primary hover:bg-primary/90 text-white font-semibold text-xs h-9 px-6"
+                        >
+                            {commonT("confirm")}
+                        </AlertDialogAction>
+                    </AlertDialogFooter>
+                </AlertDialogContent>
+            </AlertDialog>
 
             <UserDrawer
                 open={open}
@@ -183,3 +264,4 @@ export function UserTableWrapper({ initialUsers }: UserTableWrapperProps) {
         </div>
     )
 }
+ 

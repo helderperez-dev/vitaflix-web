@@ -106,7 +106,7 @@ export function FileUploader({
                 <div
                     onClick={() => !isUploading && fileInputRef.current?.click()}
                     className={cn(
-                        "p-3 rounded-xl border border-dashed border-border/60 bg-muted/5 flex items-center gap-3 group cursor-pointer hover:bg-muted/10 transition-colors",
+                        "p-3 rounded-lg border border-dashed border-border/60 bg-muted/5 flex items-center gap-3 group cursor-pointer hover:bg-muted/10 transition-colors",
                         isUploading && "opacity-50 cursor-not-allowed"
                     )}
                 >
@@ -123,7 +123,7 @@ export function FileUploader({
                         {isUploading ? <Loader2 className="size-4 text-primary animate-spin" /> : <Paperclip className="size-4 text-muted-foreground group-hover:text-primary" />}
                     </div>
                     <div>
-                        <p className="text-[10px] font-bold uppercase tracking-tight text-muted-foreground group-hover:text-primary transition-colors">
+                        <p className="text-[10px] font-bold capitalize tracking-tight text-muted-foreground group-hover:text-primary transition-colors">
                             {isUploading ? "Uploading..." : "Attach Document"}
                         </p>
                         <p className="text-[9px] text-muted-foreground/40">{accept.replace(/\./g, "").toUpperCase()} up to 10MB</p>

@@ -2,7 +2,7 @@
 
 import * as React from "react"
 import { useTranslations, useLocale } from "next-intl"
-import { Home, Apple, Utensils, Users, Settings, Sun, Moon, PanelLeftClose, PanelLeftOpen, Bell, Handshake } from "lucide-react"
+import { Home, Apple, Utensils, Users, Settings, Sun, Moon, PanelLeftClose, PanelLeftOpen, Bell, Handshake, Boxes } from "lucide-react"
 import Image from "next/image"
 import { cn } from "@/lib/utils"
 import { motion, AnimatePresence } from "framer-motion"
@@ -81,11 +81,6 @@ export function AppSidebar({ user }: AppSidebarProps) {
                     icon: Users,
                 },
                 {
-                    title: t("notifications"),
-                    url: "/notifications",
-                    icon: Bell,
-                },
-                {
                     title: t("settings"),
                     url: "/settings",
                     icon: Settings,
@@ -120,7 +115,7 @@ export function AppSidebar({ user }: AppSidebarProps) {
                 </div>
                 <button
                     onClick={toggleSidebar}
-                    className="h-8 w-8 rounded-md flex items-center justify-center hover:bg-sidebar-accent transition-colors group-data-[collapsible=icon]:hidden text-sidebar-foreground/70 hover:text-sidebar-foreground"
+                    className="h-8 w-8 rounded-lg flex items-center justify-center hover:bg-sidebar-accent transition-colors group-data-[collapsible=icon]:hidden text-sidebar-foreground/70 hover:text-sidebar-foreground"
                 >
                     <PanelLeftClose className="h-[1.2rem] w-[1.2rem]" />
                 </button>
@@ -140,24 +135,15 @@ export function AppSidebar({ user }: AppSidebarProps) {
                                                 tooltip={item.title}
                                                 className={cn(
                                                     "h-10 transition-all duration-300 relative group/button overflow-hidden rounded-lg",
-                                                    "group-data-[collapsible=icon]:!size-10 group-data-[collapsible=icon]:!rounded-lg",
+                                                    "group-data-[collapsible=icon]:!size-10 group-data-[collapsible=icon]:!rounded-lg group-data-[collapsible=icon]:!p-0",
                                                     isActive
-                                                        ? "bg-primary/10 text-primary shadow-sm shadow-primary/5"
+                                                        ? "bg-primary/10 text-primary"
                                                         : "hover:bg-sidebar-accent/50 text-sidebar-foreground/60 hover:text-sidebar-foreground"
                                                 )}
                                             >
                                                 <Link href={item.url} className="flex items-center gap-3 px-3 w-full h-full relative group-data-[collapsible=icon]:justify-center group-data-[collapsible=icon]:!px-0">
-                                                    <AnimatePresence>
-                                                        {isActive && (
-                                                            <motion.div
-                                                                layoutId="sidebar-active-pill"
-                                                                className="absolute inset-0 bg-primary/5 rounded-lg -z-10"
-                                                                transition={{ type: "spring", bounce: 0.2, duration: 0.6 }}
-                                                            />
-                                                        )}
-                                                    </AnimatePresence>
                                                     <item.icon className={cn(
-                                                        "size-[18px] transition-all duration-300 shrink-0",
+                                                        "size-[18px] transition-colors duration-300 shrink-0",
                                                         isActive
                                                             ? "text-primary scale-110"
                                                             : "text-muted-foreground/70 group-hover/button:text-sidebar-foreground group-hover/button:scale-105"
@@ -165,7 +151,7 @@ export function AppSidebar({ user }: AppSidebarProps) {
                                                     <span className={cn(
                                                         "font-medium text-[13px] tracking-tight transition-colors duration-300 group-data-[collapsible=icon]:hidden",
                                                         isActive ? "text-primary" : "text-sidebar-foreground/80"
-                                                    )}>{item.title}</span>
+                                                    )}>{t(item.title.toLowerCase())}</span>
                                                 </Link>
                                             </SidebarMenuButton>
                                         </SidebarMenuItem>

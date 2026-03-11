@@ -1,12 +1,11 @@
 "use client"
 
 import * as React from "react"
-import { Trash2, Plus } from "lucide-react"
+import { Trash2, Plus, Loader2, Maximize2 } from "lucide-react"
 import { Button } from "@/components/ui/button"
 import { Badge } from "@/components/ui/badge"
 import { useLocale, useTranslations } from "next-intl"
 import type { Product } from "@/shared-schemas/product"
-import type { UserProfile } from "@/shared-schemas/user"
 import { updateUserPreferences } from "@/app/actions/users"
 import { bulkUpdateProductStatus, bulkDeleteProducts } from "@/app/actions/products"
 import { DataTable, SortableHeader } from "@/components/ui/data-table"
@@ -17,7 +16,6 @@ import { Switch } from "@/components/ui/switch"
 import { Label } from "@/components/ui/label"
 import { toast } from "sonner"
 import { motion, AnimatePresence } from "framer-motion"
-import { Loader2, Maximize2 } from "lucide-react"
 import { ImageGalleryModal } from "@/components/shared/image-gallery-modal"
 import {
     AlertDialog,
@@ -68,50 +66,41 @@ function BulkStatusActions({ selectedRows, clearSelection }: { selectedRows: any
     }
 
     return (
-        <div className="flex items-center ml-auto">
-            <div className={cn(
-                "flex items-center gap-0 bg-slate-100/50 dark:bg-white/5 rounded-xl border border-slate-200 dark:border-white/10 transition-all overflow-hidden",
-                isDirty && "border-primary/30 ring-1 ring-primary/10"
-            )}>
-                <div className="flex items-center gap-3 px-3 py-1.5 border-r border-slate-200 dark:border-white/10">
-                    <span className={cn(
-                        "text-[10px] font-semibold tracking-wide transition-colors w-14 text-center select-none",
-                        targetPublic ? "text-primary" : "text-muted-foreground"
-                    )}>
-                        {targetPublic ? "Public" : "Private"}
-                    </span>
-                    <Switch
-                        checked={targetPublic}
-                        onCheckedChange={(val) => {
-                            setTargetPublic(val)
-                            setIsDirty(val !== allPublic)
-                        }}
-                        disabled={isLoading}
-                        className="data-[state=checked]:bg-primary"
-                    />
-                </div>
+        <div className="flex items-center gap-4 shrink-0">
+            <div className="flex items-center space-x-2">
+                <Switch
+                    id="bulk-public"
+                    checked={targetPublic}
+                    onCheckedChange={(val) => {
+                        setTargetPublic(val)
+                        setIsDirty(true)
+                    }}
+                />
+                <Label htmlFor="bulk-public" className="text-[11px] font-semibold text-muted-foreground whitespace-nowrap">
+                    Public Status
+                </Label>
+            </div>
 
-                <AnimatePresence mode="popLayout" initial={false}>
-                    {isDirty && (
-                        <motion.button
-                            key="apply-btn"
-                            initial={{ width: 0, opacity: 0 }}
-                            animate={{ width: "auto", opacity: 1 }}
-                            exit={{ width: 0, opacity: 0 }}
-                            transition={{ duration: 0.2, ease: "easeInOut" }}
+            <AnimatePresence>
+                {isDirty && (
+                    <motion.div
+                        initial={{ opacity: 0, x: -10 }}
+                        animate={{ opacity: 1, x: 0 }}
+                        exit={{ opacity: 0, x: -10 }}
+                    >
+                        <Button
+                            size="sm"
+                            variant="outline"
+                            className="h-7 px-3 text-[10px] font-bold rounded-lg border-primary/20 bg-primary/5 text-primary hover:bg-primary/10 transition-all border-dashed"
                             onClick={handleApply}
                             disabled={isLoading}
-                            className="bg-primary hover:bg-primary/90 text-white font-semibold h-9 px-4 text-xs flex items-center justify-center whitespace-nowrap active:scale-95 transition-all disabled:opacity-50"
                         >
-                            {isLoading ? (
-                                <Loader2 className="h-3 w-3 animate-spin" />
-                            ) : (
-                                "Apply Changes"
-                            )}
-                        </motion.button>
-                    )}
-                </AnimatePresence>
-            </div>
+                            {isLoading ? <Loader2 className="h-3 w-3 animate-spin mr-1" /> : null}
+                            Update {selectedRows.length} items
+                        </Button>
+                    </motion.div>
+                )}
+            </AnimatePresence>
         </div>
     )
 }
@@ -119,7 +108,6 @@ function BulkStatusActions({ selectedRows, clearSelection }: { selectedRows: any
 export function ProductTableWrapper({ initialProducts, userProfile }: ProductTableWrapperProps) {
     const locale = useLocale()
     const t = useTranslations("Products")
-    const commonT = useTranslations("Common")
     const [drawerOpen, setDrawerOpen] = React.useState(false)
     const [selectedProduct, setSelectedProduct] = React.useState<Product | null>(null)
     const [deleteModalOpen, setDeleteModalOpen] = React.useState(false)
@@ -129,7 +117,6 @@ export function ProductTableWrapper({ initialProducts, userProfile }: ProductTab
     const [idParam, setIdParam] = useQueryState("id")
     const [galleryImages, setGalleryImages] = React.useState<{ url: string; isDefault?: boolean }[] | null>(null)
     const [isGalleryOpen, setIsGalleryOpen] = React.useState(false)
-
 
     // Map initial data to our Product type structure
     const data = React.useMemo(() => {
@@ -144,13 +131,13 @@ export function ProductTableWrapper({ initialProducts, userProfile }: ProductTab
                 fat: p.fat,
                 tagIds: p.product_tags?.map((pt: any) => pt.tag_id) || [],
                 brandIds: p.product_brands?.map((pb: any) => pb.brand_id) || [],
+                groupIds: p.product_group_links?.map((pg: any) => pg.group_id) || [],
                 images: p.images || [],
                 isPublic: p.is_public,
             } as Product,
             nameLocale: p.name?.[locale] || p.name?.en || "",
         }))
     }, [initialProducts, locale])
-
 
     const columns = React.useMemo<ColumnDef<any>[]>(() => [
         {
@@ -306,7 +293,7 @@ export function ProductTableWrapper({ initialProducts, userProfile }: ProductTab
             enableResizing: false,
             enableHiding: false,
         },
-    ], [locale])
+    ], [locale, t])
 
     const handlePreferencesChange = React.useCallback((newPrefs: any) => {
         if (!userProfile?.id) return
@@ -315,18 +302,17 @@ export function ProductTableWrapper({ initialProducts, userProfile }: ProductTab
             productTable: newPrefs
         }
         updateUserPreferences(userProfile.id, fullPrefs)
-    }, [userProfile.id, userProfile.preferences])
+    }, [userProfile?.id, userProfile?.preferences])
 
     return (
         <div className="h-full flex flex-col">
             <div className="flex justify-between items-center shrink-0 px-10 py-8 border-b border-border/40 bg-white dark:bg-background relative overflow-hidden">
                 {/* Premium Background Accent */}
-                <div className="absolute top-0 left-0 w-full h-10 bg-gradient-to-b from-slate-50 to-white pointer-events-none" />
-
+                <div className="absolute top-0 left-0 w-full h-10 bg-gradient-to-b from-slate-50 to-white dark:from-white/[0.03] dark:to-transparent pointer-events-none" />
 
                 <div className="flex flex-col relative z-10">
                     <div className="flex items-center gap-3">
-                        <div className="w-1 h-6 bg-primary rounded-full opacity-80" />
+                        <div className="w-1 h-6 bg-primary rounded-lg opacity-80" />
                         <h2 className="text-3xl font-semibold tracking-tight text-foreground dark:text-white leading-none">
                             {t("title")}
                         </h2>
@@ -336,12 +322,9 @@ export function ProductTableWrapper({ initialProducts, userProfile }: ProductTab
                     </p>
                 </div>
 
-                <Button
-                    onClick={() => { setSelectedProduct(null); setDrawerOpen(true); }}
-                    className="bg-primary hover:bg-primary/95 text-white font-semibold transition-all active:scale-95 shadow-sm h-10 px-6 rounded-xl text-xs flex items-center gap-2"
-                >
+                <Button onClick={() => { setSelectedProduct(null); setDrawerOpen(true); }} className="bg-primary hover:bg-primary/95 text-white font-semibold transition-all active:scale-95 shadow-sm shadow-primary/5 h-10 px-6 text-xs flex items-center gap-2">
                     <Plus className="h-4 w-4" />
-                    {t("addProduct")}
+                    Add Product
                 </Button>
             </div>
 
@@ -357,9 +340,6 @@ export function ProductTableWrapper({ initialProducts, userProfile }: ProductTab
                 onRowClick={(row) => {
                     setSelectedProduct(row.mappedProduct)
                     setDrawerOpen(true)
-                }}
-                onSelectedRowsChange={(rows) => {
-                    // console.log("Selected rows:", rows)
                 }}
                 selectionActions={(selectedRows, clearSelection) => (
                     <div className="flex items-center gap-6 w-full">
@@ -388,7 +368,7 @@ export function ProductTableWrapper({ initialProducts, userProfile }: ProductTab
             />
 
             <AlertDialog open={deleteModalOpen} onOpenChange={setDeleteModalOpen}>
-                <AlertDialogContent className="rounded-2xl border-sidebar-border/50 shadow-2xl">
+                <AlertDialogContent className="rounded-lg border-sidebar-border/50 shadow-2xl">
                     <AlertDialogHeader>
                         <AlertDialogTitle>Are you absolutely sure?</AlertDialogTitle>
                         <AlertDialogDescription>
@@ -397,7 +377,7 @@ export function ProductTableWrapper({ initialProducts, userProfile }: ProductTab
                         </AlertDialogDescription>
                     </AlertDialogHeader>
                     <AlertDialogFooter className="gap-2">
-                        <AlertDialogCancel className="rounded-xl font-semibold text-xs h-9">
+                        <AlertDialogCancel className="font-semibold text-xs h-9">
                             Cancel
                         </AlertDialogCancel>
                         <AlertDialogAction
@@ -416,7 +396,7 @@ export function ProductTableWrapper({ initialProducts, userProfile }: ProductTab
                                     setDeleteModalOpen(false)
                                 }
                             }}
-                            className="bg-primary hover:bg-primary/90 text-white rounded-xl font-semibold text-xs h-9 px-6"
+                            className="bg-primary hover:bg-primary/90 text-white font-semibold text-xs h-9 px-6"
                         >
                             Confirm Deletion
                         </AlertDialogAction>

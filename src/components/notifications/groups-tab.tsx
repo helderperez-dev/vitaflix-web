@@ -75,12 +75,12 @@ export function GroupsTab({
                             <Button
                                 variant="ghost"
                                 size="icon"
-                                className="h-9 w-9 rounded-xl hover:bg-muted transition-all active:scale-95"
+                                className="h-9 w-9 rounded-lg hover:bg-muted transition-all active:scale-95"
                             >
                                 <MoreHorizontal className="size-4" />
                             </Button>
                         </DropdownMenuTrigger>
-                        <DropdownMenuContent align="end" className="rounded-xl border-border/40 p-1.5 min-w-[140px]">
+                        <DropdownMenuContent align="end" className="rounded-lg border-border/40 p-1.5 min-w-[140px]">
                             <DropdownMenuItem
                                 onClick={() => onEdit?.(row.original)}
                                 className="rounded-lg text-xs font-medium cursor-pointer"

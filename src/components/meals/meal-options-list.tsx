@@ -1,8 +1,9 @@
 "use client"
 
 import * as React from "react"
-import { CheckCircle2, Soup, MoreHorizontal, Edit2, Trash2, Star, Image as ImageIcon, Plus } from "lucide-react"
+import { CheckCircle2, Soup, MoreHorizontal, Edit2, Trash2, Star, Image as ImageIcon, Plus, Copy } from "lucide-react"
 import { useTranslations } from "next-intl"
+import { toast } from "sonner"
 
 import { Button } from "@/components/ui/button"
 import {
@@ -16,6 +17,16 @@ import { MealOption } from "@/shared-schemas/meal"
 import { MealOptionForm } from "./meal-option-form"
 import { cn } from "@/lib/utils"
 import { MediaDisplay } from "@/components/shared/media-display"
+import {
+    AlertDialog,
+    AlertDialogAction,
+    AlertDialogCancel,
+    AlertDialogContent,
+    AlertDialogDescription,
+    AlertDialogFooter,
+    AlertDialogHeader,
+    AlertDialogTitle,
+} from "@/components/ui/alert-dialog"
 
 interface MealOptionsListProps {
     mealId: string
@@ -29,6 +40,7 @@ export function MealOptionsList({ mealId, options, onOptionsChange, onEditingCha
     const commonT = useTranslations("Common")
     const [isEditing, setIsEditing] = React.useState(false)
     const [editingOption, setEditingOption] = React.useState<MealOption | undefined>()
+    const [deleteConfirmId, setDeleteConfirmId] = React.useState<string | null>(null)
 
     const handleAddOption = () => {
         setEditingOption(undefined)
@@ -66,6 +78,8 @@ export function MealOptionsList({ mealId, options, onOptionsChange, onEditingCha
 
     const handleDeleteOption = (id: string) => {
         onOptionsChange(options.filter(o => o.id !== id))
+        setDeleteConfirmId(null)
+        toast.success(commonT("deletedSuccessfully") || "Variation removed")
     }
 
     const handleSetDefault = (id: string) => {
@@ -73,6 +87,16 @@ export function MealOptionsList({ mealId, options, onOptionsChange, onEditingCha
             ...o,
             isDefault: o.id === id
         })))
+    }
+
+    const handleDuplicateOption = (option: MealOption) => {
+        const duplicatedOption = {
+            ...option,
+            id: crypto.randomUUID(),
+            isDefault: false
+        }
+        onOptionsChange([...options, duplicatedOption])
+        toast.success(commonT("createdSuccessfully"))
     }
 
     if (isEditing) {
@@ -102,7 +126,7 @@ export function MealOptionsList({ mealId, options, onOptionsChange, onEditingCha
                     type="button"
                     variant="outline"
                     onClick={handleAddOption}
-                    className="h-8 w-auto min-w-[80px] justify-center px-4 text-xs font-semibold border-border/50 bg-transparent text-muted-foreground hover:bg-muted/5 rounded-xl transition-all gap-2"
+                    className="h-8 w-auto min-w-[80px] justify-center px-4 text-xs font-semibold border-border/50 bg-transparent text-muted-foreground hover:bg-muted/5 transition-all gap-2"
                 >
                     <Plus className="h-3.5 w-3.5 opacity-50" />
                     {commonT("add")}
@@ -112,7 +136,7 @@ export function MealOptionsList({ mealId, options, onOptionsChange, onEditingCha
             <div className="grid grid-cols-1 gap-4">
                 {options.length === 0 ? (
                     <div className="flex flex-col items-center justify-center p-12 rounded-3xl border-2 border-dashed border-border/40 bg-muted/5 gap-3 text-center transition-all hover:bg-muted/10">
-                        <div className="h-12 w-12 rounded-2xl bg-muted/30 flex items-center justify-center">
+                        <div className="h-12 w-12 rounded-lg bg-muted/30 flex items-center justify-center">
                             <Soup className="h-6 w-6 text-muted-foreground/30" />
                         </div>
                         <div className="space-y-1">
@@ -124,22 +148,25 @@ export function MealOptionsList({ mealId, options, onOptionsChange, onEditingCha
                     options.map((option, index) => (
                         <div
                             key={option.id}
-                            onClick={() => handleEditOption(option)}
                             className={cn(
-                                "relative group overflow-hidden rounded-2xl border transition-all duration-300 cursor-pointer hover:shadow-lg hover:shadow-black/5 active:scale-[0.99]",
+                                "relative group overflow-hidden rounded-lg border transition-all duration-300",
                                 option.isDefault
                                     ? "bg-slate-50/50 dark:bg-slate-900/50 border-primary/20"
                                     : "bg-white dark:bg-slate-900 border-border/40 hover:border-border/60"
                             )}
                         >
-                            <div className="p-5 flex items-center gap-5">
+                            {/* Tap Area for Editing */}
+                            <div
+                                onClick={() => handleEditOption(option)}
+                                className="p-5 pr-16 flex items-center gap-5 cursor-pointer active:scale-[0.99] transition-transform"
+                            >
                                 {/* Leading State Indicator */}
                                 <div className="flex flex-col items-center gap-2">
                                     <div
                                         className={cn(
-                                            "h-10 w-10 rounded-xl flex items-center justify-center transition-all border",
+                                            "h-10 w-10 rounded-lg flex items-center justify-center transition-all border",
                                             option.isDefault
-                                                ? "bg-primary/5 text-primary border-primary/20 shadow-sm"
+                                                ? "bg-primary/5 text-primary border-primary/20"
                                                 : "bg-muted/30 text-muted-foreground/30 border-transparent group-hover:bg-primary/5 group-hover:text-primary/40"
                                         )}
                                     >
@@ -154,7 +181,7 @@ export function MealOptionsList({ mealId, options, onOptionsChange, onEditingCha
                                 </div>
 
                                 {/* Content Grid */}
-                                <div className="flex-1 grid grid-cols-2 md:grid-cols-4 gap-6">
+                                <div className="flex-1 grid grid-cols-2 md:grid-cols-3 gap-6">
                                     {/* Kcal Section */}
                                     <div className="flex flex-col justify-center">
                                         <div className="flex items-center gap-2 mb-1">
@@ -168,7 +195,7 @@ export function MealOptionsList({ mealId, options, onOptionsChange, onEditingCha
                                     {/* Macros Grid */}
                                     <div className="col-span-1 md:col-span-2 flex items-center gap-6">
                                         <div className="flex items-center gap-3">
-                                            <div className="h-8 w-[2px] bg-border/40 rounded-full" />
+                                            <div className="h-8 w-[2px] bg-border/40 rounded-lg" />
                                             <div className="space-y-1">
                                                 <div className="flex items-center gap-1.5">
                                                     <span className="w-3.5 h-3.5 rounded-sm bg-muted flex items-center justify-center text-[8px] font-bold text-muted-foreground/70">P</span>
@@ -194,7 +221,7 @@ export function MealOptionsList({ mealId, options, onOptionsChange, onEditingCha
                                                 </span>
                                             </div>
                                             {option.images && option.images.length > 0 && (
-                                                <div className="h-8 w-8 rounded-lg overflow-hidden border border-border/40 shadow-sm transition-transform group-hover:scale-105">
+                                                <div className="h-8 w-8 rounded-lg overflow-hidden border border-border/40 transition-transform group-hover:scale-105">
                                                     <MediaDisplay
                                                         src={option.images[0].url}
                                                         alt="Option Thumbnail"
@@ -203,58 +230,84 @@ export function MealOptionsList({ mealId, options, onOptionsChange, onEditingCha
                                             )}
                                         </div>
                                     </div>
-
-                                    {/* 3-dot Actions Menu */}
-                                    <div className="flex items-center justify-end">
-                                        <DropdownMenu>
-                                            <DropdownMenuTrigger asChild>
-                                                <Button
-                                                    type="button"
-                                                    variant="ghost"
-                                                    size="icon"
-                                                    onClick={(e) => e.stopPropagation()}
-                                                    className="h-9 w-9 rounded-xl bg-muted/20 hover:bg-muted/40 text-muted-foreground/60 hover:text-foreground transition-all active:scale-95"
-                                                >
-                                                    <MoreHorizontal className="h-4 w-4" />
-                                                </Button>
-                                            </DropdownMenuTrigger>
-                                            <DropdownMenuContent
-                                                align="end"
-                                                className="w-56 p-1.5 rounded-2xl shadow-2xl border-sidebar-border/50 backdrop-blur-xl bg-background/90 animate-in fade-in-0 zoom-in-95"
-                                            >
-                                                {!option.isDefault && (
-                                                    <>
-                                                        <DropdownMenuItem
-                                                            onClick={() => handleSetDefault(option.id!)}
-                                                            className="rounded-lg text-[11px] font-semibold py-2.5 px-3 cursor-pointer"
-                                                        >
-                                                            {t("setAsDefaultOption")}
-                                                        </DropdownMenuItem>
-                                                    </>
-                                                )}
-                                                <DropdownMenuItem
-                                                    onClick={() => handleEditOption(option)}
-                                                    className="rounded-lg text-[11px] font-semibold py-2.5 px-3 cursor-pointer"
-                                                >
-                                                    {commonT("edit")}
-                                                </DropdownMenuItem>
-                                                <DropdownMenuItem
-                                                    onClick={() => handleDeleteOption(option.id!)}
-                                                    className="rounded-lg text-[11px] font-semibold py-2.5 px-3 cursor-pointer"
-                                                >
-                                                    {commonT("delete")}
-                                                </DropdownMenuItem>
-                                            </DropdownMenuContent>
-                                        </DropdownMenu>
-                                    </div>
                                 </div>
                             </div>
 
-
+                            {/* Actions Menu - Absolutely positioned to prevent click bubbling */}
+                            <div
+                                className="absolute right-5 top-1/2 -translate-y-1/2 z-10"
+                                onClick={(e) => e.stopPropagation()}
+                            >
+                                <DropdownMenu>
+                                    <DropdownMenuTrigger asChild>
+                                        <Button
+                                            type="button"
+                                            variant="ghost"
+                                            size="icon"
+                                            className="h-9 w-9 bg-muted/20 hover:bg-muted/40 text-muted-foreground/60 hover:text-foreground transition-all active:scale-95"
+                                        >
+                                            <MoreHorizontal className="h-4 w-4" />
+                                        </Button>
+                                    </DropdownMenuTrigger>
+                                    <DropdownMenuContent
+                                        align="end"
+                                        className="w-56 p-1.5 rounded-lg shadow-2xl border-sidebar-border/50 backdrop-blur-xl bg-background/90 animate-in fade-in-0 zoom-in-95"
+                                    >
+                                        {!option.isDefault && (
+                                            <>
+                                                <DropdownMenuItem
+                                                    onSelect={() => handleSetDefault(option.id!)}
+                                                    className="rounded-lg text-[11px] font-semibold py-2.5 px-3 cursor-pointer"
+                                                >
+                                                    {t("setAsDefaultOption")}
+                                                </DropdownMenuItem>
+                                            </>
+                                        )}
+                                        <DropdownMenuItem
+                                            onSelect={() => handleEditOption(option)}
+                                            className="rounded-lg text-[11px] font-semibold py-2.5 px-3 cursor-pointer"
+                                        >
+                                            {commonT("edit")}
+                                        </DropdownMenuItem>
+                                        <DropdownMenuItem
+                                            onSelect={() => handleDuplicateOption(option)}
+                                            className="rounded-lg text-[11px] font-semibold py-2.5 px-3 cursor-pointer"
+                                        >
+                                            {commonT("duplicate")}
+                                        </DropdownMenuItem>
+                                        <DropdownMenuItem
+                                            onSelect={() => setDeleteConfirmId(option.id!)}
+                                            className="rounded-lg text-[11px] font-semibold py-2.5 px-3 cursor-pointer text-destructive focus:text-destructive"
+                                        >
+                                            {commonT("delete")}
+                                        </DropdownMenuItem>
+                                    </DropdownMenuContent>
+                                </DropdownMenu>
+                            </div>
                         </div>
                     ))
                 )}
             </div>
+
+            <AlertDialog open={!!deleteConfirmId} onOpenChange={(open) => !open && setDeleteConfirmId(null)}>
+                <AlertDialogContent>
+                    <AlertDialogHeader>
+                        <AlertDialogTitle>{commonT("confirm")}</AlertDialogTitle>
+                        <AlertDialogDescription>
+                            {commonT("deleteConfirmationLabel") || "Are you sure you want to remove this variation?"}
+                        </AlertDialogDescription>
+                    </AlertDialogHeader>
+                    <AlertDialogFooter>
+                        <AlertDialogCancel>{commonT("cancel")}</AlertDialogCancel>
+                        <AlertDialogAction
+                            variant="destructive"
+                            onClick={() => deleteConfirmId && handleDeleteOption(deleteConfirmId)}
+                        >
+                            {commonT("delete")}
+                        </AlertDialogAction>
+                    </AlertDialogFooter>
+                </AlertDialogContent>
+            </AlertDialog>
         </div>
     )
 }
