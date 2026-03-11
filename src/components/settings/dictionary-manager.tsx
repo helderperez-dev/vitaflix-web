@@ -18,7 +18,8 @@ import {
     ArrowLeft,
     BrainCircuit,
     Store,
-    MoreHorizontal
+    MoreHorizontal,
+    Loader2
 } from "lucide-react"
 import { Card, CardDescription, CardHeader, CardTitle } from "@/components/ui/card"
 import { Button } from "@/components/ui/button"
@@ -30,12 +31,22 @@ import {
     DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu"
 import { type Tag, type TagTable } from "@/shared-schemas/tag"
-import { getTags, deleteTag } from "@/app/actions/tags"
+import { getTags, deleteTag, deleteTags } from "@/app/actions/tags"
 import { TagDrawer } from "@/components/shared/tag-drawer"
+import {
+    AlertDialog,
+    AlertDialogAction,
+    AlertDialogCancel,
+    AlertDialogContent,
+    AlertDialogDescription,
+    AlertDialogFooter,
+    AlertDialogHeader,
+    AlertDialogTitle,
+} from "@/components/ui/alert-dialog"
 import { DayConfigManager } from "@/components/plans/day-config-manager"
 import { DataTable, SortableHeader } from "@/components/ui/data-table"
 import { ColumnDef } from "@tanstack/react-table"
-import { useLocale } from "next-intl"
+import { useLocale, useTranslations } from "next-intl"
 import { toast } from "sonner"
 import { Badge } from "@/components/ui/badge"
 import { Link } from "@/i18n/routing"
@@ -59,12 +70,18 @@ const DICTIONARIES: { id: TagTable | 'plans_logic'; label: string; description: 
 
 export function DictionaryManager() {
     const locale = useLocale()
+    const commonT = useTranslations("Common")
     const [selectedDict, setSelectedDict] = useState<TagTable | 'plans_logic' | null>(null)
     const [items, setItems] = useState<Tag[]>([])
     const [isLoading, setIsLoading] = useState(false)
     const [globalFilter, setGlobalFilter] = useState("")
     const [isModalOpen, setIsModalOpen] = useState(false)
     const [selectedItem, setSelectedItem] = useState<Tag | null>(null)
+    const [deleteDialogOpen, setDeleteDialogOpen] = useState(false)
+    const [itemsToDelete, setItemsToDelete] = useState<Tag[]>([])
+    const [isDeleting, setIsDeleting] = useState(false)
+    const [tableKey, setTableKey] = useState(0)
+    const clearSelectionFn = React.useRef<(() => void) | null>(null)
 
     const currentDict = DICTIONARIES.find(d => d.id === selectedDict)
 
@@ -88,24 +105,43 @@ export function DictionaryManager() {
     }
 
     async function handleDelete(item: Tag) {
-        if (!selectedDict || selectedDict === 'plans_logic' || !item.id) return
+        setItemsToDelete([item])
+        setDeleteDialogOpen(true)
+    }
 
-        const name = (item.name as any)?.[locale] || (item.name as any)?.en || Object.values(item.name || {})[0] || "this item"
-        if (!confirm(`Are you sure you want to delete "${name}"? This action cannot be undone.`)) return
+    function handleBulkDelete(selectedItems: Tag[], clearSelection: () => void) {
+        setItemsToDelete(selectedItems)
+        clearSelectionFn.current = clearSelection
+        setDeleteDialogOpen(true)
+    }
 
-        setIsLoading(true)
+    async function confirmDelete() {
+        if (!selectedDict || selectedDict === 'plans_logic' || itemsToDelete.length === 0) return
+
+        setIsDeleting(true)
         try {
-            const result = await deleteTag(item.id, selectedDict as TagTable)
+            let result;
+            if (itemsToDelete.length === 1) {
+                result = await deleteTag(itemsToDelete[0].id!, selectedDict as TagTable)
+            } else {
+                result = await deleteTags(itemsToDelete.map(i => i.id!), selectedDict as TagTable)
+            }
+
             if (result.success) {
-                toast.success("Entry deleted successfully")
+                toast.success(itemsToDelete.length === 1 ? "Entry deleted successfully" : `${itemsToDelete.length} entries deleted successfully`)
+                setDeleteDialogOpen(false)
+                setItemsToDelete([])
+                if (clearSelectionFn.current) clearSelectionFn.current()
+                clearSelectionFn.current = null
+                setTableKey(prev => prev + 1)
                 loadItems()
             } else {
                 toast.error(result.error || "Failed to delete entry")
             }
         } catch (error) {
-            toast.error("An error occurred while deleting the entry")
+            toast.error("An error occurred while deleting")
         } finally {
-            setIsLoading(false)
+            setIsDeleting(false)
         }
     }
 
@@ -360,6 +396,7 @@ export function DictionaryManager() {
 
                         <div className="flex-1 overflow-hidden relative flex flex-col bg-white dark:bg-background">
                             <DataTable
+                                key={`${selectedDict}-${tableKey}`}
                                 columns={columns}
                                 data={items}
                                 globalFilter={globalFilter}
@@ -369,11 +406,63 @@ export function DictionaryManager() {
                                 className="flex-1"
                                 enableRowSelection={true}
                                 isLoading={isLoading}
+                                selectionActions={(selectedRows, clearSelection) => (
+                                    <div className="flex items-center gap-2 w-full">
+                                        <Button
+                                            variant="ghost"
+                                            className="h-9 px-4 text-xs font-semibold hover:bg-slate-100 dark:hover:bg-white/5 text-muted-foreground hover:text-foreground dark:text-white/80 dark:hover:text-white transition-all"
+                                            onClick={() => console.log("Exporting:", selectedRows)}
+                                        >
+                                            Export Data
+                                        </Button>
+                                        <Button
+                                            variant="ghost"
+                                            className="h-9 px-4 text-xs font-semibold hover:bg-slate-100 dark:hover:bg-white/5 text-destructive hover:text-destructive dark:text-red-400 dark:hover:text-red-300 transition-all ml-auto"
+                                            onClick={() => handleBulkDelete(selectedRows, clearSelection)}
+                                        >
+                                            <Trash2 className="h-4 w-4 mr-2" />
+                                            Delete Forever
+                                        </Button>
+                                    </div>
+                                )}
                             />
                         </div>
                     </motion.div>
                 )}
             </AnimatePresence>
+
+            <AlertDialog open={deleteDialogOpen} onOpenChange={setDeleteDialogOpen}>
+                <AlertDialogContent className="rounded-lg border-sidebar-border/50 shadow-2xl">
+                    <AlertDialogHeader>
+                        <AlertDialogTitle>{commonT("confirm")}</AlertDialogTitle>
+                        <AlertDialogDescription>
+                            {commonT("deleteConfirmationLabel")}
+                        </AlertDialogDescription>
+                    </AlertDialogHeader>
+                    <AlertDialogFooter className="gap-2">
+                        <AlertDialogCancel className="font-semibold text-xs h-9">
+                            {commonT("cancel")}
+                        </AlertDialogCancel>
+                        <AlertDialogAction
+                            onClick={async (e) => {
+                                e.preventDefault();
+                                await confirmDelete();
+                            }}
+                            disabled={isDeleting}
+                            className="bg-primary hover:bg-primary/90 text-white font-semibold text-xs h-9 px-6"
+                        >
+                            {isDeleting ? (
+                                <div className="flex items-center gap-2">
+                                    <Loader2 className="size-4 animate-spin" />
+                                    <span>{commonT("loading")}</span>
+                                </div>
+                            ) : (
+                                commonT("confirm")
+                            )}
+                        </AlertDialogAction>
+                    </AlertDialogFooter>
+                </AlertDialogContent>
+            </AlertDialog>
 
             {selectedDict && selectedDict !== 'plans_logic' && (
                 <TagDrawer
