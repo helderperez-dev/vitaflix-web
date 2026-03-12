@@ -104,6 +104,14 @@ export function LeadsManager({ initialFunnels, initialLeads, userProfile }: Lead
         setLeads(prev => prev.map(l => l.id === leadId ? { ...l, step_id: stepId === 'unassigned' ? null : stepId } : l))
     }
 
+    const handleDeleteLead = (leadId: string) => {
+        setLeads(prev => prev.filter(l => l.id !== leadId))
+    }
+
+    const handleBulkDelete = (leadIds: string[]) => {
+        setLeads(prev => prev.filter(l => !leadIds.includes(l.id)))
+    }
+
     // Only show empty state when there are no funnels at all
     if (funnels.length === 0) {
         return (
@@ -195,7 +203,7 @@ export function LeadsManager({ initialFunnels, initialLeads, userProfile }: Lead
                             </DropdownMenuTrigger>
                             <DropdownMenuContent align="end" className="w-56 p-1.5 rounded-lg shadow-2xl border-border/40 backdrop-blur-xl bg-background/90 animate-in fade-in-0 zoom-in-95">
                                 <DropdownMenuLabel className="text-[10px] capitalize font-bold tracking-widest text-muted-foreground/60 px-3 py-2">
-                                    Pipeline Filter
+                                    {tLeads("pipelineFilter")}
                                 </DropdownMenuLabel>
                                 <DropdownMenuItem
                                     onClick={() => setActiveFunnelId('all')}
@@ -209,7 +217,7 @@ export function LeadsManager({ initialFunnels, initialLeads, userProfile }: Lead
                                 </DropdownMenuItem>
                                 <DropdownMenuSeparator className="bg-border/40 mx-1.5 my-1" />
                                 <DropdownMenuLabel className="text-[10px] capitalize font-bold tracking-widest text-muted-foreground/60 px-3 py-2">
-                                    Active Funnels
+                                    {tLeads("activeFunnels")}
                                 </DropdownMenuLabel>
                                 {funnels.map(f => (
                                     <DropdownMenuItem
@@ -255,6 +263,7 @@ export function LeadsManager({ initialFunnels, initialLeads, userProfile }: Lead
                         leads={filteredLeads}
                         onLeadStepChange={handleLeadStepChange}
                         onLeadClick={handleEditLead}
+                        onDeleteLead={handleDeleteLead}
                     />
                 ) : (
                     <LeadsDatagrid
@@ -262,6 +271,8 @@ export function LeadsManager({ initialFunnels, initialLeads, userProfile }: Lead
                         activeFunnelId={activeFunnelId}
                         leads={filteredLeads}
                         onRowClick={handleEditLead}
+                        onDeleteLead={handleDeleteLead}
+                        onBulkDelete={handleBulkDelete}
                         userProfile={userProfile}
                     />
                 )}

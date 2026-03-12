@@ -41,12 +41,13 @@ interface KanbanBoardProps {
     leads: Lead[]
     onLeadStepChange: (leadId: string, stepId: string) => void
     onLeadClick?: (lead: Lead) => void
+    onDeleteLead?: (leadId: string) => void
 }
 
 
 const TILT_ANGLE = 2
 
-function SortableLeadCard({ lead, onLeadClick, isOverlay = false }: { lead: Lead, onLeadClick?: (lead: Lead) => void, isOverlay?: boolean }) {
+function SortableLeadCard({ lead, onLeadClick, onDeleteLead, isOverlay = false }: { lead: Lead, onLeadClick?: (lead: Lead) => void, onDeleteLead?: (leadId: string) => void, isOverlay?: boolean }) {
     const tLeads = useTranslations("Leads")
     const {
         attributes,
@@ -93,6 +94,7 @@ function SortableLeadCard({ lead, onLeadClick, isOverlay = false }: { lead: Lead
                         <LeadActions
                             lead={lead}
                             onEdit={(l) => onLeadClick?.(l)}
+                            onDelete={() => onDeleteLead?.(lead.id)}
                         />
                     </div>
                 )}
@@ -146,7 +148,7 @@ function SortableLeadCard({ lead, onLeadClick, isOverlay = false }: { lead: Lead
     )
 }
 
-function KanbanColumn({ id, title, color, leads, onLeadClick }: { id: string, title: string, color?: string | null, leads: Lead[], onLeadClick?: (lead: Lead) => void }) {
+function KanbanColumn({ id, title, color, leads, onLeadClick, onDeleteLead }: { id: string, title: string, color?: string | null, leads: Lead[], onLeadClick?: (lead: Lead) => void, onDeleteLead?: (leadId: string) => void }) {
     const tLeads = useTranslations("Leads")
     const {
         setNodeRef,
@@ -176,7 +178,7 @@ function KanbanColumn({ id, title, color, leads, onLeadClick }: { id: string, ti
             <div className="p-4 flex-1 overflow-y-auto custom-scrollbar flex flex-col gap-4 min-h-[400px]">
                 <SortableContext items={leads.map(l => l.id)} strategy={verticalListSortingStrategy}>
                     {leads.map(lead => (
-                        <SortableLeadCard key={lead.id} lead={lead} onLeadClick={onLeadClick} />
+                        <SortableLeadCard key={lead.id} lead={lead} onLeadClick={onLeadClick} onDeleteLead={onDeleteLead} />
                     ))}
                 </SortableContext>
                 {leads.length === 0 && (
@@ -192,7 +194,7 @@ function KanbanColumn({ id, title, color, leads, onLeadClick }: { id: string, ti
     )
 }
 
-export function KanbanBoard({ funnel, leads: initialLeads, onLeadStepChange, onLeadClick }: KanbanBoardProps) {
+export function KanbanBoard({ funnel, leads: initialLeads, onLeadStepChange, onLeadClick, onDeleteLead }: KanbanBoardProps) {
     const tLeads = useTranslations("Leads")
     const [mounted, setMounted] = React.useState(false)
     const [leads, setLeads] = React.useState<Lead[]>(initialLeads)
@@ -361,6 +363,7 @@ export function KanbanBoard({ funnel, leads: initialLeads, onLeadStepChange, onL
                     title={tLeads("newLead")}
                     leads={leads.filter(l => !l.step_id)}
                     onLeadClick={onLeadClick}
+                    onDeleteLead={onDeleteLead}
                 />
 
                 {funnel.lead_funnel_steps.map((step: Database['public']['Tables']['lead_funnel_steps']['Row']) => (
@@ -371,6 +374,7 @@ export function KanbanBoard({ funnel, leads: initialLeads, onLeadStepChange, onL
                         color={step.color}
                         leads={leads.filter(l => l.step_id === step.id)}
                         onLeadClick={onLeadClick}
+                        onDeleteLead={onDeleteLead}
                     />
                 ))}
             </div>
