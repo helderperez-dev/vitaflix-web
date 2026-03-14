@@ -41,7 +41,7 @@ export async function upsertTag(tag: Tag, table: TagTable = 'tags') {
     }
 
     // Auto-generate slug for roles and objectives if missing
-    if ((table === 'user_roles' || table === 'wellness_objectives' || table === 'meal_plan_sizes') && !tag.slug && !tag.id) {
+    if ((table === 'user_roles' || table === 'wellness_objectives' || table === 'meal_plan_sizes' || table === 'measurement_units' || table === 'countries') && !tag.slug && !tag.id) {
         const engName = tag.name?.en || Object.values(tag.name || {})[0] as string;
         if (engName) {
             if (table === 'meal_plan_sizes') {

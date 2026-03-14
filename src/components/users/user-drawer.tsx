@@ -90,6 +90,7 @@ export function UserDrawer({ open, onOpenChange, user }: UserDrawerProps) {
             height: 170,
             weight: 70,
             objective: "maintain",
+            countryId: null,
             extraDataComplete: false,
         },
     }) as any
@@ -102,6 +103,7 @@ export function UserDrawer({ open, onOpenChange, user }: UserDrawerProps) {
                 avatarUrl: user.avatarUrl || null,
                 genre: user.genre || "other",
                 objective: user.objective || "maintain",
+                countryId: user.countryId || null,
                 height: user.height ?? 170,
                 weight: user.weight ?? 70,
             })
@@ -116,6 +118,7 @@ export function UserDrawer({ open, onOpenChange, user }: UserDrawerProps) {
                 height: 170,
                 weight: 70,
                 objective: "maintain",
+                countryId: null,
                 extraDataComplete: false,
             })
             setRelatedData(null)
@@ -443,6 +446,25 @@ export function UserDrawer({ open, onOpenChange, user }: UserDrawerProps) {
                                                                         onChange={field.onChange}
                                                                         table="wellness_objectives"
                                                                         placeholder="Goal"
+                                                                    />
+                                                                </FormControl>
+                                                                <FormMessage className="text-[10px]" />
+                                                            </FormItem>
+                                                        )}
+                                                    />
+                                                    <FormField
+                                                        control={form.control}
+                                                        name="countryId"
+                                                        render={({ field }) => (
+                                                            <FormItem>
+                                                                <FormControl>
+                                                                    <DictionarySelector
+                                                                        label="Country"
+                                                                        value={field.value || ""}
+                                                                        onChange={field.onChange}
+                                                                        table="countries"
+                                                                        placeholder="Select country"
+                                                                        returnIdOnly
                                                                     />
                                                                 </FormControl>
                                                                 <FormMessage className="text-[10px]" />
@@ -907,6 +929,7 @@ export function UserDrawer({ open, onOpenChange, user }: UserDrawerProps) {
 
             <CreatePlanModal
                 userId={user?.id || ""}
+                userCountryId={user?.countryId || null}
                 isOpen={isCreatePlanOpen}
                 onOpenChange={setIsCreatePlanOpen}
                 onSuccess={() => {

@@ -113,7 +113,11 @@ export function DictionarySelector({
                 <PopoverContent className="w-[300px] p-0 border-input rounded-lg backdrop-blur-xl bg-background/90" align="start">
                     <Command className="bg-transparent border-none">
                         <CommandInput placeholder={t("search")} className="h-10 text-xs" />
-                        <CommandList className="max-h-[240px] overflow-y-auto custom-scrollbar">
+                        <CommandList
+                            className="max-h-[240px] overflow-y-auto custom-scrollbar overscroll-contain"
+                            onWheel={(e) => e.stopPropagation()}
+                            onTouchMove={(e) => e.stopPropagation()}
+                        >
                             <CommandEmpty className="py-6 text-xs text-muted-foreground/40 text-center">
                                 {t("noResults")}
                             </CommandEmpty>

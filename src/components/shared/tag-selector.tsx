@@ -69,6 +69,15 @@ export function TagSelector({ title = "Tags", selectedTagIds, onTagsChange, tabl
                 empty: t("noProductGroupsFound")
             }
         }
+        if (table === 'countries') {
+            return {
+                select: "Select countries",
+                search: "Search countries...",
+                available: "Available Countries",
+                create: "Create New Country",
+                empty: "No countries found"
+            }
+        }
         return {
             select: t("selectTags"),
             search: t("searchTags"),

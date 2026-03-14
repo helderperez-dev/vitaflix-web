@@ -38,6 +38,30 @@ export type Database = {
         }
         Relationships: []
       }
+      countries: {
+        Row: {
+          created_at: string
+          id: string
+          name: Json
+          slug: string | null
+          updated_at: string
+        }
+        Insert: {
+          created_at?: string
+          id?: string
+          name: Json
+          slug?: string | null
+          updated_at?: string
+        }
+        Update: {
+          created_at?: string
+          id?: string
+          name?: Json
+          slug?: string | null
+          updated_at?: string
+        }
+        Relationships: []
+      }
       dietary_tags: {
         Row: {
           color: string | null
@@ -235,6 +259,36 @@ export type Database = {
           },
         ]
       }
+      meal_countries: {
+        Row: {
+          country_id: string
+          meal_id: string
+        }
+        Insert: {
+          country_id: string
+          meal_id: string
+        }
+        Update: {
+          country_id?: string
+          meal_id?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "meal_countries_country_id_fkey"
+            columns: ["country_id"]
+            isOneToOne: false
+            referencedRelation: "countries"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "meal_countries_meal_id_fkey"
+            columns: ["meal_id"]
+            isOneToOne: false
+            referencedRelation: "meals"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
       meal_day_configurations: {
         Row: {
           category_id: string
@@ -373,6 +427,7 @@ export type Database = {
       }
       meal_plans: {
         Row: {
+          country_id: string | null
           created_at: string
           daily_meals_count: number | null
           id: string
@@ -382,6 +437,7 @@ export type Database = {
           user_id: string
         }
         Insert: {
+          country_id?: string | null
           created_at?: string
           daily_meals_count?: number | null
           id?: string
@@ -391,6 +447,7 @@ export type Database = {
           user_id: string
         }
         Update: {
+          country_id?: string | null
           created_at?: string
           daily_meals_count?: number | null
           id?: string
@@ -400,6 +457,13 @@ export type Database = {
           user_id?: string
         }
         Relationships: [
+          {
+            foreignKeyName: "meal_plans_country_id_fkey"
+            columns: ["country_id"]
+            isOneToOne: false
+            referencedRelation: "countries"
+            referencedColumns: ["id"]
+          },
           {
             foreignKeyName: "meal_plans_user_id_fkey"
             columns: ["user_id"]
@@ -618,6 +682,36 @@ export type Database = {
           },
         ]
       }
+      product_countries: {
+        Row: {
+          country_id: string
+          product_id: string
+        }
+        Insert: {
+          country_id: string
+          product_id: string
+        }
+        Update: {
+          country_id?: string
+          product_id?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "product_countries_country_id_fkey"
+            columns: ["country_id"]
+            isOneToOne: false
+            referencedRelation: "countries"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "product_countries_product_id_fkey"
+            columns: ["product_id"]
+            isOneToOne: false
+            referencedRelation: "products"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
       product_images: {
         Row: {
           created_at: string | null
@@ -700,7 +794,9 @@ export type Database = {
           name: Json
           picture: number | null
           protein: number | null
+          reference_amount: number
           tags: string[] | null
+          unit_id: string | null
           updated_at: string
         }
         Insert: {
@@ -716,7 +812,9 @@ export type Database = {
           name: Json
           picture?: number | null
           protein?: number | null
+          reference_amount?: number
           tags?: string[] | null
+          unit_id?: string | null
           updated_at?: string
         }
         Update: {
@@ -732,10 +830,20 @@ export type Database = {
           name?: Json
           picture?: number | null
           protein?: number | null
+          reference_amount?: number
           tags?: string[] | null
+          unit_id?: string | null
           updated_at?: string
         }
-        Relationships: []
+        Relationships: [
+          {
+            foreignKeyName: "products_unit_id_fkey"
+            columns: ["unit_id"]
+            isOneToOne: false
+            referencedRelation: "measurement_units"
+            referencedColumns: ["id"]
+          },
+        ]
       }
       shopping_items: {
         Row: {
@@ -1023,6 +1131,7 @@ export type Database = {
         Row: {
           avatar_url: string | null
           birthday: string | null
+          country_id: string | null
           created_at: string
           display_name: string | null
           email: string
@@ -1044,6 +1153,7 @@ export type Database = {
         Insert: {
           avatar_url?: string | null
           birthday?: string | null
+          country_id?: string | null
           created_at?: string
           display_name?: string | null
           email: string
@@ -1065,6 +1175,7 @@ export type Database = {
         Update: {
           avatar_url?: string | null
           birthday?: string | null
+          country_id?: string | null
           created_at?: string
           display_name?: string | null
           email?: string
@@ -1083,7 +1194,15 @@ export type Database = {
           updated_at?: string
           weight?: number | null
         }
-        Relationships: []
+        Relationships: [
+          {
+            foreignKeyName: "users_country_id_fkey"
+            columns: ["country_id"]
+            isOneToOne: false
+            referencedRelation: "countries"
+            referencedColumns: ["id"]
+          },
+        ]
       }
       wellness_objectives: {
         Row: {
@@ -1268,4 +1387,3 @@ export const Constants = {
     },
   },
 } as const
-

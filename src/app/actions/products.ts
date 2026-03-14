@@ -22,6 +22,8 @@ export async function upsertProduct(data: Product) {
             protein: data.protein,
             carbs: data.carbs,
             fat: data.fat,
+            unit_id: data.unitId || null,
+            reference_amount: data.referenceAmount,
             is_public: data.isPublic,
             images: data.images || []
         })
@@ -62,6 +64,15 @@ export async function upsertProduct(data: Product) {
             group_id: groupId
         }))
         await supabase.from("product_group_links").insert(groupLinks)
+    }
+
+    await supabase.from("product_countries").delete().eq("product_id", productId)
+    if (data.countryIds && data.countryIds.length > 0) {
+        const countryLinks = data.countryIds.map(countryId => ({
+            product_id: productId,
+            country_id: countryId
+        }))
+        await supabase.from("product_countries").insert(countryLinks)
     }
 
     revalidatePath("/", "layout")
@@ -131,12 +142,12 @@ export async function bulkDeleteProducts(ids: string[]) {
     revalidatePath("/", "layout")
     return { success: true }
 }
-export async function getProducts(query?: string, groupId?: string) {
+export async function getProducts(query?: string, groupId?: string, countryId?: string) {
     const supabase = await createClient()
 
     let q = supabase
         .from("products")
-        .select("*, product_group_links!left(group_id)")
+        .select("*, product_group_links!left(group_id), measurement_unit:measurement_units(id, name, slug)")
         .order("created_at", { ascending: false })
 
     if (query) {
@@ -160,6 +171,24 @@ export async function getProducts(query?: string, groupId?: string) {
         }
     }
 
+    if (countryId) {
+        const [{ data: restrictedLinks }, { data: countryLinks }] = await Promise.all([
+            supabase.from("product_countries").select("product_id"),
+            supabase.from("product_countries").select("product_id").eq("country_id", countryId),
+        ])
+
+        const restrictedIds = Array.from(new Set((restrictedLinks || []).map(link => link.product_id)))
+        const allowedIds = Array.from(new Set((countryLinks || []).map(link => link.product_id)))
+
+        if (restrictedIds.length > 0) {
+            if (allowedIds.length > 0) {
+                q = q.or(`id.in.(${allowedIds.join(",")}),id.not.in.(${restrictedIds.join(",")})`)
+            } else {
+                q = q.not("id", "in", `(${restrictedIds.join(",")})`)
+            }
+        }
+    }
+
     const { data, error } = await q.limit(50)
 
     if (error) {
@@ -175,7 +204,7 @@ export async function getProductsByIds(ids: string[]) {
 
     const { data, error } = await supabase
         .from("products")
-        .select("*")
+        .select("*, measurement_unit:measurement_units(id, name, slug), product_countries(country_id)")
         .in("id", ids)
 
     if (error) {

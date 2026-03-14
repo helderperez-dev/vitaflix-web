@@ -61,22 +61,22 @@ export function MealDrawer({ open, onOpenChange, meal }: MealDrawerProps) {
 
         const [ns, key] = message.includes(".") ? message.split(".") : [null, message]
 
-        if (ns === "Common") return commonT(key as any)
-        if (ns === "Meals") return t(key as any)
-        if (ns === "Products") return productsT(key as any)
+        if (ns === "Common") return commonT(key as never)
+        if (ns === "Meals") return t(key as never)
+        if (ns === "Products") return productsT(key as never)
 
         return message
     }
 
-    const ensureArray = (val: any) => Array.isArray(val) ? val : []
+    const ensureArray = (val: unknown) => Array.isArray(val) ? val : []
 
     const [isSubmitting, setIsSubmitting] = React.useState(false)
     const [formId] = React.useState(() => crypto.randomUUID())
     const [activeView, setActiveView] = React.useState<DrawerView>("details")
     const [isEditingOption, setIsEditingOption] = React.useState(false)
 
-    const form = useForm({
-        resolver: zodResolver(mealSchema),
+    const form = useForm<Meal>({
+        resolver: zodResolver(mealSchema) as never,
         defaultValues: {
             name: {},
             mealTypes: [],
@@ -84,13 +84,14 @@ export function MealDrawer({ open, onOpenChange, meal }: MealDrawerProps) {
             preparationMode: [],
             satiety: 5,
             restrictions: [],
+            countryIds: [],
             publishOn: null,
             images: [],
             isPublic: false,
             id: formId,
             options: [],
         },
-    }) as any
+    })
 
     const lastInitializedId = React.useRef<string | null>(null)
     React.useEffect(() => {
@@ -105,14 +106,22 @@ export function MealDrawer({ open, onOpenChange, meal }: MealDrawerProps) {
 
             if (meal && meal.id) {
                 const options = await getMealOptions(meal.id)
+                const mealData = meal as Meal & {
+                    cook_time?: number
+                    meal_types?: string[]
+                    preparation_mode?: Record<string, string>[]
+                    country_ids?: string[]
+                    is_public?: boolean
+                }
                 form.reset({
                     ...meal,
                     name: meal.name || {},
-                    cookTime: Number((meal as any).cook_time ?? (meal as any).cookTime ?? 0),
-                    mealTypes: ensureArray((meal as any).meal_types || (meal as any).mealTypes),
-                    preparationMode: ensureArray((meal as any).preparation_mode || (meal as any).preparationMode),
-                    restrictions: ensureArray((meal as any).restrictions || (meal as any).restrictions),
-                    isPublic: (meal as any).is_public ?? (meal as any).isPublic ?? false,
+                    cookTime: Number(mealData.cook_time ?? mealData.cookTime ?? 0),
+                    mealTypes: ensureArray(mealData.meal_types || mealData.mealTypes),
+                    preparationMode: ensureArray(mealData.preparation_mode || mealData.preparationMode),
+                    restrictions: ensureArray(mealData.restrictions || mealData.restrictions),
+                    countryIds: ensureArray(mealData.country_ids || mealData.countryIds),
+                    isPublic: mealData.is_public ?? mealData.isPublic ?? false,
                     options: options || []
                 })
             } else {
@@ -123,6 +132,7 @@ export function MealDrawer({ open, onOpenChange, meal }: MealDrawerProps) {
                     preparationMode: [],
                     satiety: 5,
                     restrictions: [],
+                    countryIds: [],
                     publishOn: null,
                     images: [],
                     isPublic: false,
@@ -161,19 +171,20 @@ export function MealDrawer({ open, onOpenChange, meal }: MealDrawerProps) {
         }
     }
 
-    const onInvalid = (errors: any) => {
+    const onInvalid = (errors: unknown) => {
         // More descriptive logging to help debugging
-        const flattenedErrors: Record<string, any> = {}
-        const extractErrors = (obj: any, prefix = "") => {
-            if (!obj) return
-            if (obj.message) {
+        const flattenedErrors: Record<string, unknown> = {}
+        const extractErrors = (obj: unknown, prefix = "") => {
+            if (!obj || typeof obj !== "object") return
+            if ("message" in obj) {
                 flattenedErrors[prefix || "root"] = obj.message
                 return
             }
-            Object.keys(obj).forEach(key => {
+            Object.keys(obj).forEach((key) => {
                 const newPrefix = prefix ? `${prefix}.${key}` : key
-                if (typeof obj[key] === "object") {
-                    extractErrors(obj[key], newPrefix)
+                const value = (obj as Record<string, unknown>)[key]
+                if (typeof value === "object") {
+                    extractErrors(value, newPrefix)
                 }
             })
         }
@@ -415,6 +426,20 @@ export function MealDrawer({ open, onOpenChange, meal }: MealDrawerProps) {
                                                         </FormItem>
                                                     )}
                                                 />
+                                                <FormField
+                                                    control={form.control}
+                                                    name="countryIds"
+                                                    render={({ field }) => (
+                                                        <FormItem className="space-y-4">
+                                                            <TagSelector
+                                                                title="Countries"
+                                                                selectedTagIds={field.value || []}
+                                                                onTagsChange={field.onChange}
+                                                                table="countries"
+                                                            />
+                                                        </FormItem>
+                                                    )}
+                                                />
                                             </div>
                                         </div>
 
@@ -428,7 +453,7 @@ export function MealDrawer({ open, onOpenChange, meal }: MealDrawerProps) {
                                             />
                                             {form.formState.errors.preparationMode && (
                                                 <p className="text-[10px] font-semibold text-destructive px-1">
-                                                    {translateError((form.formState.errors.preparationMode as any).message)}
+                                                    {translateError((form.formState.errors.preparationMode as { message?: string }).message)}
                                                 </p>
                                             )}
                                         </div>

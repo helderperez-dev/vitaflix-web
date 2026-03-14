@@ -47,6 +47,7 @@ export function PlanDetailsView({ plan, onBack, onUpdate }: PlanDetailsViewProps
 
     const dailyCount = plan.dailyMealsCount || plan.daily_meals_count
     const createdAt = plan.createdAt || plan.created_at
+    const planCountryId = plan.countryId || plan.country_id
 
     const [isLoadingConfigs, setIsLoadingConfigs] = useState(true)
     const [configs, setConfigs] = useState<(MealDayConfig & { category?: any })[]>([])
@@ -86,7 +87,7 @@ export function PlanDetailsView({ plan, onBack, onUpdate }: PlanDetailsViewProps
             const ids = Object.values(selectedMeals).filter(id => id && !mealDetails[id])
             if (ids.length === 0) return
 
-            const options = await getMealOptionsByIds(ids)
+            const options = await getMealOptionsByIds(ids, planCountryId)
             const newDetails: typeof mealDetails = {}
             for (const opt of options) {
                 const mealName = opt.meal?.name?.[locale] || opt.meal?.name?.en || "Unnamed"
@@ -108,7 +109,7 @@ export function PlanDetailsView({ plan, onBack, onUpdate }: PlanDetailsViewProps
             setMealDetails(prev => ({ ...prev, ...newDetails }))
         }
         fetchMissingDetails()
-    }, [selectedMeals, locale])
+    }, [selectedMeals, locale, planCountryId])
 
     useEffect(() => {
         async function load() {
@@ -123,7 +124,7 @@ export function PlanDetailsView({ plan, onBack, onUpdate }: PlanDetailsViewProps
     const loadMealsForCategory = async (categoryId: string) => {
         if (mealsCache[categoryId]) return
         setLoadingCategory(categoryId)
-        const meals = await getMealsByCategory(categoryId)
+        const meals = await getMealsByCategory(categoryId, planCountryId)
         setMealsCache(prev => ({ ...prev, [categoryId]: meals }))
 
         // Also populate mealDetails from newly loaded options
@@ -158,6 +159,7 @@ export function PlanDetailsView({ plan, onBack, onUpdate }: PlanDetailsViewProps
             try {
                 const result = await updateMealPlan(plan.id, {
                     userId: plan.userId || plan.user_id,
+                    countryId: planCountryId,
                     name: plan.name,
                     dailyMealsCount: dailyCount,
                     selectedMeals: meals,
@@ -174,7 +176,7 @@ export function PlanDetailsView({ plan, onBack, onUpdate }: PlanDetailsViewProps
                 setIsSaving(false)
             }
         }, 1000) // Increase debounce to 1s for safety
-    }, [plan.id, plan.userId, plan.user_id, plan.name, dailyCount, onUpdate])
+    }, [plan.id, plan.userId, plan.user_id, plan.name, dailyCount, onUpdate, planCountryId])
 
     const handleSelectMeal = (slotIndex: number, mealId: string) => {
         const updated = { ...selectedMeals, [slotIndex.toString()]: mealId }

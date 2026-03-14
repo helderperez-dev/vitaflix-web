@@ -50,7 +50,7 @@ export default async function NotificationsSettingsPage() {
             channel: 'email',
             type: 'marketing',
             status: 'sent',
-            created_at: new Date(Date.now() - 3600000).toISOString()
+            created_at: new Date().toISOString()
         }
     ]
 

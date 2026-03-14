@@ -27,12 +27,13 @@ import { DictionarySelector } from "@/components/shared/dictionary-selector"
 
 interface CreatePlanModalProps {
     userId: string
+    userCountryId?: string | null
     isOpen: boolean
     onOpenChange: (open: boolean) => void
     onSuccess?: () => void
 }
 
-export function CreatePlanModal({ userId, isOpen, onOpenChange, onSuccess }: CreatePlanModalProps) {
+export function CreatePlanModal({ userId, userCountryId, isOpen, onOpenChange, onSuccess }: CreatePlanModalProps) {
     const t = useTranslations("Plans")
     const [isLoading, setIsLoading] = useState(false)
     const [name, setName] = useState("")
@@ -48,6 +49,7 @@ export function CreatePlanModal({ userId, isOpen, onOpenChange, onSuccess }: Cre
         try {
             const result = await createMealPlan({
                 userId,
+                countryId: userCountryId || null,
                 name,
                 dailyMealsCount: parseInt(quantity),
                 selectedMeals: {}

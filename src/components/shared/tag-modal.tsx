@@ -64,13 +64,15 @@ export function TagModal({ open, onOpenChange, tag, onSuccess, table = "tags" }:
                     table === "user_roles" ? (tag ? "Role updated" : "Role created") :
                         table === "wellness_objectives" ? (tag ? "Objective updated" : "Objective created") :
                             table === "product_groups" ? (tag ? "Product Group updated" : "Product Group created") :
+                                table === "measurement_units" ? (tag ? "Unit updated" : "Unit created") :
+                                    table === "countries" ? (tag ? "Country updated" : "Country created") :
                                 (tag ? "Tag updated successfully" : "Tag created successfully")
                 )
                 onSuccess?.()
                 onOpenChange(false)
             }
         } catch (error) {
-            toast.error("Failed to save tag")
+            toast.error(table === "countries" ? "Failed to save country" : "Failed to save tag")
         } finally {
             setIsSubmitting(false)
         }
@@ -78,7 +80,7 @@ export function TagModal({ open, onOpenChange, tag, onSuccess, table = "tags" }:
 
     async function onDelete() {
         if (!tag?.id) return
-        if (!confirm("Are you sure you want to delete this tag? This cannot be undone and may affect associated products.")) return
+        if (!confirm(table === "countries" ? "Are you sure you want to delete this country? This cannot be undone and may affect country-based availability." : "Are you sure you want to delete this tag? This cannot be undone and may affect associated products.")) return
 
         setIsDeleting(true)
         try {
@@ -86,12 +88,12 @@ export function TagModal({ open, onOpenChange, tag, onSuccess, table = "tags" }:
             if (result?.error) {
                 toast.error(result.error)
             } else {
-                toast.success("Tag deleted successfully")
+                toast.success(table === "countries" ? "Country deleted successfully" : "Tag deleted successfully")
                 onSuccess?.()
                 onOpenChange(false)
             }
         } catch (error) {
-            toast.error("Failed to delete tag")
+            toast.error(table === "countries" ? "Failed to delete country" : "Failed to delete tag")
         } finally {
             setIsDeleting(false)
         }
@@ -114,6 +116,8 @@ export function TagModal({ open, onOpenChange, tag, onSuccess, table = "tags" }:
                                 table === "wellness_objectives" ? (tag ? "Edit Objective" : "New Objective") :
                                     table === "meal_plan_sizes" ? (tag ? "Edit Config" : "New Config") :
                                         table === "product_groups" ? (tag ? "Edit Product Group" : "New Product Group") :
+                                            table === "measurement_units" ? (tag ? "Edit Unit" : "New Unit") :
+                                                table === "countries" ? (tag ? "Edit Country" : "New Country") :
                                             (tag ? "Edit Tag" : "New Tag")}
                         </DialogTitle>
                         <DialogDescription className="text-xs text-muted-foreground leading-relaxed">
@@ -121,6 +125,8 @@ export function TagModal({ open, onOpenChange, tag, onSuccess, table = "tags" }:
                                 table === "wellness_objectives" ? (tag ? "Update wellness objective" : "Create a new system objective") :
                                     table === "meal_plan_sizes" ? (tag ? "Update daily meals configuration" : "Create a configuration for daily meals. Start with the number (e.g. '5 Meals a day')") :
                                         table === "product_groups" ? (tag ? "Update product group info" : "Create a new product group to organize your products.") :
+                                            table === "measurement_units" ? (tag ? "Update unit labeling" : "Create a new product measurement unit (g, ml, unit).") :
+                                                table === "countries" ? (tag ? "Update country availability definition." : "Create a country available for product and meal distribution.") :
                                             (tag ? "Update the multilingual names for this organizational tag." : "Create a new tag to group and filter your content across languages.")}
                         </DialogDescription>
                     </DialogHeader>
@@ -130,7 +136,7 @@ export function TagModal({ open, onOpenChange, tag, onSuccess, table = "tags" }:
                             <TranslationFields
                                 form={form}
                                 namePrefix="name"
-                                label={table === "user_roles" ? "Role Name" : table === "wellness_objectives" ? "Objective Name" : table === "meal_plan_sizes" ? "Configuration Name" : table === "product_groups" ? "Group Name" : "Tag Name"}
+                                label={table === "user_roles" ? "Role Name" : table === "wellness_objectives" ? "Objective Name" : table === "meal_plan_sizes" ? "Configuration Name" : table === "product_groups" ? "Group Name" : table === "measurement_units" ? "Unit Name" : table === "countries" ? "Country Name" : "Tag Name"}
                                 placeholder={table === "meal_plan_sizes" ? "e.g. 5 Meals per day" : "Display Name..."}
                             />
                         </form>
@@ -148,7 +154,7 @@ export function TagModal({ open, onOpenChange, tag, onSuccess, table = "tags" }:
                                 className="h-9 px-3 text-xs font-semibold text-muted-foreground/40 hover:text-destructive hover:bg-destructive/5 transition-colors gap-2"
                             >
                                 <Trash2 className="h-3.5 w-3.5" />
-                                {table === "user_roles" ? "Delete Role" : table === "wellness_objectives" ? "Delete Objective" : table === "meal_plan_sizes" ? "Delete Config" : table === "product_groups" ? "Delete Product Group" : "Delete Tag"}
+                                {table === "user_roles" ? "Delete Role" : table === "wellness_objectives" ? "Delete Objective" : table === "meal_plan_sizes" ? "Delete Config" : table === "product_groups" ? "Delete Product Group" : table === "measurement_units" ? "Delete Unit" : table === "countries" ? "Delete Country" : "Delete Tag"}
                             </Button>
                         )}
                     </div>

@@ -33,11 +33,40 @@ import { cn } from "@/lib/utils"
 import type { ColumnDef } from "@tanstack/react-table"
 
 interface MealTableWrapperProps {
-    initialMeals: any[]
-    userProfile?: any
+    initialMeals: MealTableData[]
+    userProfile?: {
+        id?: string
+        preferences?: Record<string, unknown>
+    } | null
 }
 
-function BulkStatusActions({ selectedRows, clearSelection }: { selectedRows: any[], clearSelection: () => void }) {
+type MealTableData = {
+    id: string
+    name?: Record<string, string>
+    meal_types?: string[]
+    cook_time?: number | null
+    preparation_mode?: Record<string, string>[]
+    satiety?: number | null
+    restrictions?: string[]
+    country_ids?: string[]
+    publish_on?: string | null
+    images?: { url?: string; isDefault?: boolean }[]
+    is_public?: boolean | null
+    meal_options?: { id: string }[]
+}
+
+type MealTableRow = MealTableData & {
+    mappedMeal: Meal
+    nameLocale: string
+    image: string | null
+}
+
+type SelectableMealRow = {
+    id: string
+    is_public?: boolean | number | null
+}
+
+function BulkStatusActions({ selectedRows, clearSelection }: { selectedRows: SelectableMealRow[], clearSelection: () => void }) {
     const commonT = useTranslations("Common")
     // Determine the consensus status
     const allPublic = selectedRows.every(r => r.is_public === true || r.is_public === 1)
@@ -129,7 +158,7 @@ export function MealTableWrapper({ initialMeals, userProfile }: MealTableWrapper
     const [drawerOpen, setDrawerOpen] = React.useState(false)
     const [selectedMeal, setSelectedMeal] = React.useState<Meal | null>(null)
     const [deleteModalOpen, setDeleteModalOpen] = React.useState(false)
-    const [rowsToDelete, setRowsToDelete] = React.useState<any[]>([])
+    const [rowsToDelete, setRowsToDelete] = React.useState<SelectableMealRow[]>([])
     const [clearSelectionRef, setClearSelectionRef] = React.useState<{ fn: () => void } | null>(null)
     const [searchQuery, setSearchQuery] = useQueryState("search", { defaultValue: "" })
     const [idParam, setIdParam] = useQueryState("id")
@@ -157,24 +186,25 @@ export function MealTableWrapper({ initialMeals, userProfile }: MealTableWrapper
                 preparationMode: m.preparation_mode || [],
                 satiety: Number(m.satiety || 0),
                 restrictions: m.restrictions || [],
+                countryIds: m.country_ids || [],
                 publishOn: m.publish_on,
                 images: m.images || [],
                 isPublic: m.is_public || false,
                 options: [], // Options are fetched on demand in the drawer
             } as Meal,
             nameLocale: m.name?.[locale] || m.name?.en || "Unnamed Meal",
-            image: m.images?.find((img: any) => img.isDefault)?.url || m.images?.[0]?.url || null,
+            image: m.images?.find((img) => img.isDefault)?.url || m.images?.[0]?.url || null,
         }))
     }, [initialMeals, locale])
 
 
-    const columns = React.useMemo<ColumnDef<any>[]>(() => [
+    const columns = React.useMemo<ColumnDef<MealTableRow>[]>(() => [
         {
             accessorKey: "nameLocale",
             header: ({ column }) => <SortableHeader column={column} title={t("table.name")} />,
             cell: ({ row }) => {
                 const meal = row.original.mappedMeal
-                const defaultImage = meal.images?.find((img: any) => img.isDefault) || meal.images?.[0]
+                const defaultImage = meal.images?.find((img) => img.isDefault) || meal.images?.[0]
                 const name = row.getValue("nameLocale") as string
 
                 return (
@@ -338,7 +368,7 @@ export function MealTableWrapper({ initialMeals, userProfile }: MealTableWrapper
         },
     ], [locale, t, allTags])
 
-    const handlePreferencesChange = React.useCallback((newPrefs: any) => {
+    const handlePreferencesChange = React.useCallback((newPrefs: Record<string, unknown>) => {
         if (!userProfile?.id) return
         const fullPrefs = {
             ...userProfile.preferences,
@@ -384,7 +414,7 @@ export function MealTableWrapper({ initialMeals, userProfile }: MealTableWrapper
                 onGlobalFilterChange={setSearchQuery}
                 className="flex-1"
                 enableRowSelection={true}
-                initialPreferences={userProfile?.preferences?.mealTable}
+                initialPreferences={(userProfile?.preferences as { mealTable?: { columnVisibility?: Record<string, boolean>; columnSizing?: Record<string, number> } } | undefined)?.mealTable}
                 onPreferencesChange={handlePreferencesChange}
                 onRowClick={(row) => {
                     setSelectedMeal(row.mappedMeal)

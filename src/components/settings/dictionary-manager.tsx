@@ -19,7 +19,9 @@ import {
     BrainCircuit,
     Store,
     MoreHorizontal,
-    Loader2
+    Loader2,
+    Ruler,
+    Globe
 } from "lucide-react"
 import { Card, CardDescription, CardHeader, CardTitle } from "@/components/ui/card"
 import { Button } from "@/components/ui/button"
@@ -51,11 +53,13 @@ import { toast } from "sonner"
 import { Badge } from "@/components/ui/badge"
 import { Link } from "@/i18n/routing"
 
-const DICTIONARIES: { id: TagTable | 'plans_logic'; label: string; description: string; icon: any }[] = [
+const DICTIONARIES: { id: TagTable | 'plans_logic'; label: string; description: string; icon: React.ComponentType<{ className?: string }> }[] = [
     // Product & Classification
     { id: 'brands', label: 'Brands', description: 'Manufacturer and label identities.', icon: Store },
     { id: 'dietary_tags', label: 'Dietary tags', description: 'Health requirements and filters.', icon: Leaf },
     { id: 'product_groups', label: 'Groups', description: 'Sales and inventory groupings.', icon: Boxes },
+    { id: 'measurement_units', label: 'Units', description: 'Measurement base units for products.', icon: Ruler },
+    { id: 'countries', label: 'Countries', description: 'Market availability by country.', icon: Globe },
     { id: 'tags', label: 'Tags', description: 'Global markers for entity classification.', icon: TagIcon },
 
     // Meals & Plans
@@ -163,7 +167,8 @@ export function DictionaryManager() {
                 id: "displayName",
                 header: ({ column }) => <SortableHeader column={column} title="Name" />,
                 cell: ({ row }) => {
-                    const name = (row.original.name as any)?.[locale] || (row.original.name as any)?.en || Object.values(row.original.name || {})[0] || "Untitled"
+                    const localizedName = row.original.name as Record<string, string> | undefined
+                    const name = localizedName?.[locale] || localizedName?.en || Object.values(row.original.name || {})[0] || "Untitled"
 
                     if (selectedDict === 'brands') {
                         return (
@@ -188,7 +193,10 @@ export function DictionaryManager() {
                         </span>
                     )
                 },
-                accessorFn: (row) => (row.name as any)?.[locale] || (row.name as any)?.en || Object.values(row.name || {})[0] || "",
+                accessorFn: (row) => {
+                    const localizedName = row.name as Record<string, string> | undefined
+                    return localizedName?.[locale] || localizedName?.en || Object.values(row.name || {})[0] || ""
+                },
             },
             {
                 id: "languages",

@@ -3,6 +3,7 @@ import { PainPoints } from "@/components/landing/pain-points"
 import { SolutionFeatures } from "@/components/landing/solution-features"
 import { PricingTable } from "@/components/landing/pricing-table"
 import { FaqSection } from "@/components/landing/faq-section"
+import Link from "next/link"
 
 export default function LandingPage() {
     return (
@@ -15,9 +16,9 @@ export default function LandingPage() {
                     <span className="font-bold text-xl tracking-tight ml-2">Vitaflix</span>
                 </div>
                 <div>
-                    <a href="/login" className="text-sm font-semibold text-muted-foreground hover:text-foreground transition-colors mr-1">
+                    <Link href="/login" className="text-sm font-semibold text-muted-foreground hover:text-foreground transition-colors mr-1">
                         Login Admin
-                    </a>
+                    </Link>
                 </div>
             </header>
 
