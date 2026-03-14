@@ -41,7 +41,9 @@
         "noProductGroupsFound": "Nenhum grupo encontrado.",
         "updatedSuccessfully": "Atualizado com sucesso",
         "createdSuccessfully": "Criado com sucesso",
+        "deletedSuccessfully": "Eliminado com sucesso",
         "errorSaving": "Erro ao salvar",
+        "deleteConfirmationLabel": "Tem a certeza que deseja remover este item? Esta ação não pode ser desfeita.",
         "noTagsSelected": "Nenhuma etiqueta selecionada",
         "pleaseCheckForm": "Por favor, verifique o formulário para erros",
         "invalidFormat": "Por favor, verifique esta secção para encontrar erros.",
@@ -343,6 +345,9 @@
         "created": "Criado",
         "pipelineStep": "Etapa do Funil",
         "newLead": "Novo Lead",
-        "dropLeadsHere": "Arraste leads aqui"
+        "dropLeadsHere": "Arraste leads aqui",
+        "pipelineFilter": "Filtro de Funil",
+        "activeFunnels": "Funis Ativos",
+        "allFunnels": "Todos os Funis"
     }
 }

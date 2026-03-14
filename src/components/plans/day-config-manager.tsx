@@ -10,9 +10,7 @@ import { type MealDayConfig } from "@/shared-schemas/plan"
 import { toast } from "sonner"
 import { DictionarySelector } from "@/components/shared/dictionary-selector"
 
-interface DayConfigManagerProps { }
-
-export function DayConfigManager({ }: DayConfigManagerProps = {}) {
+export function DayConfigManager() {
     const t = useTranslations("Plans")
     const tc = useTranslations("Common")
     const [selectedCount, setSelectedCount] = useState("3")
@@ -168,4 +166,3 @@ export function DayConfigManager({ }: DayConfigManagerProps = {}) {
         </Card>
     )
 }
-

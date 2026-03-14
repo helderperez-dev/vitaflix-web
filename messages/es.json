@@ -344,6 +344,9 @@
         "created": "Creado",
         "pipelineStep": "Etapa del Embudo",
         "newLead": "Nuevo Lead",
-        "dropLeadsHere": "Arrastra leads aquí"
+        "dropLeadsHere": "Arrastra leads aquí",
+        "allFunnels": "Todos los Embudos",
+        "pipelineFilter": "Filtro de Embudo",
+        "activeFunnels": "Embudos Activos"
     }
 }

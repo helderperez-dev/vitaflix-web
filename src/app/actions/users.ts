@@ -45,6 +45,7 @@ export async function upsertUser(data: UserProfile) {
             locale: finalLocale,
             phone: data.phone,
             push_token: data.pushToken,
+            country_id: data.countryId || null,
             preferences: data.preferences || {},
             updated_at: new Date().toISOString()
         })

@@ -17,6 +17,7 @@ export const userProfileSchema = z.object({
     avatarUrl: z.string().url().optional().nullable(),
     phone: z.string().optional().nullable(),
     pushToken: z.string().optional().nullable(),
+    countryId: z.string().uuid().optional().nullable(),
     preferences: z.record(z.string(), z.any()).default({}).optional().nullable(),
     createdAt: z.string().optional(),
     updatedAt: z.string().optional(),

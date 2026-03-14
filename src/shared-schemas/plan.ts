@@ -12,6 +12,7 @@ export type MealDayConfig = z.infer<typeof mealDayConfigSchema>;
 export const mealPlanSchema = z.object({
     id: z.string().uuid().optional(),
     userId: z.string().uuid(),
+    countryId: z.string().uuid().optional().nullable(),
     name: z.string().min(1, "Plans.errorNameRequired"),
     dailyMealsCount: z.number().int().min(1).max(10),
     selectedMeals: z.record(z.string(), z.string().uuid()).default({}), // slotIndex -> mealOptionId

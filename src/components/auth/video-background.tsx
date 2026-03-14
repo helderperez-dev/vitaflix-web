@@ -4,14 +4,10 @@ import { useEffect, useState } from "react"
 import { motion, AnimatePresence } from "framer-motion"
 
 export function VideoBackground() {
-    const [videoIndex, setVideoIndex] = useState(0)
     const videos = ["1.mp4", "2.mp4", "3.mp4", "4.mp4", "5.mp4"]
+    const [videoIndex, setVideoIndex] = useState(() => Math.floor(Math.random() * videos.length))
 
     useEffect(() => {
-        // Select an initial random video, then cycle
-        const initialIndex = Math.floor(Math.random() * videos.length)
-        setVideoIndex(initialIndex)
-
         const timer = setInterval(() => {
             setVideoIndex((current) => (current + 1) % videos.length)
         }, 15000) // Cycle videos every 15 seconds

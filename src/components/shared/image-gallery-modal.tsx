@@ -23,6 +23,16 @@ export function ImageGalleryModal({
     const [currentIndex, setCurrentIndex] = React.useState(initialIndex)
     const [direction, setDirection] = React.useState(0)
 
+    const handleNext = React.useCallback(() => {
+        setDirection(1)
+        setCurrentIndex((prev) => (prev + 1) % images.length)
+    }, [images.length])
+
+    const handlePrev = React.useCallback(() => {
+        setDirection(-1)
+        setCurrentIndex((prev) => (prev - 1 + images.length) % images.length)
+    }, [images.length])
+
     React.useEffect(() => {
         const handleKeyDown = (e: KeyboardEvent) => {
             if (!open) return
@@ -42,17 +52,7 @@ export function ImageGalleryModal({
             window.removeEventListener("keydown", handleKeyDown)
             document.body.style.overflow = "unset"
         }
-    }, [open, initialIndex])
-
-    const handleNext = () => {
-        setDirection(1)
-        setCurrentIndex((prev) => (prev + 1) % images.length)
-    }
-
-    const handlePrev = () => {
-        setDirection(-1)
-        setCurrentIndex((prev) => (prev - 1 + images.length) % images.length)
-    }
+    }, [open, initialIndex, handleNext, handlePrev, onOpenChange])
 
     const variants = {
         enter: (direction: number) => ({

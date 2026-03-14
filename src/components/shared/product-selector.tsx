@@ -145,6 +145,8 @@ export function ProductSelector({ onSelect, onMultiSelect, multiSelect, placehol
                         <CommandGroup className="px-1.5 py-2">
                             {products.map((product) => {
                                 const isSelected = selectedProducts.some(p => p.id === product.id)
+                                const productUnit = product.measurement_unit?.slug || product.measurement_unit?.name?.[locale] || product.measurement_unit?.name?.en || "g"
+                                const referenceAmount = product.reference_amount || 100
                                 return (
                                     <CommandItem
                                         key={product.id}
@@ -179,7 +181,7 @@ export function ProductSelector({ onSelect, onMultiSelect, multiSelect, placehol
                                                 {product.name?.[locale] || product.name?.en || product.name?.["pt-br"] || product.name?.["pt-pt"] || t("unnamedProduct")}
                                             </span>
                                             <span className="text-[10px] text-muted-foreground/50 font-medium tracking-tight mt-0.5">
-                                                {product.kcal} kcal | P: {product.protein}g | C: {product.carbs}g | F: {product.fat}g
+                                                {product.kcal} kcal/{`${referenceAmount}${productUnit}`} | P: {product.protein}g | C: {product.carbs}g | F: {product.fat}g
                                             </span>
                                         </div>
                                         <div className="ml-auto transition-all">

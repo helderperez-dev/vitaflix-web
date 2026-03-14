@@ -306,7 +306,7 @@ export function NotificationDrawer({ open, onOpenChange, mode, groups, users, ed
         const values: any = activeForm.getValues()
 
         let name = ""
-        let isUpdating = !!selectedTemplateId
+        const isUpdating = !!selectedTemplateId
 
         if (isUpdating) {
             const existing = templates.find(t => t.id === selectedTemplateId)
@@ -1153,7 +1153,7 @@ export function NotificationDrawer({ open, onOpenChange, mode, groups, users, ed
                                     </div>
                                 ) : (
                                     <p className="text-sm leading-relaxed text-muted-foreground/80 font-medium bg-muted/5 p-4 rounded-lg border border-border/40 italic">
-                                        "{editingData?.body}"
+                                        “{editingData?.body}”
                                     </p>
                                 )}
 

@@ -31,6 +31,14 @@ interface MealOptionFormProps {
     onCancel: () => void
 }
 
+function getProductUnit(product: any) {
+    return product?.measurement_unit?.slug || product?.measurement_unit?.name?.en || product?.measurement_unit?.name?.["pt-br"] || product?.measurement_unit?.name?.["pt-pt"] || "g"
+}
+
+function getProductReferenceAmount(product: any) {
+    return Number(product?.reference_amount) > 0 ? Number(product.reference_amount) : 100
+}
+
 export function MealOptionForm({
     initialData,
     mealId,
@@ -74,7 +82,7 @@ export function MealOptionForm({
     })
 
     // Local state for product names/images to resolve IDs
-    const [productMap, setProductMap] = React.useState<Record<string, { name: any; image?: any; kcal: number; protein: number; carbs: number; fat: number }>>({})
+    const [productMap, setProductMap] = React.useState<Record<string, { name: any; image?: any; kcal: number; protein: number; carbs: number; fat: number; unit: string; referenceAmount: number }>>({})
     const [isLoadingProducts, setIsLoadingProducts] = React.useState(false)
 
     const fetchProductDetails = React.useCallback(async (ids: string[]) => {
@@ -95,7 +103,9 @@ export function MealOptionForm({
                     kcal: p.kcal || 0,
                     protein: p.protein || 0,
                     carbs: p.carbs || 0,
-                    fat: p.fat || 0
+                    fat: p.fat || 0,
+                    unit: getProductUnit(p),
+                    referenceAmount: getProductReferenceAmount(p)
                 }
             })
             setProductMap(newMap)
@@ -129,11 +139,26 @@ export function MealOptionForm({
             const product = productMap[ing.productId]
             if (product) {
                 const qty = Number(ing.quantity) || 0
-                totalKcal += (Number(product.kcal) || 0) * qty / 100
-                totalP += (Number(product.protein) || 0) * qty / 100
-                totalC += (Number(product.carbs) || 0) * qty / 100
-                totalF += (Number(product.fat) || 0) * qty / 100
+                const referenceAmount = Number(product.referenceAmount) || 100
+                totalKcal += (Number(product.kcal) || 0) * qty / referenceAmount
+                totalP += (Number(product.protein) || 0) * qty / referenceAmount
+                totalC += (Number(product.carbs) || 0) * qty / referenceAmount
+                totalF += (Number(product.fat) || 0) * qty / referenceAmount
             }
+        })
+
+        watchedIngredients.forEach((ing, index) => {
+            const ingredientProduct = productMap[ing.productId]
+            if (ingredientProduct && ing.unit !== ingredientProduct.unit) {
+                form.setValue(`ingredients.${index}.unit`, ingredientProduct.unit)
+            }
+
+            ;(ing.substitutions || []).forEach((sub, subIndex) => {
+                const substitutionProduct = productMap[sub.productId]
+                if (substitutionProduct && sub.unit !== substitutionProduct.unit) {
+                    form.setValue(`ingredients.${index}.substitutions.${subIndex}.unit`, substitutionProduct.unit)
+                }
+            })
         })
 
         form.setValue("kcal", Math.round(totalKcal))
@@ -179,8 +204,8 @@ export function MealOptionForm({
                                     onSelect={(product) => {
                                         appendIngredient({
                                             productId: product.id,
-                                            quantity: 100,
-                                            unit: "g",
+                                            quantity: getProductReferenceAmount(product),
+                                            unit: getProductUnit(product),
                                             substitutions: []
                                         })
                                         // Cache product name
@@ -192,7 +217,9 @@ export function MealOptionForm({
                                                 kcal: product.kcal || 0,
                                                 protein: product.protein || 0,
                                                 carbs: product.carbs || 0,
-                                                fat: product.fat || 0
+                                                fat: product.fat || 0,
+                                                unit: getProductUnit(product),
+                                                referenceAmount: getProductReferenceAmount(product)
                                             }
                                         }))
                                     }}
@@ -229,7 +256,9 @@ export function MealOptionForm({
                                                         kcal: p.kcal || 0,
                                                         protein: p.protein || 0,
                                                         carbs: p.carbs || 0,
-                                                        fat: p.fat || 0
+                                                        fat: p.fat || 0,
+                                                        unit: getProductUnit(p),
+                                                        referenceAmount: getProductReferenceAmount(p)
                                                     }
                                                 }))}
                                             />
@@ -433,21 +462,26 @@ function IngredientItem({ index, form, productMap, onRemove, onProductCached }: 
     const productName = product?.name?.[locale] || product?.name?.en || product?.name?.["pt-br"] || product?.name?.["pt-pt"] || t("unnamedProduct")
 
     const mainQuantity = Number(form.watch(`ingredients.${index}.quantity`)) || 0
+    const mainUnit = form.watch(`ingredients.${index}.unit`)
 
     // Auto-calculate substitution quantities to match main ingredient kcal
     const watchedSubstitutions = form.watch(`ingredients.${index}.substitutions`) || []
     React.useEffect(() => {
         if (!product || product.kcal === undefined) return;
 
-        const targetKcal = (Number(product.kcal) * mainQuantity) / 100;
+        const mainReferenceAmount = Number(product.referenceAmount) || 100;
+        const targetKcal = (Number(product.kcal) * mainQuantity) / mainReferenceAmount;
 
         watchedSubstitutions.forEach((sub: any, subIndex: number) => {
             const subProduct = productMap[sub.productId];
             if (subProduct && subProduct.kcal && subProduct.kcal > 0) {
-                const calculatedQty = Math.round((targetKcal * 100) / Number(subProduct.kcal));
-                // Only update if significantly different to avoid feedback loops or minor decimals
+                const subReferenceAmount = Number(subProduct.referenceAmount) || 100;
+                const calculatedQty = Math.round((targetKcal * subReferenceAmount) / Number(subProduct.kcal));
                 if (Math.abs(calculatedQty - (Number(sub.quantity) || 0)) > 0.5) {
                     form.setValue(`ingredients.${index}.substitutions.${subIndex}.quantity`, calculatedQty);
+                }
+                if (sub.unit !== subProduct.unit) {
+                    form.setValue(`ingredients.${index}.substitutions.${subIndex}.unit`, subProduct.unit);
                 }
             }
         });
@@ -496,20 +530,20 @@ function IngredientItem({ index, form, productMap, onRemove, onProductCached }: 
             {product && (
                 <div className="px-4 py-2 bg-primary/5 flex items-center gap-6 border-b border-border/20">
                     <div className="flex items-center gap-1.5 font-semibold text-[10px] text-primary/80">
-                        <span>{Math.round(((Number(product.kcal) || 0) * (Number(form.watch(`ingredients.${index}.quantity`)) || 0)) / 100)} kcal</span>
+                        <span>{Math.round(((Number(product.kcal) || 0) * (Number(form.watch(`ingredients.${index}.quantity`)) || 0)) / (Number(product.referenceAmount) || 100))} kcal</span>
                     </div>
                     <div className="flex items-center gap-4 text-[9px] font-medium text-muted-foreground/60">
                         <div className="flex items-center gap-1">
                             <span className="opacity-50">Prot:</span>
-                            <span className="text-secondary dark:text-foreground/80">{(((Number(product.protein) || 0) * (Number(form.watch(`ingredients.${index}.quantity`)) || 0)) / 100).toFixed(1)}g</span>
+                            <span className="text-secondary dark:text-foreground/80">{(((Number(product.protein) || 0) * (Number(form.watch(`ingredients.${index}.quantity`)) || 0)) / (Number(product.referenceAmount) || 100)).toFixed(1)}g</span>
                         </div>
                         <div className="flex items-center gap-1">
                             <span className="opacity-50">Carb:</span>
-                            <span className="text-secondary dark:text-foreground/80">{(((Number(product.carbs) || 0) * (Number(form.watch(`ingredients.${index}.quantity`)) || 0)) / 100).toFixed(1)}g</span>
+                            <span className="text-secondary dark:text-foreground/80">{(((Number(product.carbs) || 0) * (Number(form.watch(`ingredients.${index}.quantity`)) || 0)) / (Number(product.referenceAmount) || 100)).toFixed(1)}g</span>
                         </div>
                         <div className="flex items-center gap-1">
                             <span className="opacity-50">Fat:</span>
-                            <span className="text-secondary dark:text-foreground/80">{(((Number(product.fat) || 0) * (Number(form.watch(`ingredients.${index}.quantity`)) || 0)) / 100).toFixed(1)}g</span>
+                            <span className="text-secondary dark:text-foreground/80">{(((Number(product.fat) || 0) * (Number(form.watch(`ingredients.${index}.quantity`)) || 0)) / (Number(product.referenceAmount) || 100)).toFixed(1)}g</span>
                         </div>
                     </div>
                 </div>
@@ -527,8 +561,8 @@ function IngredientItem({ index, form, productMap, onRemove, onProductCached }: 
                             products.forEach(p => {
                                 appendSub({
                                     productId: p.id,
-                                    quantity: 0, // Will be auto-calculated by the useEffect
-                                    unit: form.getValues(`ingredients.${index}.unit`)
+                                    quantity: 0,
+                                    unit: getProductUnit(p)
                                 })
                                 onProductCached(p)
                             })
@@ -547,6 +581,7 @@ function IngredientItem({ index, form, productMap, onRemove, onProductCached }: 
                             const subProduct = productMap[sub.productId]
                             const subName = subProduct?.name?.[locale] || subProduct?.name?.en || subProduct?.name?.["pt-br"] || subProduct?.name?.["pt-pt"] || t("unnamedProduct")
                             const subQuantity = form.watch(`ingredients.${index}.substitutions.${subIndex}.quantity`)
+                            const subUnit = form.watch(`ingredients.${index}.substitutions.${subIndex}.unit`) || subProduct?.unit || mainUnit || "g"
 
                             return (
                                 <div key={sub.id} className="flex flex-col rounded-lg bg-muted/10 border border-border/20 transition-colors overflow-hidden">
@@ -564,7 +599,7 @@ function IngredientItem({ index, form, productMap, onRemove, onProductCached }: 
                                         <div className="w-40 shrink-0 flex items-center justify-end pr-4">
                                             <div className="flex items-center gap-1.5 px-3 py-1.5 rounded-lg bg-primary/10 border border-primary/20">
                                                 <span className="text-[11px] font-bold text-primary">{subQuantity}</span>
-                                                <span className="text-[9px] font-semibold text-primary/40">g</span>
+                                                <span className="text-[9px] font-semibold text-primary/40">{subUnit}</span>
                                             </div>
                                         </div>
                                         <Button
@@ -579,11 +614,11 @@ function IngredientItem({ index, form, productMap, onRemove, onProductCached }: 
                                     </div>
                                     {subProduct && (
                                         <div className="px-3 py-1 bg-muted/20 border-t border-border/10 flex items-center gap-4">
-                                            <span className="text-[9px] font-bold text-muted-foreground/60">{Math.round(((Number(subProduct.kcal) || 0) * (Number(subQuantity) || 0)) / 100)} kcal</span>
+                                            <span className="text-[9px] font-bold text-muted-foreground/60">{Math.round(((Number(subProduct.kcal) || 0) * (Number(subQuantity) || 0)) / (Number(subProduct.referenceAmount) || 100))} kcal</span>
                                             <div className="flex items-center gap-3 text-[9px] text-muted-foreground/40 font-medium">
-                                                <span>P: {(((Number(subProduct.protein) || 0) * (Number(subQuantity) || 0)) / 100).toFixed(1)}g</span>
-                                                <span>C: {(((Number(subProduct.carbs) || 0) * (Number(subQuantity) || 0)) / 100).toFixed(1)}g</span>
-                                                <span>F: {(((Number(subProduct.fat) || 0) * (Number(subQuantity) || 0)) / 100).toFixed(1)}g</span>
+                                                <span>P: {(((Number(subProduct.protein) || 0) * (Number(subQuantity) || 0)) / (Number(subProduct.referenceAmount) || 100)).toFixed(1)}g</span>
+                                                <span>C: {(((Number(subProduct.carbs) || 0) * (Number(subQuantity) || 0)) / (Number(subProduct.referenceAmount) || 100)).toFixed(1)}g</span>
+                                                <span>F: {(((Number(subProduct.fat) || 0) * (Number(subQuantity) || 0)) / (Number(subProduct.referenceAmount) || 100)).toFixed(1)}g</span>
                                             </div>
                                         </div>
                                     )}

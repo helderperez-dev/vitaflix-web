@@ -64,6 +64,18 @@ export async function upsertMeal(data: Meal) {
         if (tagInsertError) return { error: `Restrictions error: ${tagInsertError.message}` }
     }
 
+    const { error: countryDeleteError } = await supabase.from("meal_countries").delete().eq("meal_id", mealId)
+    if (countryDeleteError) return { error: `Countries error: ${countryDeleteError.message}` }
+
+    if (data.countryIds && data.countryIds.length > 0) {
+        const countryLinks = data.countryIds.map(countryId => ({
+            meal_id: mealId,
+            country_id: countryId
+        }))
+        const { error: countryInsertError } = await supabase.from("meal_countries").insert(countryLinks)
+        if (countryInsertError) return { error: `Countries error: ${countryInsertError.message}` }
+    }
+
     // Sync Meal Options
     if (data.options && data.options.length > 0) {
         // Remove options that are no longer in the list
@@ -242,7 +254,7 @@ export async function getMealCategories() {
     return data
 }
 
-export async function getMealsByCategory(categoryId: string) {
+export async function getMealsByCategory(categoryId: string, countryId?: string) {
     const supabase = await createClient()
 
     // Use a direct join: get meals that have a link to this category
@@ -264,17 +276,33 @@ export async function getMealsByCategory(categoryId: string) {
         return []
     }
 
-    // Unwrap the nested meal object
-    return (data || [])
-        .map((row: any) => row.meal)
-        .filter(Boolean)
+    const meals = (data || []).flatMap((row) => {
+        if (Array.isArray(row.meal)) {
+            return row.meal
+        }
+        return row.meal ? [row.meal] : []
+    })
+
+    if (!countryId) {
+        return meals
+    }
+
+    const [{ data: restrictedLinks }, { data: countryLinks }] = await Promise.all([
+        supabase.from("meal_countries").select("meal_id"),
+        supabase.from("meal_countries").select("meal_id").eq("country_id", countryId),
+    ])
+
+    const restrictedIds = new Set((restrictedLinks || []).map(link => link.meal_id))
+    const allowedIds = new Set((countryLinks || []).map(link => link.meal_id))
+
+    return meals.filter((meal) => !restrictedIds.has(meal.id) || allowedIds.has(meal.id))
 }
-export async function getMealsByIds(ids: string[]) {
+export async function getMealsByIds(ids: string[], countryId?: string) {
     const supabase = await createClient()
 
     const { data, error } = await supabase
         .from('meals')
-        .select('id, name, images, cook_time, options:meal_options(*)')
+        .select('id, name, images, cook_time, options:meal_options(*), meal_countries(country_id)')
         .in('id', ids)
 
     if (error) {
@@ -282,15 +310,27 @@ export async function getMealsByIds(ids: string[]) {
         return []
     }
 
-    return data || []
+    if (!countryId) {
+        return data || []
+    }
+
+    const [{ data: restrictedLinks }, { data: countryLinks }] = await Promise.all([
+        supabase.from("meal_countries").select("meal_id"),
+        supabase.from("meal_countries").select("meal_id").eq("country_id", countryId),
+    ])
+
+    const restrictedIds = new Set((restrictedLinks || []).map(link => link.meal_id))
+    const allowedIds = new Set((countryLinks || []).map(link => link.meal_id))
+
+    return (data || []).filter((meal) => !restrictedIds.has(meal.id) || allowedIds.has(meal.id))
 }
 
-export async function getMealOptionsByIds(ids: string[]) {
+export async function getMealOptionsByIds(ids: string[], countryId?: string) {
     const supabase = await createClient()
 
     const { data: options, error } = await supabase
         .from('meal_options')
-        .select('*, meal:meals(id, name, images, cook_time, options:meal_options(*))')
+        .select('*, meal:meals(id, name, images, cook_time, options:meal_options(*), meal_countries(country_id))')
         .in('id', ids)
 
     if (error) {
@@ -298,7 +338,19 @@ export async function getMealOptionsByIds(ids: string[]) {
         return []
     }
 
-    return (options || []).map(opt => ({
+    const rawOptions = options || []
+
+    const filteredOptions = !countryId
+        ? rawOptions
+        : rawOptions.filter((opt) => {
+            const links = opt.meal?.meal_countries || []
+            if (!links.length) {
+                return true
+            }
+            return links.some((link: { country_id: string }) => link.country_id === countryId)
+        })
+
+    return filteredOptions.map(opt => ({
         ...opt,
         associatedMealId: opt.associated_meal_id,
         isDefault: opt.is_default || false,

@@ -10,7 +10,7 @@ export default async function ProductsPage() {
     // Fetch products
     const { data: products } = await supabase
         .from("products")
-        .select("*, product_tags(tag_id, tags(*)), product_brands(brand_id, brands(*)), product_group_links(group_id, product_groups(*))")
+        .select("*, measurement_unit:measurement_units(id, name, slug), product_tags(tag_id, tags(*)), product_brands(brand_id, brands(*)), product_group_links(group_id, product_groups(*)), product_countries(country_id, countries(*))")
         .order("name->>en", { ascending: true })
 
     // Fetch user profile for preferences
@@ -22,4 +22,3 @@ export default async function ProductsPage() {
 
     return <ProductTableWrapper initialProducts={products || []} userProfile={userProfile} />
 }
-

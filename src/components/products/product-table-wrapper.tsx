@@ -32,11 +32,44 @@ import type { ColumnDef } from "@tanstack/react-table"
 import { MediaDisplay } from "@/components/shared/media-display"
 
 interface ProductTableWrapperProps {
-    initialProducts: any[]
-    userProfile?: any
+    initialProducts: ProductTableData[]
+    userProfile?: {
+        id?: string
+        preferences?: Record<string, unknown>
+    } | null
 }
 
-function BulkStatusActions({ selectedRows, clearSelection }: { selectedRows: any[], clearSelection: () => void }) {
+type LocalizedText = Record<string, string>
+
+type ProductTableData = {
+    id: string
+    name?: LocalizedText
+    kcal: number
+    protein?: number | null
+    carbs?: number | null
+    fat?: number | null
+    unit_id?: string | null
+    reference_amount?: number | null
+    images?: { url: string; isDefault?: boolean }[]
+    is_public?: boolean | null
+    measurement_unit?: { slug?: string | null; name?: LocalizedText } | null
+    product_tags?: { tag_id: string; tags?: { name?: LocalizedText } | { name?: LocalizedText }[] }[]
+    product_brands?: { brand_id: string; brands?: { name?: LocalizedText; logo_url?: string } | { name?: LocalizedText; logo_url?: string }[] }[]
+    product_group_links?: { group_id: string }[]
+    product_countries?: { country_id: string; countries?: { name?: LocalizedText } | { name?: LocalizedText }[] }[]
+}
+
+type ProductTableRow = ProductTableData & {
+    mappedProduct: Product
+    nameLocale: string
+}
+
+type SelectableRow = {
+    id: string
+    is_public?: boolean | number | null
+}
+
+function BulkStatusActions({ selectedRows, clearSelection }: { selectedRows: SelectableRow[], clearSelection: () => void }) {
     // Determine the consensus status
     const allPublic = selectedRows.every(r => r.is_public === true || r.is_public === 1)
 
@@ -111,7 +144,7 @@ export function ProductTableWrapper({ initialProducts, userProfile }: ProductTab
     const [drawerOpen, setDrawerOpen] = React.useState(false)
     const [selectedProduct, setSelectedProduct] = React.useState<Product | null>(null)
     const [deleteModalOpen, setDeleteModalOpen] = React.useState(false)
-    const [rowsToDelete, setRowsToDelete] = React.useState<any[]>([])
+    const [rowsToDelete, setRowsToDelete] = React.useState<SelectableRow[]>([])
     const [clearSelectionRef, setClearSelectionRef] = React.useState<{ fn: () => void } | null>(null)
     const [searchQuery, setSearchQuery] = useQueryState("search", { defaultValue: "" })
     const [idParam, setIdParam] = useQueryState("id")
@@ -129,9 +162,12 @@ export function ProductTableWrapper({ initialProducts, userProfile }: ProductTab
                 protein: p.protein,
                 carbs: p.carbs,
                 fat: p.fat,
-                tagIds: p.product_tags?.map((pt: any) => pt.tag_id) || [],
-                brandIds: p.product_brands?.map((pb: any) => pb.brand_id) || [],
-                groupIds: p.product_group_links?.map((pg: any) => pg.group_id) || [],
+                tagIds: p.product_tags?.map((pt) => pt.tag_id) || [],
+                brandIds: p.product_brands?.map((pb) => pb.brand_id) || [],
+                groupIds: p.product_group_links?.map((pg) => pg.group_id) || [],
+                countryIds: p.product_countries?.map((pc) => pc.country_id) || [],
+                unitId: p.unit_id || null,
+                referenceAmount: p.reference_amount || 100,
                 images: p.images || [],
                 isPublic: p.is_public,
             } as Product,
@@ -139,13 +175,13 @@ export function ProductTableWrapper({ initialProducts, userProfile }: ProductTab
         }))
     }, [initialProducts, locale])
 
-    const columns = React.useMemo<ColumnDef<any>[]>(() => [
+    const columns = React.useMemo<ColumnDef<ProductTableRow>[]>(() => [
         {
             accessorKey: "nameLocale",
             header: ({ column }) => <SortableHeader column={column} title={t("table.name")} />,
             cell: ({ row }) => {
                 const product = row.original.mappedProduct
-                const defaultImage = product.images?.find((img: any) => img.isDefault) || product.images?.[0]
+                const defaultImage = product.images?.find((img) => img.isDefault) || product.images?.[0]
                 return (
                     <div className="flex items-center gap-3">
                         <motion.div
@@ -178,7 +214,7 @@ export function ProductTableWrapper({ initialProducts, userProfile }: ProductTab
             id: "brand",
             header: ({ column }) => <SortableHeader column={column} title="Brand" />,
             sortingFn: (rowA, rowB) => {
-                const getBrandName = (pb: any) => {
+                const getBrandName = (pb: NonNullable<ProductTableData["product_brands"]>[number] | undefined) => {
                     const brandData = Array.isArray(pb?.brands) ? pb.brands[0] : pb?.brands;
                     return (brandData?.name?.[locale] || brandData?.name?.en || "").toLowerCase();
                 }
@@ -190,7 +226,7 @@ export function ProductTableWrapper({ initialProducts, userProfile }: ProductTab
                 const brands = row.original.product_brands || []
                 return (
                     <div className="flex flex-col gap-1">
-                        {brands.map((pb: any) => {
+                        {brands.map((pb) => {
                             const brandData = Array.isArray(pb.brands) ? pb.brands[0] : pb.brands;
                             if (!brandData) return null;
                             return (
@@ -211,6 +247,23 @@ export function ProductTableWrapper({ initialProducts, userProfile }: ProductTab
                 )
             },
             size: 150,
+        },
+        {
+            id: "unit",
+            header: ({ column }) => <SortableHeader column={column} title="Unit" />,
+            accessorFn: (row) => row.measurement_unit?.slug || row.measurement_unit?.name?.[locale] || row.measurement_unit?.name?.en || "",
+            cell: ({ row }) => {
+                const unit = row.original.measurement_unit
+                const unitLabel = unit?.slug || unit?.name?.[locale] || unit?.name?.en
+                return unitLabel ? (
+                    <Badge variant="outline" className="text-[10px] h-5 px-1.5 font-semibold uppercase">
+                        {unitLabel}
+                    </Badge>
+                ) : (
+                    <span className="text-xs text-muted-foreground italic">None</span>
+                )
+            },
+            size: 90,
         },
         {
             accessorKey: "kcal",
@@ -237,6 +290,32 @@ export function ProductTableWrapper({ initialProducts, userProfile }: ProductTab
             size: 80
         },
         {
+            id: "countries",
+            header: ({ column }) => <SortableHeader column={column} title="Countries" />,
+            accessorFn: (row) => row.product_countries?.length || 0,
+            cell: ({ row }) => {
+                const countryLinks = row.original.product_countries || []
+                if (countryLinks.length === 0) {
+                    return <span className="text-xs text-muted-foreground italic">Global</span>
+                }
+                return (
+                    <div className="flex flex-wrap gap-1">
+                        {countryLinks.map((link) => {
+                            const countryData = Array.isArray(link.countries) ? link.countries[0] : link.countries
+                            const label = countryData?.name?.[locale] || countryData?.name?.en
+                            if (!label) return null
+                            return (
+                                <Badge key={link.country_id} variant="secondary" className="text-[10px] h-5 px-1.5 font-semibold">
+                                    {label}
+                                </Badge>
+                            )
+                        })}
+                    </div>
+                )
+            },
+            size: 180,
+        },
+        {
             id: "tags",
             header: ({ column }) => <SortableHeader column={column} title="Tags" />,
             sortingFn: (rowA, rowB) => {
@@ -248,7 +327,7 @@ export function ProductTableWrapper({ initialProducts, userProfile }: ProductTab
                 const tags = row.original.product_tags || []
                 return (
                     <div className="flex flex-wrap gap-1">
-                        {tags.map((pt: any) => {
+                        {tags.map((pt) => {
                             const tagData = Array.isArray(pt.tags) ? pt.tags[0] : pt.tags;
                             if (!tagData) return null;
                             return (
@@ -295,7 +374,7 @@ export function ProductTableWrapper({ initialProducts, userProfile }: ProductTab
         },
     ], [locale, t])
 
-    const handlePreferencesChange = React.useCallback((newPrefs: any) => {
+    const handlePreferencesChange = React.useCallback((newPrefs: Record<string, unknown>) => {
         if (!userProfile?.id) return
         const fullPrefs = {
             ...userProfile.preferences,
@@ -335,7 +414,7 @@ export function ProductTableWrapper({ initialProducts, userProfile }: ProductTab
                 onGlobalFilterChange={setSearchQuery}
                 className="flex-1"
                 enableRowSelection={true}
-                initialPreferences={userProfile?.preferences?.productTable}
+                initialPreferences={(userProfile?.preferences as { productTable?: { columnVisibility?: Record<string, boolean>; columnSizing?: Record<string, number> } } | undefined)?.productTable}
                 onPreferencesChange={handlePreferencesChange}
                 onRowClick={(row) => {
                     setSelectedProduct(row.mappedProduct)

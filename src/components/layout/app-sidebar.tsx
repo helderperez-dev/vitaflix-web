@@ -46,7 +46,7 @@ export function AppSidebar({ user }: AppSidebarProps) {
             id: "main",
             items: [
                 {
-                    title: t("dashboard"),
+                    title: "dashboard",
                     url: "/dashboard",
                     icon: Home,
                 },
@@ -56,17 +56,17 @@ export function AppSidebar({ user }: AppSidebarProps) {
             id: "catalogue",
             items: [
                 {
-                    title: t("products"),
+                    title: "products",
                     url: "/products",
                     icon: Apple,
                 },
                 {
-                    title: t("meals"),
+                    title: "meals",
                     url: "/meals",
                     icon: Utensils,
                 },
                 {
-                    title: t("leads"),
+                    title: "leads",
                     url: "/leads",
                     icon: Handshake,
                 },
@@ -76,12 +76,12 @@ export function AppSidebar({ user }: AppSidebarProps) {
             id: "system",
             items: [
                 {
-                    title: t("users"),
+                    title: "users",
                     url: "/users",
                     icon: Users,
                 },
                 {
-                    title: t("settings"),
+                    title: "settings",
                     url: "/settings",
                     icon: Settings,
                 },
@@ -132,7 +132,7 @@ export function AppSidebar({ user }: AppSidebarProps) {
                                             <SidebarMenuButton
                                                 asChild
                                                 isActive={isActive}
-                                                tooltip={item.title}
+                                                tooltip={t(item.title)}
                                                 className={cn(
                                                     "h-10 transition-all duration-300 relative group/button overflow-hidden rounded-lg",
                                                     "group-data-[collapsible=icon]:!size-10 group-data-[collapsible=icon]:!rounded-lg group-data-[collapsible=icon]:!p-0",
@@ -151,7 +151,7 @@ export function AppSidebar({ user }: AppSidebarProps) {
                                                     <span className={cn(
                                                         "font-medium text-[13px] tracking-tight transition-colors duration-300 group-data-[collapsible=icon]:hidden",
                                                         isActive ? "text-primary" : "text-sidebar-foreground/80"
-                                                    )}>{t(item.title.toLowerCase())}</span>
+                                                    )}>{t(item.title)}</span>
                                                 </Link>
                                             </SidebarMenuButton>
                                         </SidebarMenuItem>

@@ -34,11 +34,14 @@ interface LeadsDatagridProps {
     activeFunnelId?: string
     leads: Lead[]
     onRowClick?: (lead: Lead) => void
+    onDeleteLead?: (leadId: string) => void
+    onBulkDelete?: (leadIds: string[]) => void
     userProfile?: any
 }
 
-export function LeadsDatagrid({ funnels, activeFunnelId, leads, onRowClick, userProfile }: LeadsDatagridProps) {
+export function LeadsDatagrid({ funnels, activeFunnelId, leads, onRowClick, onDeleteLead, onBulkDelete, userProfile }: LeadsDatagridProps) {
     const tLeads = useTranslations("Leads")
+    const commonT = useTranslations("Common")
     const locale = useLocale()
     const [deleteModalOpen, setDeleteModalOpen] = React.useState(false)
     const [rowsToDelete, setRowsToDelete] = React.useState<Lead[]>([])
@@ -164,6 +167,7 @@ export function LeadsDatagrid({ funnels, activeFunnelId, leads, onRowClick, user
                     <LeadActions
                         lead={row.original}
                         onEdit={(l) => onRowClick?.(l)}
+                        onDelete={(id) => onDeleteLead?.(id)}
                     />
                 </div>
             ),
@@ -204,7 +208,7 @@ export function LeadsDatagrid({ funnels, activeFunnelId, leads, onRowClick, user
                             }}
                         >
                             <Trash2 className="h-4 w-4 mr-2" />
-                            Delete ({selectedRows.length})
+                            {commonT("delete")} ({selectedRows.length})
                         </Button>
                     </div>
                 )}
@@ -213,15 +217,14 @@ export function LeadsDatagrid({ funnels, activeFunnelId, leads, onRowClick, user
             <AlertDialog open={deleteModalOpen} onOpenChange={setDeleteModalOpen}>
                 <AlertDialogContent className="rounded-lg border-sidebar-border/50 shadow-2xl">
                     <AlertDialogHeader>
-                        <AlertDialogTitle>Are you absolutely sure?</AlertDialogTitle>
+                        <AlertDialogTitle>{commonT("confirm")}</AlertDialogTitle>
                         <AlertDialogDescription>
-                            This will permanently delete {rowsToDelete.length} {rowsToDelete.length === 1 ? 'lead' : 'leads'}.
-                            This action cannot be undone and will remove all associated information.
+                            {commonT("deleteConfirmationLabel")}
                         </AlertDialogDescription>
                     </AlertDialogHeader>
                     <AlertDialogFooter className="gap-2">
                         <AlertDialogCancel className="rounded-lg font-semibold text-xs h-9">
-                            Cancel
+                            {commonT("cancel")}
                         </AlertDialogCancel>
                         <AlertDialogAction
                             onClick={async () => {
@@ -230,7 +233,8 @@ export function LeadsDatagrid({ funnels, activeFunnelId, leads, onRowClick, user
                                     const result = await bulkDeleteLeads(ids)
 
                                     if (result.success) {
-                                        toast.success(`Deleted ${ids.length} leads`)
+                                        toast.success(commonT("deletedSuccessfully"))
+                                        onBulkDelete?.(ids)
                                         clearSelectionRef?.fn()
                                     } else {
                                         toast.error(result.error || "Failed to delete leads")
@@ -241,7 +245,7 @@ export function LeadsDatagrid({ funnels, activeFunnelId, leads, onRowClick, user
                             }}
                             className="bg-primary hover:bg-primary/90 text-white rounded-lg font-semibold text-xs h-9 px-6"
                         >
-                            Confirm Deletion
+                            {commonT("confirm")}
                         </AlertDialogAction>
                     </AlertDialogFooter>
                 </AlertDialogContent>

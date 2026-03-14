@@ -13,6 +13,7 @@ export async function createMealPlan(data: Partial<MealPlan>) {
         .from('meal_plans')
         .insert({
             user_id: result.userId,
+            country_id: result.countryId || null,
             name: result.name,
             daily_meals_count: result.dailyMealsCount,
             selected_meals: result.selectedMeals || {}
@@ -36,6 +37,7 @@ export async function updateMealPlan(id: string, data: Partial<MealPlan>) {
         .from('meal_plans')
         .update({
             name: data.name,
+            country_id: data.countryId || null,
             daily_meals_count: data.dailyMealsCount,
             selected_meals: data.selectedMeals,
             updated_at: new Date().toISOString()

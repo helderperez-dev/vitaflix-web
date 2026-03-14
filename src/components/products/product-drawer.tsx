@@ -36,8 +36,11 @@ import { TranslationFields } from "@/components/shared/translation-fields"
 import { TagSelector } from "@/components/shared/tag-selector"
 import { BrandSelector } from "@/components/shared/brand-selector"
 import { GroupSelector } from "@/components/shared/group-selector"
+import { DictionarySelector } from "@/components/shared/dictionary-selector"
 import { ImageUploader } from "@/components/shared/image-uploader"
 import { Stepper } from "@/components/ui/stepper"
+import { getTags } from "@/app/actions/tags"
+import type { Tag } from "@/shared-schemas/tag"
 
 interface ProductDrawerProps {
     open: boolean
@@ -49,10 +52,11 @@ export function ProductDrawer({ open, onOpenChange, product }: ProductDrawerProp
     const t = useTranslations("Products")
     const commonT = useTranslations("Common")
     const [isSubmitting, setIsSubmitting] = React.useState(false)
+    const [unitOptions, setUnitOptions] = React.useState<Tag[]>([])
     const [formId] = React.useState(() => crypto.randomUUID())
 
-    const form = useForm({
-        resolver: zodResolver(productSchema),
+    const form = useForm<Product>({
+        resolver: zodResolver(productSchema) as never,
         defaultValues: {
             id: formId,
             name: {},
@@ -60,19 +64,23 @@ export function ProductDrawer({ open, onOpenChange, product }: ProductDrawerProp
             protein: 0,
             carbs: 0,
             fat: 0,
+            unitId: null,
+            referenceAmount: 100,
             tagIds: [],
             brandIds: [],
             groupIds: [],
+            countryIds: [],
             images: [],
             isPublic: true,
         },
-    }) as any
+    })
 
     React.useEffect(() => {
         if (product) {
             form.reset({
                 ...product,
-                name: product.name || {}
+                name: product.name || {},
+                referenceAmount: (product as Product & { reference_amount?: number }).referenceAmount ?? (product as Product & { reference_amount?: number }).reference_amount ?? 100
             })
         } else {
             form.reset({
@@ -82,16 +90,55 @@ export function ProductDrawer({ open, onOpenChange, product }: ProductDrawerProp
                 protein: 0,
                 carbs: 0,
                 fat: 0,
+                unitId: null,
+                referenceAmount: 100,
                 tagIds: [],
                 brandIds: [],
                 groupIds: [],
+                countryIds: [],
                 images: [],
                 isPublic: true,
             })
         }
     }, [product, form, open])
 
+    React.useEffect(() => {
+        async function loadUnits() {
+            const units = await getTags("measurement_units")
+            setUnitOptions(units || [])
+        }
+
+        if (open) {
+            loadUnits()
+        }
+    }, [open])
+
+    React.useEffect(() => {
+        if (!open || product || unitOptions.length === 0) return
+        const currentUnitId = form.getValues("unitId")
+        if (!currentUnitId) {
+            form.setValue("unitId", unitOptions[0].id, { shouldDirty: true })
+        }
+    }, [open, product, unitOptions, form])
+
     const currentId = form.watch("id") || formId
+    const selectedUnitId = form.watch("unitId")
+    const referenceAmount = form.watch("referenceAmount") || 100
+    const selectedUnit = unitOptions.find((unit) => unit.id === selectedUnitId)
+    const unitSymbol = selectedUnit?.slug || selectedUnit?.name?.en || selectedUnit?.name?.["pt-br"] || selectedUnit?.name?.["pt-pt"] || "g"
+
+    React.useEffect(() => {
+        if (!open) return
+        const unit = unitOptions.find((option) => option.id === selectedUnitId)
+        const slug = (unit?.slug || "").toLowerCase()
+        const currentReference = form.getValues("referenceAmount")
+        if ((slug === "unit" || slug === "slice") && (!currentReference || currentReference === 100)) {
+            form.setValue("referenceAmount", 1, { shouldDirty: true })
+        }
+        if ((slug === "g" || slug === "ml" || slug === "gram" || slug === "milliliter") && (!currentReference || currentReference === 1)) {
+            form.setValue("referenceAmount", 100, { shouldDirty: true })
+        }
+    }, [open, selectedUnitId, unitOptions, form])
 
     async function onSubmit(values: Product) {
         setIsSubmitting(true)
@@ -157,12 +204,30 @@ export function ProductDrawer({ open, onOpenChange, product }: ProductDrawerProp
                                     <div className="flex items-center justify-between gap-4">
                                         <div className="flex items-center gap-2 flex-1">
                                             <h3 className="font-semibold text-xs text-secondary dark:text-white whitespace-nowrap">
-                                                {t("nutritionalValues")} <span className="text-[10px] font-normal lowercase opacity-50 ml-1">({t("per100g")})</span>
+                                                {t("nutritionalValues")} <span className="text-[10px] font-normal lowercase opacity-50 ml-1">{`(per ${referenceAmount}${unitSymbol})`}</span>
                                             </h3>
                                             <div className="h-px w-full bg-border/60" />
                                         </div>
                                     </div>
                                     <div className="grid grid-cols-2 gap-x-12 gap-y-8">
+                                        <FormField
+                                            control={form.control}
+                                            name="referenceAmount"
+                                            render={({ field }) => (
+                                                <FormItem className="col-span-full">
+                                                    <FormLabel className="text-xs font-semibold text-muted-foreground/70">Nutrition Reference</FormLabel>
+                                                    <FormControl>
+                                                        <Stepper
+                                                            value={field.value ?? 100}
+                                                            onChange={field.onChange}
+                                                            step={1}
+                                                            unit={unitSymbol}
+                                                        />
+                                                    </FormControl>
+                                                    <FormMessage className="text-[10px]" />
+                                                </FormItem>
+                                            )}
+                                        />
                                         <FormField
                                             control={form.control}
                                             name="kcal"
@@ -265,6 +330,24 @@ export function ProductDrawer({ open, onOpenChange, product }: ProductDrawerProp
                                             <GroupSelector
                                                 selectedGroupIds={form.watch("groupIds") || []}
                                                 onGroupsChange={(groupIds) => form.setValue("groupIds", groupIds, { shouldDirty: true })}
+                                            />
+                                        </div>
+                                        <div className="space-y-4">
+                                            <TagSelector
+                                                title="Countries"
+                                                selectedTagIds={form.watch("countryIds") || []}
+                                                onTagsChange={(countryIds) => form.setValue("countryIds", countryIds, { shouldDirty: true })}
+                                                table="countries"
+                                            />
+                                        </div>
+                                        <div className="space-y-4">
+                                            <DictionarySelector
+                                                table="measurement_units"
+                                                label="Product Unit"
+                                                placeholder="Select unit"
+                                                value={form.watch("unitId") || ""}
+                                                onChange={(unitId) => form.setValue("unitId", unitId, { shouldDirty: true })}
+                                                returnIdOnly
                                             />
                                         </div>
 

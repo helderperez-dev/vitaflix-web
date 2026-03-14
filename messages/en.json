@@ -351,6 +351,8 @@
         "created": "Created",
         "pipelineStep": "Pipeline Step",
         "newLead": "New Lead",
-        "dropLeadsHere": "Drop leads here"
+        "dropLeadsHere": "Drop leads here",
+        "pipelineFilter": "Pipeline Filter",
+        "activeFunnels": "Active Funnels"
     }
 }

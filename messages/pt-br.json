@@ -344,6 +344,8 @@
         "created": "Criado",
         "pipelineStep": "Etapa do Funil",
         "newLead": "Novo Lead",
-        "dropLeadsHere": "Arraste leads aqui"
+        "dropLeadsHere": "Arraste leads aqui",
+        "pipelineFilter": "Filtro de Funil",
+        "activeFunnels": "Funis Ativos"
     }
 }

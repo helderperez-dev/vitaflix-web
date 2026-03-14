@@ -60,6 +60,7 @@ export function UserTableWrapper({ initialUsers, userProfile }: UserTableWrapper
             role: u.role || 'user',
             locale: u.locale || 'en',
             avatarUrl: u.avatar_url,
+            countryId: u.country_id || null,
             createdAt: u.created_at,
             updatedAt: u.updated_at,
         }))
