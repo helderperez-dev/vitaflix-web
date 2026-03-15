@@ -4,6 +4,8 @@ import { useEffect, useState } from "react"
 import { HeroSection } from "@/components/landing/hero-section"
 import { PainPoints } from "@/components/landing/pain-points"
 import { SolutionFeatures } from "@/components/landing/solution-features"
+import { FounderSection } from "@/components/landing/founder-section"
+import { TestimonialsSection } from "@/components/landing/testimonials-section"
 import { PricingTable } from "@/components/landing/pricing-table"
 import { FaqSection } from "@/components/landing/faq-section"
 import Link from "next/link"
@@ -44,6 +46,8 @@ export default function LandingPage() {
                             isScrolled ? "gap-7" : "gap-9"
                         )}>
                             <Link href="#beneficios" className="hover:text-primary transition-all">Benefícios</Link>
+                            <Link href="#sobre" className="hover:text-primary transition-all">Método</Link>
+                            <Link href="#testemunhos" className="hover:text-primary transition-all">Testemunhos</Link>
                             <Link href="#pricing" className="hover:text-primary transition-all">Preços</Link>
                             <Link href="#faq" className="hover:text-primary transition-all">FAQ</Link>
                         </nav>
@@ -62,6 +66,12 @@ export default function LandingPage() {
                 <div id="beneficios">
                     <PainPoints />
                     <SolutionFeatures />
+                </div>
+                <div id="sobre">
+                    <FounderSection />
+                </div>
+                <div id="testemunhos">
+                    <TestimonialsSection />
                 </div>
                 <div id="pricing">
                     <PricingTable />

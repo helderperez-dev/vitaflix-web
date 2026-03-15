@@ -1,8 +1,8 @@
 "use client"
 
 import { WaitlistForm } from "./waitlist-form"
-import { motion } from "framer-motion"
-import { useState, useEffect } from "react"
+import { motion, useScroll, useTransform, useSpring } from "framer-motion"
+import { useState, useEffect, useRef } from "react"
 import { Apple, Check, ChevronRight } from "lucide-react"
 import Image from "next/image"
 
@@ -26,11 +26,32 @@ const heroPersonas = [
 ]
 
 export function HeroSection() {
+    const heroRef = useRef<HTMLElement>(null)
     const [activeCard, setActiveCard] = useState(0)
     const [checkedItems, setCheckedItems] = useState<number[]>([])
     const [videoIndex, setVideoIndex] = useState(0)
     
     const videos = ["1.mp4", "2.mp4", "3.mp4", "4.mp4", "5.mp4"]
+
+    const { scrollYProgress } = useScroll({
+        target: heroRef,
+        offset: ["start start", "end start"]
+    })
+
+    const smoothProgress = useSpring(scrollYProgress, {
+        stiffness: 100,
+        damping: 30,
+        restDelta: 0.001
+    })
+
+    const yPhone = useTransform(smoothProgress, [0, 1], [0, 60])
+    const yCard1 = useTransform(smoothProgress, [0, 1], [0, -80])
+    const yCard2 = useTransform(smoothProgress, [0, 1], [0, -120])
+    const yCard3 = useTransform(smoothProgress, [0, 1], [0, -40])
+    
+    const yBlob1 = useTransform(smoothProgress, [0, 1], [0, 100])
+    const yBlob2 = useTransform(smoothProgress, [0, 1], [0, -60])
+    const yBlob3 = useTransform(smoothProgress, [0, 1], [0, 40])
 
     useEffect(() => {
         const interval = setInterval(() => {
@@ -68,14 +89,15 @@ export function HeroSection() {
     return (
         <section
             id="waitlist"
+            ref={heroRef}
             className="relative overflow-hidden pt-28 pb-16 lg:pt-32 lg:pb-24 min-h-screen flex items-center"
         >
             {/* Background Effects */}
             <div className="absolute inset-0 z-0 bg-[#FAFCFF]" />
             <div className="absolute inset-0 z-0 overflow-hidden pointer-events-none">
-                <div className="absolute top-[-10%] left-[-10%] h-[600px] w-[600px] rounded-full bg-primary/5 blur-[120px]" />
-                <div className="absolute top-[20%] right-[-10%] h-[500px] w-[500px] rounded-full bg-sky-100/60 blur-[100px]" />
-                <div className="absolute bottom-[-10%] left-[20%] h-[400px] w-[400px] rounded-full bg-teal-50/80 blur-[80px]" />
+                <motion.div style={{ y: yBlob1 }} className="absolute top-[-10%] left-[-10%] h-[600px] w-[600px] rounded-full bg-primary/5 blur-[120px]" />
+                <motion.div style={{ y: yBlob2 }} className="absolute top-[20%] right-[-10%] h-[500px] w-[500px] rounded-full bg-sky-100/60 blur-[100px]" />
+                <motion.div style={{ y: yBlob3 }} className="absolute bottom-[-10%] left-[20%] h-[400px] w-[400px] rounded-full bg-teal-50/80 blur-[80px]" />
             </div>
 
             <div className="w-full max-w-[90rem] mx-auto px-4 sm:px-6 lg:px-8 relative z-10">
@@ -148,59 +170,61 @@ export function HeroSection() {
                         <motion.div style={{ y: 0, opacity: 1 }} className="absolute inset-0 flex items-center justify-center">
                             
                             {/* Central High-Def iPhone Mockup */}
-                            <motion.div
-                                initial={{ opacity: 0, scale: 0.9, y: 20 }}
-                                animate={{ opacity: 1, scale: 1, y: 0 }}
-                                transition={{ duration: 0.8, type: "spring", bounce: 0.3 }}
-                                className="relative z-20 w-[260px] sm:w-[290px] h-[530px] sm:h-[590px] rounded-[40px] sm:rounded-[45px] border-[6px] sm:border-[8px] border-[#1f2937] bg-black shadow-[0_0_0_2px_rgba(255,255,255,0.1),_0_20px_60px_-15px_rgba(0,0,0,0.4)] sm:shadow-[0_0_0_2px_rgba(255,255,255,0.1),_0_40px_80px_-20px_rgba(0,0,0,0.4)] overflow-hidden"
-                            >
-                                {/* Dynamic Island / Notch Area */}
-                                <div className="absolute top-2 inset-x-0 h-6 sm:h-7 flex justify-center z-30">
-                                    <div className="w-[80px] sm:w-[90px] h-full bg-black rounded-full flex items-center justify-between px-2.5 shadow-sm border border-white/5">
-                                        <div className="w-2 sm:w-2.5 h-2 sm:h-2.5 rounded-full bg-[#1a1a24] flex items-center justify-center">
-                                            <div className="w-1 h-1 rounded-full bg-blue-500/30" />
+                            <motion.div style={{ y: yPhone }} className="relative z-20 w-[260px] sm:w-[290px] h-[530px] sm:h-[590px]">
+                                <motion.div
+                                    initial={{ opacity: 0, scale: 0.9, y: 20 }}
+                                    animate={{ opacity: 1, scale: 1, y: 0 }}
+                                    transition={{ duration: 0.8, type: "spring", bounce: 0.3 }}
+                                    className="w-full h-full rounded-[40px] sm:rounded-[45px] border-[6px] sm:border-[8px] border-[#1f2937] bg-black shadow-[0_0_0_2px_rgba(255,255,255,0.1),0_20px_60px_-15px_rgba(0,0,0,0.4)] sm:shadow-[0_0_0_2px_rgba(255,255,255,0.1),0_40px_80px_-20px_rgba(0,0,0,0.4)] overflow-hidden"
+                                >
+                                    {/* Dynamic Island / Notch Area */}
+                                    <div className="absolute top-2 inset-x-0 h-6 sm:h-7 flex justify-center z-30">
+                                        <div className="w-[80px] sm:w-[90px] h-full bg-black rounded-full flex items-center justify-between px-2.5 shadow-sm border border-white/5">
+                                            <div className="w-2 sm:w-2.5 h-2 sm:h-2.5 rounded-full bg-[#1a1a24] flex items-center justify-center">
+                                                <div className="w-1 h-1 rounded-full bg-blue-500/30" />
+                                            </div>
+                                            <div className="w-2 sm:w-2.5 h-2 sm:h-2.5 rounded-full bg-[#1a1a24]" />
                                         </div>
-                                        <div className="w-2 sm:w-2.5 h-2 sm:h-2.5 rounded-full bg-[#1a1a24]" />
                                     </div>
-                                </div>
-                                
-                                {/* Side Buttons */}
-                                <div className="absolute top-20 sm:top-24 -left-[8px] sm:-left-[10px] w-1 h-6 bg-slate-800 rounded-l-sm" />
-                                <div className="absolute top-32 sm:top-36 -left-[8px] sm:-left-[10px] w-1 h-10 sm:h-12 bg-slate-800 rounded-l-sm" />
-                                <div className="absolute top-48 sm:top-52 -left-[8px] sm:-left-[10px] w-1 h-10 sm:h-12 bg-slate-800 rounded-l-sm" />
-                                <div className="absolute top-36 sm:top-40 -right-[8px] sm:-right-[10px] w-1 h-14 sm:h-16 bg-slate-800 rounded-r-sm" />
-                                
-                                {/* Video Player */}
-                                <div className="relative w-full h-full rounded-[34px] sm:rounded-[37px] overflow-hidden bg-black">
-                                    <video
-                                        key={videos[videoIndex]}
-                                        autoPlay
-                                        loop
-                                        muted
-                                        playsInline
-                                        className="absolute inset-0 w-full h-full object-cover"
-                                        src={`/videos/${videos[videoIndex]}`}
-                                    />
                                     
-                                    {/* Glass Overlay for realism */}
-                                    <div className="absolute inset-0 shadow-[inset_0_0_20px_rgba(0,0,0,0.5)] z-20 pointer-events-none" />
-                                    <div className="absolute inset-0 bg-gradient-to-tr from-white/10 to-transparent opacity-50 z-20 pointer-events-none mix-blend-overlay" />
-                                </div>
+                                    {/* Side Buttons */}
+                                    <div className="absolute top-20 sm:top-24 -left-[4px] sm:-left-[5px] w-1.5 h-6 bg-slate-800 rounded-l-sm z-0" />
+                                    <div className="absolute top-32 sm:top-36 -left-[4px] sm:-left-[5px] w-1.5 h-10 sm:h-12 bg-slate-800 rounded-l-sm z-0" />
+                                    <div className="absolute top-48 sm:top-52 -left-[4px] sm:-left-[5px] w-1.5 h-10 sm:h-12 bg-slate-800 rounded-l-sm z-0" />
+                                    <div className="absolute top-36 sm:top-40 -right-[4px] sm:-right-[5px] w-1.5 h-14 sm:h-16 bg-slate-800 rounded-r-sm z-0" />
+                                    
+                                    {/* Video Player */}
+                                    <div className="relative w-full h-full rounded-[34px] sm:rounded-[37px] overflow-hidden bg-black z-10">
+                                        <video
+                                            key={videos[videoIndex]}
+                                            autoPlay
+                                            loop
+                                            muted
+                                            playsInline
+                                            className="absolute inset-0 w-full h-full object-cover"
+                                            src={`/videos/${videos[videoIndex]}`}
+                                        />
+                                        
+                                        {/* Glass Overlay for realism */}
+                                        <div className="absolute inset-0 shadow-[inset_0_0_20px_rgba(0,0,0,0.5)] z-20 pointer-events-none" />
+                                        <div className="absolute inset-0 bg-gradient-to-tr from-white/10 to-transparent opacity-50 z-20 pointer-events-none mix-blend-overlay" />
+                                    </div>
+                                </motion.div>
                             </motion.div>
 
                             {/* Main Card (Center Right) - Meal Card */}
-                            <motion.div
-                                animate={{ 
-                                    scale: activeCard === 0 ? 1 : 0.85,
-                                    zIndex: activeCard === 0 ? 30 : 10,
-                                    opacity: activeCard === 0 ? 1 : 0.7,
-                                    x: activeCard === 0 ? 100 : 120,
-                                    y: activeCard === 0 ? -40 : -20,
-                                    rotate: activeCard === 0 ? 4 : 8
-                                }}
-                                transition={{ duration: 0.8, type: "spring", bounce: 0.4 }}
-                                className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[260px] sm:w-[300px] lg:!translate-x-[calc(-50%+80px)]"
-                            >
+                            <motion.div style={{ y: yCard1 }} className={`absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[260px] sm:w-[300px] lg:!translate-x-[calc(-50%+80px)] ${activeCard === 0 ? 'z-30' : 'z-10'}`}>
+                                <motion.div
+                                    animate={{ 
+                                        scale: activeCard === 0 ? 1 : 0.85,
+                                        opacity: activeCard === 0 ? 1 : 0.95,
+                                        x: activeCard === 0 ? 100 : 120,
+                                        y: activeCard === 0 ? -40 : -20,
+                                        rotate: activeCard === 0 ? 4 : 8
+                                    }}
+                                    transition={{ duration: 0.8, type: "spring", bounce: 0.4 }}
+                                    className="w-full"
+                                >
                                 <motion.div
                                     animate={{ y: [0, -15, 0] }}
                                     transition={{ duration: 6, repeat: Infinity, ease: "easeInOut" }}
@@ -232,21 +256,22 @@ export function HeroSection() {
                                         </div>
                                     </div>
                                 </motion.div>
+                                </motion.div>
                             </motion.div>
 
                             {/* Back Card 1 (Top Left) - Shopping List */}
-                            <motion.div
-                                animate={{ 
-                                    scale: activeCard === 1 ? 1 : 0.85,
-                                    zIndex: activeCard === 1 ? 30 : 10,
-                                    opacity: activeCard === 1 ? 1 : 0.7,
-                                    x: activeCard === 1 ? -100 : -80,
-                                    y: activeCard === 1 ? -140 : -120,
-                                    rotate: activeCard === 1 ? -6 : -10
-                                }}
-                                transition={{ duration: 0.8, type: "spring", bounce: 0.4 }}
-                                className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[240px] sm:w-[260px] lg:!translate-x-[calc(-50%-60px)]"
-                            >
+                            <motion.div style={{ y: yCard2 }} className={`absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[240px] sm:w-[260px] lg:!translate-x-[calc(-50%-60px)] ${activeCard === 1 ? 'z-30' : 'z-10'}`}>
+                                <motion.div
+                                    animate={{ 
+                                        scale: activeCard === 1 ? 1 : 0.85,
+                                        opacity: activeCard === 1 ? 1 : 0.95,
+                                        x: activeCard === 1 ? -100 : -80,
+                                        y: activeCard === 1 ? -140 : -120,
+                                        rotate: activeCard === 1 ? -6 : -10
+                                    }}
+                                    transition={{ duration: 0.8, type: "spring", bounce: 0.4 }}
+                                    className="w-full"
+                                >
                                 <motion.div
                                     animate={{ y: [0, -10, 0] }}
                                     transition={{ duration: 5, repeat: Infinity, ease: "easeInOut", delay: 1 }}
@@ -273,21 +298,22 @@ export function HeroSection() {
                                         </div>
                                     </div>
                                 </motion.div>
+                                </motion.div>
                             </motion.div>
 
                             {/* Back Card 2 (Bottom Left) - Progress */}
-                            <motion.div
-                                animate={{ 
-                                    scale: activeCard === 2 ? 1.1 : 0.85,
-                                    zIndex: activeCard === 2 ? 30 : 10,
-                                    opacity: activeCard === 2 ? 1 : 0.7,
-                                    x: activeCard === 2 ? -80 : -60,
-                                    y: activeCard === 2 ? 160 : 140,
-                                    rotate: activeCard === 2 ? -2 : -6
-                                }}
-                                transition={{ duration: 0.8, type: "spring", bounce: 0.4 }}
-                                className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[220px] sm:w-[240px] lg:!translate-x-[calc(-50%-40px)]"
-                            >
+                            <motion.div style={{ y: yCard3 }} className={`absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[220px] sm:w-[240px] lg:!translate-x-[calc(-50%-40px)] ${activeCard === 2 ? 'z-30' : 'z-10'}`}>
+                                <motion.div
+                                    animate={{ 
+                                        scale: activeCard === 2 ? 1.1 : 0.85,
+                                        opacity: activeCard === 2 ? 1 : 0.95,
+                                        x: activeCard === 2 ? -80 : -60,
+                                        y: activeCard === 2 ? 160 : 140,
+                                        rotate: activeCard === 2 ? -2 : -6
+                                    }}
+                                    transition={{ duration: 0.8, type: "spring", bounce: 0.4 }}
+                                    className="w-full"
+                                >
                                 <motion.div
                                     animate={{ y: [0, -12, 0] }}
                                     transition={{ duration: 5.5, repeat: Infinity, ease: "easeInOut", delay: 2 }}
@@ -311,6 +337,7 @@ export function HeroSection() {
                                             ))}
                                         </div>
                                     </div>
+                                </motion.div>
                                 </motion.div>
                             </motion.div>
                         </motion.div>

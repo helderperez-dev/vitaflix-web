@@ -83,23 +83,23 @@ export function WaitlistForm() {
     return (
         <Form {...form}>
             <form onSubmit={form.handleSubmit(onSubmit)} className="w-full relative z-10">
-                <div className="relative flex flex-col sm:flex-row sm:items-center gap-2 sm:gap-0 p-1.5 bg-white/80 backdrop-blur-xl border border-slate-200/80 rounded-2xl sm:rounded-full shadow-xl shadow-slate-200/50 focus-within:ring-4 focus-within:ring-primary/10 transition-all hover:shadow-2xl hover:shadow-slate-200/60 overflow-hidden">
+                <div className="relative flex flex-col sm:flex-row sm:items-center gap-2 sm:gap-0 p-1.5 bg-white border border-slate-200 rounded-2xl sm:rounded-full shadow-lg shadow-slate-200/40 focus-within:ring-4 focus-within:ring-primary/10 transition-all hover:shadow-xl hover:shadow-slate-200/50 overflow-hidden">
                     <FormField
                         control={form.control}
                         name="name"
                         render={({ field }) => (
-                            <FormItem className="flex-1 mb-0 sm:border-r sm:border-slate-200/60 px-2">
+                            <FormItem className="flex-1 mb-0 sm:border-r sm:border-slate-200 px-2">
                                 <FormControl>
                                     <Input
                                         placeholder="O teu nome"
-                                        className="h-12 border-0 bg-transparent text-slate-900 placeholder:text-slate-400 focus-visible:ring-0 shadow-none px-3 font-medium text-sm"
+                                        className="h-12 border-0 bg-transparent text-slate-900 placeholder:text-slate-500 focus-visible:ring-0 shadow-none px-3 font-medium text-sm"
                                         {...field}
                                     />
                                 </FormControl>
                             </FormItem>
                         )}
                     />
-                    <div className="h-[1px] w-full bg-slate-200/60 sm:hidden mx-2" />
+                    <div className="h-[1px] w-full bg-slate-200 sm:hidden mx-2" />
                     <FormField
                         control={form.control}
                         name="email"
@@ -108,7 +108,7 @@ export function WaitlistForm() {
                                 <FormControl>
                                     <Input
                                         placeholder="O teu melhor email"
-                                        className="h-12 border-0 bg-transparent text-slate-900 placeholder:text-slate-400 focus-visible:ring-0 shadow-none px-3 font-medium text-sm"
+                                        className="h-12 border-0 bg-transparent text-slate-900 placeholder:text-slate-500 focus-visible:ring-0 shadow-none px-3 font-medium text-sm"
                                         {...field}
                                     />
                                 </FormControl>
