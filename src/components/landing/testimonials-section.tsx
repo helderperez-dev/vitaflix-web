@@ -3,29 +3,18 @@
 import Image from "next/image"
 import { motion } from "framer-motion"
 import { Quote, Star } from "lucide-react"
+import { useTranslations } from "next-intl"
 
-const testimonials = [
-    {
-        name: "Marta Silva",
-        role: "Mãe de 2 filhos",
-        image: "/avatars/persona-marta.svg",
-        quote: "Antes perdia imenso tempo a decidir o que cozinhar. Com a Vitaflix passei a planear a semana em poucos minutos e a família come muito melhor."
-    },
-    {
-        name: "Diogo Almeida",
-        role: "Profissional de TI",
-        image: "/avatars/persona-diogo.svg",
-        quote: "A maior diferença foi a consistência. Deixei de improvisar refeições e finalmente consegui manter uma rotina alimentar alinhada com os meus objetivos."
-    },
-    {
-        name: "Inês Rocha",
-        role: "Estudante-atleta",
-        image: "/avatars/persona-ines.svg",
-        quote: "Gosto da forma simples como tudo está organizado. Tenho variedade, sei as porções certas e não fico perdida quando a semana aperta."
-    }
-]
+const testimonialKeys = ["marta", "diogo", "ines"]
+
+const testimonialImages = {
+    marta: "/avatars/persona-marta.svg",
+    diogo: "/avatars/persona-diogo.svg",
+    ines: "/avatars/persona-ines.svg"
+}
 
 export function TestimonialsSection() {
+    const t = useTranslations("Landing.Testimonials")
     return (
         <section className="relative overflow-hidden bg-white py-24 md:py-32">
             <div className="absolute inset-0 pointer-events-none">
@@ -34,17 +23,17 @@ export function TestimonialsSection() {
 
             <div className="container relative z-10 mx-auto px-4 sm:px-6">
                 <div className="mx-auto mb-14 max-w-3xl text-center md:mb-16">
-                    <p className="mb-4 text-xs font-semibold uppercase tracking-[0.2em] text-primary">Testemunhos</p>
-                    <h2 className="mb-5 text-3xl font-bold tracking-tight text-slate-900 sm:text-4xl md:text-5xl">O que os nossos utilizadores dizem</h2>
+                    <p className="mb-4 text-xs font-semibold uppercase tracking-[0.2em] text-primary">{t("label")}</p>
+                    <h2 className="mb-5 text-3xl font-bold tracking-tight text-slate-900 sm:text-4xl md:text-5xl">{t("title")}</h2>
                     <p className="mx-auto max-w-2xl text-base text-slate-600 md:text-lg">
-                        Experiências reais de pessoas que simplificaram o planeamento alimentar e ganharam consistência no dia a dia.
+                        {t("subtitle")}
                     </p>
                 </div>
 
                 <div className="mx-auto grid max-w-6xl gap-6 md:grid-cols-3">
-                    {testimonials.map((testimonial, index) => (
+                    {testimonialKeys.map((key, index) => (
                         <motion.article
-                            key={testimonial.name}
+                            key={key}
                             initial={{ opacity: 0, y: 20 }}
                             whileInView={{ opacity: 1, y: 0 }}
                             viewport={{ once: true, margin: "-80px" }}
@@ -54,17 +43,17 @@ export function TestimonialsSection() {
                             <div className="mb-5 flex items-center justify-between">
                                 <div className="flex items-center gap-3">
                                     <div className="relative h-12 w-12 overflow-hidden rounded-full border border-slate-200">
-                                        <Image src={testimonial.image} alt={testimonial.name} fill className="object-cover" sizes="48px" />
+                                        <Image src={testimonialImages[key as keyof typeof testimonialImages]} alt={key} fill className="object-cover" sizes="48px" />
                                     </div>
                                     <div>
-                                        <p className="text-sm font-bold text-slate-900">{testimonial.name}</p>
-                                        <p className="text-xs text-slate-500">{testimonial.role}</p>
+                                        <p className="text-sm font-bold text-slate-900 capitalize">{key}</p>
+                                        <p className="text-xs text-slate-500">{t(`items.${key}.role`)}</p>
                                     </div>
                                 </div>
                                 <Quote className="size-4 text-primary/60" />
                             </div>
 
-                            <p className="text-[15px] leading-relaxed text-slate-600">{testimonial.quote}</p>
+                            <p className="text-[15px] leading-relaxed text-slate-600">{t(`items.${key}.quote`)}</p>
 
                             <div className="mt-5 flex items-center gap-1 text-amber-400">
                                 <Star className="size-4 fill-current" />

@@ -61,3 +61,9 @@ Posso cancelar quando quiser? Sim, a subscrição pode ser cancelada a qualquer 
 Está disponível para Android e iPhone? Sim, a Vitaflix está disponível nas duas lojas oficiais.
 
 A app inclui acompanhamento personalizado? Não. A Vitaflix é uma ferramenta de organização e receitas. O foco é a autonomia e praticidade, não incluindo consultas ou chat direto de acompanhamento.
+
+A app cria lista de compras automática? Sim! A Vitaflix gera automaticamente uma lista de compras organizada por secções do supermercado, baseada nas receitas que escolheres para a tua semana.
+
+Existem opções vegetarianas ou veganas? Sim, a nossa base de dados inclui diversas opções vegetarianas, veganas e sem glúten, permitindo filtrar as receitas de acordo com as tuas preferências alimentares.
+
+Como funcionam os pagamentos? Os pagamentos são processados de forma segura através da App Store (Apple) ou Google Play Store (Android), garantindo total proteção dos teus dados.

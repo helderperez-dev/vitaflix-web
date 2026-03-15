@@ -5,6 +5,7 @@ import { motion, useScroll, useTransform, useSpring } from "framer-motion"
 import { useState, useEffect, useRef } from "react"
 import { Apple, Check, ChevronRight } from "lucide-react"
 import Image from "next/image"
+import { useTranslations } from "next-intl"
 
 const heroPersonas = [
     {
@@ -26,6 +27,7 @@ const heroPersonas = [
 ]
 
 export function HeroSection() {
+    const t = useTranslations("Landing.Hero")
     const heroRef = useRef<HTMLElement>(null)
     const [activeCard, setActiveCard] = useState(0)
     const [checkedItems, setCheckedItems] = useState<number[]>([])
@@ -52,6 +54,8 @@ export function HeroSection() {
     const yBlob1 = useTransform(smoothProgress, [0, 1], [0, 100])
     const yBlob2 = useTransform(smoothProgress, [0, 1], [0, -60])
     const yBlob3 = useTransform(smoothProgress, [0, 1], [0, 40])
+
+    const shoppingListItems = ['eggs', 'spinach', 'oats', 'blueberries']
 
     useEffect(() => {
         const interval = setInterval(() => {
@@ -115,20 +119,19 @@ export function HeroSection() {
                                     <span className="relative inline-flex rounded-full h-2 w-2 bg-primary"></span>
                                 </span>
                                 <span className="text-xs font-bold tracking-wide text-slate-700 uppercase">
-                                    Vagas limitadas para Beta
+                                    {t("badge")}
                                 </span>
                             </div>
 
                             <h1 className="text-4xl sm:text-5xl lg:text-6xl xl:text-[4.5rem] font-bold tracking-tight text-slate-900 leading-[1.05] mb-5 font-['Poppins',sans-serif]">
-                                A tua nutrição, <br className="hidden lg:block" />
+                                {t("titlePrefix")} <br className="hidden lg:block" />
                                 <span className="text-transparent bg-clip-text bg-gradient-to-r from-primary via-emerald-500 to-teal-500 whitespace-nowrap font-extrabold">
-                                    finalmente simples.
+                                    {t("titleSuffix")}
                                 </span>
                             </h1>
 
                             <p className="text-base text-slate-600 leading-relaxed mb-6 max-w-lg mx-auto lg:mx-0 font-medium">
-                                Esquece as folhas de excel e as dúvidas no supermercado.
-                                A Vitaflix cria o teu plano semanal, lista de compras e receitas em segundos.
+                                {t("subtitle")}
                             </p>
 
                             <div className="flex flex-col sm:flex-row items-center gap-3 justify-center lg:justify-start mb-6 text-sm font-semibold text-slate-600">
@@ -140,12 +143,12 @@ export function HeroSection() {
                                             </div>
                                         ))}
                                     </div>
-                                    <span className="text-xs">+2.000 na lista de espera</span>
+                                    <span className="text-xs">{t("waitlistCount")}</span>
                                 </div>
                             </div>
 
                             <div className="mt-8 w-full max-w-[600px] mx-auto lg:mx-0">
-                                <WaitlistForm />
+                                <WaitlistForm inputId="hero-waitlist-input" />
                             </div>
 
                             <div className="mt-4 flex items-center justify-center lg:justify-start gap-5 text-[11px] font-medium text-slate-500">
@@ -153,13 +156,13 @@ export function HeroSection() {
                                     <div className="h-4 w-4 rounded-full bg-emerald-100 flex items-center justify-center">
                                         <Check className="size-2.5 text-emerald-600" />
                                     </div>
-                                    <span>Sem cartão de crédito</span>
+                                    <span>{t("noCard")}</span>
                                 </div>
                                 <div className="flex items-center gap-1.5">
                                     <div className="h-4 w-4 rounded-full bg-emerald-100 flex items-center justify-center">
                                         <Check className="size-2.5 text-emerald-600" />
                                     </div>
-                                    <span>Cancela quando quiseres</span>
+                                    <span>{t("cancelAnytime")}</span>
                                 </div>
                             </div>
                         </motion.div>
@@ -232,25 +235,34 @@ export function HeroSection() {
                                     <div className="rounded-[2rem] bg-white/95 border border-white/60 shadow-2xl p-4 ring-1 ring-black/5 backdrop-blur-md transition-transform hover:scale-105 duration-500">
                                         <div className="rounded-[1.5rem] bg-slate-50/80 p-5 space-y-4">
                                             <div className="flex items-center justify-between">
-                                                <span className="text-xs font-bold text-slate-400 uppercase tracking-wider">Hoje, 12:30</span>
+                                                <span className="text-xs font-bold text-slate-400 uppercase tracking-wider">{t("Cards.Meal.time")}</span>
                                                 <span className="h-2 w-2 rounded-full bg-emerald-400" />
                                             </div>
                                             <div>
-                                                <h3 className="font-bold text-slate-900 text-lg">Bowl de Salmão</h3>
-                                                <p className="text-slate-500 text-sm">Com abacate e quinoa</p>
+                                                <h3 className="font-bold text-slate-900 text-lg">{t("Cards.Meal.title")}</h3>
+                                                <p className="text-slate-500 text-sm">{t("Cards.Meal.subtitle")}</p>
                                             </div>
                                             <div className="flex gap-2">
-                                                <span className="px-2.5 py-1 rounded-lg bg-white text-xs font-semibold text-slate-600 shadow-sm border border-slate-100">540 kcal</span>
-                                                <span className="px-2.5 py-1 rounded-lg bg-white text-xs font-semibold text-slate-600 shadow-sm border border-slate-100">32g Prot</span>
+                                                <span className="px-2.5 py-1 rounded-lg bg-white text-xs font-semibold text-slate-600 shadow-sm border border-slate-100">{t("Cards.Meal.calories")}</span>
+                                                <span className="px-2.5 py-1 rounded-lg bg-white text-xs font-semibold text-slate-600 shadow-sm border border-slate-100">{t("Cards.Meal.protein")}</span>
                                             </div>
-                                            <div className="h-24 rounded-xl bg-slate-200/50 w-full animate-pulse" />
+                                            <div className="h-24 rounded-xl w-full overflow-hidden">
+                                                <Image 
+                                                    src="/images/wrap.jpeg" 
+                                                    alt="Wrap Misto" 
+                                                    width={300} 
+                                                    height={150} 
+                                                    className="w-full h-full object-cover"
+                                                    priority
+                                                />
+                                            </div>
                                         </div>
                                         <div className="mt-4 flex items-center justify-between px-2">
                                             <div className="flex items-center gap-2">
                                                 <div className="h-8 w-8 rounded-full bg-emerald-100 flex items-center justify-center text-emerald-600">
                                                     <Check className="size-4" />
                                                 </div>
-                                                <span className="text-sm font-medium text-slate-600">Registar</span>
+                                                <span className="text-sm font-medium text-slate-600">{t("Cards.Meal.action")}</span>
                                             </div>
                                             <ChevronRight className="size-4 text-slate-400" />
                                         </div>
@@ -282,17 +294,16 @@ export function HeroSection() {
                                                 <Apple className="size-4 text-orange-500" />
                                             </div>
                                             <div>
-                                                <p className="text-xs font-bold text-slate-900">Lista de Compras</p>
-                                                <p className="text-[10px] text-slate-500">Pingo Doce</p>
+                                                <p className="text-xs font-bold text-slate-900">{t("Cards.Shopping.title")}</p>
                                             </div>
                                         </div>
                                         <div className="space-y-2">
-                                            {['Ovos M', 'Espinafres', 'Aveia', 'Mirtilos'].map((item, i) => (
+                                            {shoppingListItems.map((item, i) => (
                                                 <div key={i} className="flex items-center gap-2 p-2 rounded-lg bg-slate-50/50">
                                                     <div className={`h-4 w-4 rounded border flex items-center justify-center transition-colors duration-300 ${checkedItems.includes(i) ? 'bg-emerald-500 border-emerald-500 text-white' : 'border-slate-300 bg-white'}`}>
                                                         {checkedItems.includes(i) && <Check className="size-3" />}
                                                     </div>
-                                                    <span className={`text-xs font-medium transition-colors duration-300 ${checkedItems.includes(i) ? 'text-slate-400 line-through' : 'text-slate-600'}`}>{item}</span>
+                                                    <span className={`text-xs font-medium transition-colors duration-300 ${checkedItems.includes(i) ? 'text-slate-400 line-through' : 'text-slate-600'}`}>{t(`Cards.Shopping.items.${item}`)}</span>
                                                 </div>
                                             ))}
                                         </div>
@@ -321,7 +332,7 @@ export function HeroSection() {
                                     <div className="rounded-[1.5rem] bg-white/95 border border-white/60 shadow-xl p-4 ring-1 ring-black/5 backdrop-blur-md transition-transform duration-500 hover:scale-105">
                                         <div className="mb-4 flex items-end">
                                             <div>
-                                                <p className="text-[10px] font-bold text-slate-400 uppercase">Progresso</p>
+                                                <p className="text-[10px] font-bold text-slate-400 uppercase">{t("Cards.Progress.title")}</p>
                                                 <p className="text-2xl font-black text-slate-900">-2.4kg</p>
                                             </div>
                                         </div>

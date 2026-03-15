@@ -8,11 +8,17 @@ import { FounderSection } from "@/components/landing/founder-section"
 import { TestimonialsSection } from "@/components/landing/testimonials-section"
 import { PricingTable } from "@/components/landing/pricing-table"
 import { FaqSection } from "@/components/landing/faq-section"
+import { CtaSection } from "@/components/landing/cta-section"
+import { Footer } from "@/components/landing/footer"
+import { WhatsAppWidget } from "@/components/landing/whatsapp-widget"
+import { LanguageSwitcher } from "@/components/landing/language-switcher"
 import Link from "next/link"
 import Image from "next/image"
 import { cn } from "@/lib/utils"
+import { useTranslations } from "next-intl"
 
 export default function LandingPage() {
+    const t = useTranslations("Landing.Header")
     const [isScrolled, setIsScrolled] = useState(false)
 
     useEffect(() => {
@@ -23,6 +29,17 @@ export default function LandingPage() {
 
         return () => window.removeEventListener("scroll", handleScroll)
     }, [])
+
+    const handleCtaClick = (e: React.MouseEvent<HTMLAnchorElement>) => {
+        e.preventDefault()
+        const element = document.getElementById("hero-waitlist-input")
+        if (element) {
+            element.scrollIntoView({ behavior: "smooth", block: "center" })
+            setTimeout(() => {
+                element.focus()
+            }, 500)
+        }
+    }
 
     return (
         <div className="min-h-screen bg-gradient-to-b from-white via-[#f7fcfa] to-[#f5f8ff] text-foreground font-sans selection:bg-primary/30">
@@ -45,17 +62,22 @@ export default function LandingPage() {
                             "hidden items-center text-sm font-semibold text-slate-700 md:flex transition-all duration-300",
                             isScrolled ? "gap-7" : "gap-9"
                         )}>
-                            <Link href="#beneficios" className="hover:text-primary transition-all">Benefícios</Link>
-                            <Link href="#sobre" className="hover:text-primary transition-all">Método</Link>
-                            <Link href="#testemunhos" className="hover:text-primary transition-all">Testemunhos</Link>
-                            <Link href="#pricing" className="hover:text-primary transition-all">Preços</Link>
-                            <Link href="#faq" className="hover:text-primary transition-all">FAQ</Link>
+                            <Link href="#beneficios" className="hover:text-primary transition-all">{t("benefits")}</Link>
+                            <Link href="#sobre" className="hover:text-primary transition-all">{t("method")}</Link>
+                            <Link href="#testemunhos" className="hover:text-primary transition-all">{t("testimonials")}</Link>
+                            <Link href="#pricing" className="hover:text-primary transition-all">{t("pricing")}</Link>
+                            <Link href="#faq" className="hover:text-primary transition-all">{t("faq")}</Link>
                         </nav>
                     </div>
 
-                    <div>
-                        <Link href="#waitlist" className="inline-flex h-11 items-center rounded-full bg-slate-900 hover:bg-slate-800 px-7 text-sm font-bold text-white shadow-xl shadow-slate-900/10 transition-all hover:scale-105 active:scale-95">
-                            Acesso antecipado
+                    <div className="flex items-center gap-4">
+                        <LanguageSwitcher />
+                        <Link 
+                            href="#waitlist" 
+                            onClick={handleCtaClick}
+                            className="inline-flex h-11 items-center rounded-full bg-slate-900 hover:bg-slate-800 px-7 text-sm font-bold text-white shadow-xl shadow-slate-900/10 transition-all hover:scale-105 active:scale-95"
+                        >
+                            {t("cta")}
                         </Link>
                     </div>
                 </div>
@@ -79,13 +101,11 @@ export default function LandingPage() {
                 <div id="faq">
                     <FaqSection />
                 </div>
+                <CtaSection />
             </main>
 
-            <footer className="py-12 bg-white/80 border-t border-border/40 text-center">
-                <p className="text-sm text-muted-foreground">
-                    &copy; {new Date().getFullYear()} Vitaflix. Todos os direitos reservados.
-                </p>
-            </footer>
+            <WhatsAppWidget />
+            <Footer />
         </div>
     )
 }

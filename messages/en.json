@@ -1,4 +1,281 @@
 {
+    "Landing": {
+        "Header": {
+            "benefits": "Benefits",
+            "method": "Method",
+            "testimonials": "Testimonials",
+            "pricing": "Pricing",
+            "faq": "FAQ",
+            "cta": "Get Access"
+        },
+        "Hero": {
+            "badge": "Limited Beta Spots",
+            "titlePrefix": "Your nutrition,",
+            "titleSuffix": "finally simple.",
+            "subtitle": "Forget Excel sheets and supermarket doubts. Vitaflix creates your weekly plan, shopping list, and recipes in seconds.",
+            "waitlistCount": "+2,000 on the waitlist",
+            "noCard": "No credit card required",
+            "cancelAnytime": "Cancel anytime",
+            "Cards": {
+                "Meal": {
+                    "time": "Today, 12:30",
+                    "title": "Mixed Wrap",
+                    "subtitle": "Ham and cheese",
+                    "calories": "380 kcal",
+                    "protein": "22g Prot",
+                    "action": "Log"
+                },
+                "Shopping": {
+                    "title": "Shopping List",
+                    "items": {
+                        "eggs": "Eggs M",
+                        "spinach": "Spinach",
+                        "oats": "Oats",
+                        "blueberries": "Blueberries"
+                    }
+                },
+                "Progress": {
+                    "title": "Progress"
+                }
+            }
+        },
+        "PainPoints": {
+            "label": "Day to day",
+            "title": "What usually complicates your planning",
+            "subtitle": "With Vitaflix, these blocks stop hindering your routine and planning becomes light and fast.",
+            "items": {
+                "time": {
+                    "title": "Little Time",
+                    "desc": "Between work, family and routine, planning balanced meals always ends up being left for later."
+                },
+                "flavor": {
+                    "title": "Flavorless Meals",
+                    "desc": "Many options seem repetitive and unappealing, making it difficult to maintain consistency."
+                },
+                "doubt": {
+                    "title": "Constant Doubt",
+                    "desc": "Deciding what to cook every day consumes time and energy you could use on other priorities."
+                },
+                "variety": {
+                    "title": "Lack of Variety",
+                    "desc": "You end up repeating the same meals because you don't have a simple system to vary."
+                },
+                "quantity": {
+                    "title": "Uncertain Quantities",
+                    "desc": "Without clear guidance, it is difficult to adjust portions to your goal and maintain consistent results."
+                }
+            }
+        },
+        "SolutionFeatures": {
+            "imageLabel": "Real recipes for your daily life",
+            "title": "Everything in one place",
+            "subtitle": "Introducing the definitive solution. With Vitaflix, you don't lose time, you just gain health and control over your meals.",
+            "premium": {
+                "title": "Premium Experience",
+                "desc": "Clean, fast interface designed for daily use."
+            },
+            "practical": {
+                "title": "Practical Results",
+                "desc": "Decide in minutes what to cook for the whole week."
+            },
+            "list": {
+                "recipes": {
+                    "title": "+300 Recipes",
+                    "desc": "Real variety for all tastes, without monotony."
+                },
+                "calories": {
+                    "title": "Caloric Variations",
+                    "desc": "The same meal adapted to various goals (loss, gain, focus)."
+                },
+                "shopping": {
+                    "title": "Automatic Shopping List",
+                    "desc": "Don't waste time with unnecessary trips to the supermarket."
+                },
+                "planning": {
+                    "title": "Weekly Planning",
+                    "desc": "Intuitive tool to organize the whole week at a glance."
+                },
+                "filters": {
+                    "title": "Smart Filters",
+                    "desc": "Find what you want (meat, fish, vegan, lactose-free) in a second."
+                }
+            }
+        },
+        "WaitlistForm": {
+            "validation": {
+                "nameRequired": "Name is required.",
+                "emailInvalid": "Invalid email."
+            },
+            "success": {
+                "toast": "Thanks for joining the waitlist!",
+                "message": "Spot guaranteed — you'll be among the first to know when we launch."
+            },
+            "error": {
+                "toast": "An error occurred. Please try again later."
+            },
+            "placeholders": {
+                "name": "Your name",
+                "email": "Your best email"
+            },
+            "button": {
+                "loading": "Processing...",
+                "submit": "Secure my spot"
+            }
+        },
+        "Founder": {
+            "label": "Method Credibility",
+            "title": "Behind Vitaflix is a method, not promises",
+            "subtitle": "The app was designed based on field experience and real monitoring to make meal planning simpler, more consistent, and sustainable.",
+            "pillars": {
+                "tech": {
+                    "title": "Solid Technical Base",
+                    "desc": "Methodology built with Physical Education training and real practice with students."
+                },
+                "progress": {
+                    "title": "Sustainable Progression",
+                    "desc": "Focus on consistency and evolution over time, without extreme shortcuts or short-term solutions."
+                },
+                "routine": {
+                    "title": "Applicable Routine",
+                    "desc": "Meal planning that fits into daily life, with simple and repeatable decisions."
+                }
+            },
+            "box": "The methodology was developed by Bruno Cortez with a focus on sustainable results and has already helped hundreds of students lose weight, gain muscle mass, and maintain consistent habits.",
+            "button": "I want access to these recipes"
+        },
+        "Testimonials": {
+            "label": "Testimonials",
+            "title": "What our users say",
+            "subtitle": "Real experiences from people who simplified meal planning and gained consistency in their daily lives.",
+            "items": {
+                "marta": {
+                    "role": "Mother of 2",
+                    "quote": "Before I wasted so much time deciding what to cook. With Vitaflix I started planning the week in a few minutes and the family eats much better."
+                },
+                "diogo": {
+                    "role": "IT Professional",
+                    "quote": "The biggest difference was consistency. I stopped improvising meals and finally managed to maintain a diet routine aligned with my goals."
+                },
+                "ines": {
+                    "role": "Student-athlete",
+                    "quote": "I like the simple way everything is organized. I have variety, I know the right portions, and I don't get lost when the week gets tight."
+                }
+            }
+        },
+        "Recipes": {
+            "title": "Exclusive Recipes",
+            "subtitle": "Created by Bruno for the app",
+            "badge": "Bruno's Recipes",
+            "cta": "View full preparation",
+            "items": {
+                "rice": "Creamy Rice",
+                "shepherd": "Shepherd's Pie",
+                "cake": "Fit Carrot Cake",
+                "sandwich": "Healthy Sandwiches",
+                "breakfast": "Breakfast",
+                "lasagna": "Fit Lasagna"
+            }
+        },
+        "Pricing": {
+            "label": "Clear Pricing",
+            "title": "Invest in your routine",
+            "subtitle": "Simple and transparent plans. No fine print or long contracts.",
+            "button": "Start now",
+            "plans": {
+                "monthly": {
+                    "name": "Monthly Plan",
+                    "desc": "Ideal for those who just want to test.",
+                    "period": "/month",
+                    "features": {
+                        "recipes": "Full access to +300 recipes",
+                        "planning": "Complete weekly planning",
+                        "list": "Automatic shopping list",
+                        "filters": "Macro filters and variations"
+                    }
+                },
+                "quarterly": {
+                    "name": "Quarterly Plan",
+                    "desc": "The favorite for real results.",
+                    "period": "/3 months",
+                    "tag": "Most Popular",
+                    "features": {
+                        "recipes": "Full access to +300 recipes",
+                        "planning": "Complete weekly planning",
+                        "list": "Automatic shopping list",
+                        "filters": "Macro filters and variations",
+                        "price": "Equivalent to €9.99/month"
+                    }
+                },
+                "annual": {
+                    "name": "Annual Plan",
+                    "desc": "The best long-term value.",
+                    "period": "/year",
+                    "features": {
+                        "recipes": "Full access to +300 recipes",
+                        "planning": "Complete weekly planning",
+                        "list": "Automatic shopping list",
+                        "filters": "Macro filters and variations",
+                        "updates": "Access to new updates",
+                        "price": "Equivalent to €5.83/month"
+                    }
+                }
+            }
+        },
+        "Faq": {
+            "label": "No complications",
+            "title": "Frequently Asked Questions",
+            "subtitle": "Everything you need to know about Vitaflix.",
+            "items": {
+                "cancel": {
+                    "q": "Can I cancel anytime?",
+                    "a": "Yes, absolutely. Your subscription can be canceled at any time, directly in your account settings, with no questions or tricks."
+                },
+                "devices": {
+                    "q": "Is it available for Android and iPhone?",
+                    "a": "Yes, Vitaflix is available and optimized on both the App Store (iOS) and Google Play (Android)."
+                },
+                "support": {
+                    "q": "Does the app include personalized monitoring?",
+                    "a": "No. Vitaflix is a creative meal organization tool. Our focus is to give you total autonomy and enormous practical sense, not including consultations or chat monitoring."
+                },
+                "shopping": {
+                    "q": "Does the app create an automatic shopping list?",
+                    "a": "Yes! Vitaflix automatically generates a shopping list organized by supermarket sections, based on the recipes you choose for your week."
+                },
+                "diet": {
+                    "q": "Are there vegetarian or vegan options?",
+                    "a": "Yes, our database includes several vegetarian, vegan, and gluten-free options, allowing you to filter recipes according to your dietary preferences."
+                },
+                "payments": {
+                    "q": "How do payments work?",
+                    "a": "Payments are processed securely through the App Store (Apple) or Google Play Store (Android), ensuring full protection of your data."
+                }
+            }
+        },
+        "Cta": {
+            "title": "Ready to transform your",
+            "highlight": "nutrition?",
+            "subtitle": "Join the waitlist and be one of the first to try Vitaflix. Simplify your planning and reach your goals.",
+            "footer": "Exclusive access for the first subscribers."
+        },
+        "Footer": {
+            "desc": "Simplified meal planning for busy people. Save time, eat better, and reach your goals without stress.",
+            "cols": {
+                "product": "Product",
+                "support": "Support",
+                "contact": "Contact"
+            },
+            "contact": {
+                "help": "Questions? We are here to help on your journey."
+            },
+            "rights": "All rights reserved.",
+            "links": {
+                "privacy": "Privacy",
+                "terms": "Terms",
+                "contact": "Contact"
+            }
+        }
+    },
     "Common": {
         "all": "All",
         "save": "Save",

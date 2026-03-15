@@ -16,15 +16,17 @@ import {
 } from "@/components/ui/form"
 import { CheckCircle2 } from "lucide-react"
 import { toast } from "sonner"
+import { useTranslations } from "next-intl"
 
-const waitlistSchema = z.object({
-    name: z.string().min(2, { message: "Nome é obrigatório." }),
-    email: z.string().email({ message: "Email inválido." }),
-})
-
-export function WaitlistForm() {
+export function WaitlistForm({ inputId }: { inputId?: string }) {
+    const t = useTranslations("Landing.WaitlistForm")
     const [isSubmitting, setIsSubmitting] = useState(false)
     const [isSuccess, setIsSuccess] = useState(false)
+
+    const waitlistSchema = z.object({
+        name: z.string().min(2, { message: t("validation.nameRequired") }),
+        email: z.string().email({ message: t("validation.emailInvalid") }),
+    })
 
     const form = useForm<z.infer<typeof waitlistSchema>>({
         resolver: zodResolver(waitlistSchema),
@@ -52,10 +54,10 @@ export function WaitlistForm() {
             if (!response.ok) throw new Error("Failed to submit")
 
             setIsSuccess(true)
-            toast.success("Obrigado por te juntares à lista de espera!")
+            toast.success(t("success.toast"))
         } catch (error) {
             console.error(error)
-            toast.error("Ocorreu um erro. Tenta novamente mais tarde.")
+            toast.error(t("error.toast"))
         } finally {
             setIsSubmitting(false)
         }
@@ -73,7 +75,7 @@ export function WaitlistForm() {
                         <CheckCircle2 className="size-5 text-primary" />
                     </div>
                     <p className="text-sm md:text-[15px] font-semibold text-slate-800 whitespace-nowrap">
-                        Lugar garantido — serás dos primeiros a saber quando lançarmos.
+                        {t("success.message")}
                     </p>
                 </div>
             </motion.div>
@@ -91,7 +93,8 @@ export function WaitlistForm() {
                             <FormItem className="flex-1 mb-0 sm:border-r sm:border-slate-200 px-2">
                                 <FormControl>
                                     <Input
-                                        placeholder="O teu nome"
+                                        id={inputId}
+                                        placeholder={t("placeholders.name")}
                                         className="h-12 border-0 bg-transparent text-slate-900 placeholder:text-slate-500 focus-visible:ring-0 shadow-none px-3 font-medium text-sm"
                                         {...field}
                                     />
@@ -107,7 +110,7 @@ export function WaitlistForm() {
                             <FormItem className="flex-[2] mb-0 px-2">
                                 <FormControl>
                                     <Input
-                                        placeholder="O teu melhor email"
+                                        placeholder={t("placeholders.email")}
                                         className="h-12 border-0 bg-transparent text-slate-900 placeholder:text-slate-500 focus-visible:ring-0 shadow-none px-3 font-medium text-sm"
                                         {...field}
                                     />
@@ -122,7 +125,7 @@ export function WaitlistForm() {
                     >
                         <div className="absolute inset-0 bg-white/20 translate-y-full group-hover:translate-y-0 transition-transform duration-300" />
                         <span className="relative flex items-center justify-center gap-2 whitespace-nowrap">
-                            {isSubmitting ? "A entrar..." : "Acesso antecipado"}
+                            {isSubmitting ? t("button.loading") : t("button.submit")}
                         </span>
                     </Button>
                 </div>
