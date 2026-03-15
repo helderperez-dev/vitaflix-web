@@ -1,10 +1,11 @@
 "use client"
 
 import * as React from "react"
-import { Search, Loader2, X, Apple, Utensils, Users, Tag, Store, UserCheck, CalendarDays, type LucideIcon } from "lucide-react"
+import { createPortal } from "react-dom"
+import { Search, Loader2, Apple, Utensils, Users, Tag, Store, UserCheck, CalendarDays, type LucideIcon } from "lucide-react"
 import { useRouter } from "next/navigation"
-import { usePathname } from "@/i18n/routing"
 import { useLocale } from "next-intl"
+import { useTranslations } from "next-intl"
 import { useDebounce } from "use-debounce"
 import { globalSearch } from "@/app/actions/search"
 import { type SearchResult } from "@/shared-schemas/search"
@@ -12,40 +13,33 @@ import { type SearchResult } from "@/shared-schemas/search"
 import { cn } from "@/lib/utils"
 import { MediaDisplay } from "@/components/shared/media-display"
 
-const sectionConfig: Record<string, { label: string; icon: LucideIcon }> = {
-    product: { label: "Products", icon: Apple },
-    meal: { label: "Meals", icon: Utensils },
-    user: { label: "Users", icon: Users },
-    lead: { label: "Leads", icon: UserCheck },
-    plan: { label: "Meal Plans", icon: CalendarDays },
-    brand: { label: "Brands", icon: Store },
-    tag: { label: "Tags", icon: Tag },
-}
-
 export function GlobalSearch() {
     const router = useRouter()
-    const pathname = usePathname()
     const locale = useLocale()
+    const t = useTranslations("Common")
     const inputRef = React.useRef<HTMLInputElement>(null)
     const containerRef = React.useRef<HTMLDivElement>(null)
-    const scrollContainerRef = React.useRef<HTMLDivElement>(null)
+    const dropdownRef = React.useRef<HTMLDivElement>(null)
+    const latestRequestRef = React.useRef(0)
     const [query, setQuery] = React.useState("")
     const [debouncedQuery] = useDebounce(query, 300)
     const [results, setResults] = React.useState<SearchResult[]>([])
     const [isLoading, setIsLoading] = React.useState(false)
     const [isFocused, setIsFocused] = React.useState(false)
     const [selectedIndex, setSelectedIndex] = React.useState(-1)
-    const [selectedItems, setSelectedItems] = React.useState<SearchResult[]>([])
-
-    // Track the pathname that was active when items were selected
-    const selectionPathRef = React.useRef<string | null>(null)
-
-    // Flatten results for keyboard navigation
-    const flatResults = React.useMemo(() => results, [results])
+    const [dropdownStyle, setDropdownStyle] = React.useState<{ top: number; left: number; width: number } | null>(null)
+    const sectionConfig: Record<string, { label: string; icon: LucideIcon }> = React.useMemo(() => ({
+        product: { label: t("product"), icon: Apple },
+        meal: { label: t("meal"), icon: Utensils },
+        user: { label: t("user"), icon: Users },
+        lead: { label: t("lead"), icon: UserCheck },
+        plan: { label: t("plan"), icon: CalendarDays },
+        brand: { label: t("brand"), icon: Store },
+        tag: { label: t("tag"), icon: Tag },
+    }), [t])
 
     const isOpen = isFocused && query.trim().length >= 2
 
-    // ⌘K shortcut
     React.useEffect(() => {
         const down = (e: KeyboardEvent) => {
             if (e.key === "k" && (e.metaKey || e.ctrlKey)) {
@@ -58,10 +52,15 @@ export function GlobalSearch() {
         return () => document.removeEventListener("keydown", down)
     }, [])
 
-    // Click-outside to close dropdown (but keep tags)
     React.useEffect(() => {
         function handleClickOutside(e: MouseEvent) {
-            if (containerRef.current && !containerRef.current.contains(e.target as Node)) {
+            const targetNode = e.target as Node
+            if (
+                containerRef.current &&
+                !containerRef.current.contains(targetNode) &&
+                dropdownRef.current &&
+                !dropdownRef.current.contains(targetNode)
+            ) {
                 setIsFocused(false)
             }
         }
@@ -69,28 +68,35 @@ export function GlobalSearch() {
         return () => document.removeEventListener("mousedown", handleClickOutside)
     }, [])
 
-    // Clear selected items when navigating manually to a different page
     React.useEffect(() => {
-        if (selectionPathRef.current && pathname !== selectionPathRef.current) {
-            setSelectedItems([])
-            selectionPathRef.current = null
-        } else if (selectionPathRef.current && pathname === selectionPathRef.current) {
-            // We arrived at the intended path (e.g. after removing the last tag).
-            // Clear the ref so normal sync can resume without re-triggering navigation.
-            selectionPathRef.current = null
+        if (!isOpen) {
+            setDropdownStyle(null)
+            return
         }
-    }, [pathname])
 
-    // Scroll tags to end when a item is selected
-    React.useEffect(() => {
-        if (scrollContainerRef.current) {
-            scrollContainerRef.current.scrollLeft = scrollContainerRef.current.scrollWidth
+        const updatePosition = () => {
+            if (!containerRef.current) return
+            const rect = containerRef.current.getBoundingClientRect()
+            setDropdownStyle({
+                top: rect.bottom + 6,
+                left: rect.left,
+                width: rect.width,
+            })
         }
-    }, [selectedItems])
 
-    // Fetch results on debounced query change
+        updatePosition()
+        window.addEventListener("resize", updatePosition)
+        window.addEventListener("scroll", updatePosition, true)
+        return () => {
+            window.removeEventListener("resize", updatePosition)
+            window.removeEventListener("scroll", updatePosition, true)
+        }
+    }, [isOpen])
+
     React.useEffect(() => {
-        let isMounted = true
+        const currentRequest = latestRequestRef.current + 1
+        latestRequestRef.current = currentRequest
+
         async function fetchResults() {
             if (debouncedQuery.trim().length < 2) {
                 setResults([])
@@ -101,186 +107,51 @@ export function GlobalSearch() {
             setIsLoading(true)
             try {
                 const searchResults = await globalSearch(debouncedQuery)
-                if (!isMounted) return
-
-                // Filter out already-selected items
-                const filtered = searchResults.filter(
-                    (r) => !selectedItems.some((s) => s.id === r.id && s.type === r.type)
-                )
-
-                // Batch updates to avoid unnecessary intermediate renders
+                if (latestRequestRef.current !== currentRequest) return
                 React.startTransition(() => {
-                    setResults(filtered)
+                    setResults(searchResults)
                     setIsLoading(false)
                 })
             } catch (error) {
                 console.error(error)
-                if (isMounted) setIsLoading(false)
+                if (latestRequestRef.current === currentRequest) {
+                    setIsLoading(false)
+                }
             }
         }
 
         fetchResults()
-        return () => { isMounted = false }
-    }, [debouncedQuery, selectedItems])
+    }, [debouncedQuery])
 
-    // Reset selected index when results change
     React.useEffect(() => {
         setSelectedIndex(-1)
     }, [results])
 
-    // Sync URL search param to tags on mount or manual navigation
-    React.useEffect(() => {
-        const params = new URLSearchParams(window.location.search)
-        const searchVal = params.get("search")
-
-        // If we have a URL search but no visual tags, try to reconstruct them
-        if (searchVal && selectedItems.length === 0) {
-            const terms = searchVal.split(/\s+/).filter(Boolean)
-            const reconstructed = terms.map(t => ({
-                id: `url-${t}`,
-                type: 'product',
-                title: t,
-                url: `${pathname}?search=${encodeURIComponent(t)}`
-            } as SearchResult))
-            setSelectedItems(reconstructed)
-            selectionPathRef.current = pathname
-        }
-    }, [pathname])
-
-    // Live sync input query to URL if on a compatible page
-    React.useEffect(() => {
-        // Skip sync if we're in the middle of a category transition
-        // or if the current tags don't belong to this page
-        if (selectionPathRef.current && pathname !== selectionPathRef.current) return
-
-        const supportedPaths = ["/products", "/meals", "/users", "/leads"]
-        const isSupported = supportedPaths.some(p => pathname.endsWith(p))
-        if (!isSupported) return
-
-        const currentParams = new URLSearchParams(window.location.search)
-        const oldSearch = currentParams.get("search") || ""
-
-        const tagTerms = selectedItems
-            .filter(s => ["product", "meal", "user", "lead", "plan"].includes(s.type))
-            .map(s => s.title)
-
-        const allTerms = [...tagTerms]
-        if (debouncedQuery.trim()) allTerms.push(debouncedQuery.trim())
-
-        const newSearch = allTerms.join("")
-
-        if (newSearch !== oldSearch) {
-            if (newSearch) {
-                currentParams.set("search", newSearch)
-            } else {
-                currentParams.delete("search")
-            }
-            const searchStr = currentParams.toString()
-            router.replace(`${pathname}${searchStr ? `?${searchStr}` : ""}`, { scroll: false })
-        }
-    }, [debouncedQuery, selectedItems, pathname, router])
-
     function handleSelect(item: SearchResult) {
-        const itemUrl = new URL(item.url, "http://dummy")
-        const basePath = itemUrl.pathname
-
-        // Use the current pathname to detect if we need a screen jump
-        const isChangingCategory = pathname !== basePath
-
-        const newSelected = isChangingCategory ? [item] : [...selectedItems, item]
-
-        // Construct final URL params from all selected items
-        const finalParams = new URLSearchParams()
-
-        const searchTerms = newSelected
-            .filter(s => ["product", "meal", "user", "lead", "plan"].includes(s.type))
-            .map(s => s.title)
-
-        if (searchTerms.length > 0) {
-            finalParams.set("search", searchTerms.join(""))
-        }
-
-        newSelected.forEach(s => {
-            if (["brand", "tag"].includes(s.type)) {
-                const sUrl = new URL(s.url, "http://dummy")
-                sUrl.searchParams.forEach((v, k) => finalParams.set(k, v))
-            }
-        })
-
-        // Update selectionPathRef BEFORE setting state to ensure the sync effect
-        // can detect the transition and avoid overwriting the URL
-        selectionPathRef.current = basePath
-        setSelectedItems(newSelected)
-
+        router.push(item.url)
         setIsFocused(false)
         setQuery("")
         setResults([])
-
-        const searchStr = finalParams.toString()
-        router.push(`/${locale}${basePath}${searchStr ? `?${searchStr}` : ""}`)
-    }
-
-    function handleRemoveTag(item: SearchResult) {
-        const remainingItems = selectedItems.filter((s) => !(s.id === item.id && s.type === item.type))
-        const itemUrl = new URL(item.url, "http://dummy")
-        const basePath = itemUrl.pathname
-
-        // Keep selectionPathRef pointing to basePath even when all items are removed.
-        // This prevents the live-sync effect from firing a competing navigation
-        // at the same time as the router.push below (which caused the not-found redirect).
-        selectionPathRef.current = basePath
-        setSelectedItems(remainingItems)
-
-        if (remainingItems.length === 0) {
-            router.push(`/${locale}${basePath}`)
-        } else {
-            const finalParams = new URLSearchParams()
-
-            const searchTerms = remainingItems
-                .filter(s => ["product", "meal", "user", "lead", "plan"].includes(s.type))
-                .map(s => s.title)
-
-            if (searchTerms.length > 0) {
-                finalParams.set("search", searchTerms.join(""))
-            }
-
-            remainingItems.forEach(s => {
-                if (["brand", "tag"].includes(s.type)) {
-                    const sUrl = new URL(s.url, "http://dummy")
-                    sUrl.searchParams.forEach((v, k) => finalParams.set(k, v))
-                }
-            })
-
-            const searchStr = finalParams.toString()
-            router.push(`/${locale}${basePath}${searchStr ? `?${searchStr}` : ""}`)
-        }
-
-        setTimeout(() => inputRef.current?.focus(), 100)
+        setSelectedIndex(-1)
     }
 
     function handleKeyDown(e: React.KeyboardEvent) {
-        // Backspace on empty input removes last tag
-        if (e.key === "Backspace" && query === "" && selectedItems.length > 0) {
-            e.preventDefault()
-            handleRemoveTag(selectedItems[selectedItems.length - 1])
-            return
-        }
-
         if (!isOpen) return
 
         if (e.key === "ArrowDown") {
             e.preventDefault()
             setSelectedIndex((prev) =>
-                prev < flatResults.length - 1 ? prev + 1 : 0
+                prev < results.length - 1 ? prev + 1 : 0
             )
         } else if (e.key === "ArrowUp") {
             e.preventDefault()
             setSelectedIndex((prev) =>
-                prev > 0 ? prev - 1 : flatResults.length - 1
+                prev > 0 ? prev - 1 : results.length - 1
             )
-        } else if (e.key === "Enter" && selectedIndex >= 0) {
+        } else if (e.key === "Enter" && results.length > 0) {
             e.preventDefault()
-            handleSelect(flatResults[selectedIndex])
+            const fallbackIndex = selectedIndex >= 0 ? selectedIndex : 0
+            handleSelect(results[fallbackIndex])
         } else if (e.key === "Escape") {
             e.preventDefault()
             setIsFocused(false)
@@ -288,7 +159,6 @@ export function GlobalSearch() {
         }
     }
 
-    // Group results by type - memoized for performance
     const groupedResults = React.useMemo(() => {
         return results.reduce((acc, result) => {
             if (!acc[result.type]) {
@@ -299,14 +169,16 @@ export function GlobalSearch() {
         }, {} as Record<string, SearchResult[]>)
     }, [results])
 
-    // Track global index for highlighting
     let globalIndex = -1
 
-    const hasSelectedItems = selectedItems.length > 0
-
     return (
-        <div ref={containerRef} className="relative w-fit max-w-full">
-            {/* Input trigger with tags */}
+        <div
+            ref={containerRef}
+            className={cn(
+                "relative isolate w-fit max-w-full",
+                isOpen ? "z-[9999]" : "z-10"
+            )}
+        >
             <div
                 className={cn(
                     "flex h-9 items-center gap-1.5 rounded-lg border bg-background px-2 transition-all duration-200 overflow-hidden",
@@ -318,45 +190,11 @@ export function GlobalSearch() {
             >
                 <Search className="size-4 shrink-0 text-muted-foreground/60 ml-1" />
 
-                <div ref={scrollContainerRef} className="flex-1 flex items-center gap-1.5 overflow-x-auto no-scrollbar scroll-smooth py-1">
-                    {/* Selected tags */}
-                    {selectedItems.map((item) => {
-                        const ItemIcon = sectionConfig[item.type]?.icon || Search
-                        return (
-                            <span
-                                key={`tag-${item.type}-${item.id}`}
-                                className="inline-flex items-center gap-1 rounded-md bg-primary/10 text-primary pl-1.5 pr-0.5 py-0.5 text-xs font-medium animate-in fade-in-0 zoom-in-95 duration-150 whitespace-nowrap shrink-0"
-                            >
-                                {item.imageUrl ? (
-                                    <MediaDisplay
-                                        src={item.imageUrl}
-                                        alt=""
-                                        className="size-4 rounded-sm shrink-0"
-                                    />
-                                ) : (
-                                    <ItemIcon className="size-3 shrink-0 opacity-70" />
-                                )}
-                                <span className="truncate max-w-[120px]">{item.title}</span>
-                                <button
-                                    type="button"
-                                    className="ml-0.5 rounded-sm p-0.5 hover:bg-primary/20 transition-colors"
-                                    onClick={(e) => {
-                                        e.stopPropagation()
-                                        handleRemoveTag(item)
-                                    }}
-                                    onMouseDown={(e) => e.preventDefault()}
-                                >
-                                    <X className="size-3" />
-                                </button>
-                            </span>
-                        )
-                    })}
-
-                    {/* Input */}
+                <div className="flex-1 flex items-center gap-1.5 overflow-x-auto no-scrollbar scroll-smooth py-1">
                     <input
                         ref={inputRef}
                         type="text"
-                        placeholder={hasSelectedItems ? "Add filter..." : "Search anywhere..."}
+                        placeholder={t("search")}
                         value={query}
                         onChange={(e) => setQuery(e.target.value)}
                         onFocus={() => setIsFocused(true)}
@@ -368,25 +206,33 @@ export function GlobalSearch() {
 
                 {isLoading ? (
                     <Loader2 className="size-4 shrink-0 animate-spin text-muted-foreground/60 mx-1" />
-                ) : !hasSelectedItems ? (
+                ) : (
                     <kbd className="pointer-events-none hidden h-5 select-none items-center gap-0.5 rounded border bg-muted/60 px-1.5 font-mono text-[10px] font-medium text-muted-foreground/70 sm:inline-flex ml-1">
                         <span className="text-xs">⌘</span>K
                     </kbd>
-                ) : null}
+                )}
             </div>
 
-            {/* Dropdown results */}
-            {isOpen && (
-                <div className="absolute top-full left-0 right-0 mt-1.5 z-50 rounded-lg border border-border/60 bg-popover shadow-lg shadow-black/[0.08] dark:shadow-black/30 overflow-hidden animate-in fade-in-0 zoom-in-95 slide-in-from-top-1 duration-150">
+            {isOpen && dropdownStyle && createPortal(
+                <div
+                    ref={dropdownRef}
+                    className="fixed rounded-lg border border-border/60 bg-popover shadow-lg shadow-black/[0.08] dark:shadow-black/30 overflow-hidden animate-in fade-in-0 zoom-in-95 slide-in-from-top-1 duration-150"
+                    style={{
+                        top: dropdownStyle.top,
+                        left: dropdownStyle.left,
+                        width: dropdownStyle.width,
+                        zIndex: 2147483647,
+                    }}
+                >
                     {results.length === 0 && !isLoading && debouncedQuery.length >= 2 && (
                         <div className="px-4 py-6 text-center text-sm text-muted-foreground">
-                            No results found.
+                            {locale.startsWith('pt') ? "Sem resultados." : "No results found."}
                         </div>
                     )}
                     {results.length === 0 && isLoading && (
                         <div className="px-4 py-6 text-center text-sm text-muted-foreground flex items-center justify-center gap-2">
                             <Loader2 className="size-3.5 animate-spin" />
-                            Searching...
+                            {locale.startsWith('pt') ? "A pesquisar..." : "Searching..."}
                         </div>
                     )}
 
@@ -457,7 +303,8 @@ export function GlobalSearch() {
                             })}
                         </div>
                     )}
-                </div>
+                </div>,
+                document.body
             )}
         </div>
     )

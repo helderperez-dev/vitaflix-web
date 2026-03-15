@@ -16,6 +16,7 @@ import {
     PopoverContent,
     PopoverTrigger,
 } from "@/components/ui/popover"
+import { useLocale } from "next-intl"
 
 interface SearchableSelectProps {
     options: { value: string, label: string, secondary?: string }[]
@@ -31,12 +32,16 @@ export function SearchableSelect({
     options,
     value,
     onValueChange,
-    placeholder = "Select option...",
-    emptyMessage = "No results found.",
+    placeholder,
+    emptyMessage,
     className,
     name
 }: SearchableSelectProps) {
+    const locale = useLocale()
+    const isPt = locale.startsWith("pt")
     const [open, setOpen] = React.useState(false)
+    const resolvedPlaceholder = placeholder || (isPt ? "Selecionar opção..." : "Select option...")
+    const resolvedEmptyMessage = emptyMessage || (isPt ? "Sem resultados." : "No results found.")
 
     const selectedOption = options.find((opt) => opt.value === value)
 
@@ -65,15 +70,15 @@ export function SearchableSelect({
                                 )}
                             </div>
                         ) : (
-                            placeholder
+                            resolvedPlaceholder
                         )}
                         <ChevronsUpDown className="ml-2 h-4 w-4 shrink-0 opacity-50" />
                     </Button>
                 </PopoverTrigger>
                 <PopoverContent className="p-0 sm:w-[var(--radix-popover-trigger-width)] rounded-lg border-border/40 shadow-2xl overflow-hidden" align="start">
                     <Command className="border-none">
-                        <CommandInput placeholder="Search..." className="h-10 border-none ring-0 focus:ring-0" />
-                        <CommandEmpty className="py-4 text-xs text-center text-muted-foreground/60">{emptyMessage}</CommandEmpty>
+                        <CommandInput placeholder={isPt ? "Pesquisar..." : "Search..."} className="h-10 border-none ring-0 focus:ring-0" />
+                        <CommandEmpty className="py-4 text-xs text-center text-muted-foreground/60">{resolvedEmptyMessage}</CommandEmpty>
                         <CommandGroup className="max-h-[300px] overflow-y-auto p-1 custom-scrollbar">
                             {options.map((option) => (
                                 <CommandItem

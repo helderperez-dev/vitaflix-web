@@ -85,7 +85,13 @@ export function DictionarySelector({
     )
 
     const selectedItem = items.find((item) => returnIdOnly ? item.id === value : (item.slug === value || item.id === value))
-    const displayValue = selectedItem?.name?.[locale] || selectedItem?.name?.en || value || placeholder || t("select")
+    const isResolvingSelectedId = Boolean(returnIdOnly && value && !selectedItem && loading)
+    const displayValue = selectedItem?.name?.[locale]
+        || selectedItem?.name?.en
+        || (isResolvingSelectedId ? (placeholder || t("loading")) : "")
+        || (!returnIdOnly ? value : "")
+        || placeholder
+        || t("select")
 
     const handleSelect = (item: Tag) => {
         onChange(returnIdOnly ? item.id! : (item.slug || item.id!))
@@ -107,7 +113,11 @@ export function DictionarySelector({
                         <span className={cn("truncate", !value && "text-muted-foreground/50")}>
                             {displayValue}
                         </span>
-                        <ChevronDown className="h-4 w-4 shrink-0 opacity-50 group-hover:opacity-100 transition-opacity" />
+                        {isResolvingSelectedId ? (
+                            <Loader2 className="h-4 w-4 shrink-0 animate-spin opacity-60" />
+                        ) : (
+                            <ChevronDown className="h-4 w-4 shrink-0 opacity-50 group-hover:opacity-100 transition-opacity" />
+                        )}
                     </Button>
                 </PopoverTrigger>
                 <PopoverContent className="w-[300px] p-0 border-input rounded-lg backdrop-blur-xl bg-background/90" align="start">
@@ -172,7 +182,7 @@ export function DictionarySelector({
                                         className="w-full justify-start text-xs py-2.5 px-3 text-primary font-semibold rounded-lg hover:bg-primary/5 transition-colors h-auto gap-2"
                                     >
                                         <Plus className="h-3.5 w-3.5" />
-                                        {t("addNew")}
+                                        {t("add")}
                                     </Button>
                                 </div>
                             </>

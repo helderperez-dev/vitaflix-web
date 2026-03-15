@@ -1,10 +1,10 @@
 "use client"
 
 import * as React from "react"
-import { useTranslations } from "next-intl"
+import { useLocale, useTranslations } from "next-intl"
 import { DataTable, SortableHeader } from "@/components/ui/data-table"
 import { Badge } from "@/components/ui/badge"
-import { Zap, BellRing, Mail, Smartphone, MessageSquare, Users, ShieldCheck, MoreHorizontal, Clock, Pencil, Trash2 } from "lucide-react"
+import { BellRing, Mail, Smartphone, MessageSquare, MoreHorizontal, Clock, Pencil, Trash2 } from "lucide-react"
 import type { ColumnDef } from "@tanstack/react-table"
 import { cn } from "@/lib/utils"
 import { Button } from "@/components/ui/button"
@@ -22,13 +22,15 @@ export function TriggersTab({
     initialTriggers: any[],
     onEdit?: (data: any) => void
 }) {
+    const locale = useLocale()
     const t = useTranslations("Notifications")
     const commonT = useTranslations("Common")
+    const isPt = locale.startsWith("pt")
 
     const columns = React.useMemo<ColumnDef<any>[]>(() => [
         {
             accessorKey: "name",
-            header: ({ column }) => <SortableHeader column={column} title={t("table.name") || "Automation Name"} />,
+            header: ({ column }) => <SortableHeader column={column} title={t("table.name")} />,
             cell: ({ row }) => (
                 <div className="flex flex-col max-w-[250px]">
                     <span className="font-semibold text-sm truncate">{row.getValue("name")}</span>
@@ -52,7 +54,7 @@ export function TriggersTab({
         },
         {
             accessorKey: "channels",
-            header: ({ column }) => <SortableHeader column={column} title={t("table.channels") || "Channels"} />,
+            header: ({ column }) => <SortableHeader column={column} title={t("table.channels")} />,
             cell: ({ row }) => {
                 const channels = (row.getValue("channels") as string[]) || []
                 return (
@@ -63,7 +65,7 @@ export function TriggersTab({
                                 {ch === 'push' && <Smartphone className="size-2.5 mr-1" />}
                                 {ch === 'email' && <Mail className="size-2.5 mr-1" />}
                                 {ch === 'sms' && <MessageSquare className="size-2.5 mr-1" />}
-                                {ch}
+                                {t(`channels.${ch}`)}
                             </Badge>
                         ))}
                     </div>
@@ -81,7 +83,7 @@ export function TriggersTab({
                         "h-5 px-2 text-[9px] font-bold capitalize tracking-tight border-none",
                         isActive ? "bg-emerald-500/10 text-emerald-600 dark:text-emerald-400" : "bg-muted/10 text-muted-foreground"
                     )}>
-                        {isActive ? "Active" : "Inactive"}
+                        {isActive ? (isPt ? "Ativo" : "Active") : (isPt ? "Inativo" : "Inactive")}
                     </Badge>
                 )
             },
@@ -89,7 +91,7 @@ export function TriggersTab({
         },
         {
             accessorKey: "created_at",
-            header: ({ column }) => <SortableHeader column={column} title={commonT("date") || "Date"} />,
+            header: ({ column }) => <SortableHeader column={column} title={commonT("date")} />,
             cell: ({ row }) => {
                 const date = new Date(row.getValue("created_at"))
                 return (
@@ -121,20 +123,20 @@ export function TriggersTab({
                                 className="rounded-lg text-xs font-medium cursor-pointer"
                             >
                                 <Pencil className="size-3.5 mr-2 text-muted-foreground" />
-                                {commonT("edit") || "Edit"}
+                                {commonT("edit")}
                             </DropdownMenuItem>
                             <DropdownMenuItem
                                 className="rounded-lg text-xs font-medium cursor-pointer text-destructive focus:text-destructive"
                             >
                                 <Trash2 className="size-3.5 mr-2" />
-                                {commonT("delete") || "Delete"}
+                                {commonT("delete")}
                             </DropdownMenuItem>
                         </DropdownMenuContent>
                     </DropdownMenu>
                 </div>
             )
         }
-    ], [t, commonT, onEdit])
+    ], [isPt, t, commonT, onEdit])
 
     return (
         <div className="h-full flex flex-col">
@@ -142,7 +144,7 @@ export function TriggersTab({
                 columns={columns}
                 data={initialTriggers}
                 className="flex-1"
-                emptyStateText={t("noTriggers") || "No automated triggers found."}
+                emptyStateText={t("noTriggers")}
                 onRowClick={(row) => onEdit?.(row)}
             />
         </div>

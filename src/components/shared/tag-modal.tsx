@@ -14,12 +14,12 @@ import {
     DialogHeader,
     DialogTitle,
 } from "@/components/ui/dialog"
-import { Form, FormField, FormItem, FormLabel, FormControl, FormMessage } from "@/components/ui/form"
+import { Form } from "@/components/ui/form"
 import { Button } from "@/components/ui/button"
-import { Input } from "@/components/ui/input"
 import { TranslationFields } from "./translation-fields"
 import { tagSchema, type Tag, type TagTable } from "@/shared-schemas/tag"
 import { upsertTag, deleteTag } from "@/app/actions/tags"
+import { useLocale, useTranslations } from "next-intl"
 
 interface TagModalProps {
     open: boolean
@@ -32,6 +32,28 @@ interface TagModalProps {
 export function TagModal({ open, onOpenChange, tag, onSuccess, table = "tags" }: TagModalProps) {
     const [isSubmitting, setIsSubmitting] = React.useState(false)
     const [isDeleting, setIsDeleting] = React.useState(false)
+    const locale = useLocale()
+    const commonT = useTranslations("Common")
+    const usersT = useTranslations("Users")
+    const isPt = locale.startsWith("pt")
+
+    const getEntityLabel = React.useCallback((targetTable: TagTable) => {
+        if (targetTable === "user_roles") return usersT("table.role")
+        if (targetTable === "wellness_objectives") return usersT("wellnessObjective")
+        if (targetTable === "meal_plan_sizes") return isPt ? "Ciclo de serviço" : "Service cycle"
+        if (targetTable === "product_groups") return isPt ? "Grupo" : "Group"
+        if (targetTable === "measurement_units") return isPt ? "Unidade" : "Unit"
+        if (targetTable === "countries") return isPt ? "País" : "Country"
+        if (targetTable === "brands") return commonT("brand")
+        return isPt ? "Etiqueta" : "Tag"
+    }, [commonT, isPt, usersT])
+
+    const entityLabel = getEntityLabel(table)
+    const titleText = tag ? `${commonT("edit")} ${entityLabel}` : `${commonT("addNew")} ${entityLabel}`
+    const helperText = isPt
+        ? "Atualize os nomes traduzidos deste registo."
+        : "Update the translated names for this record."
+    const deleteText = `${commonT("delete")} ${entityLabel}`
 
     const form = useForm<Tag>({
         resolver: zodResolver(tagSchema),
@@ -61,18 +83,13 @@ export function TagModal({ open, onOpenChange, tag, onSuccess, table = "tags" }:
                 toast.error(result.error)
             } else {
                 toast.success(
-                    table === "user_roles" ? (tag ? "Role updated" : "Role created") :
-                        table === "wellness_objectives" ? (tag ? "Objective updated" : "Objective created") :
-                            table === "product_groups" ? (tag ? "Product Group updated" : "Product Group created") :
-                                table === "measurement_units" ? (tag ? "Unit updated" : "Unit created") :
-                                    table === "countries" ? (tag ? "Country updated" : "Country created") :
-                                (tag ? "Tag updated successfully" : "Tag created successfully")
+                    tag ? commonT("updatedSuccessfully") : commonT("createdSuccessfully")
                 )
                 onSuccess?.()
                 onOpenChange(false)
             }
         } catch (error) {
-            toast.error(table === "countries" ? "Failed to save country" : "Failed to save tag")
+            toast.error(commonT("errorSaving"))
         } finally {
             setIsSubmitting(false)
         }
@@ -80,7 +97,7 @@ export function TagModal({ open, onOpenChange, tag, onSuccess, table = "tags" }:
 
     async function onDelete() {
         if (!tag?.id) return
-        if (!confirm(table === "countries" ? "Are you sure you want to delete this country? This cannot be undone and may affect country-based availability." : "Are you sure you want to delete this tag? This cannot be undone and may affect associated products.")) return
+        if (!confirm(commonT("deleteConfirmationLabel"))) return
 
         setIsDeleting(true)
         try {
@@ -88,12 +105,12 @@ export function TagModal({ open, onOpenChange, tag, onSuccess, table = "tags" }:
             if (result?.error) {
                 toast.error(result.error)
             } else {
-                toast.success(table === "countries" ? "Country deleted successfully" : "Tag deleted successfully")
+                toast.success(commonT("deletedSuccessfully"))
                 onSuccess?.()
                 onOpenChange(false)
             }
         } catch (error) {
-            toast.error(table === "countries" ? "Failed to delete country" : "Failed to delete tag")
+            toast.error(commonT("errorSaving"))
         } finally {
             setIsDeleting(false)
         }
@@ -111,23 +128,9 @@ export function TagModal({ open, onOpenChange, tag, onSuccess, table = "tags" }:
 
                 <div className="p-8 space-y-8">
                     <DialogHeader className="space-y-2">
-                        <DialogTitle className="text-xl font-semibold tracking-tight text-secondary dark:text-foreground">
-                            {table === "user_roles" ? (tag ? "Edit Role" : "New Role") :
-                                table === "wellness_objectives" ? (tag ? "Edit Objective" : "New Objective") :
-                                    table === "meal_plan_sizes" ? (tag ? "Edit Config" : "New Config") :
-                                        table === "product_groups" ? (tag ? "Edit Product Group" : "New Product Group") :
-                                            table === "measurement_units" ? (tag ? "Edit Unit" : "New Unit") :
-                                                table === "countries" ? (tag ? "Edit Country" : "New Country") :
-                                            (tag ? "Edit Tag" : "New Tag")}
-                        </DialogTitle>
+                        <DialogTitle className="text-xl font-semibold tracking-tight text-secondary dark:text-foreground">{titleText}</DialogTitle>
                         <DialogDescription className="text-xs text-muted-foreground leading-relaxed">
-                            {table === "user_roles" ? (tag ? "Update role configuration" : "Create a new system role") :
-                                table === "wellness_objectives" ? (tag ? "Update wellness objective" : "Create a new system objective") :
-                                    table === "meal_plan_sizes" ? (tag ? "Update daily meals configuration" : "Create a configuration for daily meals. Start with the number (e.g. '5 Meals a day')") :
-                                        table === "product_groups" ? (tag ? "Update product group info" : "Create a new product group to organize your products.") :
-                                            table === "measurement_units" ? (tag ? "Update unit labeling" : "Create a new product measurement unit (g, ml, unit).") :
-                                                table === "countries" ? (tag ? "Update country availability definition." : "Create a country available for product and meal distribution.") :
-                                            (tag ? "Update the multilingual names for this organizational tag." : "Create a new tag to group and filter your content across languages.")}
+                            {helperText}
                         </DialogDescription>
                     </DialogHeader>
 
@@ -136,8 +139,8 @@ export function TagModal({ open, onOpenChange, tag, onSuccess, table = "tags" }:
                             <TranslationFields
                                 form={form}
                                 namePrefix="name"
-                                label={table === "user_roles" ? "Role Name" : table === "wellness_objectives" ? "Objective Name" : table === "meal_plan_sizes" ? "Configuration Name" : table === "product_groups" ? "Group Name" : table === "measurement_units" ? "Unit Name" : table === "countries" ? "Country Name" : "Tag Name"}
-                                placeholder={table === "meal_plan_sizes" ? "e.g. 5 Meals per day" : "Display Name..."}
+                                label={entityLabel}
+                                placeholder={isPt ? "Nome de exibição..." : "Display Name..."}
                             />
                         </form>
                     </Form>
@@ -154,7 +157,7 @@ export function TagModal({ open, onOpenChange, tag, onSuccess, table = "tags" }:
                                 className="h-9 px-3 text-xs font-semibold text-muted-foreground/40 hover:text-destructive hover:bg-destructive/5 transition-colors gap-2"
                             >
                                 <Trash2 className="h-3.5 w-3.5" />
-                                {table === "user_roles" ? "Delete Role" : table === "wellness_objectives" ? "Delete Objective" : table === "meal_plan_sizes" ? "Delete Config" : table === "product_groups" ? "Delete Product Group" : table === "measurement_units" ? "Delete Unit" : table === "countries" ? "Delete Country" : "Delete Tag"}
+                                {deleteText}
                             </Button>
                         )}
                     </div>
@@ -166,7 +169,7 @@ export function TagModal({ open, onOpenChange, tag, onSuccess, table = "tags" }:
                             onClick={() => onOpenChange(false)}
                             disabled={isSubmitting || isDeleting}
                         >
-                            Cancel
+                            {commonT("cancel")}
                         </Button>
                         <Button
                             type="submit"
@@ -177,7 +180,7 @@ export function TagModal({ open, onOpenChange, tag, onSuccess, table = "tags" }:
                             {isSubmitting ? (
                                 <Loader2 className="mr-2 h-4 w-4 animate-spin" />
                             ) : null}
-                            Save
+                            {commonT("save")}
                         </Button>
                     </div>
                 </DialogFooter>

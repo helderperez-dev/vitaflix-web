@@ -6,40 +6,46 @@ import { motion } from "framer-motion"
 import {
     Boxes,
     Settings2,
-    BellRing,
-    ChevronRight,
-    ArrowLeft
+    BellRing
 } from "lucide-react"
 import { Card, CardHeader, CardTitle, CardDescription } from "@/components/ui/card"
-import { Button } from "@/components/ui/button"
 import { Link } from "@/i18n/routing"
-import { cn } from "@/lib/utils"
-
-const SETTINGS_OPTIONS = [
-    {
-        id: 'platform',
-        label: 'Platform',
-        description: 'Core settings, localization and regional parameters.',
-        icon: Settings2,
-        href: '/settings/platform',
-    },
-    {
-        id: 'system',
-        label: 'Dictionaries',
-        description: 'Manage master data, categories and logic structures.',
-        icon: Boxes,
-        href: '/settings/system',
-    },
-    {
-        id: 'notifications',
-        label: 'Notifications',
-        description: 'Broadcast management, triggers and user groups.',
-        icon: BellRing,
-        href: '/settings/notifications',
-    }
-]
+import { useLocale, useTranslations } from "next-intl"
 
 export default function SettingsHubPage_Client() {
+    const locale = useLocale()
+    const navigationT = useTranslations("Navigation")
+    const isPt = locale.startsWith("pt")
+    const settingsOptions = React.useMemo(() => ([
+        {
+            id: 'platform',
+            label: navigationT("platformConfig"),
+            description: isPt
+                ? "Definições centrais, localização e parâmetros regionais."
+                : "Core settings, localization and regional parameters.",
+            icon: Settings2,
+            href: '/settings/platform',
+        },
+        {
+            id: 'system',
+            label: isPt ? "Dicionários" : "Dictionaries",
+            description: isPt
+                ? "Gerir dados mestre, categorias e estruturas lógicas."
+                : "Manage master data, categories and logic structures.",
+            icon: Boxes,
+            href: '/settings/system',
+        },
+        {
+            id: 'notifications',
+            label: navigationT("notifications"),
+            description: isPt
+                ? "Gestão de campanhas, gatilhos e grupos de utilizadores."
+                : "Broadcast management, triggers and user groups.",
+            icon: BellRing,
+            href: '/settings/notifications',
+        }
+    ]), [isPt, navigationT])
+
     return (
         <div className="h-full flex flex-col pt-0 overflow-hidden bg-white dark:bg-background">
             {/* Master Hub Header */}
@@ -52,11 +58,13 @@ export default function SettingsHubPage_Client() {
                         <div className="flex items-center gap-3">
                             <div className="w-1 h-6 bg-primary rounded-full opacity-80" />
                             <h2 className="text-3xl font-semibold tracking-tight text-foreground dark:text-white leading-none">
-                                Settings
+                                {navigationT("settings")}
                             </h2>
                         </div>
                         <p className="text-[11px] font-medium text-muted-foreground/70 dark:text-white/40 mt-2.5 ml-4 max-w-2xl leading-relaxed">
-                            Centralized orchestration for platform rules, structural data and user communications.
+                            {isPt
+                                ? "Orquestração centralizada para regras da plataforma, dados estruturais e comunicação com utilizadores."
+                                : "Centralized orchestration for platform rules, structural data and user communications."}
                         </p>
                     </div>
                 </div>
@@ -64,7 +72,7 @@ export default function SettingsHubPage_Client() {
 
             <div className="flex-1 overflow-y-auto bg-slate-50/20 dark:bg-transparent custom-scrollbar">
                 <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8 p-10 max-w-7xl mx-auto w-full">
-                    {SETTINGS_OPTIONS.map((option, index) => {
+                    {settingsOptions.map((option, index) => {
                         const Icon = option.icon
                         return (
                             <motion.div

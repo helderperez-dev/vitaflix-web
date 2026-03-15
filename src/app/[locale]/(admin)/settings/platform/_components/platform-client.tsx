@@ -6,8 +6,13 @@ import { PlatformSetting } from "@/components/settings/platform-setting"
 import { ArrowLeft } from "lucide-react"
 import { Button } from "@/components/ui/button"
 import { Link } from "@/i18n/routing"
+import { useLocale, useTranslations } from "next-intl"
 
 export default function PlatformPage_Client({ initialData }: { initialData: any }) {
+    const locale = useLocale()
+    const navigationT = useTranslations("Navigation")
+    const isPt = locale.startsWith("pt")
+
     return (
         <div className="h-full flex flex-col pt-0 overflow-hidden bg-white dark:bg-background">
             <div className="flex justify-between items-center shrink-0 px-10 py-8 border-b border-border/40 bg-white dark:bg-background relative overflow-hidden">
@@ -18,7 +23,7 @@ export default function PlatformPage_Client({ initialData }: { initialData: any 
                     <div className="flex items-center gap-3">
                         <div className="w-1 h-6 bg-primary rounded-full opacity-80" />
                         <h2 className="text-3xl font-semibold tracking-tight text-foreground dark:text-white leading-none">
-                            Platform
+                            {navigationT("platformConfig")}
                         </h2>
                     </div>
                     <div className="flex items-center gap-2 mt-2.5 ml-0">
@@ -32,7 +37,9 @@ export default function PlatformPage_Client({ initialData }: { initialData: any 
                             </Button>
                         </Link>
                         <p className="text-[11px] font-medium text-muted-foreground/70 dark:text-white/40 max-w-2xl leading-relaxed">
-                            Global identity and systemic rules for {initialData.platformName}.
+                            {isPt
+                                ? `Identidade global e regras sistémicas para ${initialData.platformName}.`
+                                : `Global identity and systemic rules for ${initialData.platformName}.`}
                         </p>
                     </div>
                 </div>

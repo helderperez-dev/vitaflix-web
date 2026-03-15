@@ -23,7 +23,7 @@ import {
     AlertDialogHeader,
     AlertDialogTitle,
 } from "@/components/ui/alert-dialog"
-import { useTranslations } from "next-intl"
+import { useLocale, useTranslations } from "next-intl"
 
 interface UserActionsProps {
     user: UserProfile
@@ -33,7 +33,9 @@ interface UserActionsProps {
 export function UserActions({ user, onEdit }: UserActionsProps) {
     const [isDeleting, setIsDeleting] = React.useState(false)
     const [showDeleteConfirm, setShowDeleteConfirm] = React.useState(false)
+    const locale = useLocale()
     const commonT = useTranslations("Common")
+    const isPt = locale.startsWith("pt")
 
     async function handleDelete() {
         if (!user.id) return
@@ -44,10 +46,10 @@ export function UserActions({ user, onEdit }: UserActionsProps) {
             if (result.error) {
                 toast.error(result.error)
             } else {
-                toast.success("User profile deleted")
+                toast.success(commonT("deletedSuccessfully"))
             }
         } catch (error) {
-            toast.error("Failed to delete user")
+            toast.error(commonT("errorSaving"))
         } finally {
             setIsDeleting(false)
         }
@@ -62,7 +64,7 @@ export function UserActions({ user, onEdit }: UserActionsProps) {
                         className="h-9 w-9 p-0 rounded-lg hover:bg-primary/5 hover:text-primary transition-all active:scale-95"
                         disabled={isDeleting}
                     >
-                        <span className="sr-only">Open menu</span>
+                        <span className="sr-only">{isPt ? "Abrir menu" : "Open menu"}</span>
                         <MoreHorizontal className="h-4 w-4" />
                     </Button>
                 </DropdownMenuTrigger>
@@ -74,13 +76,13 @@ export function UserActions({ user, onEdit }: UserActionsProps) {
                         onSelect={() => onEdit(user)}
                         className="rounded-lg text-[11px] font-semibold py-2.5 px-3 cursor-pointer"
                     >
-                        Edit Details
+                        {commonT("editDetails")}
                     </DropdownMenuItem>
                     <DropdownMenuItem
                         onSelect={() => setShowDeleteConfirm(true)}
                         className="rounded-lg text-[11px] font-semibold py-2.5 px-3 cursor-pointer text-destructive focus:text-destructive"
                     >
-                        Delete User
+                        {isPt ? "Eliminar utilizador" : "Delete User"}
                     </DropdownMenuItem>
                 </DropdownMenuContent>
             </DropdownMenu>

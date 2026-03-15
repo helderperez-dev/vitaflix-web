@@ -36,7 +36,6 @@ interface LeadActionsProps {
 export function LeadActions({ lead, onEdit, onDelete }: LeadActionsProps) {
     const [isDeleting, setIsDeleting] = React.useState(false)
     const [showDeleteConfirm, setShowDeleteConfirm] = React.useState(false)
-    const t = useTranslations("Leads")
     const commonT = useTranslations("Common")
 
     async function handleDelete() {
@@ -48,11 +47,11 @@ export function LeadActions({ lead, onEdit, onDelete }: LeadActionsProps) {
             if (result.error) {
                 toast.error(result.error)
             } else {
-                toast.success(commonT("deletedSuccessfully") || "Lead deleted")
+                toast.success(commonT("deletedSuccessfully"))
                 onDelete?.(lead.id)
             }
         } catch (error) {
-            toast.error("Failed to delete lead")
+            toast.error(commonT("errorSaving"))
         } finally {
             setIsDeleting(false)
         }
@@ -79,13 +78,13 @@ export function LeadActions({ lead, onEdit, onDelete }: LeadActionsProps) {
                         onSelect={() => onEdit(lead)}
                         className="rounded-lg text-[10px] font-bold capitalize tracking-wider py-2.5 px-3 cursor-pointer"
                     >
-                        {commonT("editDetails") || "Edit Details"}
+                        {commonT("editDetails")}
                     </DropdownMenuItem>
                     <DropdownMenuItem
                         onSelect={() => setShowDeleteConfirm(true)}
                         className="rounded-lg text-[10px] font-bold capitalize tracking-wider py-2.5 px-3 cursor-pointer text-destructive focus:text-destructive"
                     >
-                        {commonT("delete") || "Delete"}
+                        {commonT("delete")}
                     </DropdownMenuItem>
                 </DropdownMenuContent>
             </DropdownMenu>

@@ -3,7 +3,7 @@
 import * as React from "react"
 import { useForm } from "react-hook-form"
 import { zodResolver } from "@hookform/resolvers/zod"
-import { useTranslations } from "next-intl"
+import { useLocale, useTranslations } from "next-intl"
 import {
     Loader2
 } from "lucide-react"
@@ -51,6 +51,7 @@ interface ProductDrawerProps {
 export function ProductDrawer({ open, onOpenChange, product }: ProductDrawerProps) {
     const t = useTranslations("Products")
     const commonT = useTranslations("Common")
+    const locale = useLocale()
     const [isSubmitting, setIsSubmitting] = React.useState(false)
     const [unitOptions, setUnitOptions] = React.useState<Tag[]>([])
     const [formId] = React.useState(() => crypto.randomUUID())
@@ -125,7 +126,7 @@ export function ProductDrawer({ open, onOpenChange, product }: ProductDrawerProp
     const selectedUnitId = form.watch("unitId")
     const referenceAmount = form.watch("referenceAmount") || 100
     const selectedUnit = unitOptions.find((unit) => unit.id === selectedUnitId)
-    const unitSymbol = selectedUnit?.slug || selectedUnit?.name?.en || selectedUnit?.name?.["pt-br"] || selectedUnit?.name?.["pt-pt"] || "g"
+    const unitSymbol = selectedUnit?.slug || selectedUnit?.name?.[locale] || selectedUnit?.name?.en || selectedUnit?.name?.["pt-br"] || selectedUnit?.name?.["pt-pt"] || "g"
 
     React.useEffect(() => {
         if (!open) return
@@ -147,11 +148,11 @@ export function ProductDrawer({ open, onOpenChange, product }: ProductDrawerProp
             if (result?.error) {
                 toast.error(result.error)
             } else {
-                toast.success(product ? "Product updated successfully" : "Product created successfully")
+                toast.success(product ? commonT("updatedSuccessfully") : commonT("createdSuccessfully"))
                 onOpenChange(false)
             }
         } catch (error) {
-            toast.error("Failed to save product")
+            toast.error(commonT("errorSaving"))
         } finally {
             setIsSubmitting(false)
         }
@@ -181,7 +182,7 @@ export function ProductDrawer({ open, onOpenChange, product }: ProductDrawerProp
                                     form={form}
                                     namePrefix="name"
                                     label={t("table.name")}
-                                    placeholder="e.g. Chicken Breast"
+                                    placeholder={t("namePlaceholder")}
                                 />
 
                                 {/* Media Gallery */}
@@ -215,7 +216,7 @@ export function ProductDrawer({ open, onOpenChange, product }: ProductDrawerProp
                                             name="referenceAmount"
                                             render={({ field }) => (
                                                 <FormItem className="col-span-full">
-                                                    <FormLabel className="text-xs font-semibold text-muted-foreground/70">Nutrition Reference</FormLabel>
+                                                    <FormLabel className="text-xs font-semibold text-muted-foreground/70">{t("nutritionReference")}</FormLabel>
                                                     <FormControl>
                                                         <Stepper
                                                             value={field.value ?? 100}
@@ -334,7 +335,7 @@ export function ProductDrawer({ open, onOpenChange, product }: ProductDrawerProp
                                         </div>
                                         <div className="space-y-4">
                                             <TagSelector
-                                                title="Countries"
+                                                title={t("countries")}
                                                 selectedTagIds={form.watch("countryIds") || []}
                                                 onTagsChange={(countryIds) => form.setValue("countryIds", countryIds, { shouldDirty: true })}
                                                 table="countries"
@@ -343,8 +344,8 @@ export function ProductDrawer({ open, onOpenChange, product }: ProductDrawerProp
                                         <div className="space-y-4">
                                             <DictionarySelector
                                                 table="measurement_units"
-                                                label="Product Unit"
-                                                placeholder="Select unit"
+                                                label={t("unitLabel")}
+                                                placeholder={t("selectUnit")}
                                                 value={form.watch("unitId") || ""}
                                                 onChange={(unitId) => form.setValue("unitId", unitId, { shouldDirty: true })}
                                                 returnIdOnly

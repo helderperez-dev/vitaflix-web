@@ -32,7 +32,7 @@ interface TagSelectorProps {
     table?: TagTable
 }
 
-export function TagSelector({ title = "Tags", selectedTagIds, onTagsChange, table = "tags" }: TagSelectorProps) {
+export function TagSelector({ title, selectedTagIds, onTagsChange, table = "tags" }: TagSelectorProps) {
     const locale = useLocale()
     const t = useTranslations("Common")
     const [open, setOpen] = React.useState(false)
@@ -71,11 +71,11 @@ export function TagSelector({ title = "Tags", selectedTagIds, onTagsChange, tabl
         }
         if (table === 'countries') {
             return {
-                select: "Select countries",
-                search: "Search countries...",
-                available: "Available Countries",
-                create: "Create New Country",
-                empty: "No countries found"
+                select: t("selectCountries"),
+                search: t("searchCountries"),
+                available: t("availableCountries"),
+                create: t("createNewCountry"),
+                empty: t("noCountriesFound")
             }
         }
         return {
@@ -123,7 +123,7 @@ export function TagSelector({ title = "Tags", selectedTagIds, onTagsChange, tabl
         <div className="space-y-4">
             <div className="flex items-center justify-between gap-4">
                 <div className="flex items-center gap-3 flex-1">
-                    <h3 className="font-semibold text-xs text-secondary dark:text-white whitespace-nowrap">{title}</h3>
+                    <h3 className="font-semibold text-xs text-secondary dark:text-white whitespace-nowrap">{title || t("selectTags")}</h3>
                     <div className="h-px w-full bg-border/60" />
                 </div>
 
@@ -205,7 +205,7 @@ export function TagSelector({ title = "Tags", selectedTagIds, onTagsChange, tabl
             <div className="flex flex-wrap gap-2">
                 {selectedTags.length === 0 ? (
                     <div className="w-full py-6 border-2 border-dashed border-border/40 rounded-lg flex flex-col items-center justify-center bg-muted/5 group hover:border-border/60 transition-all duration-500">
-                        <p className="text-[10px] font-semibold text-muted-foreground/40">{t("noItemAddedYet", { item: title })}</p>
+                        <p className="text-[10px] font-semibold text-muted-foreground/40">{t("noItemAddedYet", { item: title || t("selectTags") })}</p>
                     </div>
                 ) : (
                     selectedTags.map((tag) => (

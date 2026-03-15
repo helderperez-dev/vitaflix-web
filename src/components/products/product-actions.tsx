@@ -36,6 +36,7 @@ export function ProductActions({ product, onEdit }: ProductActionsProps) {
     const [isDeleting, setIsDeleting] = React.useState(false)
     const [showDeleteConfirm, setShowDeleteConfirm] = React.useState(false)
     const commonT = useTranslations("Common")
+    const t = useTranslations("Products")
 
     async function onDelete() {
         if (!product.id) return
@@ -46,10 +47,10 @@ export function ProductActions({ product, onEdit }: ProductActionsProps) {
             if (result?.error) {
                 toast.error(result.error)
             } else {
-                toast.success("Product deleted")
+                toast.success(commonT("deletedSuccessfully"))
             }
         } catch (err) {
-            toast.error("Failed to delete product")
+            toast.error(t("failedToDeleteProducts"))
         } finally {
             setIsDeleting(false)
         }
@@ -64,7 +65,7 @@ export function ProductActions({ product, onEdit }: ProductActionsProps) {
                         className="h-9 w-9 p-0 rounded-lg hover:bg-primary/5 hover:text-primary transition-all active:scale-95"
                         disabled={isDeleting}
                     >
-                        <span className="sr-only">Open menu</span>
+                        <span className="sr-only">{commonT("actions")}</span>
                         {isDeleting ? <Loader2 className="h-4 w-4 animate-spin" /> : <MoreHorizontal className="h-4 w-4" />}
                     </Button>
                 </DropdownMenuTrigger>
@@ -76,13 +77,13 @@ export function ProductActions({ product, onEdit }: ProductActionsProps) {
                         onSelect={() => onEdit(product)}
                         className="rounded-lg text-[11px] font-semibold py-2.5 px-3 cursor-pointer"
                     >
-                        Product Details
+                        {commonT("editDetails")}
                     </DropdownMenuItem>
                     <DropdownMenuItem
                         onSelect={() => setShowDeleteConfirm(true)}
                         className="rounded-lg text-[11px] font-semibold py-2.5 px-3 cursor-pointer text-destructive focus:text-destructive"
                     >
-                        Delete Product
+                        {commonT("delete")}
                     </DropdownMenuItem>
                 </DropdownMenuContent>
             </DropdownMenu>

@@ -574,7 +574,7 @@ function IngredientItem({ index, form, productMap, onRemove, onProductCached }: 
                 </div>
 
                 {substitutions.length === 0 ? (
-                    <p className="text-[10px] text-muted-foreground/40 italic px-1">{t("noSubstitutionsDefined") || "No substitutes defined"}</p>
+                    <p className="text-[10px] text-muted-foreground/40 italic px-1">{t("noSubstitutionsDefined")}</p>
                 ) : (
                     <div className="grid gap-2">
                         {substitutions.map((sub: any, subIndex: number) => {

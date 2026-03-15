@@ -1,20 +1,40 @@
 import { getRequestConfig } from 'next-intl/server';
 import { routing } from './routing';
 
+function isRecord(value: unknown): value is Record<string, unknown> {
+    return typeof value === 'object' && value !== null && !Array.isArray(value);
+}
+
+function mergeMessages(
+    base: Record<string, unknown>,
+    override: Record<string, unknown>
+): Record<string, unknown> {
+    const merged: Record<string, unknown> = { ...base };
+
+    for (const [key, value] of Object.entries(override)) {
+        const current = merged[key];
+        if (isRecord(current) && isRecord(value)) {
+            merged[key] = mergeMessages(current, value);
+            continue;
+        }
+        merged[key] = value;
+    }
+
+    return merged;
+}
+
 export default getRequestConfig(async ({ requestLocale }) => {
-    // This should correspond to the `[locale]` segment
     let locale = await requestLocale;
 
-    // Ensure that a valid locale is used
     if (!locale || !routing.locales.includes(locale as any)) {
-        // Here we could fetch the global default from the DB if needed
-        // For simplicity and performance, we'll keep the routing.defaultLocale as static
-        // but we've already ensured logic elsewhere updates the user preference.
         locale = routing.defaultLocale;
     }
 
+    const baseMessages = (await import('../../messages/en.json')).default as Record<string, unknown>;
+    const localeMessages = (await import(`../../messages/${locale}.json`)).default as Record<string, unknown>;
+
     return {
         locale,
-        messages: (await import(`../../messages/${locale}.json`)).default
+        messages: mergeMessages(baseMessages, localeMessages)
     };
 });

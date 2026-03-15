@@ -31,7 +31,7 @@ export function GroupsTab({
     const columns = React.useMemo<ColumnDef<any>[]>(() => [
         {
             accessorKey: "name",
-            header: ({ column }) => <SortableHeader column={column} title={t("table.name") || "Name"} />,
+            header: ({ column }) => <SortableHeader column={column} title={t("table.name")} />,
             cell: ({ row }) => (
                 <div className="flex flex-col max-w-[250px]">
                     <span className="font-semibold text-sm truncate">{row.getValue("name")}</span>
@@ -44,7 +44,7 @@ export function GroupsTab({
         },
         {
             id: "members",
-            header: ({ column }) => <SortableHeader column={column} title={t("table.members") || "Members"} />,
+            header: ({ column }) => <SortableHeader column={column} title={t("table.members")} />,
             cell: ({ row }) => (
                 <Badge variant="outline" className="h-5 px-2 text-[10px] font-bold bg-muted/10 text-muted-foreground/80 border-none">
                     {row.original.member_count ?? "-"}
@@ -54,7 +54,7 @@ export function GroupsTab({
         },
         {
             accessorKey: "created_at",
-            header: ({ column }) => <SortableHeader column={column} title={commonT("date") || "Date"} />,
+            header: ({ column }) => <SortableHeader column={column} title={commonT("date")} />,
             cell: ({ row }) => {
                 const date = new Date(row.getValue("created_at"))
                 return (
@@ -86,13 +86,13 @@ export function GroupsTab({
                                 className="rounded-lg text-xs font-medium cursor-pointer"
                             >
                                 <Pencil className="size-3.5 mr-2 text-muted-foreground" />
-                                {commonT("edit") || "Edit"}
+                                {commonT("edit")}
                             </DropdownMenuItem>
                             <DropdownMenuItem
                                 className="rounded-lg text-xs font-medium cursor-pointer text-destructive focus:text-destructive"
                             >
                                 <Trash2 className="size-3.5 mr-2" />
-                                {commonT("delete") || "Delete"}
+                                {commonT("delete")}
                             </DropdownMenuItem>
                         </DropdownMenuContent>
                     </DropdownMenu>
@@ -107,7 +107,7 @@ export function GroupsTab({
                 columns={columns}
                 data={initialGroups}
                 className="flex-1"
-                emptyStateText={t("noGroups") || "No user groups found."}
+                emptyStateText={t("noGroups")}
                 onRowClick={(row) => onEdit?.(row)}
             />
         </div>

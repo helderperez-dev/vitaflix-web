@@ -79,7 +79,7 @@ export function LeadsDatagrid({ funnels, activeFunnelId, leads, onRowClick, onDe
                                 <span>{lead.phone}</span>
                             </div>
                         )}
-                        {!lead.email && !lead.phone && <span className="text-[11px] text-muted-foreground/40 italic">{tLeads("noContactInfo")}</span>}
+                        {!lead.email && !lead.phone && <span className="text-[11px] font-medium text-muted-foreground/70">{tLeads("noContactInfo")}</span>}
                     </div>
                 )
             },
@@ -237,7 +237,7 @@ export function LeadsDatagrid({ funnels, activeFunnelId, leads, onRowClick, onDe
                                         onBulkDelete?.(ids)
                                         clearSelectionRef?.fn()
                                     } else {
-                                        toast.error(result.error || "Failed to delete leads")
+                                        toast.error(result.error || commonT("errorSaving"))
                                     }
                                 } finally {
                                     setDeleteModalOpen(false)
@@ -253,4 +253,3 @@ export function LeadsDatagrid({ funnels, activeFunnelId, leads, onRowClick, onDe
         </>
     )
 }
-

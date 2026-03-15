@@ -79,7 +79,7 @@ export function MealOptionsList({ mealId, options, onOptionsChange, onEditingCha
     const handleDeleteOption = (id: string) => {
         onOptionsChange(options.filter(o => o.id !== id))
         setDeleteConfirmId(null)
-        toast.success(commonT("deletedSuccessfully") || "Variation removed")
+        toast.success(commonT("deletedSuccessfully"))
     }
 
     const handleSetDefault = (id: string) => {
@@ -141,7 +141,7 @@ export function MealOptionsList({ mealId, options, onOptionsChange, onEditingCha
                         </div>
                         <div className="space-y-1">
                             <p className="text-sm font-semibold text-secondary dark:text-foreground">{t("noOptionsYet")}</p>
-                            <p className="text-[10px] text-muted-foreground/60 max-w-[200px] font-medium leading-relaxed">{t("addOptionDescription") || "Start by adding your first meal variation with custom ingredients."}</p>
+                            <p className="text-[10px] text-muted-foreground/60 max-w-[200px] font-medium leading-relaxed">{t("addOptionDescription")}</p>
                         </div>
                     </div>
                 ) : (
@@ -217,7 +217,7 @@ export function MealOptionsList({ mealId, options, onOptionsChange, onEditingCha
                                             <div className="flex items-center gap-1.5 text-muted-foreground/40">
                                                 <Soup className="h-3.5 w-3.5" />
                                                 <span className="text-[10px] font-semibold">
-                                                    {(option as any).ingredients?.length || 0} {t("ingredients") || "Items"}
+                                                    {(option as any).ingredients?.length || 0} {t("ingredients")}
                                                 </span>
                                             </div>
                                             {option.images && option.images.length > 0 && (
@@ -294,7 +294,7 @@ export function MealOptionsList({ mealId, options, onOptionsChange, onEditingCha
                     <AlertDialogHeader>
                         <AlertDialogTitle>{commonT("confirm")}</AlertDialogTitle>
                         <AlertDialogDescription>
-                            {commonT("deleteConfirmationLabel") || "Are you sure you want to remove this variation?"}
+                            {commonT("deleteConfirmationLabel")}
                         </AlertDialogDescription>
                     </AlertDialogHeader>
                     <AlertDialogFooter>
@@ -311,4 +311,3 @@ export function MealOptionsList({ mealId, options, onOptionsChange, onEditingCha
         </div>
     )
 }
-

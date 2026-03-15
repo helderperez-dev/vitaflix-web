@@ -1,7 +1,7 @@
 'use client'
 
 import { useState, useEffect } from "react"
-import { useTranslations } from "next-intl"
+import { useLocale, useTranslations } from "next-intl"
 import { Button } from "@/components/ui/button"
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card"
 import { Loader2, Plus, Trash2, Save, Utensils } from "lucide-react"
@@ -11,8 +11,10 @@ import { toast } from "sonner"
 import { DictionarySelector } from "@/components/shared/dictionary-selector"
 
 export function DayConfigManager() {
+    const locale = useLocale()
     const t = useTranslations("Plans")
     const tc = useTranslations("Common")
+    const isPt = locale.startsWith("pt")
     const [selectedCount, setSelectedCount] = useState("3")
     const [configs, setConfigs] = useState<MealDayConfig[]>([])
     const [isLoading, setIsLoading] = useState(true)
@@ -77,10 +79,12 @@ export function DayConfigManager() {
                     <div className="space-y-1.5">
                         <CardTitle className="text-sm font-bold text-foreground/90 flex items-center gap-2">
                             <Utensils className="size-4 text-primary/60" />
-                            Daily sequence setup
+                            {isPt ? "Configuração da sequência diária" : "Daily sequence setup"}
                         </CardTitle>
                         <CardDescription className="text-xs font-medium text-muted-foreground/60 leading-tight">
-                            Configure the meal category sequence for plans with {selectedCount} daily slots.
+                            {isPt
+                                ? `Configure a sequência de categorias para planos com ${selectedCount} slots diários.`
+                                : `Configure the meal category sequence for plans with ${selectedCount} daily slots.`}
                         </CardDescription>
                     </div>
                     <div className="w-full md:w-[220px]">
@@ -88,7 +92,7 @@ export function DayConfigManager() {
                             value={selectedCount}
                             onChange={(val: string) => setSelectedCount(val)}
                             table="meal_plan_sizes"
-                            placeholder="Slots number"
+                            placeholder={isPt ? "Número de slots" : "Slots number"}
                             className="h-10 bg-muted/5 border-border/40 hover:bg-background transition-all"
                         />
                     </div>
@@ -98,7 +102,7 @@ export function DayConfigManager() {
                 {isLoading ? (
                     <div className="py-24 flex flex-col items-center justify-center gap-4 text-muted-foreground/30">
                         <Loader2 className="size-10 animate-spin opacity-20" />
-                        <p className="text-[11px] font-bold">Synchronizing slots...</p>
+                        <p className="text-[11px] font-bold">{isPt ? "A sincronizar slots..." : "Synchronizing slots..."}</p>
                     </div>
                 ) : (
                     <div className="space-y-4">
@@ -112,7 +116,7 @@ export function DayConfigManager() {
                                         value={config.categoryId}
                                         onChange={(val: string) => handleUpdateSlot(idx, val)}
                                         table="meal_categories"
-                                        placeholder="Select category"
+                                        placeholder={isPt ? "Selecionar categoria" : "Select category"}
                                         returnIdOnly={true}
                                         className="h-10 bg-transparent border-transparent group-hover:border-border/40 transition-all font-medium text-xs"
                                     />
@@ -131,13 +135,13 @@ export function DayConfigManager() {
 
                         {configs.length === 0 && (
                             <div className="py-12 flex flex-col items-center justify-center border-2 border-dashed border-border/40 rounded-lg bg-muted/5 gap-3">
-                                <p className="text-xs font-semibold text-muted-foreground/60">No meal slots defined for this configuration.</p>
+                                <p className="text-xs font-semibold text-muted-foreground/60">{isPt ? "Nenhum slot de refeição definido para esta configuração." : "No meal slots defined for this configuration."}</p>
                                 <Button
                                     variant="outline"
                                     onClick={handleAddSlot}
                                     className="h-9 rounded-lg border-dashed border-primary/20 hover:bg-primary/5 text-primary text-[11px] font-bold transition-all active:scale-95"
                                 >
-                                    Initialize first slot
+                                    {isPt ? "Inicializar primeiro slot" : "Initialize first slot"}
                                 </Button>
                             </div>
                         )}
@@ -149,7 +153,7 @@ export function DayConfigManager() {
                                 className="h-11 rounded-lg bg-muted/5 border-border/40 hover:bg-muted/10 font-bold text-[11px] gap-2 transition-all active:scale-95"
                             >
                                 <Plus className="size-4 opacity-60" />
-                                Add meal slot
+                                {isPt ? "Adicionar slot de refeição" : "Add meal slot"}
                             </Button>
                             <Button
                                 onClick={handleSave}
@@ -157,7 +161,7 @@ export function DayConfigManager() {
                                 className="h-11 rounded-lg bg-primary hover:bg-primary/95 text-white font-bold text-[11px] gap-2 shadow-sm transition-all active:scale-95"
                             >
                                 {isSaving ? <Loader2 className="size-4 animate-spin" /> : <Save className="size-4 opacity-80" />}
-                                Save sequence
+                                {isPt ? "Guardar sequência" : "Save sequence"}
                             </Button>
                         </div>
                     </div>

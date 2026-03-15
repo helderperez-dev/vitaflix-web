@@ -2,7 +2,7 @@
 
 import * as React from "react"
 
-import { useTranslations } from "next-intl"
+import { useLocale, useTranslations } from "next-intl"
 import { Button } from "@/components/ui/button"
 import { Badge } from "@/components/ui/badge"
 import { Plus, Loader2, Trash2 } from "lucide-react"
@@ -25,7 +25,6 @@ import {
     AlertDialogTitle,
 } from "@/components/ui/alert-dialog"
 import { bulkDeleteUsers, updateUserPreferences } from "@/app/actions/users"
-import { cn } from "@/lib/utils"
 import type { ColumnDef } from "@tanstack/react-table"
 
 interface UserTableWrapperProps {
@@ -34,8 +33,10 @@ interface UserTableWrapperProps {
 }
 
 export function UserTableWrapper({ initialUsers, userProfile }: UserTableWrapperProps) {
+    const locale = useLocale()
     const t = useTranslations("Users")
     const commonT = useTranslations("Common")
+    const isPt = locale.startsWith("pt")
     const [open, setOpen] = React.useState(false)
     const [selectedUser, setSelectedUser] = React.useState<UserProfile | null>(null)
     const [deleteModalOpen, setDeleteModalOpen] = React.useState(false)
@@ -84,7 +85,7 @@ export function UserTableWrapper({ initialUsers, userProfile }: UserTableWrapper
                             </AvatarFallback>
                         </Avatar>
                         <div className="flex flex-col">
-                            <span className="font-medium text-foreground text-sm">{user.displayName || "Anonymous User"}</span>
+                            <span className="font-medium text-foreground text-sm">{user.displayName || (isPt ? "Utilizador anónimo" : "Anonymous User")}</span>
                             <span className="text-[10px] text-muted-foreground tabular-nums tracking-tight">{user.email}</span>
                         </div>
                     </div>
@@ -109,7 +110,7 @@ export function UserTableWrapper({ initialUsers, userProfile }: UserTableWrapper
                 const goal = row.getValue("objective") as string
                 return (
                     <span className="text-[10px] capitalize font-semibold text-muted-foreground bg-muted/50 px-2 py-0.5 rounded">
-                        {goal?.replace("_", "") || "No goal"}
+                        {goal?.replace("_", "") || (isPt ? "Sem objetivo" : "No goal")}
                     </span>
                 )
             },
@@ -120,9 +121,9 @@ export function UserTableWrapper({ initialUsers, userProfile }: UserTableWrapper
             header: ({ column }) => <SortableHeader column={column} title={t("table.status")} />,
             cell: ({ row }) => (
                 row.getValue("extraDataComplete") ? (
-                    <Badge className="bg-emerald-500/10 text-emerald-600 border-emerald-500/20 hover:bg-emerald-500/10 text-[10px] font-semibold border">Full Profile</Badge>
+                    <Badge className="bg-emerald-500/10 text-emerald-600 border-emerald-500/20 hover:bg-emerald-500/10 text-[10px] font-semibold border">{isPt ? "Perfil completo" : "Full Profile"}</Badge>
                 ) : (
-                    <Badge variant="secondary" className="bg-amber-500/10 text-amber-600 border-amber-500/20 hover:bg-amber-500/10 text-[10px] font-semibold border">Pending Bio</Badge>
+                    <Badge variant="secondary" className="bg-amber-500/10 text-amber-600 border-amber-500/20 hover:bg-amber-500/10 text-[10px] font-semibold border">{isPt ? "Bio pendente" : "Pending Bio"}</Badge>
                 )
             ),
             size: 120,
@@ -143,7 +144,7 @@ export function UserTableWrapper({ initialUsers, userProfile }: UserTableWrapper
             ),
             size: 50,
         },
-    ], [])
+    ], [isPt, t])
 
     function handleAdd() {
         setSelectedUser(null)
@@ -217,15 +218,16 @@ export function UserTableWrapper({ initialUsers, userProfile }: UserTableWrapper
             <AlertDialog open={deleteModalOpen} onOpenChange={setDeleteModalOpen}>
                 <AlertDialogContent className="rounded-lg border-sidebar-border/50 shadow-2xl">
                     <AlertDialogHeader>
-                        <AlertDialogTitle>Are you absolutely sure?</AlertDialogTitle>
+                        <AlertDialogTitle>{isPt ? "Tem a certeza absoluta?" : "Are you absolutely sure?"}</AlertDialogTitle>
                         <AlertDialogDescription>
-                            This will permanently delete {rowsToDelete.length} {rowsToDelete.length === 1 ? 'user' : 'users'}.
-                            This action cannot be undone and will remove all associated profile data.
+                            {isPt
+                                ? `Isto irá eliminar permanentemente ${rowsToDelete.length} ${rowsToDelete.length === 1 ? "utilizador" : "utilizadores"}. Esta ação não pode ser desfeita e irá remover todos os dados de perfil associados.`
+                                : `This will permanently delete ${rowsToDelete.length} ${rowsToDelete.length === 1 ? "user" : "users"}. This action cannot be undone and will remove all associated profile data.`}
                         </AlertDialogDescription>
                     </AlertDialogHeader>
                     <AlertDialogFooter className="gap-2">
                         <AlertDialogCancel className="font-semibold text-xs h-9">
-                            Cancel
+                            {commonT("cancel")}
                         </AlertDialogCancel>
                         <AlertDialogAction
                             onClick={async () => {
@@ -234,10 +236,10 @@ export function UserTableWrapper({ initialUsers, userProfile }: UserTableWrapper
                                     const result = await bulkDeleteUsers(ids)
 
                                     if (result.success) {
-                                        toast.success(`Deleted ${ids.length} users`)
+                                        toast.success(isPt ? `${ids.length} utilizadores eliminados` : `Deleted ${ids.length} users`)
                                         clearSelectionRef?.fn()
                                     } else {
-                                        toast.error(result.error || "Failed to delete users")
+                                        toast.error(result.error || commonT("errorSaving"))
                                     }
                                 } finally {
                                     setDeleteModalOpen(false)
