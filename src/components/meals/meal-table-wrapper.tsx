@@ -68,6 +68,7 @@ type SelectableMealRow = {
 
 function BulkStatusActions({ selectedRows, clearSelection }: { selectedRows: SelectableMealRow[], clearSelection: () => void }) {
     const commonT = useTranslations("Common")
+    const t = useTranslations("Meals")
     // Determine the consensus status
     const allPublic = selectedRows.every(r => r.is_public === true || r.is_public === 1)
 
@@ -135,7 +136,7 @@ function BulkStatusActions({ selectedRows, clearSelection }: { selectedRows: Sel
                             {isLoading ? (
                                 <Loader2 className="h-3 w-3 animate-spin" />
                             ) : (
-                                "Apply Changes"
+                                t("applyChanges")
                             )}
                         </motion.button>
                     )}
@@ -273,7 +274,7 @@ export function MealTableWrapper({ initialMeals, userProfile }: MealTableWrapper
                 const count = row.original.meal_options?.length || 0;
                 return (
                     <Badge variant="secondary" className="font-mono text-[10px] h-5 px-2 bg-primary/10 text-primary border-none rounded-md">
-                        {count} {count === 1 ? "Option" : "Options"}
+                        {t("optionCount", { count })}
                     </Badge>
                 )
             },
@@ -296,7 +297,7 @@ export function MealTableWrapper({ initialMeals, userProfile }: MealTableWrapper
                                 </Badge>
                             )
                         })}
-                        {ids.length === 0 && <span className="text-xs font-medium text-muted-foreground/70">None</span>}
+                        {ids.length === 0 && <span className="text-xs font-medium text-muted-foreground/70">{t("none")}</span>}
                     </div>
                 )
             },
@@ -319,7 +320,7 @@ export function MealTableWrapper({ initialMeals, userProfile }: MealTableWrapper
                                 </Badge>
                             )
                         })}
-                        {ids.length === 0 && <span className="text-xs font-medium text-muted-foreground/70">None</span>}
+                        {ids.length === 0 && <span className="text-xs font-medium text-muted-foreground/70">{t("none")}</span>}
                     </div>
                 )
             },
@@ -452,7 +453,7 @@ export function MealTableWrapper({ initialMeals, userProfile }: MealTableWrapper
                             }}
                         >
                             <Trash2 className="h-4 w-4 mr-2" />
-                            Delete ({selectedRows.length})
+                            {t("deleteSelected", { count: selectedRows.length })}
                         </Button>
                     </div>
                 )}
@@ -462,11 +463,9 @@ export function MealTableWrapper({ initialMeals, userProfile }: MealTableWrapper
             <AlertDialog open={deleteModalOpen} onOpenChange={setDeleteModalOpen}>
                 <AlertDialogContent className="rounded-lg border-sidebar-border/50 shadow-2xl">
                     <AlertDialogHeader>
-                        <AlertDialogTitle>{isPt ? "Tem a certeza absoluta?" : "Are you absolutely sure?"}</AlertDialogTitle>
+                        <AlertDialogTitle>{t("deleteMealsTitle")}</AlertDialogTitle>
                         <AlertDialogDescription>
-                            {isPt
-                                ? `Isto irá eliminar permanentemente ${rowsToDelete.length} ${rowsToDelete.length === 1 ? "refeição" : "refeições"}. Esta ação não pode ser desfeita e irá remover todos os dados associados.`
-                                : `This will permanently delete ${rowsToDelete.length} ${rowsToDelete.length === 1 ? "meal" : "meals"}. This action cannot be undone and will remove all associated data.`}
+                            {t("deleteMealsDescription", { count: rowsToDelete.length })}
                         </AlertDialogDescription>
                     </AlertDialogHeader>
                     <AlertDialogFooter className="gap-2">
@@ -480,7 +479,7 @@ export function MealTableWrapper({ initialMeals, userProfile }: MealTableWrapper
                                     const result = await bulkDeleteMeals(ids)
 
                                     if (result.success) {
-                                        toast.success(isPt ? `${ids.length} refeições eliminadas` : `Deleted ${ids.length} meals`)
+                                        toast.success(t("deletedMeals", { count: ids.length }))
                                         clearSelectionRef?.fn()
                                     } else {
                                         toast.error(result.error || commonT("errorSaving"))
@@ -491,7 +490,7 @@ export function MealTableWrapper({ initialMeals, userProfile }: MealTableWrapper
                             }}
                             className="bg-primary hover:bg-primary/90 text-white font-semibold text-xs h-9 px-6"
                         >
-                            {isPt ? "Confirmar eliminação" : "Confirm Deletion"}
+                            {t("confirmDeletion")}
                         </AlertDialogAction>
                     </AlertDialogFooter>
                 </AlertDialogContent>

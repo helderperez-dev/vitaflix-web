@@ -25,14 +25,14 @@ const chartConfig = {
 export function LeadsFunnelChart({ data, title, description }: LeadsFunnelChartProps) {
     return (
         <div className="flex flex-col h-full w-full">
-            <div className="flex-1 min-h-[160px] -ml-4">
-                <ChartContainer config={chartConfig} className="h-[160px] w-full">
+            <div className="flex-1 min-h-[220px]">
+                <ChartContainer config={chartConfig} className="h-[220px] w-full">
                     <ResponsiveContainer width="100%" height="100%">
                         <BarChart
                             accessibilityLayer
                             data={data}
                             layout="vertical"
-                            margin={{ right: 40, left: 0 }}
+                            margin={{ right: 28, left: 0, top: 4, bottom: 4 }}
                         >
                             <defs>
                                 <linearGradient id="barGradient" x1="0" y1="0" x2="1" y2="0">
@@ -48,11 +48,11 @@ export function LeadsFunnelChart({ data, title, description }: LeadsFunnelChartP
                                 tickMargin={12}
                                 axisLine={false}
                                 style={{ fontSize: '10px', fontWeight: 600, fill: 'hsl(var(--muted-foreground)/0.6)' }}
-                                width={90}
+                                width={128}
                             />
                             <XAxis dataKey="count" type="number" hide />
                             <ChartTooltip
-                                cursor={{ fill: 'hsl(var(--muted-foreground)/0.05)' }}
+                                cursor={false}
                                 content={<ChartTooltipContent indicator="line" className="bg-popover border-border/50" />}
                             />
                             <Bar
@@ -60,7 +60,8 @@ export function LeadsFunnelChart({ data, title, description }: LeadsFunnelChartP
                                 layout="vertical"
                                 fill="url(#barGradient)"
                                 radius={[0, 6, 6, 0]}
-                                barSize={20}
+                                barSize={22}
+                                activeBar={{ fill: "url(#barGradient)", opacity: 1 }}
                             >
                                 <LabelList
                                     dataKey="count"

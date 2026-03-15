@@ -1,7 +1,7 @@
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card"
 import { createClient } from "@/lib/supabase/server"
 import { getTranslations } from "next-intl/server"
-import { Users, Apple, Utensils, CreditCard, Activity, Target, PieChart as PieChartIcon, TrendingUp, History, ListChecks, TrendingDown } from "lucide-react"
+import { Users, Apple, Utensils, CreditCard, Activity, Target, PieChart as PieChartIcon, TrendingUp, History, ListChecks } from "lucide-react"
 import { cn } from "@/lib/utils"
 import { GrowthChart, GrowthData } from "./_components/growth-chart"
 import { LeadsFunnelChart, FunnelData } from "./_components/leads-funnel-chart"
@@ -106,16 +106,16 @@ export default async function DashboardPage({ params }: { params: { locale: stri
 
     // Formatted Chart Data (Funnels)
     const leadsFunnelData: FunnelData[] = (funnels || []).map((f) => ({
-        funnel: f.name || "Default",
+        funnel: f.name || t("defaultFunnel"),
         count: leadsDataFetch?.filter(l => l.funnel_id === f.id).length || 0
     }))
     const unassignedCount = leadsDataFetch?.filter(l => !l.funnel_id).length || 0
-    if (unassignedCount > 0) leadsFunnelData.push({ funnel: "Unassigned", count: unassignedCount })
+    if (unassignedCount > 0) leadsFunnelData.push({ funnel: t("unassigned"), count: unassignedCount })
     leadsFunnelData.sort((a, b) => b.count - a.count)
 
     const mealsData: MealsData[] = [
-        { category: "Public", count: allMeals?.filter(m => m.is_public).length || 0, fill: "oklch(0.61 0.13 168)" },
-        { category: "Drafts", count: allMeals?.filter(m => !m.is_public).length || 0, fill: "oklch(0.24 0.05 240)" }
+        { category: t("publicItems"), count: allMeals?.filter(m => m.is_public).length || 0, fill: "oklch(0.61 0.13 168)" },
+        { category: t("draftItems"), count: allMeals?.filter(m => !m.is_public).length || 0, fill: "oklch(0.24 0.05 240)" }
     ]
 
     return (
@@ -152,24 +152,24 @@ export default async function DashboardPage({ params }: { params: { locale: stri
                     <Card className="border-border/60 bg-card shadow-none overflow-hidden">
                         <CardHeader className="border-b border-border/50 py-2 px-6 bg-muted/3">
                             <CardTitle className="text-[12px] font-bold flex items-center gap-2 text-foreground/90">
-                                User growth
+                                {t("userGrowth")}
                                 <Activity className="h-3 w-3 text-primary/40" />
                             </CardTitle>
                         </CardHeader>
                         <CardContent className="p-4 pt-6">
-                            <GrowthChart id="user-growth" data={userGrowthData} color="oklch(0.61 0.13 168)" />
+                            <GrowthChart id="user-growth" data={userGrowthData} color="oklch(0.61 0.13 168)" locale={locale} />
                         </CardContent>
                     </Card>
 
                     <Card className="border-border/60 bg-card shadow-none overflow-hidden">
                         <CardHeader className="border-b border-border/50 py-2 px-6 bg-muted/3">
                             <CardTitle className="text-[12px] font-bold flex items-center gap-2 text-foreground/90">
-                                Lead volume
+                                {t("leadVolume")}
                                 <TrendingUp className="h-3 w-3 text-primary/40" />
                             </CardTitle>
                         </CardHeader>
                         <CardContent className="p-4 pt-6">
-                            <GrowthChart id="lead-volume" data={leadGrowthData} color="oklch(0.24 0.05 240)" />
+                            <GrowthChart id="lead-volume" data={leadGrowthData} color="oklch(0.24 0.05 240)" locale={locale} />
                         </CardContent>
                     </Card>
                 </div>
@@ -179,7 +179,7 @@ export default async function DashboardPage({ params }: { params: { locale: stri
                     <Card className="border-border/60 bg-card shadow-none overflow-hidden">
                         <CardHeader className="border-b border-border/50 py-2 px-6 bg-muted/3">
                             <CardTitle className="text-[12px] font-bold flex items-center gap-2 text-foreground/90">
-                                Lead funnels
+                                {t("leadFunnels")}
                                 <Target className="h-3 w-3 text-primary/40" />
                             </CardTitle>
                         </CardHeader>
@@ -191,7 +191,7 @@ export default async function DashboardPage({ params }: { params: { locale: stri
                     <Card className="border-border/60 bg-card shadow-none overflow-hidden">
                         <CardHeader className="border-b border-border/50 py-2 px-6 bg-muted/3">
                             <CardTitle className="text-[12px] font-bold flex items-center gap-2 text-foreground/90">
-                                Meal catalog
+                                {t("mealCatalog")}
                                 <PieChartIcon className="h-3 w-3 text-primary/40" />
                             </CardTitle>
                         </CardHeader>
@@ -206,24 +206,29 @@ export default async function DashboardPage({ params }: { params: { locale: stri
                     <Card className="border-border/60 bg-card shadow-none overflow-hidden">
                         <CardHeader className="border-b border-border/50 py-2 px-6 bg-muted/3">
                             <CardTitle className="text-[12px] font-bold flex items-center gap-2 text-foreground/90">
-                                Recent leads
+                                {t("recentLeads")}
                                 <History className="h-3 w-3 text-primary/40" />
                             </CardTitle>
                         </CardHeader>
                         <CardContent className="p-5">
-                            <RecentLeadsList leads={rawRecentLeads || []} locale={locale} />
+                            <RecentLeadsList
+                                leads={rawRecentLeads || []}
+                                locale={locale}
+                                emptyText={t("noRecentLeads")}
+                                directLabel={t("direct")}
+                            />
                         </CardContent>
                     </Card>
 
                     <Card className="border-border/60 bg-card shadow-none overflow-hidden">
                         <CardHeader className="border-b border-border/50 py-2 px-6 bg-muted/3">
                             <CardTitle className="text-[12px] font-bold flex items-center gap-2 text-foreground/90">
-                                Latest registrations
+                                {t("latestRegistrations")}
                                 <ListChecks className="h-3 w-3 text-primary/40" />
                             </CardTitle>
                         </CardHeader>
                         <CardContent className="p-5">
-                            <RecentUsersList users={rawRecentUsers || []} locale={locale} />
+                            <RecentUsersList users={rawRecentUsers || []} locale={locale} emptyText={t("noRecentUsers")} />
                         </CardContent>
                     </Card>
                 </div>

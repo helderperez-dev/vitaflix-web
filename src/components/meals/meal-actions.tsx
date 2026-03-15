@@ -35,6 +35,7 @@ export function MealActions({ meal, onEdit }: MealActionsProps) {
     const [isUpdating, setIsUpdating] = React.useState(false)
     const [showDeleteConfirm, setShowDeleteConfirm] = React.useState(false)
     const commonT = useTranslations("Common")
+    const t = useTranslations("Meals")
 
     async function handleDelete() {
         if (!meal.id) return
@@ -45,10 +46,10 @@ export function MealActions({ meal, onEdit }: MealActionsProps) {
             if (result.error) {
                 toast.error(result.error)
             } else {
-                toast.success("Meal deleted")
+                toast.success(t("mealDeleted"))
             }
         } catch (error) {
-            toast.error("Failed to delete meal")
+            toast.error(t("failedToDeleteMeal"))
         } finally {
             setIsDeleting(false)
         }
@@ -63,14 +64,11 @@ export function MealActions({ meal, onEdit }: MealActionsProps) {
             if (result.error) {
                 toast.error(result.error)
             } else {
-                toast.success(newStatus ? "Meal is now public" : "Meal is now private")
+                toast.success(newStatus ? t("mealNowPublic") : t("mealNowPrivate"))
             }
         } catch (error) {
-            toast.error("Failed to update visibility")
+            toast.error(t("failedToUpdateVisibility"))
         } finally {
-            setIsUpdating(true)
-            // Note: In a real app we might want to trigger a refresh or use optimistic updates
-            // But since this is a server action with revalidatePath, the page should refresh.
             setIsUpdating(false)
         }
     }
@@ -84,7 +82,7 @@ export function MealActions({ meal, onEdit }: MealActionsProps) {
                         className="h-9 w-9 p-0 rounded-lg hover:bg-primary/5 hover:text-primary transition-all active:scale-95"
                         disabled={isDeleting}
                     >
-                        <span className="sr-only">Open menu</span>
+                        <span className="sr-only">{t("openMenu")}</span>
                         <MoreHorizontal className="h-4 w-4" />
                     </Button>
                 </DropdownMenuTrigger>
@@ -96,20 +94,20 @@ export function MealActions({ meal, onEdit }: MealActionsProps) {
                         onSelect={() => onEdit(meal)}
                         className="rounded-lg text-[11px] font-semibold py-2.5 px-3 cursor-pointer"
                     >
-                        Edit Details
+                        {commonT("editDetails")}
                     </DropdownMenuItem>
                     <DropdownMenuItem
                         onSelect={handleToggleVisibility}
                         disabled={isUpdating}
                         className="rounded-lg text-[11px] font-semibold py-2.5 px-3 cursor-pointer"
                     >
-                        {meal.isPublic ? "Make Private" : "Make Public"}
+                        {meal.isPublic ? t("makePrivate") : t("makePublic")}
                     </DropdownMenuItem>
                     <DropdownMenuItem
                         onSelect={() => setShowDeleteConfirm(true)}
                         className="rounded-lg text-[11px] font-semibold py-2.5 px-3 cursor-pointer text-destructive focus:text-destructive"
                     >
-                        Delete Meal
+                        {t("deleteMeal")}
                     </DropdownMenuItem>
                 </DropdownMenuContent>
             </DropdownMenu>

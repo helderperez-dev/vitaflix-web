@@ -1278,7 +1278,7 @@ export function NotificationDrawer({ open, onOpenChange, mode, groups, users, ed
                                         </div>
                                         <div className="flex items-center gap-2">
                                             <Smartphone className="size-3.5 text-muted-foreground/30" />
-                                            <span className="text-[11px] font-semibold text-muted-foreground/60">Push: {targetUser?.push_token ? (isPt ? 'Registado' : 'Registered') : (isPt ? 'Nenhum' : 'None')}</span>
+                                            <span className="text-[11px] font-semibold text-muted-foreground/60">Push: {targetUser?.push_token ? (isPt ? 'Registado' : 'Registered') : '—'}</span>
                                         </div>
                                     </div>
                                 )}

@@ -12,6 +12,7 @@ interface GrowthChartProps {
     id: string
     data: GrowthData[]
     color?: string
+    locale: string
 }
 
 const chartConfig = {
@@ -20,7 +21,7 @@ const chartConfig = {
     },
 } satisfies ChartConfig
 
-export function GrowthChart({ id, data, color = "var(--color-value)" }: GrowthChartProps) {
+export function GrowthChart({ id, data, color = "var(--color-value)", locale }: GrowthChartProps) {
     const gradientId = `fill-${id}`
 
     return (
@@ -42,13 +43,15 @@ export function GrowthChart({ id, data, color = "var(--color-value)" }: GrowthCh
                                 tickMargin={10}
                                 tickFormatter={(str) => {
                                     const date = new Date(str)
-                                    return date.toLocaleDateString('en-US', { month: 'short', day: 'numeric' })
+                                    return date.toLocaleDateString(locale, { month: 'short', day: 'numeric' })
                                 }}
                                 style={{ fontSize: '9px', fontWeight: 500, fill: 'hsl(var(--muted-foreground)/0.4)' }}
                             />
                             <YAxis
                                 axisLine={false}
                                 tickLine={false}
+                                allowDecimals={false}
+                                domain={[0, "dataMax"]}
                                 style={{ fontSize: '9px', fontWeight: 500, fill: 'hsl(var(--muted-foreground)/0.4)' }}
                             />
                             <ChartTooltip cursor={false} content={<ChartTooltipContent indicator="dot" className="bg-popover border-border/50" />} />

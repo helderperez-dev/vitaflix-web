@@ -13,6 +13,8 @@ interface Lead {
 interface RecentLeadsListProps {
     leads: Lead[]
     locale: string
+    emptyText: string
+    directLabel: string
 }
 
 const localesMap: Record<string, any> = {
@@ -22,13 +24,13 @@ const localesMap: Record<string, any> = {
     "es": es,
 }
 
-export function RecentLeadsList({ leads, locale }: RecentLeadsListProps) {
+export function RecentLeadsList({ leads, locale, emptyText, directLabel }: RecentLeadsListProps) {
     const dateLocale = localesMap[locale] || enUS
 
     return (
         <div className="space-y-3">
             {leads.length === 0 ? (
-                <div className="text-[11px] text-muted-foreground py-4 text-center">No recent leads</div>
+                <div className="text-[11px] text-muted-foreground py-4 text-center">{emptyText}</div>
             ) : (
                 leads.slice(0, 5).map((lead) => (
                     <div key={lead.id} className="flex items-center justify-between group">
@@ -41,7 +43,7 @@ export function RecentLeadsList({ leads, locale }: RecentLeadsListProps) {
                                     {lead.name}
                                 </span>
                                 <span className="text-[9px] text-muted-foreground/60 leading-tight">
-                                    {lead.source || "Direct"}
+                                    {lead.source || directLabel}
                                 </span>
                             </div>
                         </div>

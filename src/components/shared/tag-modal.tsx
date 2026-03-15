@@ -157,7 +157,7 @@ export function TagModal({ open, onOpenChange, tag, onSuccess, table = "tags" }:
                             {table === "brands" && (
                                 <TagSelector
                                     table="store_markets"
-                                    title={isPt ? "Onde encontrar" : "Where to find"}
+                                    title={isPt ? "Lojas" : "Stores"}
                                     selectedTagIds={selectedStoreMarketIds}
                                     onTagsChange={setSelectedStoreMarketIds}
                                 />

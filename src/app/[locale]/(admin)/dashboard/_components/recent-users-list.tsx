@@ -12,6 +12,7 @@ interface UserItem {
 interface RecentUsersListProps {
     users: UserItem[]
     locale: string
+    emptyText: string
 }
 
 const localesMap: Record<string, any> = {
@@ -21,13 +22,13 @@ const localesMap: Record<string, any> = {
     "es": es,
 }
 
-export function RecentUsersList({ users, locale }: RecentUsersListProps) {
+export function RecentUsersList({ users, locale, emptyText }: RecentUsersListProps) {
     const dateLocale = localesMap[locale] || enUS
 
     return (
         <div className="space-y-3">
             {users.length === 0 ? (
-                <div className="text-[11px] text-muted-foreground py-4 text-center">No recent users</div>
+                <div className="text-[11px] text-muted-foreground py-4 text-center">{emptyText}</div>
             ) : (
                 users.slice(0, 5).map((user) => (
                     <div key={user.id} className="flex items-center justify-between group">

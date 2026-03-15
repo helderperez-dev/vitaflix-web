@@ -144,10 +144,15 @@ export function BrandModal({ open, onOpenChange, brand, onSuccess }: BrandModalP
                             />
                             <TagSelector
                                 table="store_markets"
-                                title={locale.startsWith("pt") ? "Onde encontrar" : "Where to find"}
+                                title={locale.startsWith("pt") ? "Lojas" : "Stores"}
                                 selectedTagIds={selectedStoreMarketIds}
                                 onTagsChange={setSelectedStoreMarketIds}
                             />
+
+                            <div className="flex items-center gap-2">
+                                <h3 className="font-semibold text-xs text-secondary dark:text-white whitespace-nowrap capitalize tracking-widest opacity-80">{locale.startsWith("pt") ? "Logótipo da marca" : "Brand Logo"}</h3>
+                                <div className="h-px w-full bg-border/40" />
+                            </div>
 
                             <ImageUploader
                                 folder={`brands/${currentId}`}

@@ -163,12 +163,12 @@ export function TagDrawer({ open, onOpenChange, tag, onSuccess, table = "tags" }
                                     <div className="space-y-8 mt-12 animate-in fade-in slide-in-from-bottom-2 duration-500">
                                         <TagSelector
                                             table="store_markets"
-                                            title={isPt ? "Onde encontrar" : "Where to find"}
+                                            title={isPt ? "Lojas" : "Stores"}
                                             selectedTagIds={selectedStoreMarketIds}
                                             onTagsChange={setSelectedStoreMarketIds}
                                         />
                                         <div className="flex items-center gap-2">
-                                            <h3 className="font-semibold text-xs text-secondary dark:text-white whitespace-nowrap capitalize tracking-widest opacity-80">{isPt ? "Identidade do fabricante" : "Manufacturer identity"}</h3>
+                                            <h3 className="font-semibold text-xs text-secondary dark:text-white whitespace-nowrap capitalize tracking-widest opacity-80">{isPt ? "Logótipo da marca" : "Brand Logo"}</h3>
                                             <div className="h-px w-full bg-border/40" />
                                         </div>
                                         <ImageUploader
