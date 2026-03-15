@@ -14,7 +14,7 @@ import {
     FormItem,
     FormMessage,
 } from "@/components/ui/form"
-import { ArrowRight, CheckCircle2 } from "lucide-react"
+import { CheckCircle2 } from "lucide-react"
 import { toast } from "sonner"
 
 const waitlistSchema = z.object({
@@ -66,66 +66,71 @@ export function WaitlistForm() {
             <motion.div
                 initial={{ opacity: 0, scale: 0.95 }}
                 animate={{ opacity: 1, scale: 1 }}
-                className="bg-primary/10 border border-primary/20 rounded-lg p-6 md:p-8 flex flex-col items-center justify-center text-center max-w-md mx-auto"
+                className="bg-primary/10 border border-primary/20 rounded-2xl px-5 py-6 md:px-6 md:py-7 flex items-center justify-center max-w-[600px] mx-auto"
             >
-                <div className="size-12 bg-primary/20 rounded-lg flex items-center justify-center mb-4">
-                    <CheckCircle2 className="size-6 text-primary" />
+                <div className="inline-flex items-center gap-3 text-center">
+                    <div className="size-9 bg-primary/20 rounded-full flex items-center justify-center shrink-0">
+                        <CheckCircle2 className="size-5 text-primary" />
+                    </div>
+                    <p className="text-sm md:text-[15px] font-semibold text-slate-800 whitespace-nowrap">
+                        Lugar garantido — serás dos primeiros a saber quando lançarmos.
+                    </p>
                 </div>
-                <h3 className="text-xl font-bold text-foreground mb-2">Lugar Garantido!</h3>
-                <p className="text-muted-foreground text-sm">
-                    Ficarás a saber antes de todos assim que lançarmos. Fica atento ao teu email.
-                </p>
             </motion.div>
         )
     }
 
     return (
         <Form {...form}>
-            <form onSubmit={form.handleSubmit(onSubmit)} className="w-full max-w-sm mx-auto space-y-4 relative z-10">
-                <div className="flex flex-col gap-3">
+            <form onSubmit={form.handleSubmit(onSubmit)} className="w-full relative z-10">
+                <div className="relative flex flex-col sm:flex-row sm:items-center gap-2 sm:gap-0 p-1.5 bg-white/80 backdrop-blur-xl border border-slate-200/80 rounded-2xl sm:rounded-full shadow-xl shadow-slate-200/50 focus-within:ring-4 focus-within:ring-primary/10 transition-all hover:shadow-2xl hover:shadow-slate-200/60 overflow-hidden">
                     <FormField
                         control={form.control}
                         name="name"
                         render={({ field }) => (
-                            <FormItem>
+                            <FormItem className="flex-1 mb-0 sm:border-r sm:border-slate-200/60 px-2">
                                 <FormControl>
                                     <Input
                                         placeholder="O teu nome"
-                                        className="h-12 bg-white/60 dark:bg-white/5 backdrop-blur-md border-white/20 dark:border-white/10 rounded-lg px-4 text-sm"
+                                        className="h-12 border-0 bg-transparent text-slate-900 placeholder:text-slate-400 focus-visible:ring-0 shadow-none px-3 font-medium text-sm"
                                         {...field}
                                     />
                                 </FormControl>
-                                <FormMessage className="text-xs text-red-400" />
                             </FormItem>
                         )}
                     />
+                    <div className="h-[1px] w-full bg-slate-200/60 sm:hidden mx-2" />
                     <FormField
                         control={form.control}
                         name="email"
                         render={({ field }) => (
-                            <FormItem>
+                            <FormItem className="flex-[2] mb-0 px-2">
                                 <FormControl>
                                     <Input
                                         placeholder="O teu melhor email"
-                                        className="h-12 bg-white/60 dark:bg-white/5 backdrop-blur-md border-white/20 dark:border-white/10 rounded-lg px-4 text-sm"
+                                        className="h-12 border-0 bg-transparent text-slate-900 placeholder:text-slate-400 focus-visible:ring-0 shadow-none px-3 font-medium text-sm"
                                         {...field}
                                     />
                                 </FormControl>
-                                <FormMessage className="text-xs text-red-400" />
                             </FormItem>
                         )}
                     />
                     <Button
                         type="submit"
                         disabled={isSubmitting}
-                        className="h-12 rounded-lg bg-primary text-white font-bold text-base hover:scale-[1.02] active:scale-[0.98] transition-all shadow-xl shadow-primary/25 relative overflow-hidden group w-full"
+                        className="h-12 sm:h-[46px] rounded-xl sm:rounded-full bg-primary text-white font-bold text-sm px-6 sm:px-8 hover:bg-primary/90 active:scale-[0.98] transition-all shrink-0 relative overflow-hidden group w-full sm:w-auto mt-2 sm:mt-0 sm:ml-1"
                     >
                         <div className="absolute inset-0 bg-white/20 translate-y-full group-hover:translate-y-0 transition-transform duration-300" />
-                        <span className="relative flex items-center justify-center gap-2">
-                            {isSubmitting ? "A entrar na lista..." : "Quero acesso antecipado"}
-                            {!isSubmitting && <ArrowRight className="size-4" />}
+                        <span className="relative flex items-center justify-center gap-2 whitespace-nowrap">
+                            {isSubmitting ? "A entrar..." : "Acesso antecipado"}
                         </span>
                     </Button>
+                </div>
+                
+                {/* Error messages positioned absolutely below to not break the pill layout */}
+                <div className="absolute left-6 -bottom-6 flex gap-4 text-[10px] text-red-500 font-medium">
+                    {form.formState.errors.name && <span>{form.formState.errors.name.message}</span>}
+                    {form.formState.errors.email && !form.formState.errors.name && <span>{form.formState.errors.email.message}</span>}
                 </div>
             </form>
         </Form>

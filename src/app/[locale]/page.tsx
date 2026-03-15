@@ -1,37 +1,68 @@
+"use client"
+
+import { useEffect, useState } from "react"
 import { HeroSection } from "@/components/landing/hero-section"
 import { PainPoints } from "@/components/landing/pain-points"
 import { SolutionFeatures } from "@/components/landing/solution-features"
 import { PricingTable } from "@/components/landing/pricing-table"
 import { FaqSection } from "@/components/landing/faq-section"
 import Link from "next/link"
+import Image from "next/image"
+import { cn } from "@/lib/utils"
 
 export default function LandingPage() {
+    const [isScrolled, setIsScrolled] = useState(false)
+
+    useEffect(() => {
+        const handleScroll = () => setIsScrolled(window.scrollY > 16)
+
+        handleScroll()
+        window.addEventListener("scroll", handleScroll, { passive: true })
+
+        return () => window.removeEventListener("scroll", handleScroll)
+    }, [])
+
     return (
-        <div className="min-h-screen bg-background text-foreground font-sans selection:bg-primary/30">
-            {/* Navigation (Optional minimalist nav could go here) */}
-            <header className="fixed top-0 inset-x-0 z-50 h-20 flex items-center justify-between px-6 lg:px-12 bg-white/95 backdrop-blur-md border-b border-border/40 shadow-sm">
-                <div className="flex items-center gap-2">
-                    <img src="/vitaflix_logo_dark_mode.png" alt="Vitaflix" className="h-8 dark:block hidden" />
-                    <img src="/vitaflix_logo_light_mode.png" alt="Vitaflix" className="h-8 dark:hidden block" />
-                    <span className="font-bold text-xl tracking-tight ml-2">Vitaflix</span>
-                </div>
-                <div>
-                    <Link href="/login" className="text-sm font-semibold text-muted-foreground hover:text-foreground transition-colors mr-1">
-                        Login Admin
-                    </Link>
+        <div className="min-h-screen bg-gradient-to-b from-white via-[#f7fcfa] to-[#f5f8ff] text-foreground font-sans selection:bg-primary/30">
+            <header className={cn(
+                "fixed top-0 inset-x-0 z-50 transition-all duration-300",
+                isScrolled ? "bg-white/85 backdrop-blur-lg border-b border-slate-200/70 shadow-sm" : "bg-transparent border-b border-transparent"
+            )}>
+                <div className="mx-auto flex h-24 w-full max-w-[90rem] items-center justify-between px-4 sm:px-6 lg:px-8">
+                    <div className="flex items-center justify-center">
+                        <Image src="/vitaflix_logo_light_mode.png" alt="Vitaflix" width={130} height={30} className="h-8 w-auto opacity-100" priority />
+                    </div>
+                    
+                    <nav className="hidden md:flex items-center gap-10 text-sm font-semibold text-slate-700">
+                        <Link href="#beneficios" className="hover:text-primary transition-all">Benefícios</Link>
+                        <Link href="#pricing" className="hover:text-primary transition-all">Preços</Link>
+                        <Link href="#faq" className="hover:text-primary transition-all">FAQ</Link>
+                    </nav>
+
+                    <div>
+                        <Link href="#waitlist" className="inline-flex h-11 items-center rounded-full bg-slate-900 hover:bg-slate-800 px-7 text-sm font-bold text-white shadow-xl shadow-slate-900/10 transition-all hover:scale-105 active:scale-95">
+                            Acesso antecipado
+                        </Link>
+                    </div>
                 </div>
             </header>
 
             <main className="flex flex-col min-h-screen overflow-hidden">
                 <HeroSection />
-                <PainPoints />
-                <SolutionFeatures />
-                <PricingTable />
-                <FaqSection />
+                <div id="beneficios">
+                    <PainPoints />
+                    <SolutionFeatures />
+                </div>
+                <div id="pricing">
+                    <PricingTable />
+                </div>
+                <div id="faq">
+                    <FaqSection />
+                </div>
             </main>
 
-            <footer className="py-12 bg-muted/50 border-t border-border/40 text-center">
-                <p className="text-sm text-muted-foreground font-medium">
+            <footer className="py-12 bg-white/80 border-t border-border/40 text-center">
+                <p className="text-sm text-muted-foreground">
                     &copy; {new Date().getFullYear()} Vitaflix. Todos os direitos reservados.
                 </p>
             </footer>
