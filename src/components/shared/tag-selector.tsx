@@ -78,6 +78,15 @@ export function TagSelector({ title, selectedTagIds, onTagsChange, table = "tags
                 empty: t("noCountriesFound")
             }
         }
+        if (table === 'store_markets') {
+            return {
+                select: t("selectStoreMarkets"),
+                search: t("searchStoreMarkets"),
+                available: t("availableStoreMarkets"),
+                create: t("createNewStoreMarket"),
+                empty: t("noStoreMarketsFound")
+            }
+        }
         return {
             select: t("selectTags"),
             search: t("searchTags"),

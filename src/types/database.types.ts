@@ -38,6 +38,36 @@ export type Database = {
         }
         Relationships: []
       }
+      brand_store_markets: {
+        Row: {
+          brand_id: string
+          store_market_id: string
+        }
+        Insert: {
+          brand_id: string
+          store_market_id: string
+        }
+        Update: {
+          brand_id?: string
+          store_market_id?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "brand_store_markets_brand_id_fkey"
+            columns: ["brand_id"]
+            isOneToOne: false
+            referencedRelation: "brands"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "brand_store_markets_store_market_id_fkey"
+            columns: ["store_market_id"]
+            isOneToOne: false
+            referencedRelation: "store_markets"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
       countries: {
         Row: {
           created_at: string
@@ -918,6 +948,30 @@ export type Database = {
             referencedColumns: ["id"]
           },
         ]
+      }
+      store_markets: {
+        Row: {
+          created_at: string
+          id: string
+          name: Json
+          slug: string
+          updated_at: string
+        }
+        Insert: {
+          created_at?: string
+          id?: string
+          name: Json
+          slug: string
+          updated_at?: string
+        }
+        Update: {
+          created_at?: string
+          id?: string
+          name?: Json
+          slug?: string
+          updated_at?: string
+        }
+        Relationships: []
       }
       subscriptions: {
         Row: {

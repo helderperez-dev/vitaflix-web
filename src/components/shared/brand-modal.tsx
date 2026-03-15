@@ -17,9 +17,12 @@ import {
 import { Form } from"@/components/ui/form"
 import { Button } from"@/components/ui/button"
 import { TranslationFields } from"./translation-fields"
+import { TagSelector } from "./tag-selector"
 import { brandSchema, type Brand } from"@/shared-schemas/brand"
 import { upsertBrand, deleteBrand } from"@/app/actions/brands"
 import { ImageUploader } from"./image-uploader"
+import { useLocale } from"next-intl"
+import { sanitizeBrandLocalizedNames } from"@/lib/brand-market"
 
 interface BrandModalProps {
     open: boolean
@@ -31,6 +34,8 @@ interface BrandModalProps {
 export function BrandModal({ open, onOpenChange, brand, onSuccess }: BrandModalProps) {
     const [isSubmitting, setIsSubmitting] = React.useState(false)
     const [isDeleting, setIsDeleting] = React.useState(false)
+    const [selectedStoreMarketIds, setSelectedStoreMarketIds] = React.useState<string[]>([])
+    const locale = useLocale()
 
     // Generate stable ID for new brands so images can be uploaded into a specific folder
     const [formId] = React.useState(() => crypto.randomUUID())
@@ -57,12 +62,18 @@ export function BrandModal({ open, onOpenChange, brand, onSuccess }: BrandModalP
                 logoUrl: null
             })
         }
+        setSelectedStoreMarketIds(brand?.storeMarketIds || [])
     }, [brand, form, open])
 
     async function onSubmit(values: Brand) {
         setIsSubmitting(true)
         try {
-            const result = await upsertBrand(values)
+            const payload = {
+                ...values,
+                name: sanitizeBrandLocalizedNames(values.name as Record<string, string>),
+                storeMarketIds: selectedStoreMarketIds,
+            }
+            const result = await upsertBrand(payload)
             if (result?.error) {
                 toast.error(result.error)
             } else {
@@ -130,6 +141,12 @@ export function BrandModal({ open, onOpenChange, brand, onSuccess }: BrandModalP
                                 namePrefix="name"
                                 label="Brand Name"
                                 placeholder="e.g. Vitaflix"
+                            />
+                            <TagSelector
+                                table="store_markets"
+                                title={locale.startsWith("pt") ? "Onde encontrar" : "Where to find"}
+                                selectedTagIds={selectedStoreMarketIds}
+                                onTagsChange={setSelectedStoreMarketIds}
                             />
 
                             <ImageUploader

@@ -18,9 +18,11 @@ import { Form } from "@/components/ui/form"
 import { Button } from "@/components/ui/button"
 import { TranslationFields } from "./translation-fields"
 import { ImageUploader } from "./image-uploader"
+import { TagSelector } from "./tag-selector"
 import { tagSchema, type Tag, type TagTable } from "@/shared-schemas/tag"
 import { upsertTag, deleteTag } from "@/app/actions/tags"
 import { useLocale, useTranslations } from "next-intl"
+import { sanitizeBrandLocalizedNames } from "@/lib/brand-market"
 
 interface TagDrawerProps {
     open: boolean
@@ -33,6 +35,7 @@ interface TagDrawerProps {
 export function TagDrawer({ open, onOpenChange, tag, onSuccess, table = "tags" }: TagDrawerProps) {
     const [isSubmitting, setIsSubmitting] = React.useState(false)
     const [isDeleting, setIsDeleting] = React.useState(false)
+    const [selectedStoreMarketIds, setSelectedStoreMarketIds] = React.useState<string[]>([])
     const locale = useLocale()
     const commonT = useTranslations("Common")
     const usersT = useTranslations("Users")
@@ -46,6 +49,7 @@ export function TagDrawer({ open, onOpenChange, tag, onSuccess, table = "tags" }
         if (table === "measurement_units") return isPt ? "Unidade" : "Unit"
         if (table === "countries") return isPt ? "País" : "Country"
         if (table === "brands") return commonT("brand")
+        if (table === "store_markets") return isPt ? "Loja / supermercado" : "Store / supermarket"
         if (table === "meal_categories") return isPt ? "Categoria de refeição" : "Meal category"
         if (table === "dietary_tags") return isPt ? "Etiqueta dietética" : "Dietary tag"
         return isPt ? "Etiqueta" : "Tag"
@@ -74,12 +78,20 @@ export function TagDrawer({ open, onOpenChange, tag, onSuccess, table = "tags" }
                 name: {},
             })
         }
-    }, [tag, form, open])
+        setSelectedStoreMarketIds(tag?.store_market_ids || [])
+    }, [tag, form, open, table])
 
     async function onSubmit(values: Tag) {
         setIsSubmitting(true)
         try {
-            const result = await upsertTag(values, table)
+            const payload = table === "brands"
+                ? {
+                    ...values,
+                    name: sanitizeBrandLocalizedNames(values.name as Record<string, string>),
+                    store_market_ids: selectedStoreMarketIds,
+                }
+                : values
+            const result = await upsertTag(payload, table)
             if (result?.error) {
                 toast.error(result.error)
             } else {
@@ -149,6 +161,12 @@ export function TagDrawer({ open, onOpenChange, tag, onSuccess, table = "tags" }
 
                                 {table === "brands" && (
                                     <div className="space-y-8 mt-12 animate-in fade-in slide-in-from-bottom-2 duration-500">
+                                        <TagSelector
+                                            table="store_markets"
+                                            title={isPt ? "Onde encontrar" : "Where to find"}
+                                            selectedTagIds={selectedStoreMarketIds}
+                                            onTagsChange={setSelectedStoreMarketIds}
+                                        />
                                         <div className="flex items-center gap-2">
                                             <h3 className="font-semibold text-xs text-secondary dark:text-white whitespace-nowrap capitalize tracking-widest opacity-80">{isPt ? "Identidade do fabricante" : "Manufacturer identity"}</h3>
                                             <div className="h-px w-full bg-border/40" />

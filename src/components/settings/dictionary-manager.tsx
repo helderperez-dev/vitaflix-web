@@ -52,6 +52,7 @@ import { Link } from "@/i18n/routing"
 
 const DICTIONARY_META: { id: TagTable | 'plans_logic'; icon: React.ComponentType<{ className?: string }> }[] = [
     { id: 'brands', icon: Store },
+    { id: 'store_markets', icon: Store },
     { id: 'dietary_tags', icon: Leaf },
     { id: 'product_groups', icon: Boxes },
     { id: 'measurement_units', icon: Ruler },
@@ -85,6 +86,10 @@ export function DictionaryManager() {
             brands: {
                 label: commonT("brand"),
                 description: isPt ? "Identidades de fabricantes e marcas." : "Manufacturer and label identities.",
+            },
+            store_markets: {
+                label: isPt ? "Lojas / supermercados" : "Stores / supermarkets",
+                description: isPt ? "Canais de disponibilidade para marcas e produtos." : "Availability channels for brands and products.",
             },
             dietary_tags: {
                 label: isPt ? "Etiquetas dietéticas" : "Dietary tags",
@@ -216,18 +221,24 @@ export function DictionaryManager() {
                     const name = localizedName?.[locale] || localizedName?.en || Object.values(row.original.name || {})[0] || (isPt ? "Sem título" : "Untitled")
 
                     if (selectedDict === 'brands') {
+                        const storeMarkets = (row.original.store_markets || []) as Array<{ id: string; name?: Record<string, string> }>
                         return (
-                            <div className="flex items-center gap-3">
-                                <div className="h-10 w-10 rounded-md overflow-hidden bg-muted border border-border/40 flex-shrink-0 flex items-center justify-center">
-                                    {row.original.logo_url ? (
-                                        <img src={row.original.logo_url} alt="" className="w-full h-full object-cover" />
-                                    ) : (
-                                        <Store className="size-4 text-muted-foreground/30" />
-                                    )}
+                            <div className="flex items-start gap-3">
+                                <div className="h-10 w-10 mt-0.5 rounded-md overflow-hidden bg-muted border border-border/40 flex-shrink-0 flex items-center justify-center">
+                                    {row.original.logo_url ? <img src={row.original.logo_url} alt="" className="w-full h-full object-cover" /> : <Store className="size-4 text-muted-foreground/30" />}
                                 </div>
-                                <span className="font-bold text-foreground/80 tracking-tight">
-                                    {name}
-                                </span>
+                                <div className="space-y-1.5">
+                                    <span className="font-bold text-foreground/80 tracking-tight block">
+                                        {name}
+                                    </span>
+                                    <div className="flex flex-wrap gap-1.5">
+                                        {(storeMarkets.length > 0 ? storeMarkets : [{ id: "all", name: { en: "All stores", "pt-pt": "Todas as lojas" } }]).map((market) => (
+                                            <Badge key={`${row.original.id}-${market.id}`} variant="outline" className="px-2 py-0 h-5 border-border/40 text-[9px] font-black capitalize text-muted-foreground/50 bg-zinc-50 dark:bg-white/5">
+                                                {market.name?.[locale] || market.name?.en || (isPt ? "Todas as lojas" : "All stores")}
+                                            </Badge>
+                                        ))}
+                                    </div>
+                                </div>
                             </div>
                         )
                     }

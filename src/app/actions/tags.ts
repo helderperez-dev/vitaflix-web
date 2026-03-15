@@ -3,6 +3,7 @@
 import { createClient } from "@/lib/supabase/server"
 import { revalidatePath } from "next/cache"
 import { tagSchema, type Tag, type TagTable } from "@/shared-schemas/tag"
+import { sanitizeBrandLocalizedNames } from "@/lib/brand-market"
 
 
 function slugify(text: string) {
@@ -17,6 +18,35 @@ function slugify(text: string) {
 
 export async function getTags(table: TagTable = 'tags') {
     const supabase = await createClient()
+    if (table === 'brands') {
+        const { data, error } = await supabase
+            .from('brands')
+            .select('id,name,logo_url,created_at,updated_at,brand_store_markets(store_market_id,store_markets(id,slug,name))')
+            .order('created_at', { ascending: false })
+
+        if (error) {
+            console.error(`Error fetching ${table}:`, error)
+            return []
+        }
+
+        return (data || []).map((brand: any) => {
+            const links = brand.brand_store_markets || []
+            const linkedMarkets = links
+                .map((link: any) => link.store_markets)
+                .filter(Boolean)
+
+            return {
+                id: brand.id,
+                name: brand.name,
+                logo_url: brand.logo_url,
+                store_market_ids: links.map((link: any) => link.store_market_id).filter(Boolean),
+                store_markets: linkedMarkets,
+                created_at: brand.created_at,
+                updated_at: brand.updated_at,
+            } as Tag
+        })
+    }
+
     const { data, error } = await supabase
         .from(table)
         .select('*')
@@ -32,6 +62,49 @@ export async function getTags(table: TagTable = 'tags') {
 
 export async function upsertTag(tag: Tag, table: TagTable = 'tags') {
     const supabase = await createClient()
+    if (table === 'brands') {
+        const brandPayload = {
+            id: tag.id || undefined,
+            name: sanitizeBrandLocalizedNames(tag.name as Record<string, string>),
+            logo_url: tag.logo_url,
+            updated_at: new Date().toISOString()
+        }
+
+        const { data, error } = await supabase
+            .from('brands')
+            .upsert(brandPayload)
+            .select()
+            .single()
+
+        if (error) {
+            console.error(`Error saving ${table}:`, error)
+            return { error: error.message }
+        }
+
+        const brandId = data.id as string
+        await supabase
+            .from('brand_store_markets')
+            .delete()
+            .eq('brand_id', brandId)
+
+        const storeMarketIds = tag.store_market_ids || []
+        if (storeMarketIds.length > 0) {
+            const rows = storeMarketIds.map((storeMarketId) => ({
+                brand_id: brandId,
+                store_market_id: storeMarketId,
+            }))
+            const { error: linkError } = await supabase
+                .from('brand_store_markets')
+                .insert(rows)
+            if (linkError) {
+                console.error('Error saving brand store market links:', linkError)
+                return { error: linkError.message }
+            }
+        }
+
+        revalidatePath("/", "layout")
+        return { data: data as Tag }
+    }
 
     const upsertData: any = {
         id: tag.id || undefined,
@@ -41,7 +114,7 @@ export async function upsertTag(tag: Tag, table: TagTable = 'tags') {
     }
 
     // Auto-generate slug for roles and objectives if missing
-    if ((table === 'user_roles' || table === 'wellness_objectives' || table === 'meal_plan_sizes' || table === 'measurement_units' || table === 'countries') && !tag.slug && !tag.id) {
+    if ((table === 'user_roles' || table === 'wellness_objectives' || table === 'meal_plan_sizes' || table === 'measurement_units' || table === 'countries' || table === 'store_markets') && !tag.slug && !tag.id) {
         const engName = tag.name?.en || Object.values(tag.name || {})[0] as string;
         if (engName) {
             if (table === 'meal_plan_sizes') {

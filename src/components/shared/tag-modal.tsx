@@ -17,9 +17,11 @@ import {
 import { Form } from "@/components/ui/form"
 import { Button } from "@/components/ui/button"
 import { TranslationFields } from "./translation-fields"
+import { TagSelector } from "./tag-selector"
 import { tagSchema, type Tag, type TagTable } from "@/shared-schemas/tag"
 import { upsertTag, deleteTag } from "@/app/actions/tags"
 import { useLocale, useTranslations } from "next-intl"
+import { sanitizeBrandLocalizedNames } from "@/lib/brand-market"
 
 interface TagModalProps {
     open: boolean
@@ -32,6 +34,7 @@ interface TagModalProps {
 export function TagModal({ open, onOpenChange, tag, onSuccess, table = "tags" }: TagModalProps) {
     const [isSubmitting, setIsSubmitting] = React.useState(false)
     const [isDeleting, setIsDeleting] = React.useState(false)
+    const [selectedStoreMarketIds, setSelectedStoreMarketIds] = React.useState<string[]>([])
     const locale = useLocale()
     const commonT = useTranslations("Common")
     const usersT = useTranslations("Users")
@@ -45,6 +48,7 @@ export function TagModal({ open, onOpenChange, tag, onSuccess, table = "tags" }:
         if (targetTable === "measurement_units") return isPt ? "Unidade" : "Unit"
         if (targetTable === "countries") return isPt ? "País" : "Country"
         if (targetTable === "brands") return commonT("brand")
+        if (targetTable === "store_markets") return isPt ? "Loja / supermercado" : "Store / supermarket"
         return isPt ? "Etiqueta" : "Tag"
     }, [commonT, isPt, usersT])
 
@@ -73,12 +77,20 @@ export function TagModal({ open, onOpenChange, tag, onSuccess, table = "tags" }:
                 name: {},
             })
         }
-    }, [tag, form, open])
+        setSelectedStoreMarketIds(tag?.store_market_ids || [])
+    }, [tag, form, open, table])
 
     async function onSubmit(values: Tag) {
         setIsSubmitting(true)
         try {
-            const result = await upsertTag(values, table)
+            const payload = table === "brands"
+                ? {
+                    ...values,
+                    name: sanitizeBrandLocalizedNames(values.name as Record<string, string>),
+                    store_market_ids: selectedStoreMarketIds,
+                }
+                : values
+            const result = await upsertTag(payload, table)
             if (result?.error) {
                 toast.error(result.error)
             } else {
@@ -142,6 +154,14 @@ export function TagModal({ open, onOpenChange, tag, onSuccess, table = "tags" }:
                                 label={entityLabel}
                                 placeholder={isPt ? "Nome de exibição..." : "Display Name..."}
                             />
+                            {table === "brands" && (
+                                <TagSelector
+                                    table="store_markets"
+                                    title={isPt ? "Onde encontrar" : "Where to find"}
+                                    selectedTagIds={selectedStoreMarketIds}
+                                    onTagsChange={setSelectedStoreMarketIds}
+                                />
+                            )}
                         </form>
                     </Form>
                 </div>

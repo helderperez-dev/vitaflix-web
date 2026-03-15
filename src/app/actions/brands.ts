@@ -3,12 +3,13 @@
 import { createClient } from "@/lib/supabase/server"
 import { revalidatePath } from "next/cache"
 import { brandSchema, type Brand } from "@/shared-schemas/brand"
+import { sanitizeBrandLocalizedNames } from "@/lib/brand-market"
 
 export async function getBrands() {
     const supabase = await createClient()
     const { data, error } = await supabase
         .from('brands')
-        .select('*')
+        .select('id,name,logo_url,brand_store_markets(store_market_id)')
         .order('created_at', { ascending: false })
 
     if (error) {
@@ -21,6 +22,7 @@ export async function getBrands() {
         id: b.id,
         name: b.name,
         logoUrl: b.logo_url,
+        storeMarketIds: (b.brand_store_markets || []).map((link: any) => link.store_market_id).filter(Boolean),
     })) as Brand[]
 }
 
@@ -31,7 +33,7 @@ export async function upsertBrand(brand: Brand) {
         .from('brands')
         .upsert({
             id: brand.id || undefined,
-            name: brand.name,
+            name: sanitizeBrandLocalizedNames(brand.name as Record<string, string>),
             logo_url: brand.logoUrl || null,
             updated_at: new Date().toISOString()
         })
@@ -43,8 +45,36 @@ export async function upsertBrand(brand: Brand) {
         return { error: error.message }
     }
 
+    const brandId = data.id as string
+    await supabase
+        .from('brand_store_markets')
+        .delete()
+        .eq('brand_id', brandId)
+
+    const storeMarketIds = brand.storeMarketIds || []
+    if (storeMarketIds.length > 0) {
+        const rows = storeMarketIds.map((storeMarketId) => ({
+            brand_id: brandId,
+            store_market_id: storeMarketId,
+        }))
+        const { error: linkError } = await supabase
+            .from('brand_store_markets')
+            .insert(rows)
+        if (linkError) {
+            console.error('Error saving brand store market links:', linkError)
+            return { error: linkError.message }
+        }
+    }
+
     revalidatePath("/", "layout")
-    return { data: { id: data.id, name: data.name, logoUrl: data.logo_url } as Brand }
+    return {
+        data: {
+            id: data.id,
+            name: data.name,
+            logoUrl: data.logo_url,
+            storeMarketIds,
+        } as Brand
+    }
 }
 
 export async function deleteBrand(id: string) {
@@ -73,4 +103,3 @@ export async function deleteBrand(id: string) {
     revalidatePath("/", "layout")
     return { success: true }
 }
-
