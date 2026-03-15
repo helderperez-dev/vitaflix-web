@@ -220,14 +220,18 @@ export function MealOptionsList({ mealId, options, onOptionsChange, onEditingCha
                                                     {(option as any).ingredients?.length || 0} {t("ingredients")}
                                                 </span>
                                             </div>
-                                            {option.images && option.images.length > 0 && (
-                                                <div className="h-8 w-8 rounded-lg overflow-hidden border border-border/40 transition-transform group-hover:scale-105">
+                                            <div className="h-8 w-8 rounded-lg overflow-hidden border border-border/40 transition-transform group-hover:scale-105 bg-muted/30">
+                                                {option.images && option.images.length > 0 ? (
                                                     <MediaDisplay
                                                         src={option.images[0].url}
                                                         alt="Option Thumbnail"
                                                     />
-                                                </div>
-                                            )}
+                                                ) : (
+                                                    <div className="h-full w-full flex items-center justify-center">
+                                                        <ImageIcon className="h-3.5 w-3.5 text-muted-foreground/35" />
+                                                    </div>
+                                                )}
+                                            </div>
                                         </div>
                                     </div>
                                 </div>

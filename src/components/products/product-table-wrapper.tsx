@@ -1,7 +1,7 @@
 "use client"
 
 import * as React from "react"
-import { Trash2, Plus, Loader2, Maximize2 } from "lucide-react"
+import { Trash2, Plus, Loader2, Maximize2, Image as ImageIcon } from "lucide-react"
 import { Button } from "@/components/ui/button"
 import { Badge } from "@/components/ui/badge"
 import { useLocale, useTranslations } from "next-intl"
@@ -184,6 +184,7 @@ export function ProductTableWrapper({ initialProducts, userProfile }: ProductTab
             cell: ({ row }) => {
                 const product = row.original.mappedProduct
                 const defaultImage = product.images?.find((img) => img.isDefault) || product.images?.[0]
+                const hasImage = Boolean(defaultImage?.url)
                 return (
                     <div className="flex items-center gap-3">
                         <motion.div
@@ -191,19 +192,32 @@ export function ProductTableWrapper({ initialProducts, userProfile }: ProductTab
                             whileTap={{ scale: 0.95 }}
                             onClick={(e) => {
                                 e.stopPropagation()
-                                setGalleryImages(product.images || [])
-                                setIsGalleryOpen(true)
+                                if (hasImage) {
+                                    setGalleryImages(product.images || [])
+                                    setIsGalleryOpen(true)
+                                }
                             }}
-                            className="h-10 w-10 rounded-md overflow-hidden bg-muted border border-border/40 flex-shrink-0 relative group cursor-pointer"
+                            className={cn(
+                                "h-10 w-10 rounded-md overflow-hidden border border-border/40 flex-shrink-0 relative group",
+                                hasImage ? "bg-muted cursor-pointer" : "bg-muted/30 cursor-default"
+                            )}
                         >
-                            <MediaDisplay
-                                src={defaultImage ? defaultImage.url : "/product_placeholder.png"}
-                                alt="Product"
-                                className="transition-all group-hover:brightness-50"
-                            />
-                            <div className="absolute inset-0 flex items-center justify-center opacity-0 group-hover:opacity-100 transition-opacity">
-                                <Maximize2 className="h-4 w-4 text-white" />
-                            </div>
+                            {hasImage ? (
+                                <>
+                                    <MediaDisplay
+                                        src={defaultImage!.url}
+                                        alt="Product"
+                                        className="transition-all group-hover:brightness-50"
+                                    />
+                                    <div className="absolute inset-0 flex items-center justify-center opacity-0 group-hover:opacity-100 transition-opacity">
+                                        <Maximize2 className="h-4 w-4 text-white" />
+                                    </div>
+                                </>
+                            ) : (
+                                <div className="h-full w-full flex items-center justify-center">
+                                    <ImageIcon className="h-4 w-4 text-muted-foreground/35" />
+                                </div>
+                            )}
                         </motion.div>
                         <div className="font-medium truncate">{row.getValue("nameLocale")}</div>
                     </div>

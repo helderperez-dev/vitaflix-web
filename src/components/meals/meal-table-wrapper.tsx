@@ -1,7 +1,7 @@
 "use client"
 
 import * as React from "react"
-import { Trash2, Clock, Maximize2, Plus, Loader2 } from "lucide-react"
+import { Trash2, Clock, Maximize2, Plus, Loader2, Image as ImageIcon } from "lucide-react"
 import { Button } from "@/components/ui/button"
 import { Badge } from "@/components/ui/badge"
 import { type Meal } from "@/shared-schemas/meal"
@@ -206,6 +206,7 @@ export function MealTableWrapper({ initialMeals, userProfile }: MealTableWrapper
             cell: ({ row }) => {
                 const meal = row.original.mappedMeal
                 const defaultImage = meal.images?.find((img) => img.isDefault) || meal.images?.[0]
+                const hasImage = Boolean(defaultImage?.url)
                 const name = row.getValue("nameLocale") as string
 
                 return (
@@ -215,21 +216,32 @@ export function MealTableWrapper({ initialMeals, userProfile }: MealTableWrapper
                             whileTap={{ scale: 0.95 }}
                             onClick={(e) => {
                                 e.stopPropagation()
-                                if (meal.images && meal.images.length > 0) {
+                                if (hasImage) {
                                     setGalleryImages(meal.images)
                                     setIsGalleryOpen(true)
                                 }
                             }}
-                            className="h-10 w-10 rounded-md overflow-hidden bg-muted border border-border/40 flex-shrink-0 relative group cursor-pointer"
+                            className={cn(
+                                "h-10 w-10 rounded-md overflow-hidden border border-border/40 flex-shrink-0 relative group",
+                                hasImage ? "bg-muted cursor-pointer" : "bg-muted/30 cursor-default"
+                            )}
                         >
-                            <MediaDisplay
-                                src={defaultImage ? defaultImage.url : "/product_placeholder.png"}
-                                alt={name}
-                                className="transition-all group-hover:brightness-50"
-                            />
-                            <div className="absolute inset-0 flex items-center justify-center opacity-0 group-hover:opacity-100 transition-opacity">
-                                <Maximize2 className="h-4 w-4 text-white" />
-                            </div>
+                            {hasImage ? (
+                                <>
+                                    <MediaDisplay
+                                        src={defaultImage!.url}
+                                        alt={name}
+                                        className="transition-all group-hover:brightness-50"
+                                    />
+                                    <div className="absolute inset-0 flex items-center justify-center opacity-0 group-hover:opacity-100 transition-opacity">
+                                        <Maximize2 className="h-4 w-4 text-white" />
+                                    </div>
+                                </>
+                            ) : (
+                                <div className="h-full w-full flex items-center justify-center">
+                                    <ImageIcon className="h-4 w-4 text-muted-foreground/35" />
+                                </div>
+                            )}
                         </motion.div>
                         <div className="font-semibold text-sm truncate">{name}</div>
                     </div>
