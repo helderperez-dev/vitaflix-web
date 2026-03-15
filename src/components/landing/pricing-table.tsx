@@ -2,6 +2,7 @@
 
 import { motion } from "framer-motion"
 import { Check } from "lucide-react"
+import Link from "next/link"
 
 const plans = [
     {
@@ -33,7 +34,7 @@ const plans = [
 
 export function PricingTable() {
     return (
-        <section className="py-28 relative bg-gradient-to-b from-white to-[#f7fcfa] overflow-hidden">
+        <section className="relative overflow-hidden bg-gradient-to-b from-white to-[#f7fcfa] py-24 md:py-32">
             <div className="absolute inset-0 pointer-events-none">
                 <div className="absolute -top-20 left-1/2 -translate-x-1/2 h-80 w-80 rounded-full bg-primary/15 blur-[120px]" />
             </div>
@@ -52,9 +53,9 @@ export function PricingTable() {
                             whileInView={{ opacity: 1, y: 0 }}
                             viewport={{ once: true }}
                             transition={{ duration: 0.5, delay: i * 0.1 }}
-                            className={`relative flex flex-col p-8 rounded-[2.5rem] bg-white border shadow-lg transition-transform duration-300
+                            className={`relative flex flex-col rounded-[2.5rem] border bg-white p-8 shadow-lg transition-all duration-300
                                 ${plan.highlight
-                                    ? 'border-primary shadow-2xl shadow-primary/20 scale-105 md:-mt-8 z-10'
+                                    ? 'z-10 scale-105 border-primary shadow-2xl shadow-primary/20 ring-1 ring-primary/20 md:-mt-8'
                                     : 'border-border/40 hover:-translate-y-2 hover:shadow-xl'
                                 }
                             `}
@@ -86,14 +87,14 @@ export function PricingTable() {
                                 ))}
                             </div>
 
-                            <button className={`w-full mt-8 py-4 rounded-lg font-bold transition-all shadow-sm
+                            <Link href="#waitlist" className={`mt-8 inline-flex w-full items-center justify-center rounded-full px-6 py-4 text-sm font-bold transition-all shadow-sm
                                 ${plan.highlight
                                     ? 'bg-primary text-white hover:bg-primary/90 hover:shadow-primary/25'
                                     : 'bg-muted/60 text-foreground hover:bg-muted'
                                 }
                             `}>
-                                Começar Agora
-                            </button>
+                                Começar agora
+                            </Link>
                         </motion.div>
                     ))}
                 </div>

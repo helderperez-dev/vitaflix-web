@@ -24,20 +24,30 @@ export default function LandingPage() {
 
     return (
         <div className="min-h-screen bg-gradient-to-b from-white via-[#f7fcfa] to-[#f5f8ff] text-foreground font-sans selection:bg-primary/30">
-            <header className={cn(
-                "fixed top-0 inset-x-0 z-50 transition-all duration-300",
-                isScrolled ? "bg-white/85 backdrop-blur-lg border-b border-slate-200/70 shadow-sm" : "bg-transparent border-b border-transparent"
-            )}>
-                <div className="mx-auto flex h-24 w-full max-w-[90rem] items-center justify-between px-4 sm:px-6 lg:px-8">
-                    <div className="flex items-center justify-center">
-                        <Image src="/vitaflix_logo_light_mode.png" alt="Vitaflix" width={130} height={30} className="h-8 w-auto opacity-100" priority />
+            <header className="fixed inset-x-0 top-0 z-50">
+                <div className={cn(
+                    "mx-auto flex w-full max-w-[90rem] items-center justify-between px-4 sm:px-6 lg:px-8 transition-all duration-300",
+                    isScrolled
+                        ? "mt-3 h-[4.25rem] max-w-[78rem] rounded-2xl border border-slate-200/70 bg-white/90 shadow-lg shadow-slate-900/5 backdrop-blur-xl"
+                        : "h-24 bg-transparent"
+                )}>
+                    <div className={cn(
+                        "flex items-center transition-all duration-300",
+                        isScrolled ? "gap-8" : "gap-12"
+                    )}>
+                        <div className="flex items-center justify-center">
+                            <Image src="/vitaflix_logo_light_mode.png" alt="Vitaflix" width={130} height={30} className="h-8 w-auto opacity-100" priority />
+                        </div>
+                        
+                        <nav className={cn(
+                            "hidden items-center text-sm font-semibold text-slate-700 md:flex transition-all duration-300",
+                            isScrolled ? "gap-7" : "gap-9"
+                        )}>
+                            <Link href="#beneficios" className="hover:text-primary transition-all">Benefícios</Link>
+                            <Link href="#pricing" className="hover:text-primary transition-all">Preços</Link>
+                            <Link href="#faq" className="hover:text-primary transition-all">FAQ</Link>
+                        </nav>
                     </div>
-                    
-                    <nav className="hidden md:flex items-center gap-10 text-sm font-semibold text-slate-700">
-                        <Link href="#beneficios" className="hover:text-primary transition-all">Benefícios</Link>
-                        <Link href="#pricing" className="hover:text-primary transition-all">Preços</Link>
-                        <Link href="#faq" className="hover:text-primary transition-all">FAQ</Link>
-                    </nav>
 
                     <div>
                         <Link href="#waitlist" className="inline-flex h-11 items-center rounded-full bg-slate-900 hover:bg-slate-800 px-7 text-sm font-bold text-white shadow-xl shadow-slate-900/10 transition-all hover:scale-105 active:scale-95">

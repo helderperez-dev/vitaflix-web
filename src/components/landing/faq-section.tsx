@@ -25,12 +25,15 @@ const faqs = [
 
 export function FaqSection() {
     return (
-        <section className="py-28 relative bg-white">
-            <div className="container mx-auto px-4 max-w-3xl">
-                <div className="text-center mb-16">
-                    <p className="text-xs uppercase tracking-[0.2em] text-primary font-semibold mb-4">Sem complicações</p>
-                    <h2 className="text-3xl md:text-5xl font-bold tracking-tight mb-4">Perguntas Frequentes</h2>
-                    <p className="text-muted-foreground text-lg">Tudo o que precisas de saber sobre a Vitaflix.</p>
+        <section className="relative bg-white py-24 md:py-32">
+            <div className="absolute inset-0 pointer-events-none">
+                <div className="absolute -top-24 right-8 h-72 w-72 rounded-full bg-primary/10 blur-[120px]" />
+            </div>
+            <div className="container mx-auto max-w-3xl px-4">
+                <div className="mb-16 text-center">
+                    <p className="mb-4 text-xs font-semibold uppercase tracking-[0.2em] text-primary">Sem complicações</p>
+                    <h2 className="mb-4 text-3xl font-bold tracking-tight md:text-5xl">Perguntas Frequentes</h2>
+                    <p className="text-lg text-muted-foreground">Tudo o que precisas de saber sobre a Vitaflix.</p>
                 </div>
 
                 <motion.div
@@ -41,11 +44,11 @@ export function FaqSection() {
                 >
                     <Accordion type="single" collapsible className="w-full space-y-4">
                         {faqs.map((faq, i) => (
-                            <AccordionItem key={i} value={`item-${i}`} className="bg-white border border-border/60 rounded-2xl px-6 shadow-sm">
-                                <AccordionTrigger className="text-left font-bold text-lg hover:no-underline hover:text-primary transition-colors py-6">
+                            <AccordionItem key={i} value={`item-${i}`} className="rounded-2xl border border-border/60 bg-white/95 px-6 shadow-sm transition-all duration-300 hover:border-primary/25 hover:shadow-md">
+                                <AccordionTrigger className="py-6 text-left text-lg font-bold hover:text-primary hover:no-underline transition-colors">
                                     {faq.question}
                                 </AccordionTrigger>
-                                <AccordionContent className="text-muted-foreground text-base leading-relaxed pb-6">
+                                <AccordionContent className="pb-6 text-base leading-relaxed text-muted-foreground">
                                     {faq.answer}
                                 </AccordionContent>
                             </AccordionItem>
@@ -58,7 +61,7 @@ export function FaqSection() {
                     whileInView={{ opacity: 1, y: 0 }}
                     viewport={{ once: true }}
                     transition={{ duration: 0.4, delay: 0.1 }}
-                    className="mt-10 rounded-3xl border border-primary/20 bg-primary/5 p-6 text-center"
+                    className="mt-10 rounded-3xl border border-primary/20 bg-gradient-to-r from-primary/10 to-primary/5 p-6 text-center"
                 >
                     <p className="text-sm font-medium text-primary/90">Apenas disponível via app móvel. Sem login web para utilizadores.</p>
                 </motion.div>

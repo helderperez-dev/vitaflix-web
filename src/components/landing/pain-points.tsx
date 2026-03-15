@@ -1,51 +1,51 @@
 "use client"
 
 import { motion } from "framer-motion"
-import { Clock, Frown, HelpCircle, UtensilsCrossed, Scale } from "lucide-react"
+import { Clock3, Soup, CircleHelp, Repeat2, Target } from "lucide-react"
+import { cn } from "@/lib/utils"
 
 const pains = [
     {
-        icon: Clock,
-        title: "Falta de Tempo",
-        desc: "Equilibrar trabalho, família e ainda encontrar tempo para planear refeições saudáveis parece impossível."
+        icon: Clock3,
+        title: "Pouco Tempo",
+        desc: "Entre trabalho, família e rotina, planear refeições equilibradas acaba sempre por ficar para depois."
     },
     {
-        icon: Frown,
-        title: "Dietas Restritivas",
-        desc: "A sensação constante de que 'fazer dieta' é sinónimo de comer pratos secos e sem sabor."
+        icon: Soup,
+        title: "Refeições Sem Sabor",
+        desc: "Muitas opções parecem repetitivas e pouco apelativas, o que torna difícil manter consistência."
     },
     {
-        icon: HelpCircle,
-        title: "A Eterna Dúvida",
-        desc: "\"O que é que vou comer hoje?\" é a pergunta mais stressante do dia a dia."
+        icon: CircleHelp,
+        title: "Dúvida Constante",
+        desc: "Decidir o que cozinhar todos os dias consome tempo e energia que podias usar noutras prioridades."
     },
     {
-        icon: UtensilsCrossed,
-        title: "Monotonia",
-        desc: "Acabas por comer sempre frango com arroz porque não sabes como variar sem sair do plano."
+        icon: Repeat2,
+        title: "Falta de Variedade",
+        desc: "Acabas por repetir as mesmas refeições por não teres um sistema simples para variar."
     },
     {
-        icon: Scale,
-        title: "Erro nas Quantidades",
-        desc: "Desconhecimento de quanto precisas comer para o teu objetivo, levando à frustração por falta de resultados."
+        icon: Target,
+        title: "Quantidades Incertas",
+        desc: "Sem orientação clara, é difícil ajustar porções ao teu objetivo e manter resultados consistentes."
     }
 ]
 
 export function PainPoints() {
     return (
-        <section className="py-28 relative overflow-hidden bg-gradient-to-b from-[#f5f8ff] to-white">
+        <section className="relative overflow-hidden bg-[#f8fbff] py-24 md:py-32">
             <div className="absolute inset-0 pointer-events-none">
-                <div className="absolute -top-32 left-1/3 h-72 w-72 rounded-full bg-sky-100 blur-[120px]" />
-                <div className="absolute bottom-0 -left-20 h-64 w-64 rounded-full bg-rose-100/70 blur-[100px]" />
+                <div className="absolute left-1/2 top-0 h-60 w-[36rem] -translate-x-1/2 rounded-full bg-primary/8 blur-[120px]" />
             </div>
-            <div className="container mx-auto px-4 sm:px-6 relative z-10">
-                <div className="text-center max-w-3xl mx-auto mb-16">
-                    <p className="text-xs uppercase tracking-[0.2em] text-primary font-semibold mb-4">As dores mais comuns</p>
-                    <h2 className="text-3xl md:text-5xl font-bold tracking-tight mb-6 text-balance">Identificas-te com isto?</h2>
-                    <p className="text-lg text-muted-foreground text-balance">O planeamento alimentar não devia ser o momento mais stressante da tua semana.</p>
+            <div className="container relative z-10 mx-auto px-4 sm:px-6">
+                <div className="mx-auto mb-14 max-w-3xl text-center md:mb-16">
+                    <p className="mb-4 text-xs font-semibold uppercase tracking-[0.2em] text-primary">No dia a dia</p>
+                    <h2 className="mb-5 text-3xl font-bold tracking-tight text-slate-900 md:text-5xl">O que costuma complicar o teu planeamento</h2>
+                    <p className="mx-auto max-w-2xl text-base text-muted-foreground md:text-lg">Com a Vitaflix, estes bloqueios deixam de travar a tua rotina e o planeamento passa a ser leve e rápido.</p>
                 </div>
 
-                <div className="grid sm:grid-cols-2 lg:grid-cols-3 gap-6 max-w-6xl mx-auto">
+                <div className="mx-auto grid max-w-6xl gap-5 sm:gap-6 md:grid-cols-2 lg:grid-cols-6">
                     {pains.map((pain, i) => (
                         <motion.div
                             initial={{ opacity: 0, y: 20 }}
@@ -53,28 +53,20 @@ export function PainPoints() {
                             viewport={{ once: true, margin: "-100px" }}
                             transition={{ duration: 0.5, delay: i * 0.1 }}
                             key={i}
-                            className={`group p-6 md:p-8 rounded-[2rem] bg-white/60 backdrop-blur-xl border border-white/50 shadow-lg shadow-slate-200/40 hover:shadow-xl hover:shadow-primary/10 hover:-translate-y-1 transition-all duration-300 ${i === pains.length - 1 ? "sm:col-span-2 lg:col-span-1" : ""}`}
+                            className={cn(
+                                "group rounded-3xl border border-slate-200/70 bg-white p-6 shadow-sm transition-all duration-300 hover:-translate-y-1 hover:border-primary/30 hover:shadow-xl hover:shadow-primary/10 md:min-h-[230px] md:p-7",
+                                i < 3 ? "lg:col-span-2" : "lg:col-span-3"
+                            )}
                         >
-                            <div className="mb-6 inline-flex rounded-2xl bg-white p-3 shadow-sm border border-slate-100 text-destructive">
+                            <div className="mb-5 inline-flex rounded-2xl border border-primary/15 bg-primary/5 p-3 text-primary transition-colors group-hover:bg-primary/10">
                                 <pain.icon className="size-6" />
                             </div>
-                            <h3 className="text-xl font-bold mb-3 group-hover:text-primary transition-colors">{pain.title}</h3>
-                            <p className="text-muted-foreground leading-relaxed">{pain.desc}</p>
+                            <h3 className="mb-3 text-xl font-bold tracking-tight text-slate-900">{pain.title}</h3>
+                            <p className="text-[15px] leading-relaxed text-slate-600">{pain.desc}</p>
                         </motion.div>
                     ))}
                 </div>
 
-                <motion.div
-                    initial={{ opacity: 0, y: 24 }}
-                    whileInView={{ opacity: 1, y: 0 }}
-                    viewport={{ once: true, margin: "-50px" }}
-                    transition={{ duration: 0.6, delay: 0.1 }}
-                    className="max-w-4xl mx-auto mt-14 rounded-[2rem] border border-white bg-white/90 px-6 py-8 sm:px-8 shadow-lg"
-                >
-                    <p className="text-center text-lg text-muted-foreground">
-                        A Vitaflix transforma este caos num sistema simples: escolhes o teu objetivo e a app trata do resto.
-                    </p>
-                </motion.div>
             </div>
         </section>
     )

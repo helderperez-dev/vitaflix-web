@@ -1,22 +1,31 @@
 "use client"
 
 import { WaitlistForm } from "./waitlist-form"
-import { motion, useScroll, useTransform, AnimatePresence } from "framer-motion"
-import { useRef, useState, useEffect } from "react"
-import { Apple, ArrowRight, PlayCircle, Sparkles, Check, ChevronRight } from "lucide-react"
-import { VideoBackground } from "@/components/auth/video-background"
+import { motion } from "framer-motion"
+import { useState, useEffect } from "react"
+import { Apple, Check, ChevronRight } from "lucide-react"
 import Image from "next/image"
 
+const heroPersonas = [
+    {
+        name: "Marta · Mãe ocupada",
+        avatar: "/avatars/persona-marta.svg",
+    },
+    {
+        name: "Diogo · Profissional ativo",
+        avatar: "/avatars/persona-diogo.svg",
+    },
+    {
+        name: "Inês · Estudante-atleta",
+        avatar: "/avatars/persona-ines.svg",
+    },
+    {
+        name: "Rui · Foco em recomposição",
+        avatar: "/avatars/persona-rui.svg",
+    }
+]
+
 export function HeroSection() {
-    const containerRef = useRef<HTMLDivElement>(null)
-    const { scrollYProgress } = useScroll({
-        target: containerRef,
-        offset: ["start start", "end start"]
-    })
-
-    const y = useTransform(scrollYProgress, [0, 1], ["0%", "20%"])
-    const opacity = useTransform(scrollYProgress, [0, 0.5], [1, 0])
-
     const [activeCard, setActiveCard] = useState(0)
     const [checkedItems, setCheckedItems] = useState<number[]>([])
     const [videoIndex, setVideoIndex] = useState(0)
@@ -58,7 +67,6 @@ export function HeroSection() {
 
     return (
         <section
-            ref={containerRef}
             id="waitlist"
             className="relative overflow-hidden pt-28 pb-16 lg:pt-32 lg:pb-24 min-h-screen flex items-center"
         >
@@ -104,9 +112,9 @@ export function HeroSection() {
                             <div className="flex flex-col sm:flex-row items-center gap-3 justify-center lg:justify-start mb-6 text-sm font-semibold text-slate-600">
                                 <div className="flex items-center gap-2">
                                     <div className="flex -space-x-2">
-                                        {[1, 2, 3, 4].map((i) => (
-                                            <div key={i} className="h-8 w-8 rounded-full border-2 border-white bg-slate-100 flex items-center justify-center text-[10px] overflow-hidden shadow-sm">
-                                                <img src={`https://api.dicebear.com/9.x/avataaars/svg?seed=${i * 123}`} alt="User" />
+                                        {heroPersonas.map((persona) => (
+                                            <div key={persona.name} className="h-8 w-8 rounded-full border-2 border-white bg-slate-100 flex items-center justify-center text-[10px] overflow-hidden shadow-sm">
+                                                <Image src={persona.avatar} alt={persona.name} width={32} height={32} className="h-full w-full object-cover" />
                                             </div>
                                         ))}
                                     </div>
@@ -285,13 +293,10 @@ export function HeroSection() {
                                     transition={{ duration: 5.5, repeat: Infinity, ease: "easeInOut", delay: 2 }}
                                 >
                                     <div className="rounded-[1.5rem] bg-white/95 border border-white/60 shadow-xl p-4 ring-1 ring-black/5 backdrop-blur-md transition-transform duration-500 hover:scale-105">
-                                        <div className="flex justify-between items-end mb-4">
+                                        <div className="mb-4 flex items-end">
                                             <div>
                                                 <p className="text-[10px] font-bold text-slate-400 uppercase">Progresso</p>
                                                 <p className="text-2xl font-black text-slate-900">-2.4kg</p>
-                                            </div>
-                                            <div className="h-8 w-8 rounded-full bg-emerald-100 flex items-center justify-center">
-                                                <Sparkles className="size-4 text-emerald-600" />
                                             </div>
                                         </div>
                                         <div className="h-16 w-full flex items-end justify-between gap-1">
