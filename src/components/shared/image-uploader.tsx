@@ -7,6 +7,7 @@ import type { ProductImage } from "@/shared-schemas/product"
 import { createClient } from "@/lib/supabase/client"
 import { cn } from "@/lib/utils"
 import { MediaDisplay } from "./media-display"
+import { useTranslations } from "next-intl"
 
 interface ImageUploaderProps {
     folder: string
@@ -16,6 +17,7 @@ interface ImageUploaderProps {
 }
 
 export function ImageUploader({ folder, value = [], onChange, maxImages = 10 }: ImageUploaderProps) {
+    const t = useTranslations("Common")
     const [isUploading, setIsUploading] = React.useState(false)
     const [draggedItemIndex, setDraggedItemIndex] = React.useState<number | null>(null)
     const fileInputRef = React.useRef<HTMLInputElement>(null)
@@ -26,7 +28,7 @@ export function ImageUploader({ folder, value = [], onChange, maxImages = 10 }: 
         if (!files.length) return
 
         if (value.length + files.length > maxImages) {
-            toast.error(`You can only upload up to ${maxImages} images.`)
+            toast.error(t("maxImagesExceeded"))
             return
         }
 
@@ -43,7 +45,7 @@ export function ImageUploader({ folder, value = [], onChange, maxImages = 10 }: 
                 .upload(filePath, file)
 
             if (uploadError) {
-                toast.error(`Failed to upload ${file.name}`)
+                toast.error(t("errorSaving"))
                 console.error(uploadError)
                 continue
             }
@@ -73,7 +75,7 @@ export function ImageUploader({ folder, value = [], onChange, maxImages = 10 }: 
         if (path) {
             const { error } = await supabase.storage.from('vitaflix').remove([path])
             if (error) {
-                toast.error("Failed to delete image from storage")
+                toast.error(t("errorSaving"))
                 console.error(error)
             }
         }
@@ -172,7 +174,7 @@ export function ImageUploader({ folder, value = [], onChange, maxImages = 10 }: 
                                     )}
                                 >
                                     <Star className={cn("h-3 w-3", image.isDefault && "fill-current")} />
-                                    {image.isDefault ? "Master" : "Set as Master"}
+                                    {image.isDefault ? t("defaultMedia") : t("setAsDefault")}
                                 </button>
                             </div>
                         </div>
@@ -206,7 +208,7 @@ export function ImageUploader({ folder, value = [], onChange, maxImages = 10 }: 
                                     <Loader2 className="absolute h-10 w-10 text-primary animate-spin" />
                                     <UploadCloud className="h-5 w-5 text-primary/40" />
                                 </div>
-                                <p className="text-xs font-semibold text-primary text-center px-2">Uploading...</p>
+                                <p className="text-xs font-semibold text-primary text-center px-2">{t("loading")}</p>
                             </>
                         ) : (
                             <>
@@ -214,7 +216,7 @@ export function ImageUploader({ folder, value = [], onChange, maxImages = 10 }: 
                                     <UploadCloud className="h-6 w-6 text-muted-foreground group-hover:text-primary transition-colors" />
                                 </div>
                                 <p className="text-xs font-semibold text-muted-foreground/60 text-center px-4 group-hover:text-primary/70 transition-colors">
-                                    {maxImages === 1 ? 'Add Media' : 'Add Media'}
+                                    {t("addMedia")}
                                 </p>
                             </>
                         )}

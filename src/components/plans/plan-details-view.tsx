@@ -42,8 +42,8 @@ interface PlanDetailsViewProps {
 
 export function PlanDetailsView({ plan, onBack, onUpdate }: PlanDetailsViewProps) {
     const t = useTranslations("Plans")
-    const tc = useTranslations("Common")
     const locale = useLocale()
+    const isPt = locale.startsWith("pt")
 
     const dailyCount = plan.dailyMealsCount || plan.daily_meals_count
     const createdAt = plan.createdAt || plan.created_at
@@ -90,7 +90,7 @@ export function PlanDetailsView({ plan, onBack, onUpdate }: PlanDetailsViewProps
             const options = await getMealOptionsByIds(ids, planCountryId)
             const newDetails: typeof mealDetails = {}
             for (const opt of options) {
-                const mealName = opt.meal?.name?.[locale] || opt.meal?.name?.en || "Unnamed"
+                const mealName = opt.meal?.name?.[locale] || opt.meal?.name?.en || (isPt ? "Sem nome" : "Unnamed")
                 const name = `${mealName} (${opt.kcal} kcal)`
                 const img = opt.images?.find((i: any) => i.isDefault)?.url ||
                     opt.meal?.images?.find((i: any) => i.isDefault)?.url ||
@@ -130,7 +130,7 @@ export function PlanDetailsView({ plan, onBack, onUpdate }: PlanDetailsViewProps
         // Also populate mealDetails from newly loaded options
         const newDetails: typeof mealDetails = {}
         for (const meal of meals) {
-            const mealName = meal.name?.[locale] || meal.name?.en || "Unnamed"
+            const mealName = meal.name?.[locale] || meal.name?.en || (isPt ? "Sem nome" : "Unnamed")
             const mealImg = meal.images?.find((i: any) => i.isDefault)?.url || meal.images?.[0]?.url
 
             if (meal.options) {
@@ -171,12 +171,12 @@ export function PlanDetailsView({ plan, onBack, onUpdate }: PlanDetailsViewProps
                 }
             } catch (error) {
                 console.error("Auto-save failed:", error)
-                toast.error("Failed to save meal selection")
+                toast.error(isPt ? "Falha ao guardar seleção de refeição" : "Failed to save meal selection")
             } finally {
                 setIsSaving(false)
             }
         }, 1000) // Increase debounce to 1s for safety
-    }, [plan.id, plan.userId, plan.user_id, plan.name, dailyCount, onUpdate, planCountryId])
+    }, [isPt, plan.id, plan.userId, plan.user_id, plan.name, dailyCount, onUpdate, planCountryId])
 
     const handleSelectMeal = (slotIndex: number, mealId: string) => {
         const updated = { ...selectedMeals, [slotIndex.toString()]: mealId }
@@ -226,7 +226,7 @@ export function PlanDetailsView({ plan, onBack, onUpdate }: PlanDetailsViewProps
             <div className="space-y-4">
                 <div className="flex items-center gap-2 px-1">
                     <h3 className="text-[10px] font-bold text-muted-foreground capitalize tracking-widest flex-1">
-                        Daily Meal Sequence
+                        {isPt ? "Sequência diária de refeições" : "Daily Meal Sequence"}
                     </h3>
                     <div className="h-px flex-[2] bg-border/40" />
                 </div>
@@ -234,19 +234,19 @@ export function PlanDetailsView({ plan, onBack, onUpdate }: PlanDetailsViewProps
                 {isLoadingConfigs ? (
                     <div className="py-12 flex flex-col items-center justify-center gap-3 text-muted-foreground/40">
                         <Loader2 className="size-6 animate-spin" />
-                        <p className="text-[11px] font-semibold text-secondary">Loading slots...</p>
+                        <p className="text-[11px] font-semibold text-secondary">{isPt ? "A carregar slots..." : "Loading slots..."}</p>
                     </div>
                 ) : configs.length === 0 ? (
                     <div className="p-8 text-center rounded-lg bg-muted/5 border border-dashed border-border/60">
-                        <p className="text-xs text-muted-foreground">No slots configured for {dailyCount} meals.</p>
-                        <p className="text-[10px] text-muted-foreground/60 mt-1 italic">Please configure this in Admin Settings.</p>
+                        <p className="text-xs text-muted-foreground">{isPt ? `Nenhum slot configurado para ${dailyCount} refeições.` : `No slots configured for ${dailyCount} meals.`}</p>
+                        <p className="text-[10px] text-muted-foreground/60 mt-1 italic">{isPt ? "Configure isto nas Definições de Admin." : "Please configure this in Admin Settings."}</p>
                     </div>
                 ) : (
                     <div className="grid gap-4">
                         {configs.map((config, idx) => {
                             const slotKey = config.slotIndex.toString()
                             const selectedOptionId = selectedMeals[slotKey]
-                            const categoryName = config.category?.name?.[locale] || config.category?.name?.en || 'Standard Slot'
+                            const categoryName = config.category?.name?.[locale] || config.category?.name?.en || (isPt ? 'Slot padrão' : 'Standard Slot')
                             const detail = selectedOptionId ? mealDetails[selectedOptionId] : null
                             const categoryMeals = mealsCache[config.categoryId] || []
                             const isOpen = openSlot === config.slotIndex
@@ -330,7 +330,7 @@ export function PlanDetailsView({ plan, onBack, onUpdate }: PlanDetailsViewProps
                                                                 </h4>
                                                             ) : (
                                                                 <span className="truncate text-sm font-medium text-muted-foreground/40">
-                                                                    Select meal for {categoryName.toLowerCase()}...
+                                                                    {isPt ? `Selecionar refeição para ${categoryName.toLowerCase()}...` : `Select meal for ${categoryName.toLowerCase()}...`}
                                                                 </span>
                                                             )}
                                                             {!selectedOptionId && <ChevronDown className="size-4 shrink-0 opacity-40" />}
@@ -343,24 +343,24 @@ export function PlanDetailsView({ plan, onBack, onUpdate }: PlanDetailsViewProps
                                                     >
                                                         <Command className="bg-transparent border-none">
                                                             <CommandInput
-                                                                placeholder={`Search ${categoryName} meals...`}
+                                                                placeholder={isPt ? `Pesquisar refeições de ${categoryName}...` : `Search ${categoryName} meals...`}
                                                                 className="h-12 text-sm border-none focus:ring-0"
                                                             />
                                                             <CommandList className="max-h-[340px] p-2 custom-scrollbar">
                                                                 {loadingCategory === config.categoryId ? (
                                                                     <div className="py-12 flex flex-col items-center gap-3 text-muted-foreground/40">
                                                                         <Loader2 className="size-6 animate-spin" />
-                                                                        <span className="text-[11px] font-bold tracking-widest capitalize">Fetching Menu...</span>
+                                                                        <span className="text-[11px] font-bold tracking-widest capitalize">{isPt ? "A obter menu..." : "Fetching Menu..."}</span>
                                                                     </div>
                                                                 ) : (
                                                                     <>
                                                                         <CommandEmpty className="py-10 text-center">
                                                                             <UtensilsCrossed className="size-8 mx-auto text-muted-foreground/20 mb-3" />
-                                                                            <p className="text-xs font-semibold text-muted-foreground/60">No meals found.</p>
+                                                                            <p className="text-xs font-semibold text-muted-foreground/60">{isPt ? "Nenhuma refeição encontrada." : "No meals found."}</p>
                                                                         </CommandEmpty>
 
                                                                         {categoryMeals.map((meal: any) => {
-                                                                            const mealName = meal.name?.[locale] || meal.name?.en || "Unnamed"
+                                                                            const mealName = meal.name?.[locale] || meal.name?.en || (isPt ? "Sem nome" : "Unnamed")
                                                                             const mealImg = meal.images?.find((i: any) => i.isDefault)?.url || meal.images?.[0]?.url
 
                                                                             return (
@@ -388,7 +388,9 @@ export function PlanDetailsView({ plan, onBack, onUpdate }: PlanDetailsViewProps
                                                                                             {mealName}
                                                                                         </p>
                                                                                         <p className="text-[10px] text-muted-foreground/60 font-medium">
-                                                                                            {meal.options?.length || 0} variations • From {Math.min(...(meal.options?.map((o: any) => o.kcal) || [0]))} kcal
+                                                                                            {isPt
+                                                                                                ? `${meal.options?.length || 0} variações • Desde ${Math.min(...(meal.options?.map((o: any) => o.kcal) || [0]))} kcal`
+                                                                                                : `${meal.options?.length || 0} variations • From ${Math.min(...(meal.options?.map((o: any) => o.kcal) || [0]))} kcal`}
                                                                                         </p>
                                                                                     </div>
                                                                                     {detail?.mealId === meal.id && (
@@ -410,14 +412,14 @@ export function PlanDetailsView({ plan, onBack, onUpdate }: PlanDetailsViewProps
                                                         <PopoverTrigger asChild>
                                                             <button className="inline-flex items-center gap-2 px-2.5 py-1 rounded-lg bg-primary/10 text-primary hover:bg-primary/20 transition-colors active:scale-95 group/variation">
                                                                 <span className="text-[11px] font-bold tracking-tight">
-                                                                    {detail.kcal} kcal variation
+                                                                    {isPt ? `${detail.kcal} kcal variação` : `${detail.kcal} kcal variation`}
                                                                 </span>
                                                                 <ChevronDown className="size-3 opacity-60 group-hover/variation:opacity-100 transition-opacity" />
                                                             </button>
                                                         </PopoverTrigger>
                                                         <PopoverContent className="w-[280px] p-2 rounded-lg border-border/40 shadow-2xl bg-background/95 backdrop-blur-md" align="start">
                                                             <div className="space-y-1">
-                                                                <p className="px-2 py-1.5 text-[10px] font-bold text-muted-foreground/50 capitalize tracking-widest">Available Variations</p>
+                                                                <p className="px-2 py-1.5 text-[10px] font-bold text-muted-foreground/50 capitalize tracking-widest">{isPt ? "Variações disponíveis" : "Available Variations"}</p>
                                                                 {(detail.fullMeal.options || []).map((opt: any) => (
                                                                     <button
                                                                         key={opt.id}
@@ -449,27 +451,27 @@ export function PlanDetailsView({ plan, onBack, onUpdate }: PlanDetailsViewProps
                                         {selectedOptionId && detail?.macros && (
                                             <div className="flex items-center justify-between gap-2 p-3 rounded-lg bg-white dark:bg-zinc-900 border border-primary/10 shadow-sm animate-in zoom-in-95 duration-300">
                                                 <div className="flex flex-col">
-                                                    <span className="text-[9px] font-bold text-muted-foreground/50 capitalize tracking-widest mb-1">Nutrition Breakdown</span>
+                                                    <span className="text-[9px] font-bold text-muted-foreground/50 capitalize tracking-widest mb-1">{isPt ? "Resumo nutricional" : "Nutrition Breakdown"}</span>
                                                     <div className="flex items-center gap-4">
                                                         <div className="flex flex-col">
                                                             <span className="text-[10px] font-bold text-secondary dark:text-white tabular-nums">{detail.macros.protein}g</span>
-                                                            <span className="text-[8px] font-semibold text-primary/60 capitalize">Protein</span>
+                                                            <span className="text-[8px] font-semibold text-primary/60 capitalize">{isPt ? "Proteína" : "Protein"}</span>
                                                         </div>
                                                         <div className="w-px h-6 bg-border/40" />
                                                         <div className="flex flex-col">
                                                             <span className="text-[10px] font-bold text-secondary dark:text-white tabular-nums">{detail.macros.carbs}g</span>
-                                                            <span className="text-[8px] font-semibold text-amber-500/60 capitalize">Carbs</span>
+                                                            <span className="text-[8px] font-semibold text-amber-500/60 capitalize">{isPt ? "Hidratos" : "Carbs"}</span>
                                                         </div>
                                                         <div className="w-px h-6 bg-border/40" />
                                                         <div className="flex flex-col">
                                                             <span className="text-[10px] font-bold text-secondary dark:text-white tabular-nums">{detail.macros.fat}g</span>
-                                                            <span className="text-[8px] font-semibold text-rose-500/60 capitalize">Fat</span>
+                                                            <span className="text-[8px] font-semibold text-rose-500/60 capitalize">{isPt ? "Gordura" : "Fat"}</span>
                                                         </div>
                                                     </div>
                                                 </div>
                                                 <div className="text-right">
                                                     <p className="text-xs font-bold text-secondary dark:text-white leading-none mb-0.5">{detail.kcal}</p>
-                                                    <p className="text-[8px] font-bold text-muted-foreground/40 capitalize tracking-wider">Total Kcal</p>
+                                                    <p className="text-[8px] font-bold text-muted-foreground/40 capitalize tracking-wider">{isPt ? "Kcal total" : "Total Kcal"}</p>
                                                 </div>
                                             </div>
                                         )}
@@ -488,7 +490,7 @@ export function PlanDetailsView({ plan, onBack, onUpdate }: PlanDetailsViewProps
             {isSaving && (
                 <div className="flex items-center justify-center gap-2 py-2 text-muted-foreground/50 animate-in fade-in duration-200">
                     <Loader2 className="size-3 animate-spin" />
-                    <span className="text-[10px] font-semibold">Saving...</span>
+                    <span className="text-[10px] font-semibold">{isPt ? "A guardar..." : "Saving..."}</span>
                 </div>
             )}
         </div>

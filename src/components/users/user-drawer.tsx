@@ -2,7 +2,7 @@
 
 import * as React from "react"
 import { useForm } from "react-hook-form"
-import { useTranslations } from "next-intl"
+import { useLocale, useTranslations } from "next-intl"
 import { zodResolver } from "@hookform/resolvers/zod"
 import {
     Loader2, Camera, ShieldCheck, KeyRound, UserCog, AlertCircle, CheckCircle2, MoreVertical,
@@ -63,10 +63,12 @@ interface UserDrawerProps {
 }
 
 export function UserDrawer({ open, onOpenChange, user }: UserDrawerProps) {
+    const locale = useLocale()
     const t = useTranslations("Users")
     const tp = useTranslations("Plans")
     const commonT = useTranslations("Common")
     const tc = useTranslations("Common")
+    const isPt = locale.startsWith("pt")
     const [isSubmiting, setIsSubmitting] = React.useState(false)
     const [isResettingPassword, setIsResettingPassword] = React.useState(false)
     const [isUpdatingPassword, setIsUpdatingPassword] = React.useState(false)
@@ -168,10 +170,10 @@ export function UserDrawer({ open, onOpenChange, user }: UserDrawerProps) {
             if (result.error) {
                 toast.error(result.error)
             } else {
-                toast.success("Success: reset email sent")
+                toast.success(isPt ? "E-mail de redefinição enviado" : "Reset email sent")
             }
         } catch (error) {
-            toast.error("Error: reset failed")
+            toast.error(isPt ? "Falha ao enviar redefinição" : "Reset request failed")
         } finally {
             setIsResettingPassword(false)
         }
@@ -179,12 +181,12 @@ export function UserDrawer({ open, onOpenChange, user }: UserDrawerProps) {
 
     async function handleDirectUpdate() {
         if (!user?.id || !newPassword) {
-            toast.error("Please enter a password")
+            toast.error(isPt ? "Introduza uma palavra-passe" : "Please enter a password")
             return
         }
 
         if (newPassword.length < 6) {
-            toast.error("Too short")
+            toast.error(isPt ? "Demasiado curta" : "Too short")
             return
         }
 
@@ -194,11 +196,11 @@ export function UserDrawer({ open, onOpenChange, user }: UserDrawerProps) {
             if (result.error) {
                 toast.error(result.error)
             } else {
-                toast.success("Identity synchronized")
+                toast.success(isPt ? "Credenciais sincronizadas" : "Identity synchronized")
                 setNewPassword("")
             }
         } catch (error) {
-            toast.error("Sync failed")
+            toast.error(isPt ? "Falha na sincronização" : "Sync failed")
         } finally {
             setIsUpdatingPassword(false)
         }
@@ -390,11 +392,11 @@ export function UserDrawer({ open, onOpenChange, user }: UserDrawerProps) {
                                                             <FormItem className="md:col-span-2">
                                                                 <FormControl>
                                                                     <DictionarySelector
-                                                                        label="System Authorization Role"
+                                                                        label={isPt ? "Função de autorização do sistema" : "System Authorization Role"}
                                                                         value={field.value}
                                                                         onChange={field.onChange}
                                                                         table="user_roles"
-                                                                        placeholder="Select access level"
+                                                                        placeholder={isPt ? "Selecionar nível de acesso" : "Select access level"}
                                                                     />
                                                                 </FormControl>
                                                                 <FormMessage className="text-[10px]" />
@@ -421,13 +423,13 @@ export function UserDrawer({ open, onOpenChange, user }: UserDrawerProps) {
                                                                 <Select onValueChange={field.onChange} defaultValue={field.value}>
                                                                     <FormControl>
                                                                         <SelectTrigger>
-                                                                            <SelectValue placeholder="Select" />
+                                                                            <SelectValue placeholder={commonT("select")} />
                                                                         </SelectTrigger>
                                                                     </FormControl>
                                                                     <SelectContent>
-                                                                        <SelectItem value="male">Male</SelectItem>
-                                                                        <SelectItem value="female">Female</SelectItem>
-                                                                        <SelectItem value="other">Other</SelectItem>
+                                                                        <SelectItem value="male">{isPt ? "Masculino" : "Male"}</SelectItem>
+                                                                        <SelectItem value="female">{isPt ? "Feminino" : "Female"}</SelectItem>
+                                                                        <SelectItem value="other">{isPt ? "Outro" : "Other"}</SelectItem>
                                                                     </SelectContent>
                                                                 </Select>
                                                                 <FormMessage className="text-[10px]" />
@@ -445,7 +447,7 @@ export function UserDrawer({ open, onOpenChange, user }: UserDrawerProps) {
                                                                         value={field.value}
                                                                         onChange={field.onChange}
                                                                         table="wellness_objectives"
-                                                                        placeholder="Goal"
+                                                                        placeholder={isPt ? "Objetivo" : "Goal"}
                                                                     />
                                                                 </FormControl>
                                                                 <FormMessage className="text-[10px]" />
@@ -459,11 +461,11 @@ export function UserDrawer({ open, onOpenChange, user }: UserDrawerProps) {
                                                             <FormItem>
                                                                 <FormControl>
                                                                     <DictionarySelector
-                                                                        label="Country"
+                                                                        label={isPt ? "País" : "Country"}
                                                                         value={field.value || ""}
                                                                         onChange={field.onChange}
                                                                         table="countries"
-                                                                        placeholder="Select country"
+                                                                        placeholder={isPt ? "Selecionar país" : "Select country"}
                                                                         returnIdOnly
                                                                     />
                                                                 </FormControl>

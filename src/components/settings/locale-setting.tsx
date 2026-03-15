@@ -6,7 +6,7 @@ import { Button } from "@/components/ui/button"
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select"
 import { updateDefaultLocale } from "@/app/actions/settings"
 import { toast } from "sonner"
-import { useTranslations } from "next-intl"
+import { useLocale } from "next-intl"
 import { Globe } from "lucide-react"
 
 interface LocaleSettingProps {
@@ -15,8 +15,10 @@ interface LocaleSettingProps {
 
 
 export function LocaleSetting({ initialLocale }: LocaleSettingProps) {
+    const currentLocale = useLocale()
     const [locale, setLocale] = useState(initialLocale)
     const [isLoading, setIsLoading] = useState(false)
+    const isPt = currentLocale.startsWith("pt")
 
     async function handleSave() {
         setIsLoading(true)
@@ -24,18 +26,18 @@ export function LocaleSetting({ initialLocale }: LocaleSettingProps) {
         setIsLoading(false)
 
         if (result.success) {
-            toast.success("Default locale updated successfully")
+            toast.success(isPt ? "Idioma padrão atualizado com sucesso" : "Default locale updated successfully")
         } else {
-            toast.error(result.error || "Failed to update default locale")
+            toast.error(result.error || (isPt ? "Falha ao atualizar o idioma padrão" : "Failed to update default locale"))
         }
     }
 
     return (
         <Card className="border-border/60 bg-card shadow-none overflow-hidden">
             <CardHeader className="border-b border-border/50 py-4 px-6 bg-muted/5">
-                <CardTitle className="text-[14px] font-bold text-foreground/90">Platform Language</CardTitle>
+                <CardTitle className="text-[14px] font-bold text-foreground/90">{isPt ? "Idioma da plataforma" : "Platform Language"}</CardTitle>
                 <CardDescription className="text-[11px] font-medium text-muted-foreground/70">
-                    Define the system-wide default language for the entire platform.
+                    {isPt ? "Defina o idioma padrão do sistema para toda a plataforma." : "Define the system-wide default language for the entire platform."}
                 </CardDescription>
             </CardHeader>
             <CardContent className="pt-8 space-y-8 px-8">
@@ -43,11 +45,11 @@ export function LocaleSetting({ initialLocale }: LocaleSettingProps) {
                     <div className="grid gap-3">
                         <label className="text-[11px] font-bold capitalize tracking-tight text-muted-foreground/70 flex items-center gap-2">
                             <Globe className="w-3.5 h-3.5" />
-                            Default Locale
+                            {isPt ? "Idioma padrão" : "Default Locale"}
                         </label>
                         <Select value={locale} onValueChange={setLocale}>
                             <SelectTrigger className="w-full md:w-[350px] h-10 bg-muted/5 border-border/40 focus:bg-background transition-all">
-                                <SelectValue placeholder="Select a language" />
+                                <SelectValue placeholder={isPt ? "Selecionar idioma" : "Select a language"} />
                             </SelectTrigger>
                             <SelectContent className="rounded-lg border-border/40 shadow-2xl">
                                 <SelectItem value="en" className="text-xs font-medium py-3 cursor-pointer">🇺🇸 English (United States)</SelectItem>
@@ -64,9 +66,11 @@ export function LocaleSetting({ initialLocale }: LocaleSettingProps) {
                                 <Globe className="size-4" />
                             </div>
                             <div className="space-y-1">
-                                <h4 className="text-xs font-bold text-foreground capitalize tracking-tight">Administrative Replication</h4>
+                                <h4 className="text-xs font-bold text-foreground capitalize tracking-tight">{isPt ? "Replicação administrativa" : "Administrative Replication"}</h4>
                                 <p className="text-[11px] text-muted-foreground/60 leading-relaxed max-w-lg">
-                                    This setting will automatically be replicated to all new users who gain access to the platform without a pre-selected language preference. Existing users will maintain their current preferences.
+                                    {isPt
+                                        ? "Esta definição será replicada automaticamente para novos utilizadores que entrarem na plataforma sem preferência de idioma definida. Utilizadores existentes mantêm as preferências atuais."
+                                        : "This setting will automatically be replicated to all new users who gain access to the platform without a pre-selected language preference. Existing users will maintain their current preferences."}
                                 </p>
                             </div>
                         </div>
@@ -79,10 +83,9 @@ export function LocaleSetting({ initialLocale }: LocaleSettingProps) {
                     disabled={isLoading || locale === initialLocale}
                     className="h-9 px-8 text-xs font-bold rounded-lg"
                 >
-                    {isLoading ? "Saving..." : "Update Language"}
+                    {isLoading ? (isPt ? "A guardar..." : "Saving...") : (isPt ? "Atualizar idioma" : "Update Language")}
                 </Button>
             </CardFooter>
         </Card>
     )
 }
-

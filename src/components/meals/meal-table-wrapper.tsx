@@ -87,11 +87,11 @@ function BulkStatusActions({ selectedRows, clearSelection }: { selectedRows: Sel
         const result = await bulkUpdateMealStatus(ids, targetPublic)
 
         if (result.success) {
-            toast.success(`Successfully updated ${ids.length} meals`)
+            toast.success(commonT("updatedSuccessfully"))
             clearSelection()
             setIsDirty(false)
         } else {
-            toast.error(result.error || "Failed to update meals")
+            toast.error(result.error || commonT("errorSaving"))
         }
         setIsLoading(false)
     }
@@ -148,6 +148,7 @@ function BulkStatusActions({ selectedRows, clearSelection }: { selectedRows: Sel
 export function MealTableWrapper({ initialMeals, userProfile }: MealTableWrapperProps) {
     const [mounted, setMounted] = React.useState(false)
     const locale = useLocale()
+    const isPt = locale.startsWith("pt")
 
     React.useEffect(() => {
         setMounted(true)
@@ -192,10 +193,10 @@ export function MealTableWrapper({ initialMeals, userProfile }: MealTableWrapper
                 isPublic: m.is_public || false,
                 options: [], // Options are fetched on demand in the drawer
             } as Meal,
-            nameLocale: m.name?.[locale] || m.name?.en || "Unnamed Meal",
+            nameLocale: m.name?.[locale] || m.name?.en || (isPt ? "Refeição sem nome" : "Unnamed Meal"),
             image: m.images?.find((img) => img.isDefault)?.url || m.images?.[0]?.url || null,
         }))
-    }, [initialMeals, locale])
+    }, [initialMeals, isPt, locale])
 
 
     const columns = React.useMemo<ColumnDef<MealTableRow>[]>(() => [
@@ -283,7 +284,7 @@ export function MealTableWrapper({ initialMeals, userProfile }: MealTableWrapper
                                 </Badge>
                             )
                         })}
-                        {ids.length === 0 && <span className="text-xs text-muted-foreground/40 italic">None</span>}
+                        {ids.length === 0 && <span className="text-xs font-medium text-muted-foreground/70">None</span>}
                     </div>
                 )
             },
@@ -306,7 +307,7 @@ export function MealTableWrapper({ initialMeals, userProfile }: MealTableWrapper
                                 </Badge>
                             )
                         })}
-                        {ids.length === 0 && <span className="text-xs text-muted-foreground/40 italic">None</span>}
+                        {ids.length === 0 && <span className="text-xs font-medium text-muted-foreground/70">None</span>}
                     </div>
                 )
             },
@@ -449,15 +450,16 @@ export function MealTableWrapper({ initialMeals, userProfile }: MealTableWrapper
             <AlertDialog open={deleteModalOpen} onOpenChange={setDeleteModalOpen}>
                 <AlertDialogContent className="rounded-lg border-sidebar-border/50 shadow-2xl">
                     <AlertDialogHeader>
-                        <AlertDialogTitle>Are you absolutely sure?</AlertDialogTitle>
+                        <AlertDialogTitle>{isPt ? "Tem a certeza absoluta?" : "Are you absolutely sure?"}</AlertDialogTitle>
                         <AlertDialogDescription>
-                            This will permanently delete {rowsToDelete.length} {rowsToDelete.length === 1 ? 'meal' : 'meals'}.
-                            This action cannot be undone and will remove all associated data.
+                            {isPt
+                                ? `Isto irá eliminar permanentemente ${rowsToDelete.length} ${rowsToDelete.length === 1 ? "refeição" : "refeições"}. Esta ação não pode ser desfeita e irá remover todos os dados associados.`
+                                : `This will permanently delete ${rowsToDelete.length} ${rowsToDelete.length === 1 ? "meal" : "meals"}. This action cannot be undone and will remove all associated data.`}
                         </AlertDialogDescription>
                     </AlertDialogHeader>
                     <AlertDialogFooter className="gap-2">
                         <AlertDialogCancel className="font-semibold text-xs h-9">
-                            Cancel
+                            {commonT("cancel")}
                         </AlertDialogCancel>
                         <AlertDialogAction
                             onClick={async () => {
@@ -466,10 +468,10 @@ export function MealTableWrapper({ initialMeals, userProfile }: MealTableWrapper
                                     const result = await bulkDeleteMeals(ids)
 
                                     if (result.success) {
-                                        toast.success(`Deleted ${ids.length} meals`)
+                                        toast.success(isPt ? `${ids.length} refeições eliminadas` : `Deleted ${ids.length} meals`)
                                         clearSelectionRef?.fn()
                                     } else {
-                                        toast.error(result.error || "Failed to delete meals")
+                                        toast.error(result.error || commonT("errorSaving"))
                                     }
                                 } finally {
                                     setDeleteModalOpen(false)
@@ -477,7 +479,7 @@ export function MealTableWrapper({ initialMeals, userProfile }: MealTableWrapper
                             }}
                             className="bg-primary hover:bg-primary/90 text-white font-semibold text-xs h-9 px-6"
                         >
-                            Confirm Deletion
+                            {isPt ? "Confirmar eliminação" : "Confirm Deletion"}
                         </AlertDialogAction>
                     </AlertDialogFooter>
                 </AlertDialogContent>

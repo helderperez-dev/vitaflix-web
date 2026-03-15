@@ -432,7 +432,7 @@ export function MealDrawer({ open, onOpenChange, meal }: MealDrawerProps) {
                                                     render={({ field }) => (
                                                         <FormItem className="space-y-4">
                                                             <TagSelector
-                                                                title="Countries"
+                                                                title={productsT("countries")}
                                                                 selectedTagIds={field.value || []}
                                                                 onTagsChange={field.onChange}
                                                                 table="countries"

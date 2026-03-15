@@ -2,7 +2,7 @@
 
 import * as React from "react"
 import { X, Plus, Loader2 } from "lucide-react"
-import { useTranslations } from "next-intl"
+import { useLocale, useTranslations } from "next-intl"
 import { FormField, FormItem, FormLabel, FormControl, FormMessage } from "@/components/ui/form"
 import { Input } from "@/components/ui/input"
 import { Textarea } from "@/components/ui/textarea"
@@ -22,13 +22,6 @@ interface TranslationFieldsProps {
     isRichText?: boolean
 }
 
-const LANGUAGE_NAMES: Record<string, string> = {
-    "en": "English",
-    "es": "Spanish",
-    "pt-pt": "Portuguese (PT)",
-    "pt-br": "Portuguese (BR)",
-}
-
 import { RichText } from "@/components/ui/rich-text"
 
 export function TranslationFields({
@@ -36,12 +29,21 @@ export function TranslationFields({
     namePrefix,
     label,
     type = "input",
-    placeholder = "Enter translation...",
+    placeholder,
     isRichText = false
 }: TranslationFieldsProps) {
+    const locale = useLocale()
     const commonT = useTranslations("Common")
     const mealsT = useTranslations("Meals")
     const productsT = useTranslations("Products")
+    const isPt = locale.startsWith("pt")
+    const LANGUAGE_NAMES: Record<string, string> = React.useMemo(() => ({
+        "en": isPt ? "Inglês" : "English",
+        "es": isPt ? "Espanhol" : "Spanish",
+        "pt-pt": isPt ? "Português (PT)" : "Portuguese (PT)",
+        "pt-br": isPt ? "Português (BR)" : "Portuguese (BR)",
+    }), [isPt])
+    const resolvedPlaceholder = placeholder || (isPt ? "Introduza a tradução..." : "Enter translation...")
 
     const [availableLanguages, setAvailableLanguages] = React.useState<string[]>([])
     const [loading, setLoading] = React.useState(true)
@@ -188,17 +190,17 @@ export function TranslationFields({
                                                     <RichText
                                                         value={field.value}
                                                         onChange={field.onChange}
-                                                        placeholder={`${placeholder} (${lang.toUpperCase()})`}
+                                                        placeholder={`${resolvedPlaceholder} (${lang.toUpperCase()})`}
                                                     />
                                                 ) : type === "textarea" ? (
                                                     <Textarea
-                                                        placeholder={`${placeholder} (${lang.toUpperCase()})`}
+                                                        placeholder={`${resolvedPlaceholder} (${lang.toUpperCase()})`}
                                                         className="resize-none min-h-[140px] bg-muted/5 focus:bg-background transition-all duration-300 rounded-lg border-border/40 focus:ring-4 ring-primary/5 p-4 text-sm font-medium leading-relaxed"
                                                         {...field}
                                                     />
                                                 ) : (
                                                     <Input
-                                                        placeholder={`${placeholder} (${lang.toUpperCase()})`}
+                                                        placeholder={`${resolvedPlaceholder} (${lang.toUpperCase()})`}
                                                         className="h-12 bg-muted/5 focus:bg-background transition-all duration-300 rounded-lg border-border/40 focus:ring-4 ring-primary/5 px-4 text-sm font-medium"
                                                         {...field}
                                                     />

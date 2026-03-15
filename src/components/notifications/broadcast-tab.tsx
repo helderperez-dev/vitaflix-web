@@ -1,10 +1,10 @@
 "use client"
 
 import * as React from "react"
-import { useTranslations } from "next-intl"
+import { useLocale, useTranslations } from "next-intl"
 import { DataTable, SortableHeader } from "@/components/ui/data-table"
 import { Badge } from "@/components/ui/badge"
-import { BellRing, Mail, Smartphone, MessageSquare, Clock, Eye, MoreHorizontal, FileText, Pencil, Trash2 } from "lucide-react"
+import { BellRing, Mail, Smartphone, MessageSquare, Clock, Eye, MoreHorizontal } from "lucide-react"
 import type { ColumnDef } from "@tanstack/react-table"
 import { cn } from "@/lib/utils"
 import { Button } from "@/components/ui/button"
@@ -24,8 +24,10 @@ export function BroadcastTab({
     notifications: any[],
     onView?: (data: any) => void
 }) {
+    const locale = useLocale()
     const t = useTranslations("Notifications")
     const commonT = useTranslations("Common")
+    const isPt = locale.startsWith("pt")
 
     const columns = React.useMemo<ColumnDef<any>[]>(() => [
         {
@@ -54,7 +56,7 @@ export function BroadcastTab({
         },
         {
             accessorKey: "channel",
-            header: ({ column }) => <SortableHeader column={column} title={t("channel") || "Channel"} />,
+            header: ({ column }) => <SortableHeader column={column} title={t("channel")} />,
             cell: ({ row }) => {
                 const channel = row.getValue("channel") as string
                 return (
@@ -79,7 +81,7 @@ export function BroadcastTab({
                         "capitalize text-[9px] h-5 px-2 border-none font-bold tracking-tight",
                         status === 'sent' ? "bg-emerald-500/10 text-emerald-600 dark:text-emerald-400" : "bg-muted/10 text-muted-foreground"
                     )}>
-                        {status || 'pending'}
+                        {status || (isPt ? 'pendente' : 'pending')}
                     </Badge>
                 )
             },
@@ -87,7 +89,7 @@ export function BroadcastTab({
         },
         {
             accessorKey: "created_at",
-            header: ({ column }) => <SortableHeader column={column} title={commonT("date") || "Date"} />,
+            header: ({ column }) => <SortableHeader column={column} title={commonT("date")} />,
             cell: ({ row }) => {
                 const date = new Date(row.getValue("created_at"))
                 return (
@@ -119,7 +121,7 @@ export function BroadcastTab({
                                 className="rounded-lg text-xs font-medium cursor-pointer"
                             >
                                 <Eye className="size-3.5 mr-2 text-muted-foreground" />
-                                {t("viewDetails") || "View Details"}
+                                {t("viewDetails")}
                             </DropdownMenuItem>
                         </DropdownMenuContent>
                     </DropdownMenu>
@@ -127,7 +129,7 @@ export function BroadcastTab({
             ),
             size: 50,
         }
-    ], [t, commonT, onView])
+    ], [isPt, t, commonT, onView])
 
     return (
         <div className="h-full flex flex-col">
@@ -136,7 +138,7 @@ export function BroadcastTab({
                 data={notifications}
                 className="flex-1"
                 onRowClick={onView}
-                emptyStateText={t("noNotifications") || "No broadcast history found."}
+                emptyStateText={t("noNotifications")}
             />
         </div>
     )

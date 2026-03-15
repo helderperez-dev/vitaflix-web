@@ -5,6 +5,7 @@ import { Search, Loader2, X, Apple, Utensils, Users, Tag, Store, UserCheck, Cale
 import { useRouter } from "next/navigation"
 import { usePathname } from "@/i18n/routing"
 import { useLocale } from "next-intl"
+import { useTranslations } from "next-intl"
 import { useDebounce } from "use-debounce"
 import { globalSearch } from "@/app/actions/search"
 import { type SearchResult } from "@/shared-schemas/search"
@@ -12,20 +13,11 @@ import { type SearchResult } from "@/shared-schemas/search"
 import { cn } from "@/lib/utils"
 import { MediaDisplay } from "@/components/shared/media-display"
 
-const sectionConfig: Record<string, { label: string; icon: LucideIcon }> = {
-    product: { label: "Products", icon: Apple },
-    meal: { label: "Meals", icon: Utensils },
-    user: { label: "Users", icon: Users },
-    lead: { label: "Leads", icon: UserCheck },
-    plan: { label: "Meal Plans", icon: CalendarDays },
-    brand: { label: "Brands", icon: Store },
-    tag: { label: "Tags", icon: Tag },
-}
-
 export function GlobalSearch() {
     const router = useRouter()
     const pathname = usePathname()
     const locale = useLocale()
+    const t = useTranslations("Common")
     const inputRef = React.useRef<HTMLInputElement>(null)
     const containerRef = React.useRef<HTMLDivElement>(null)
     const scrollContainerRef = React.useRef<HTMLDivElement>(null)
@@ -36,12 +28,18 @@ export function GlobalSearch() {
     const [isFocused, setIsFocused] = React.useState(false)
     const [selectedIndex, setSelectedIndex] = React.useState(-1)
     const [selectedItems, setSelectedItems] = React.useState<SearchResult[]>([])
+    const sectionConfig: Record<string, { label: string; icon: LucideIcon }> = React.useMemo(() => ({
+        product: { label: t("product"), icon: Apple },
+        meal: { label: t("meal"), icon: Utensils },
+        user: { label: t("user"), icon: Users },
+        lead: { label: t("lead"), icon: UserCheck },
+        plan: { label: t("plan"), icon: CalendarDays },
+        brand: { label: t("brand"), icon: Store },
+        tag: { label: t("tag"), icon: Tag },
+    }), [t])
 
     // Track the pathname that was active when items were selected
     const selectionPathRef = React.useRef<string | null>(null)
-
-    // Flatten results for keyboard navigation
-    const flatResults = React.useMemo(() => results, [results])
 
     const isOpen = isFocused && query.trim().length >= 2
 
@@ -217,7 +215,7 @@ export function GlobalSearch() {
         setResults([])
 
         const searchStr = finalParams.toString()
-        router.push(`/${locale}${basePath}${searchStr ? `?${searchStr}` : ""}`)
+        router.push(`${basePath}${searchStr ? `?${searchStr}` : ""}`)
     }
 
     function handleRemoveTag(item: SearchResult) {
@@ -232,28 +230,28 @@ export function GlobalSearch() {
         setSelectedItems(remainingItems)
 
         if (remainingItems.length === 0) {
-            router.push(`/${locale}${basePath}`)
-        } else {
-            const finalParams = new URLSearchParams()
+                router.push(`${basePath}`)
+            } else {
+                const finalParams = new URLSearchParams()
 
-            const searchTerms = remainingItems
-                .filter(s => ["product", "meal", "user", "lead", "plan"].includes(s.type))
-                .map(s => s.title)
+                const searchTerms = remainingItems
+                    .filter(s => ["product", "meal", "user", "lead", "plan"].includes(s.type))
+                    .map(s => s.title)
 
-            if (searchTerms.length > 0) {
-                finalParams.set("search", searchTerms.join(""))
-            }
-
-            remainingItems.forEach(s => {
-                if (["brand", "tag"].includes(s.type)) {
-                    const sUrl = new URL(s.url, "http://dummy")
-                    sUrl.searchParams.forEach((v, k) => finalParams.set(k, v))
+                if (searchTerms.length > 0) {
+                    finalParams.set("search", searchTerms.join(""))
                 }
-            })
 
-            const searchStr = finalParams.toString()
-            router.push(`/${locale}${basePath}${searchStr ? `?${searchStr}` : ""}`)
-        }
+                remainingItems.forEach(s => {
+                    if (["brand", "tag"].includes(s.type)) {
+                        const sUrl = new URL(s.url, "http://dummy")
+                        sUrl.searchParams.forEach((v, k) => finalParams.set(k, v))
+                    }
+                })
+
+                const searchStr = finalParams.toString()
+                router.push(`${basePath}${searchStr ? `?${searchStr}` : ""}`)
+            }
 
         setTimeout(() => inputRef.current?.focus(), 100)
     }
@@ -271,16 +269,16 @@ export function GlobalSearch() {
         if (e.key === "ArrowDown") {
             e.preventDefault()
             setSelectedIndex((prev) =>
-                prev < flatResults.length - 1 ? prev + 1 : 0
+                prev < results.length - 1 ? prev + 1 : 0
             )
         } else if (e.key === "ArrowUp") {
             e.preventDefault()
             setSelectedIndex((prev) =>
-                prev > 0 ? prev - 1 : flatResults.length - 1
+                prev > 0 ? prev - 1 : results.length - 1
             )
-        } else if (e.key === "Enter" && selectedIndex >= 0) {
+        } else if (e.key === "Enter" && selectedIndex >= 0 && results.length > 0) {
             e.preventDefault()
-            handleSelect(flatResults[selectedIndex])
+            handleSelect(results[selectedIndex])
         } else if (e.key === "Escape") {
             e.preventDefault()
             setIsFocused(false)
@@ -356,7 +354,9 @@ export function GlobalSearch() {
                     <input
                         ref={inputRef}
                         type="text"
-                        placeholder={hasSelectedItems ? "Add filter..." : "Search anywhere..."}
+                        placeholder={hasSelectedItems
+                            ? t("filter")
+                            : t("search")}
                         value={query}
                         onChange={(e) => setQuery(e.target.value)}
                         onFocus={() => setIsFocused(true)}
@@ -380,13 +380,13 @@ export function GlobalSearch() {
                 <div className="absolute top-full left-0 right-0 mt-1.5 z-50 rounded-lg border border-border/60 bg-popover shadow-lg shadow-black/[0.08] dark:shadow-black/30 overflow-hidden animate-in fade-in-0 zoom-in-95 slide-in-from-top-1 duration-150">
                     {results.length === 0 && !isLoading && debouncedQuery.length >= 2 && (
                         <div className="px-4 py-6 text-center text-sm text-muted-foreground">
-                            No results found.
+                            {locale.startsWith('pt') ? "Sem resultados." : "No results found."}
                         </div>
                     )}
                     {results.length === 0 && isLoading && (
                         <div className="px-4 py-6 text-center text-sm text-muted-foreground flex items-center justify-center gap-2">
                             <Loader2 className="size-3.5 animate-spin" />
-                            Searching...
+                            {locale.startsWith('pt') ? "A pesquisar..." : "Searching..."}
                         </div>
                     )}
 

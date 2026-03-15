@@ -63,6 +63,7 @@ import {
 } from "lucide-react"
 import { motion, AnimatePresence } from "framer-motion"
 import { cn } from "@/lib/utils"
+import { useTranslations } from "next-intl"
 
 // --- Global Types ---
 
@@ -142,7 +143,7 @@ export function DataTable<TData, TValue>({
     preferenceKey,
     initialPreferences,
     onPreferencesChange,
-    emptyStateText = "No results found.",
+    emptyStateText,
     footerContent,
     onRowClick,
     enableRowSelection = false,
@@ -153,6 +154,7 @@ export function DataTable<TData, TValue>({
     isLoading = false,
     className,
 }: DataTableProps<TData, TValue>) {
+    const t = useTranslations("Common")
     const [sorting, setSorting] = React.useState<SortingState>([])
     const [columnFilters, setColumnFilters] = React.useState<ColumnFiltersState>([])
     const [columnVisibility, setColumnVisibility] = React.useState<VisibilityState>(initialPreferences?.columnVisibility || {})
@@ -179,7 +181,7 @@ export function DataTable<TData, TValue>({
                         (table.getIsSomePageRowsSelected() && "indeterminate")
                     }
                     onCheckedChange={(value) => table.toggleAllPageRowsSelected(!!value)}
-                    aria-label="Select all"
+                    aria-label={t("selectAll")}
                     className="translate-y-[1px]"
                 />
             ),
@@ -187,7 +189,7 @@ export function DataTable<TData, TValue>({
                 <Checkbox
                     checked={row.getIsSelected()}
                     onCheckedChange={(value) => row.toggleSelected(!!value)}
-                    aria-label="Select row"
+                    aria-label={t("selectRow")}
                     className="translate-y-[1px]"
                     onClick={(e) => e.stopPropagation()}
                 />
@@ -343,21 +345,21 @@ export function DataTable<TData, TValue>({
                                                                     <PopoverContent align="end" className="w-[300px] rounded-lg shadow-2xl border-sidebar-border/50 p-0 animate-in slide-in-from-top-1 overflow-hidden">
                                                                         <div className="p-3 border-b border-border/40 bg-slate-50/30 dark:bg-white/5">
                                                                             <div className="flex items-center justify-between mb-2">
-                                                                                <span className="text-[11px] font-semibold text-foreground/70 capitalize tracking-wider">Search & Filter</span>
+                                                                                <span className="text-[11px] font-semibold text-foreground/70 capitalize tracking-wider">{t("searchAndFilter")}</span>
                                                                                 {localGlobalFilter && (
                                                                                     <Button
                                                                                         variant="ghost"
                                                                                         className="h-5 px-2 text-[10px] text-muted-foreground hover:text-foreground shadow-none"
                                                                                         onClick={() => { setLocalGlobalFilter(""); onGlobalFilterChange?.(""); }}
                                                                                     >
-                                                                                        Clear all
+                                                                                        {t("clearAll")}
                                                                                     </Button>
                                                                                 )}
                                                                             </div>
                                                                             <div className="relative flex items-center">
                                                                                 <Search className="absolute left-3 size-4 text-muted-foreground/50" />
                                                                                 <Input
-                                                                                    placeholder="Type keywords to filter..."
+                                                                                    placeholder={t("typeKeywordsToFilter")}
                                                                                     value={localGlobalFilter}
                                                                                     onChange={(e) => {
                                                                                         setLocalGlobalFilter(e.target.value);
@@ -370,7 +372,7 @@ export function DataTable<TData, TValue>({
                                                                         </div>
                                                                         <div className="p-3 bg-white dark:bg-background">
                                                                             <span className="text-[10px] font-semibold text-muted-foreground/50 capitalize tracking-wider mb-2 block">
-                                                                                {localGlobalFilter.trim().split(/\s+/).filter(Boolean).length > 0 ? "Active filter tags" : "Filter Tags"}
+                                                                                {localGlobalFilter.trim().split(/\s+/).filter(Boolean).length > 0 ? t("activeFilterTags") : t("filterTags")}
                                                                             </span>
                                                                             {localGlobalFilter.trim().split(/\s+/).filter(Boolean).length > 0 ? (
                                                                                 <div className="flex flex-wrap gap-1.5">
@@ -398,8 +400,8 @@ export function DataTable<TData, TValue>({
                                                                                     ))}
                                                                                 </div>
                                                                             ) : (
-                                                                                <div className="text-[11px] text-muted-foreground/60 text-center py-2 h-6 flex items-center justify-center italic">
-                                                                                    Type above to create filter tags
+                                                                                <div className="text-[11px] font-medium text-muted-foreground/60 text-center py-2 h-6 flex items-center justify-center">
+                                                                                    {t("typeAboveToCreateFilterTags")}
                                                                                 </div>
                                                                             )}
                                                                         </div>
@@ -417,7 +419,7 @@ export function DataTable<TData, TValue>({
                                                                     </Button>
                                                                 </DropdownMenuTrigger>
                                                                 <DropdownMenuContent align="end" className="w-[200px] rounded-lg shadow-2xl border-sidebar-border/50 p-1.5 animate-in slide-in-from-top-1">
-                                                                    <DropdownMenuLabel className="text-[11px] font-semibold text-muted-foreground/70 px-2 py-1.5">Display Columns</DropdownMenuLabel>
+                                                                    <DropdownMenuLabel className="text-[11px] font-semibold text-muted-foreground/70 px-2 py-1.5">{t("displayColumns")}</DropdownMenuLabel>
                                                                     <DropdownMenuSeparator className="bg-border/30" />
                                                                     <div className="max-h-[300px] overflow-auto py-1 custom-scrollbar">
                                                                         {table
@@ -510,14 +512,14 @@ export function DataTable<TData, TValue>({
                                 ))
                             ) : (
                                 <TableRow>
-                                    <TableCell colSpan={allColumns.length} className="h-24 text-center text-muted-foreground italic truncate">
+                                    <TableCell colSpan={allColumns.length} className="h-24 text-center text-muted-foreground truncate">
                                         {isLoading ? (
                                             <div className="flex items-center justify-center gap-2">
                                                 <Loader2 className="h-4 w-4 animate-spin text-primary" />
-                                                <span className="text-xs font-medium text-muted-foreground/60">Loading...</span>
+                                                <span className="text-xs font-medium text-muted-foreground/60">{t("loading")}</span>
                                             </div>
                                         ) : (
-                                            emptyStateText
+                                            (emptyStateText || t("noResults"))
                                         )}
                                     </TableCell>
                                 </TableRow>
@@ -532,7 +534,7 @@ export function DataTable<TData, TValue>({
                         <div className="text-xs font-semibold text-muted-foreground/40 whitespace-nowrap">
                             {footerContent || (
                                 <>
-                                    {table.getFilteredRowModel().rows.length} {table.getFilteredRowModel().rows.length === 1 ? "Item" : "Items"}
+                                    {table.getFilteredRowModel().rows.length} {table.getFilteredRowModel().rows.length === 1 ? t("item") : t("items")}
                                 </>
                             )}
                         </div>
@@ -562,7 +564,7 @@ export function DataTable<TData, TValue>({
 
                     <div className="flex items-center gap-6">
                         <div className="text-xs font-semibold text-muted-foreground/40 whitespace-nowrap min-w-[80px] text-right">
-                            {table.getState().pagination.pageIndex + 1} of {table.getPageCount() || 1}
+                            {table.getState().pagination.pageIndex + 1} {t("of")} {table.getPageCount() || 1}
                         </div>
                         <div className="flex items-center gap-1.5 font-mono">
                             <Button
@@ -606,9 +608,9 @@ export function DataTable<TData, TValue>({
                             </Button>
                             <div className="flex flex-col">
                                 <span className="text-sm font-semibold tracking-tight">
-                                    {Object.keys(rowSelection).length} {Object.keys(rowSelection).length === 1 ? 'item' : 'items'} selected
+                                    {Object.keys(rowSelection).length} {Object.keys(rowSelection).length === 1 ? t("item") : t("items")} {t("selected")}
                                 </span>
-                                <span className="text-[11px] text-muted-foreground dark:text-white/40 font-semibold">Bulk Actions</span>
+                                <span className="text-[11px] text-muted-foreground dark:text-white/40 font-semibold">{t("bulkActions")}</span>
                             </div>
                         </div>
 
@@ -622,7 +624,7 @@ export function DataTable<TData, TValue>({
                                         className="h-9 px-4 text-xs font-semibold hover:bg-slate-100 dark:hover:bg-white/5 text-muted-foreground hover:text-foreground dark:text-white/80 dark:hover:text-white transition-all"
                                         onClick={() => console.log("Exporting:", selectedRowsData)}
                                     >
-                                        Export Data
+                                        {t("exportData")}
                                     </Button>
                                     <Button
                                         variant="ghost"
@@ -630,7 +632,7 @@ export function DataTable<TData, TValue>({
                                         onClick={() => console.log("Deleting:", selectedRowsData)}
                                     >
                                         <Trash2 className="h-4 w-4 mr-2" />
-                                        Delete Forever
+                                        {t("deleteForever")}
                                     </Button>
                                 </>
                             )}

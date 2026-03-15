@@ -3,7 +3,7 @@
 import * as React from "react"
 import { useForm } from "react-hook-form"
 import { zodResolver } from "@hookform/resolvers/zod"
-import { Loader2, Trash2 } from "lucide-react"
+import { Loader2 } from "lucide-react"
 import { toast } from "sonner"
 
 import {
@@ -14,13 +14,13 @@ import {
     SheetHeader,
     SheetTitle,
 } from "@/components/ui/sheet"
-import { Form, FormField, FormItem, FormLabel, FormControl, FormMessage } from "@/components/ui/form"
+import { Form } from "@/components/ui/form"
 import { Button } from "@/components/ui/button"
-import { Input } from "@/components/ui/input"
 import { TranslationFields } from "./translation-fields"
 import { ImageUploader } from "./image-uploader"
 import { tagSchema, type Tag, type TagTable } from "@/shared-schemas/tag"
 import { upsertTag, deleteTag } from "@/app/actions/tags"
+import { useLocale, useTranslations } from "next-intl"
 
 interface TagDrawerProps {
     open: boolean
@@ -30,111 +30,31 @@ interface TagDrawerProps {
     table?: TagTable
 }
 
-const TABLE_CONFIG: Record<TagTable, {
-    editTitle: string
-    newTitle: string
-    editDescription: string
-    newDescription: string
-    fieldLabel: string
-    toastEdit: string
-    toastNew: string
-}> = {
-    tags: {
-        editTitle: "Edit tag",
-        newTitle: "New tag",
-        editDescription: "Update organizational markers.",
-        newDescription: "Create a new marker to filter content across languages.",
-        fieldLabel: "Tag name",
-        toastEdit: "Tag updated successfully",
-        toastNew: "Tag created successfully",
-    },
-    meal_categories: {
-        editTitle: "Edit meal type",
-        newTitle: "New meal type",
-        editDescription: "Update meal type configuration.",
-        newDescription: "Create a new meal type category.",
-        fieldLabel: "Meal type name",
-        toastEdit: "Meal type updated",
-        toastNew: "Meal type created",
-    },
-    dietary_tags: {
-        editTitle: "Edit dietary tag",
-        newTitle: "New dietary tag",
-        editDescription: "Update dietary restriction or preference.",
-        newDescription: "Create a new dietary filter for health requirements.",
-        fieldLabel: "Dietary tag name",
-        toastEdit: "Dietary tag updated",
-        toastNew: "Dietary tag created",
-    },
-    user_roles: {
-        editTitle: "Edit role",
-        newTitle: "New role",
-        editDescription: "Update role configuration.",
-        newDescription: "Create a new system role.",
-        fieldLabel: "Role name",
-        toastEdit: "Role updated",
-        toastNew: "Role created",
-    },
-    wellness_objectives: {
-        editTitle: "Edit goal",
-        newTitle: "New goal",
-        editDescription: "Update wellness goal.",
-        newDescription: "Create a new wellness goal.",
-        fieldLabel: "Goal name",
-        toastEdit: "Goal updated",
-        toastNew: "Goal created",
-    },
-    meal_plan_sizes: {
-        editTitle: "Edit cycle",
-        newTitle: "New service cycle",
-        editDescription: "Update daily meals configuration.",
-        newDescription: "Define a new service frequency for automated plans.",
-        fieldLabel: "Configuration name",
-        toastEdit: "Service cycle updated",
-        toastNew: "Service cycle created",
-    },
-    product_groups: {
-        editTitle: "Edit group",
-        newTitle: "New group",
-        editDescription: "Update product group info.",
-        newDescription: "Organize your inventory into high-level groups.",
-        fieldLabel: "Group name",
-        toastEdit: "Group updated",
-        toastNew: "Group created",
-    },
-    measurement_units: {
-        editTitle: "Edit unit",
-        newTitle: "New unit",
-        editDescription: "Update unit display and labeling.",
-        newDescription: "Define a product measurement unit like g, ml or unit.",
-        fieldLabel: "Unit name",
-        toastEdit: "Unit updated",
-        toastNew: "Unit created",
-    },
-    countries: {
-        editTitle: "Edit country",
-        newTitle: "New country",
-        editDescription: "Update country availability definition.",
-        newDescription: "Create a country available for product and meal distribution.",
-        fieldLabel: "Country name",
-        toastEdit: "Country updated",
-        toastNew: "Country created",
-    },
-    brands: {
-        editTitle: "Edit brand",
-        newTitle: "New brand",
-        editDescription: "Update manufacturer identity.",
-        newDescription: "Register a new brand for product classification.",
-        fieldLabel: "Brand name",
-        toastEdit: "Brand updated",
-        toastNew: "Brand created",
-    },
-}
-
 export function TagDrawer({ open, onOpenChange, tag, onSuccess, table = "tags" }: TagDrawerProps) {
     const [isSubmitting, setIsSubmitting] = React.useState(false)
     const [isDeleting, setIsDeleting] = React.useState(false)
-    const config = TABLE_CONFIG[table]
+    const locale = useLocale()
+    const commonT = useTranslations("Common")
+    const usersT = useTranslations("Users")
+    const isPt = locale.startsWith("pt")
+
+    const entityLabel = React.useMemo(() => {
+        if (table === "user_roles") return usersT("table.role")
+        if (table === "wellness_objectives") return usersT("wellnessObjective")
+        if (table === "meal_plan_sizes") return isPt ? "Ciclo de serviço" : "Service cycle"
+        if (table === "product_groups") return isPt ? "Grupo" : "Group"
+        if (table === "measurement_units") return isPt ? "Unidade" : "Unit"
+        if (table === "countries") return isPt ? "País" : "Country"
+        if (table === "brands") return commonT("brand")
+        if (table === "meal_categories") return isPt ? "Categoria de refeição" : "Meal category"
+        if (table === "dietary_tags") return isPt ? "Etiqueta dietética" : "Dietary tag"
+        return isPt ? "Etiqueta" : "Tag"
+    }, [commonT, isPt, table, usersT])
+
+    const titleText = tag ? `${commonT("edit")} ${entityLabel}` : `${commonT("addNew")} ${entityLabel}`
+    const descriptionText = isPt
+        ? "Atualize os nomes traduzidos deste registo."
+        : "Update the translated names for this record."
 
     const form = useForm<Tag>({
         resolver: zodResolver(tagSchema),
@@ -163,12 +83,12 @@ export function TagDrawer({ open, onOpenChange, tag, onSuccess, table = "tags" }
             if (result?.error) {
                 toast.error(result.error)
             } else {
-                toast.success(tag ? config.toastEdit : config.toastNew)
+                toast.success(tag ? commonT("updatedSuccessfully") : commonT("createdSuccessfully"))
                 onSuccess?.()
                 onOpenChange(false)
             }
         } catch (error) {
-            toast.error("Failed to save tag")
+            toast.error(commonT("errorSaving"))
         } finally {
             setIsSubmitting(false)
         }
@@ -176,7 +96,7 @@ export function TagDrawer({ open, onOpenChange, tag, onSuccess, table = "tags" }
 
     async function onDelete() {
         if (!tag?.id) return
-        if (!confirm("Are you sure you want to delete this item? This cannot be undone and may affect associated records.")) return
+        if (!confirm(commonT("deleteConfirmationLabel"))) return
 
         setIsDeleting(true)
         try {
@@ -184,12 +104,12 @@ export function TagDrawer({ open, onOpenChange, tag, onSuccess, table = "tags" }
             if (result?.error) {
                 toast.error(result.error)
             } else {
-                toast.success("Deleted successfully")
+                toast.success(commonT("deletedSuccessfully"))
                 onSuccess?.()
                 onOpenChange(false)
             }
         } catch (error) {
-            toast.error("Failed to delete")
+            toast.error(commonT("errorSaving"))
         } finally {
             setIsDeleting(false)
         }
@@ -208,10 +128,10 @@ export function TagDrawer({ open, onOpenChange, tag, onSuccess, table = "tags" }
                     <SheetHeader className="px-8 py-6 space-y-3 shrink-0">
                         <div>
                             <SheetTitle className="text-2xl font-semibold tracking-tight text-secondary dark:text-foreground">
-                                {tag ? config.editTitle : config.newTitle}
+                                {titleText}
                             </SheetTitle>
                             <SheetDescription className="text-sm">
-                                {tag ? config.editDescription : config.newDescription}
+                                {descriptionText}
                             </SheetDescription>
 
                         </div>
@@ -223,14 +143,14 @@ export function TagDrawer({ open, onOpenChange, tag, onSuccess, table = "tags" }
                                 <TranslationFields
                                     form={form}
                                     namePrefix="name"
-                                    label={config.fieldLabel}
-                                    placeholder={table === "meal_plan_sizes" ? "e.g. 5 Meals per day" : "Display name..."}
+                                    label={entityLabel}
+                                    placeholder={isPt ? "Nome de exibição..." : "Display name..."}
                                 />
 
                                 {table === "brands" && (
                                     <div className="space-y-8 mt-12 animate-in fade-in slide-in-from-bottom-2 duration-500">
                                         <div className="flex items-center gap-2">
-                                            <h3 className="font-semibold text-xs text-secondary dark:text-white whitespace-nowrap capitalize tracking-widest opacity-80">Manufacturer identity</h3>
+                                            <h3 className="font-semibold text-xs text-secondary dark:text-white whitespace-nowrap capitalize tracking-widest opacity-80">{isPt ? "Identidade do fabricante" : "Manufacturer identity"}</h3>
                                             <div className="h-px w-full bg-border/40" />
                                         </div>
                                         <ImageUploader
@@ -255,7 +175,7 @@ export function TagDrawer({ open, onOpenChange, tag, onSuccess, table = "tags" }
                                 onClick={() => onOpenChange(false)}
                                 disabled={isSubmitting || isDeleting}
                             >
-                                Cancel
+                                {commonT("cancel")}
                             </Button>
                             <Button
                                 type="submit"
@@ -266,7 +186,7 @@ export function TagDrawer({ open, onOpenChange, tag, onSuccess, table = "tags" }
                                 {isSubmitting ? (
                                     <Loader2 className="mr-2 h-4 w-4 animate-spin" />
                                 ) : null}
-                                Save
+                                {commonT("save")}
                             </Button>
                         </div>
                     </SheetFooter>

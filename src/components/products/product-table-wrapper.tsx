@@ -70,7 +70,8 @@ type SelectableRow = {
 }
 
 function BulkStatusActions({ selectedRows, clearSelection }: { selectedRows: SelectableRow[], clearSelection: () => void }) {
-    // Determine the consensus status
+    const commonT = useTranslations("Common")
+    const productsT = useTranslations("Products")
     const allPublic = selectedRows.every(r => r.is_public === true || r.is_public === 1)
 
     const [targetPublic, setTargetPublic] = React.useState(allPublic)
@@ -89,11 +90,11 @@ function BulkStatusActions({ selectedRows, clearSelection }: { selectedRows: Sel
         const result = await bulkUpdateProductStatus(ids, targetPublic)
 
         if (result.success) {
-            toast.success(`Successfully updated ${ids.length} items`)
+            toast.success(commonT("updatedSuccessfully"))
             clearSelection()
             setIsDirty(false)
         } else {
-            toast.error(result.error || "Failed to update items")
+            toast.error(result.error || productsT("failedToUpdateProducts"))
         }
         setIsLoading(false)
     }
@@ -110,7 +111,7 @@ function BulkStatusActions({ selectedRows, clearSelection }: { selectedRows: Sel
                     }}
                 />
                 <Label htmlFor="bulk-public" className="text-[11px] font-semibold text-muted-foreground whitespace-nowrap">
-                    Public Status
+                    {productsT("publicStatus")}
                 </Label>
             </div>
 
@@ -129,7 +130,7 @@ function BulkStatusActions({ selectedRows, clearSelection }: { selectedRows: Sel
                             disabled={isLoading}
                         >
                             {isLoading ? <Loader2 className="h-3 w-3 animate-spin mr-1" /> : null}
-                            Update {selectedRows.length} items
+                            {productsT("updateItems", { count: selectedRows.length })}
                         </Button>
                     </motion.div>
                 )}
@@ -141,6 +142,7 @@ function BulkStatusActions({ selectedRows, clearSelection }: { selectedRows: Sel
 export function ProductTableWrapper({ initialProducts, userProfile }: ProductTableWrapperProps) {
     const locale = useLocale()
     const t = useTranslations("Products")
+    const commonT = useTranslations("Common")
     const [drawerOpen, setDrawerOpen] = React.useState(false)
     const [selectedProduct, setSelectedProduct] = React.useState<Product | null>(null)
     const [deleteModalOpen, setDeleteModalOpen] = React.useState(false)
@@ -212,7 +214,7 @@ export function ProductTableWrapper({ initialProducts, userProfile }: ProductTab
         },
         {
             id: "brand",
-            header: ({ column }) => <SortableHeader column={column} title="Brand" />,
+            header: ({ column }) => <SortableHeader column={column} title={t("brand")} />,
             sortingFn: (rowA, rowB) => {
                 const getBrandName = (pb: NonNullable<ProductTableData["product_brands"]>[number] | undefined) => {
                     const brandData = Array.isArray(pb?.brands) ? pb.brands[0] : pb?.brands;
@@ -241,7 +243,7 @@ export function ProductTableWrapper({ initialProducts, userProfile }: ProductTab
                             );
                         })}
                         {brands.length === 0 && (
-                            <span className="text-xs text-muted-foreground italic">No Brand</span>
+                            <span className="text-xs text-muted-foreground/40">—</span>
                         )}
                     </div>
                 )
@@ -250,7 +252,7 @@ export function ProductTableWrapper({ initialProducts, userProfile }: ProductTab
         },
         {
             id: "unit",
-            header: ({ column }) => <SortableHeader column={column} title="Unit" />,
+            header: ({ column }) => <SortableHeader column={column} title={t("unit")} />,
             accessorFn: (row) => row.measurement_unit?.slug || row.measurement_unit?.name?.[locale] || row.measurement_unit?.name?.en || "",
             cell: ({ row }) => {
                 const unit = row.original.measurement_unit
@@ -260,7 +262,7 @@ export function ProductTableWrapper({ initialProducts, userProfile }: ProductTab
                         {unitLabel}
                     </Badge>
                 ) : (
-                    <span className="text-xs text-muted-foreground italic">None</span>
+                    <span className="text-xs text-muted-foreground/40">—</span>
                 )
             },
             size: 90,
@@ -291,12 +293,12 @@ export function ProductTableWrapper({ initialProducts, userProfile }: ProductTab
         },
         {
             id: "countries",
-            header: ({ column }) => <SortableHeader column={column} title="Countries" />,
+            header: ({ column }) => <SortableHeader column={column} title={t("countries")} />,
             accessorFn: (row) => row.product_countries?.length || 0,
             cell: ({ row }) => {
                 const countryLinks = row.original.product_countries || []
                 if (countryLinks.length === 0) {
-                    return <span className="text-xs text-muted-foreground italic">Global</span>
+                    return <span className="text-xs font-medium text-muted-foreground/70">{t("global")}</span>
                 }
                 return (
                     <div className="flex flex-wrap gap-1">
@@ -317,7 +319,7 @@ export function ProductTableWrapper({ initialProducts, userProfile }: ProductTab
         },
         {
             id: "tags",
-            header: ({ column }) => <SortableHeader column={column} title="Tags" />,
+            header: ({ column }) => <SortableHeader column={column} title={t("tags")} />,
             sortingFn: (rowA, rowB) => {
                 const numA = rowA.original.product_tags?.length || 0;
                 const numB = rowB.original.product_tags?.length || 0;
@@ -337,7 +339,7 @@ export function ProductTableWrapper({ initialProducts, userProfile }: ProductTab
                             );
                         })}
                         {tags.length === 0 && (
-                            <span className="text-xs text-muted-foreground italic">None</span>
+                            <span className="text-xs text-muted-foreground/40">—</span>
                         )}
                     </div>
                 )
@@ -349,7 +351,7 @@ export function ProductTableWrapper({ initialProducts, userProfile }: ProductTab
             header: ({ column }) => <SortableHeader column={column} title={t("table.status")} />,
             cell: ({ row }) => (
                 <Badge variant={row.getValue("is_public") ? "default" : "outline"} className="capitalize">
-                    {row.getValue("is_public") ? "Public" : "Private"}
+                    {row.getValue("is_public") ? commonT("public") : commonT("private")}
                 </Badge>
             ),
             size: 100,
@@ -372,7 +374,7 @@ export function ProductTableWrapper({ initialProducts, userProfile }: ProductTab
             enableResizing: false,
             enableHiding: false,
         },
-    ], [locale, t])
+    ], [commonT, locale, t])
 
     const handlePreferencesChange = React.useCallback((newPrefs: Record<string, unknown>) => {
         if (!userProfile?.id) return
@@ -403,7 +405,7 @@ export function ProductTableWrapper({ initialProducts, userProfile }: ProductTab
 
                 <Button onClick={() => { setSelectedProduct(null); setDrawerOpen(true); }} className="bg-primary hover:bg-primary/95 text-white font-semibold transition-all active:scale-95 shadow-sm shadow-primary/5 h-10 px-6 text-xs flex items-center gap-2">
                     <Plus className="h-4 w-4" />
-                    Add Product
+                    {t("addProduct")}
                 </Button>
             </div>
 
@@ -439,7 +441,7 @@ export function ProductTableWrapper({ initialProducts, userProfile }: ProductTab
                             }}
                         >
                             <Trash2 className="h-4 w-4 mr-2" />
-                            Delete ({selectedRows.length})
+                            {commonT("delete")} ({selectedRows.length})
                         </Button>
                     </div>
                 )}
@@ -449,15 +451,14 @@ export function ProductTableWrapper({ initialProducts, userProfile }: ProductTab
             <AlertDialog open={deleteModalOpen} onOpenChange={setDeleteModalOpen}>
                 <AlertDialogContent className="rounded-lg border-sidebar-border/50 shadow-2xl">
                     <AlertDialogHeader>
-                        <AlertDialogTitle>Are you absolutely sure?</AlertDialogTitle>
+                        <AlertDialogTitle>{t("deleteProductsTitle")}</AlertDialogTitle>
                         <AlertDialogDescription>
-                            This will permanently delete {rowsToDelete.length} {rowsToDelete.length === 1 ? 'product' : 'products'}.
-                            This action cannot be undone and will remove all associated nutritional data.
+                            {t("deleteProductsDescription", { count: rowsToDelete.length })}
                         </AlertDialogDescription>
                     </AlertDialogHeader>
                     <AlertDialogFooter className="gap-2">
                         <AlertDialogCancel className="font-semibold text-xs h-9">
-                            Cancel
+                            {commonT("cancel")}
                         </AlertDialogCancel>
                         <AlertDialogAction
                             onClick={async () => {
@@ -466,10 +467,10 @@ export function ProductTableWrapper({ initialProducts, userProfile }: ProductTab
                                     const result = await bulkDeleteProducts(ids)
 
                                     if (result.success) {
-                                        toast.success(`Deleted ${ids.length} products`)
+                                        toast.success(commonT("deletedSuccessfully"))
                                         clearSelectionRef?.fn()
                                     } else {
-                                        toast.error(result.error || "Failed to delete products")
+                                        toast.error(result.error || t("failedToDeleteProducts"))
                                     }
                                 } finally {
                                     setDeleteModalOpen(false)
@@ -477,7 +478,7 @@ export function ProductTableWrapper({ initialProducts, userProfile }: ProductTab
                             }}
                             className="bg-primary hover:bg-primary/90 text-white font-semibold text-xs h-9 px-6"
                         >
-                            Confirm Deletion
+                            {t("confirmDeletion")}
                         </AlertDialogAction>
                     </AlertDialogFooter>
                 </AlertDialogContent>

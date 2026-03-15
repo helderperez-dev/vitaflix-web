@@ -94,16 +94,16 @@ export function BrandSelector({ title, selectedBrandIds, onBrandsChange }: Brand
                     </PopoverTrigger>
                     <PopoverContent className="w-[240px] p-0 shadow-2xl border-border/40 rounded-lg backdrop-blur-xl bg-background/90" align="end">
                         <Command className="bg-transparent border-none">
-                            <CommandInput placeholder="Search brands..." className="h-10 text-xs" />
+                            <CommandInput placeholder={t("searchBrands")} className="h-10 text-xs" />
                             <CommandList
                                 className="max-h-[200px] overflow-y-auto custom-scrollbar"
                                 onWheel={(e) => e.stopPropagation()}
                                 onTouchMove={(e) => e.stopPropagation()}
                             >
                                 <CommandEmpty className="py-6 text-xs text-muted-foreground/40 text-center">
-                                    No brands found.
+                                    {t("noBrandsFound")}
                                 </CommandEmpty>
-                                <CommandGroup heading="Available Brands" className="text-[11px] font-semibold text-muted-foreground/40 px-2 py-4">
+                                <CommandGroup heading={t("availableBrands")} className="text-[11px] font-semibold text-muted-foreground/40 px-2 py-4">
                                     {brands.map((brand) => (
                                         <CommandItem
                                             key={brand.id}
@@ -152,7 +152,7 @@ export function BrandSelector({ title, selectedBrandIds, onBrandsChange }: Brand
                                     }}
                                     className="w-full justify-start text-xs py-2.5 px-3 text-primary font-semibold rounded-lg hover:bg-primary/5 transition-colors h-auto"
                                 >
-                                    Create New Brand
+                                    {t("createNewBrand")}
                                 </Button>
                             </div>
                         </Command>

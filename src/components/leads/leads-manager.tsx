@@ -1,7 +1,7 @@
 "use client"
 
 import * as React from "react"
-import { useTranslations } from "next-intl"
+import { useLocale, useTranslations } from "next-intl"
 import { Button } from "@/components/ui/button"
 import { Input } from "@/components/ui/input"
 import { Plus, LayoutGrid, Kanban, Search, Filter, Settings2, Loader2, ChevronRight } from "lucide-react"
@@ -37,7 +37,9 @@ interface LeadsManagerProps {
 }
 
 export function LeadsManager({ initialFunnels, initialLeads, userProfile }: LeadsManagerProps) {
+    const locale = useLocale()
     const tLeads = useTranslations("Leads")
+    const isPt = locale.startsWith("pt")
     const [funnels, setFunnels] = React.useState<Funnel[]>(initialFunnels)
     const [leads, setLeads] = React.useState<Lead[]>(initialLeads)
     const [activeFunnelId, setActiveFunnelId] = React.useState<string>('all')
@@ -80,7 +82,7 @@ export function LeadsManager({ initialFunnels, initialLeads, userProfile }: Lead
                 if (success) {
                     setLeads(newLeads || []);
                 } else {
-                    toast.error(error || "Failed to load leads");
+                    toast.error(error || (isPt ? "Falha ao carregar leads" : "Failed to load leads"));
                 }
                 setIsLoading(false);
             }
@@ -89,7 +91,7 @@ export function LeadsManager({ initialFunnels, initialLeads, userProfile }: Lead
         fetchLeads();
 
         return () => { isMounted = false };
-    }, [activeFunnelId]);
+    }, [activeFunnelId, isPt]);
 
     const filteredLeads = React.useMemo(() => {
         if (!searchQuery) return leads

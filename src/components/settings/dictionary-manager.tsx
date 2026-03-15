@@ -12,8 +12,6 @@ import {
     ShieldCheck,
     CalendarRange,
     Plus,
-    Search,
-    ChevronRight,
     Trash2,
     ArrowLeft,
     BrainCircuit,
@@ -25,7 +23,6 @@ import {
 } from "lucide-react"
 import { Card, CardDescription, CardHeader, CardTitle } from "@/components/ui/card"
 import { Button } from "@/components/ui/button"
-import { Input } from "@/components/ui/input"
 import {
     DropdownMenu,
     DropdownMenuContent,
@@ -53,28 +50,24 @@ import { toast } from "sonner"
 import { Badge } from "@/components/ui/badge"
 import { Link } from "@/i18n/routing"
 
-const DICTIONARIES: { id: TagTable | 'plans_logic'; label: string; description: string; icon: React.ComponentType<{ className?: string }> }[] = [
-    // Product & Classification
-    { id: 'brands', label: 'Brands', description: 'Manufacturer and label identities.', icon: Store },
-    { id: 'dietary_tags', label: 'Dietary tags', description: 'Health requirements and filters.', icon: Leaf },
-    { id: 'product_groups', label: 'Groups', description: 'Sales and inventory groupings.', icon: Boxes },
-    { id: 'measurement_units', label: 'Units', description: 'Measurement base units for products.', icon: Ruler },
-    { id: 'countries', label: 'Countries', description: 'Market availability by country.', icon: Globe },
-    { id: 'tags', label: 'Tags', description: 'Global markers for entity classification.', icon: TagIcon },
-
-    // Meals & Plans
-    { id: 'plans_logic', label: 'Meal slots', description: 'Architecture of automated plan flows.', icon: BrainCircuit },
-    { id: 'meal_categories', label: 'Meal types', description: 'Breakfast, lunch and dinner variations.', icon: Utensils },
-    { id: 'meal_plan_sizes', label: 'Service cycles', description: 'Plan frequencies and meal counts.', icon: CalendarRange },
-
-    // Users & Access
-    { id: 'user_roles', label: 'Access roles', description: 'Permission levels and system personas.', icon: ShieldCheck },
-    { id: 'wellness_objectives', label: 'Goals', description: 'User-specific health and wellness targets.', icon: Target },
+const DICTIONARY_META: { id: TagTable | 'plans_logic'; icon: React.ComponentType<{ className?: string }> }[] = [
+    { id: 'brands', icon: Store },
+    { id: 'dietary_tags', icon: Leaf },
+    { id: 'product_groups', icon: Boxes },
+    { id: 'measurement_units', icon: Ruler },
+    { id: 'countries', icon: Globe },
+    { id: 'tags', icon: TagIcon },
+    { id: 'plans_logic', icon: BrainCircuit },
+    { id: 'meal_categories', icon: Utensils },
+    { id: 'meal_plan_sizes', icon: CalendarRange },
+    { id: 'user_roles', icon: ShieldCheck },
+    { id: 'wellness_objectives', icon: Target },
 ]
 
 export function DictionaryManager() {
     const locale = useLocale()
     const commonT = useTranslations("Common")
+    const isPt = locale.startsWith("pt")
     const [selectedDict, setSelectedDict] = useState<TagTable | 'plans_logic' | null>(null)
     const [items, setItems] = useState<Tag[]>([])
     const [isLoading, setIsLoading] = useState(false)
@@ -87,7 +80,57 @@ export function DictionaryManager() {
     const [tableKey, setTableKey] = useState(0)
     const clearSelectionFn = React.useRef<(() => void) | null>(null)
 
-    const currentDict = DICTIONARIES.find(d => d.id === selectedDict)
+    const dictionaries = useMemo(() => {
+        const labels: Record<string, { label: string; description: string }> = {
+            brands: {
+                label: commonT("brand"),
+                description: isPt ? "Identidades de fabricantes e marcas." : "Manufacturer and label identities.",
+            },
+            dietary_tags: {
+                label: isPt ? "Etiquetas dietéticas" : "Dietary tags",
+                description: isPt ? "Requisitos e filtros alimentares." : "Health requirements and filters.",
+            },
+            product_groups: {
+                label: isPt ? "Grupos" : "Groups",
+                description: isPt ? "Agrupamentos comerciais e de inventário." : "Sales and inventory groupings.",
+            },
+            measurement_units: {
+                label: isPt ? "Unidades" : "Units",
+                description: isPt ? "Unidades de medida base para produtos." : "Measurement base units for products.",
+            },
+            countries: {
+                label: isPt ? "Países" : "Countries",
+                description: isPt ? "Disponibilidade por país." : "Market availability by country.",
+            },
+            tags: {
+                label: isPt ? "Etiquetas" : "Tags",
+                description: isPt ? "Marcadores globais de classificação." : "Global markers for entity classification.",
+            },
+            plans_logic: {
+                label: isPt ? "Slots de refeições" : "Meal slots",
+                description: isPt ? "Arquitetura dos fluxos automáticos de plano." : "Architecture of automated plan flows.",
+            },
+            meal_categories: {
+                label: isPt ? "Tipos de refeição" : "Meal types",
+                description: isPt ? "Variações de pequeno-almoço, almoço e jantar." : "Breakfast, lunch and dinner variations.",
+            },
+            meal_plan_sizes: {
+                label: isPt ? "Ciclos de serviço" : "Service cycles",
+                description: isPt ? "Frequências de plano e número de refeições." : "Plan frequencies and meal counts.",
+            },
+            user_roles: {
+                label: isPt ? "Funções de acesso" : "Access roles",
+                description: isPt ? "Níveis de permissão e perfis do sistema." : "Permission levels and system personas.",
+            },
+            wellness_objectives: {
+                label: isPt ? "Objetivos" : "Goals",
+                description: isPt ? "Objetivos de saúde e bem-estar por utilizador." : "User-specific health and wellness targets.",
+            },
+        }
+        return DICTIONARY_META.map((item) => ({ ...item, ...labels[item.id] }))
+    }, [commonT, isPt])
+
+    const currentDict = dictionaries.find(d => d.id === selectedDict)
 
     useEffect(() => {
         if (selectedDict && selectedDict !== 'plans_logic') {
@@ -132,7 +175,9 @@ export function DictionaryManager() {
             }
 
             if (result.success) {
-                toast.success(itemsToDelete.length === 1 ? "Entry deleted successfully" : `${itemsToDelete.length} entries deleted successfully`)
+                toast.success(itemsToDelete.length === 1
+                    ? (isPt ? "Registo eliminado com sucesso" : "Entry deleted successfully")
+                    : (isPt ? `${itemsToDelete.length} registos eliminados com sucesso` : `${itemsToDelete.length} entries deleted successfully`))
                 setDeleteDialogOpen(false)
                 setItemsToDelete([])
                 if (clearSelectionFn.current) clearSelectionFn.current()
@@ -140,10 +185,10 @@ export function DictionaryManager() {
                 setTableKey(prev => prev + 1)
                 loadItems()
             } else {
-                toast.error(result.error || "Failed to delete entry")
+                toast.error(result.error || (isPt ? "Falha ao eliminar registo" : "Failed to delete entry"))
             }
         } catch (error) {
-            toast.error("An error occurred while deleting")
+            toast.error(isPt ? "Ocorreu um erro ao eliminar" : "An error occurred while deleting")
         } finally {
             setIsDeleting(false)
         }
@@ -165,10 +210,10 @@ export function DictionaryManager() {
         baseColumns.push(
             {
                 id: "displayName",
-                header: ({ column }) => <SortableHeader column={column} title="Name" />,
+                header: ({ column }) => <SortableHeader column={column} title={isPt ? "Nome" : "Name"} />,
                 cell: ({ row }) => {
                     const localizedName = row.original.name as Record<string, string> | undefined
-                    const name = localizedName?.[locale] || localizedName?.en || Object.values(row.original.name || {})[0] || "Untitled"
+                    const name = localizedName?.[locale] || localizedName?.en || Object.values(row.original.name || {})[0] || (isPt ? "Sem título" : "Untitled")
 
                     if (selectedDict === 'brands') {
                         return (
@@ -200,7 +245,7 @@ export function DictionaryManager() {
             },
             {
                 id: "languages",
-                header: "Languages",
+                header: isPt ? "Idiomas" : "Languages",
                 cell: ({ row }) => {
                     const names = row.original.name as Record<string, string>
                     const langs = Object.keys(names || {}).filter(k => names[k])
@@ -235,13 +280,13 @@ export function DictionaryManager() {
                                     onClick={() => handleEdit(row.original)}
                                     className="text-xs font-semibold py-2.5"
                                 >
-                                    Edit
+                                    {commonT("edit")}
                                 </DropdownMenuItem>
                                 <DropdownMenuItem
                                     onClick={() => handleDelete(row.original)}
                                     className="text-xs font-semibold py-2.5 text-destructive focus:text-destructive"
                                 >
-                                    Delete
+                                    {commonT("delete")}
                                 </DropdownMenuItem>
                             </DropdownMenuContent>
                         </DropdownMenu>
@@ -252,7 +297,7 @@ export function DictionaryManager() {
         )
 
         return baseColumns
-    }, [locale, selectedDict])
+    }, [commonT, isPt, locale, selectedDict])
 
     return (
         <div className="flex-1 flex flex-col min-h-0 w-full overflow-hidden bg-white dark:bg-background">
@@ -273,7 +318,7 @@ export function DictionaryManager() {
                                 <div className="flex items-center gap-3">
                                     <div className="w-1 h-6 bg-primary rounded-full opacity-80" />
                                     <h2 className="text-3xl font-semibold tracking-tight text-foreground dark:text-white leading-none">
-                                        Plan logic hub
+                                        {isPt ? "Centro da lógica de planos" : "Plan logic hub"}
                                     </h2>
                                 </div>
                                 <div className="flex items-center gap-2 mt-2.5 ml-0">
@@ -286,7 +331,7 @@ export function DictionaryManager() {
                                         <ArrowLeft className="size-4 group-hover:-translate-x-0.5 transition-transform" />
                                     </Button>
                                     <p className="text-[11px] font-medium text-muted-foreground/70 dark:text-white/40">
-                                        Architectural meal slot flows
+                                        {isPt ? "Fluxos arquiteturais dos slots de refeições" : "Architectural meal slot flows"}
                                     </p>
                                 </div>
                             </div>
@@ -311,7 +356,7 @@ export function DictionaryManager() {
                                 <div className="flex items-center gap-3">
                                     <div className="w-1 h-6 bg-primary rounded-full opacity-80" />
                                     <h2 className="text-3xl font-semibold tracking-tight text-foreground dark:text-white leading-none">
-                                        Dictionaries
+                                        {isPt ? "Dicionários" : "Dictionaries"}
                                     </h2>
                                 </div>
                                 <div className="flex items-center gap-2 mt-2.5 ml-0">
@@ -325,7 +370,7 @@ export function DictionaryManager() {
                                         </Button>
                                     </Link>
                                     <p className="text-[11px] font-medium text-muted-foreground/70 dark:text-white/40 max-w-2xl leading-relaxed">
-                                        Manage systemic master data, architectural flows and labels.
+                                        {isPt ? "Gerir dados-mestre, fluxos arquiteturais e rótulos do sistema." : "Manage systemic master data, architectural flows and labels."}
                                     </p>
                                 </div>
                             </div>
@@ -333,7 +378,7 @@ export function DictionaryManager() {
 
                         <div className="flex-1 overflow-y-auto bg-slate-50/20 dark:bg-transparent custom-scrollbar">
                             <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-8 p-10 w-full">
-                                {DICTIONARIES.map((dict) => {
+                                {dictionaries.map((dict) => {
                                     const Icon = dict.icon
                                     return (
                                         <Card
@@ -397,7 +442,7 @@ export function DictionaryManager() {
                                     className="bg-primary hover:bg-primary/95 text-white font-semibold transition-all active:scale-95 shadow-sm h-10 px-6 rounded-lg text-xs flex items-center gap-2"
                                 >
                                     <Plus className="h-4 w-4" />
-                                    New entry
+                                    {isPt ? "Novo registo" : "New entry"}
                                 </Button>
                             </div>
                         </div>
@@ -409,7 +454,7 @@ export function DictionaryManager() {
                                 data={items}
                                 globalFilter={globalFilter}
                                 onGlobalFilterChange={setGlobalFilter}
-                                emptyStateText="No systemic records found in this dictionary."
+                                emptyStateText={isPt ? "Não foram encontrados registos neste dicionário." : "No systemic records found in this dictionary."}
                                 onRowClick={handleEdit}
                                 className="flex-1"
                                 enableRowSelection={true}
@@ -421,7 +466,7 @@ export function DictionaryManager() {
                                             className="h-9 px-4 text-xs font-semibold hover:bg-slate-100 dark:hover:bg-white/5 text-muted-foreground hover:text-foreground dark:text-white/80 dark:hover:text-white transition-all"
                                             onClick={() => console.log("Exporting:", selectedRows)}
                                         >
-                                            Export Data
+                                            {commonT("exportData")}
                                         </Button>
                                         <Button
                                             variant="ghost"
@@ -429,7 +474,7 @@ export function DictionaryManager() {
                                             onClick={() => handleBulkDelete(selectedRows, clearSelection)}
                                         >
                                             <Trash2 className="h-4 w-4 mr-2" />
-                                            Delete Forever
+                                            {commonT("deleteForever")}
                                         </Button>
                                     </div>
                                 )}

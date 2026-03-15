@@ -117,7 +117,7 @@ export function LeadDrawer({ open, onOpenChange, lead, funnels }: LeadDrawerProp
                 toast.success(lead ? commonT("updatedSuccessfully") : commonT("createdSuccessfully"))
                 onOpenChange(false)
             } else {
-                toast.error(result.error || "Failed to save lead")
+                toast.error(result.error || commonT("errorSaving"))
             }
         } catch (error) {
             toast.error(commonT("errorSaving"))
