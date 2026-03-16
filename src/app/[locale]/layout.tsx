@@ -33,8 +33,8 @@ const poppins = Poppins({
 });
 
 export const metadata: Metadata = {
-  title: "Vitaflix Admin",
-  description: "Administrative dashboard for Vitaflix",
+  title: "Vitaflix",
+  description: "Vitaflix - Your nutrition, finally simple",
 };
 
 export function generateStaticParams() {

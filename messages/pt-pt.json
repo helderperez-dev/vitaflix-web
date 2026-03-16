@@ -1,5 +1,9 @@
 {
     "Landing": {
+        "Meta": {
+            "title": "Vitaflix - A tua nutrição, finalmente simples",
+            "description": "Esquece as folhas de excel e as dúvidas no supermercado. A Vitaflix cria o teu plano semanal, lista de compras e receitas em segundos."
+        },
         "Header": {
             "benefits": "Benefícios",
             "method": "Método",
