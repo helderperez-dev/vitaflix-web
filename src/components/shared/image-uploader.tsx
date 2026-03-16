@@ -1,15 +1,16 @@
 "use client"
 
 import * as React from "react"
-import { UploadCloud, X, Star, Loader2, GripVertical, WandSparkles } from "lucide-react"
+import { UploadCloud, X, Star, Loader2, GripVertical, WandSparkles, Sparkles } from "lucide-react"
 import { toast } from "sonner"
 import type { ProductImage } from "@/shared-schemas/product"
 import { createClient } from "@/lib/supabase/client"
 import { cn } from "@/lib/utils"
 import { MediaDisplay } from "./media-display"
 import { useTranslations } from "next-intl"
-import { enhanceImageWithAI } from "@/app/actions/ai"
+import { enhanceImageWithAI, generateImageWithAI } from "@/app/actions/ai"
 import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from "@/components/ui/tooltip"
+import { Button } from "@/components/ui/button"
 
 interface ImageUploaderProps {
     folder: string
@@ -26,7 +27,7 @@ export function ImageUploader({ folder, value = [], onChange, maxImages = 10, en
     const t = useTranslations("Common")
     const aiT = useTranslations("AIActions")
     const [isUploading, setIsUploading] = React.useState(false)
-    const [isAiLoading, setIsAiLoading] = React.useState<"enhance" | null>(null)
+    const [isAiLoading, setIsAiLoading] = React.useState<"generate" | "enhance" | null>(null)
     const [aiProcessingIndex, setAiProcessingIndex] = React.useState<number | null>(null)
     const [draggedItemIndex, setDraggedItemIndex] = React.useState<number | null>(null)
     const fileInputRef = React.useRef<HTMLInputElement>(null)
@@ -132,6 +133,31 @@ export function ImageUploader({ folder, value = [], onChange, maxImages = 10, en
         onChange(newImages)
     }
 
+    const handleGenerateWithAI = async () => {
+        setIsAiLoading("generate")
+        setAiProcessingIndex(null)
+        try {
+            const result = await generateImageWithAI({
+                entityName: resolveEntityName,
+                context: aiContext,
+                runtimeContext: aiRuntimeContext,
+            })
+            if (result.error || !result.imageDataUrl) {
+                toast.error(result.error || aiT("genericError"))
+                return
+            }
+            const publicUrl = await uploadDataUrl(result.imageDataUrl)
+            const newImages = value.map(image => ({ ...image, isDefault: false }))
+            newImages.push({ url: publicUrl, isDefault: newImages.length === 0 })
+            onChange(newImages)
+            toast.success(aiT("imageGenerated"))
+        } catch (error) {
+            toast.error(error instanceof Error ? error.message : aiT("genericError"))
+        } finally {
+            setIsAiLoading(null)
+        }
+    }
+
     const handleEnhanceWithAI = async (index?: number) => {
         const targetIndex = typeof index === 'number' ? index : value.findIndex(image => image.isDefault) || 0
         const currentImage = value[targetIndex]
@@ -193,6 +219,20 @@ export function ImageUploader({ folder, value = [], onChange, maxImages = 10, en
     return (
         <TooltipProvider>
             <div className="space-y-4">
+                {enableAI && (
+                    <div className="flex justify-end">
+                        <Button
+                            type="button"
+                            variant="outline"
+                            className="h-8 px-3 text-xs font-semibold gap-2 border-border/60"
+                            disabled={isAiLoading !== null || isUploading}
+                            onClick={handleGenerateWithAI}
+                        >
+                            {isAiLoading === "generate" ? <Loader2 className="h-3.5 w-3.5 animate-spin" /> : <Sparkles className="h-3.5 w-3.5" />}
+                            {aiT("generateImage")}
+                        </Button>
+                    </div>
+                )}
                 <div className="grid grid-cols-2 sm:grid-cols-3 gap-4">
                     {/* Existing Images */}
                     {value.map((image, index) => (
