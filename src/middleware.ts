@@ -8,6 +8,6 @@ export const config = {
     // - … if they contain a dot (e.g. `favicon.ico`)
     // - api routes
     // - _next (internal paths)
-    // - metadata files (e.g. `robots.txt`)
-    matcher: ['/((?!api|_next|_vercel|.*\\..*).*)']
+    // - metadata files (e.g. `robots.txt`, `icon`, `apple-icon`)
+    matcher: ['/((?!api|_next|_vercel|icon|apple-icon|.*\\..*).*)']
 };

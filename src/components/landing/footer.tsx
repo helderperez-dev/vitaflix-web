@@ -51,7 +51,6 @@ export function Footer() {
                         <h3 className="font-semibold text-slate-900 mb-6">{t("cols.support")}</h3>
                         <ul className="space-y-4">
                             <FooterLink href="#faq">{tHeader("faq")}</FooterLink>
-                            <FooterLink href="/contact">{t("links.contact")}</FooterLink>
                             <FooterLink href="/privacy">{t("links.privacy")}</FooterLink>
                             <FooterLink href="/terms">{t("links.terms")}</FooterLink>
                         </ul>
