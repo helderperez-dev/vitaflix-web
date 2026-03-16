@@ -12,7 +12,7 @@ import { CtaSection } from "@/components/landing/cta-section"
 import { Footer } from "@/components/landing/footer"
 import { WhatsAppWidget } from "@/components/landing/whatsapp-widget"
 import { LanguageSwitcher } from "@/components/landing/language-switcher"
-import { Sheet, SheetContent, SheetTrigger } from "@/components/ui/sheet"
+import { Sheet, SheetContent, SheetTrigger, SheetHeader, SheetTitle } from "@/components/ui/sheet"
 import { Menu } from "lucide-react"
 import Link from "next/link"
 import Image from "next/image"
@@ -50,7 +50,7 @@ export default function LandingPage() {
                 <div className={cn(
                     "mx-auto flex w-full max-w-[90rem] items-center justify-between px-4 sm:px-6 lg:px-8 transition-all duration-300",
                     isScrolled
-                        ? "mt-3 h-[4.25rem] max-w-[78rem] rounded-2xl border border-slate-200/70 bg-white/90 shadow-lg shadow-slate-900/5 backdrop-blur-xl"
+                        ? "mt-3 w-[calc(100%-1.5rem)] md:w-full h-[4.25rem] max-w-[78rem] rounded-2xl border border-slate-200/70 bg-white/90 shadow-lg shadow-slate-900/5 backdrop-blur-xl"
                         : "h-24 bg-transparent"
                 )}>
                     <div className={cn(
@@ -91,60 +91,67 @@ export default function LandingPage() {
                                     <Menu className="h-6 w-6" />
                                 </button>
                             </SheetTrigger>
-                            <SheetContent side="right" className="w-[300px] sm:w-[400px]">
-                                <nav className="flex flex-col gap-6 mt-8">
+                            <SheetContent side="right" className="w-[300px] sm:w-[400px] flex flex-col h-full p-0 gap-0">
+                                <SheetHeader className="p-6 border-b border-slate-100">
+                                    <SheetTitle className="sr-only">Menu</SheetTitle>
+                                    <div className="flex items-center justify-start">
+                                        <Image src="/vitaflix_logo_light_mode.png" alt="Vitaflix" width={110} height={25} className="h-7 w-auto" priority />
+                                    </div>
+                                </SheetHeader>
+                                <nav className="flex flex-col p-4 gap-1 overflow-y-auto flex-1">
                                     <Link 
                                         href="#beneficios" 
                                         onClick={() => setIsMobileMenuOpen(false)} 
-                                        className="text-lg font-semibold text-slate-700 hover:text-primary transition-all"
+                                        className="flex items-center h-12 px-4 text-base font-medium text-slate-700 hover:text-primary hover:bg-slate-50 rounded-xl transition-all"
                                     >
                                         {t("benefits")}
                                     </Link>
                                     <Link 
                                         href="#sobre" 
                                         onClick={() => setIsMobileMenuOpen(false)} 
-                                        className="text-lg font-semibold text-slate-700 hover:text-primary transition-all"
+                                        className="flex items-center h-12 px-4 text-base font-medium text-slate-700 hover:text-primary hover:bg-slate-50 rounded-xl transition-all"
                                     >
                                         {t("method")}
                                     </Link>
                                     <Link 
                                         href="#testemunhos" 
                                         onClick={() => setIsMobileMenuOpen(false)} 
-                                        className="text-lg font-semibold text-slate-700 hover:text-primary transition-all"
+                                        className="flex items-center h-12 px-4 text-base font-medium text-slate-700 hover:text-primary hover:bg-slate-50 rounded-xl transition-all"
                                     >
                                         {t("testimonials")}
                                     </Link>
                                     <Link 
                                         href="#pricing" 
                                         onClick={() => setIsMobileMenuOpen(false)} 
-                                        className="text-lg font-semibold text-slate-700 hover:text-primary transition-all"
+                                        className="flex items-center h-12 px-4 text-base font-medium text-slate-700 hover:text-primary hover:bg-slate-50 rounded-xl transition-all"
                                     >
                                         {t("pricing")}
                                     </Link>
                                     <Link 
                                         href="#faq" 
                                         onClick={() => setIsMobileMenuOpen(false)} 
-                                        className="text-lg font-semibold text-slate-700 hover:text-primary transition-all"
+                                        className="flex items-center h-12 px-4 text-base font-medium text-slate-700 hover:text-primary hover:bg-slate-50 rounded-xl transition-all"
                                     >
                                         {t("faq")}
                                     </Link>
-
-                                    <div className="flex flex-col gap-4 mt-4">
-                                        <div className="flex justify-start">
-                                            <LanguageSwitcher />
-                                        </div>
-                                        <Link 
-                                            href="#waitlist" 
-                                            onClick={(e) => {
-                                                handleCtaClick(e);
-                                                setIsMobileMenuOpen(false);
-                                            }}
-                                            className="inline-flex h-11 items-center justify-center rounded-full bg-slate-900 hover:bg-slate-800 px-7 text-sm font-bold text-white shadow-xl shadow-slate-900/10 transition-all hover:scale-105 active:scale-95 w-full"
-                                        >
-                                            {t("cta")}
-                                        </Link>
-                                    </div>
                                 </nav>
+
+                                <div className="p-6 border-t border-slate-100 bg-slate-50/50 flex flex-col gap-4">
+                                    <div className="flex items-center justify-between px-2">
+                                        <span className="text-sm font-medium text-slate-500">Language</span>
+                                        <LanguageSwitcher />
+                                    </div>
+                                    <Link 
+                                        href="#waitlist" 
+                                        onClick={(e) => {
+                                            handleCtaClick(e);
+                                            setIsMobileMenuOpen(false);
+                                        }}
+                                        className="inline-flex h-12 items-center justify-center rounded-xl bg-slate-900 hover:bg-slate-800 px-6 text-sm font-bold text-white shadow-lg shadow-slate-900/10 transition-all hover:scale-[1.02] active:scale-[0.98] w-full"
+                                    >
+                                        {t("cta")}
+                                    </Link>
+                                </div>
                             </SheetContent>
                         </Sheet>
                     </div>
