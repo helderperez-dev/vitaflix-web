@@ -12,6 +12,8 @@ import { CtaSection } from "@/components/landing/cta-section"
 import { Footer } from "@/components/landing/footer"
 import { WhatsAppWidget } from "@/components/landing/whatsapp-widget"
 import { LanguageSwitcher } from "@/components/landing/language-switcher"
+import { Sheet, SheetContent, SheetTrigger } from "@/components/ui/sheet"
+import { Menu } from "lucide-react"
 import Link from "next/link"
 import Image from "next/image"
 import { cn } from "@/lib/utils"
@@ -20,6 +22,7 @@ import { useTranslations } from "next-intl"
 export default function LandingPage() {
     const t = useTranslations("Landing.Header")
     const [isScrolled, setIsScrolled] = useState(false)
+    const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false)
 
     useEffect(() => {
         const handleScroll = () => setIsScrolled(window.scrollY > 16)
@@ -71,14 +74,79 @@ export default function LandingPage() {
                     </div>
 
                     <div className="flex items-center gap-4">
-                        <LanguageSwitcher />
+                        <div className="hidden sm:block">
+                            <LanguageSwitcher />
+                        </div>
                         <Link 
                             href="#waitlist" 
                             onClick={handleCtaClick}
-                            className="inline-flex h-11 items-center rounded-full bg-slate-900 hover:bg-slate-800 px-7 text-sm font-bold text-white shadow-xl shadow-slate-900/10 transition-all hover:scale-105 active:scale-95"
+                            className="hidden sm:inline-flex h-11 items-center rounded-full bg-slate-900 hover:bg-slate-800 px-7 text-sm font-bold text-white shadow-xl shadow-slate-900/10 transition-all hover:scale-105 active:scale-95"
                         >
                             {t("cta")}
                         </Link>
+
+                        <Sheet open={isMobileMenuOpen} onOpenChange={setIsMobileMenuOpen}>
+                            <SheetTrigger asChild>
+                                <button className="md:hidden p-2 text-slate-700 hover:text-primary transition-colors">
+                                    <Menu className="h-6 w-6" />
+                                </button>
+                            </SheetTrigger>
+                            <SheetContent side="right" className="w-[300px] sm:w-[400px]">
+                                <nav className="flex flex-col gap-6 mt-8">
+                                    <Link 
+                                        href="#beneficios" 
+                                        onClick={() => setIsMobileMenuOpen(false)} 
+                                        className="text-lg font-semibold text-slate-700 hover:text-primary transition-all"
+                                    >
+                                        {t("benefits")}
+                                    </Link>
+                                    <Link 
+                                        href="#sobre" 
+                                        onClick={() => setIsMobileMenuOpen(false)} 
+                                        className="text-lg font-semibold text-slate-700 hover:text-primary transition-all"
+                                    >
+                                        {t("method")}
+                                    </Link>
+                                    <Link 
+                                        href="#testemunhos" 
+                                        onClick={() => setIsMobileMenuOpen(false)} 
+                                        className="text-lg font-semibold text-slate-700 hover:text-primary transition-all"
+                                    >
+                                        {t("testimonials")}
+                                    </Link>
+                                    <Link 
+                                        href="#pricing" 
+                                        onClick={() => setIsMobileMenuOpen(false)} 
+                                        className="text-lg font-semibold text-slate-700 hover:text-primary transition-all"
+                                    >
+                                        {t("pricing")}
+                                    </Link>
+                                    <Link 
+                                        href="#faq" 
+                                        onClick={() => setIsMobileMenuOpen(false)} 
+                                        className="text-lg font-semibold text-slate-700 hover:text-primary transition-all"
+                                    >
+                                        {t("faq")}
+                                    </Link>
+
+                                    <div className="flex flex-col gap-4 mt-4">
+                                        <div className="flex justify-start">
+                                            <LanguageSwitcher />
+                                        </div>
+                                        <Link 
+                                            href="#waitlist" 
+                                            onClick={(e) => {
+                                                handleCtaClick(e);
+                                                setIsMobileMenuOpen(false);
+                                            }}
+                                            className="inline-flex h-11 items-center justify-center rounded-full bg-slate-900 hover:bg-slate-800 px-7 text-sm font-bold text-white shadow-xl shadow-slate-900/10 transition-all hover:scale-105 active:scale-95 w-full"
+                                        >
+                                            {t("cta")}
+                                        </Link>
+                                    </div>
+                                </nav>
+                            </SheetContent>
+                        </Sheet>
                     </div>
                 </div>
             </header>
