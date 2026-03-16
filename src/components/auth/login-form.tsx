@@ -13,6 +13,7 @@ import {
     FormMessage,
 } from "@/components/ui/form"
 import { Input } from "@/components/ui/input"
+import { Loader2 } from "lucide-react"
 import { useState } from "react"
 import { loginAction } from "@/app/actions/auth"
 import { useLocale, useTranslations } from "next-intl"
@@ -57,11 +58,11 @@ export function LoginForm() {
                         name="email"
                         render={({ field }) => (
                             <FormItem className="space-y-2">
-                                <FormLabel className="text-white/80 font-medium">{t("email")}</FormLabel>
+                                <FormLabel className="text-foreground/80 font-medium">{t("email")}</FormLabel>
                                 <FormControl>
                                     <Input
-                                        placeholder="admin@vitaflix.com"
-                                        className="h-12 bg-white/10 dark:bg-white/5 text-white placeholder:text-white/40 backdrop-blur-sm border-white/20 dark:border-white/10 rounded-lg focus-visible:ring-1 focus-visible:ring-primary focus-visible:border-primary focus-visible:bg-white/20 dark:focus-visible:bg-white/10 transition-all duration-300"
+                                        placeholder={t("emailPlaceholder")}
+                                        className="h-12 text-base transition-all duration-300 bg-background"
                                         {...field}
                                     />
                                 </FormControl>
@@ -74,12 +75,12 @@ export function LoginForm() {
                         name="password"
                         render={({ field }) => (
                             <FormItem className="space-y-2">
-                                <FormLabel className="text-white/80 font-medium">{t("password")}</FormLabel>
+                                <FormLabel className="text-foreground/80 font-medium">{t("password")}</FormLabel>
                                 <FormControl>
                                     <Input
                                         type="password"
                                         placeholder="••••••••"
-                                        className="h-12 bg-white/10 dark:bg-white/5 text-white placeholder:text-white/40 backdrop-blur-sm border-white/20 dark:border-white/10 rounded-lg focus-visible:ring-1 focus-visible:ring-primary focus-visible:border-primary focus-visible:bg-white/20 dark:focus-visible:bg-white/10 transition-all duration-300"
+                                        className="h-12 text-base transition-all duration-300 bg-background"
                                         {...field}
                                     />
                                 </FormControl>
@@ -90,7 +91,14 @@ export function LoginForm() {
                 </div>
                 {error && <p className="text-sm text-destructive">{error}</p>}
                 <Button type="submit" className="w-full h-12 text-base font-medium transition-all duration-300 hover:shadow-lg hover:shadow-primary/25 active:scale-[0.98]" disabled={isLoading}>
-                    {isLoading ? t("signingIn") : t("signIn")}
+                    {isLoading ? (
+                        <>
+                            <Loader2 className="mr-2 h-5 w-5 animate-spin" />
+                            {t("signingIn")}
+                        </>
+                    ) : (
+                        t("signIn")
+                    )}
                 </Button>
             </form>
         </Form>

@@ -20,9 +20,9 @@ export function LoginThemeToggle() {
     return (
         <motion.button
             onClick={() => setTheme(isDark ? "light" : "dark")}
-            className="relative size-9 rounded-lg bg-white/10 border border-white/20 backdrop-blur-sm flex items-center justify-center hover:bg-white/20 transition-colors duration-300 group"
-            whileHover={{ scale: 1.05 }}
-            whileTap={{ scale: 0.95 }}
+            className="relative flex items-center justify-center p-2 text-foreground/50 hover:text-foreground transition-colors duration-300 group outline-none"
+            whileHover={{ scale: 1.1 }}
+            whileTap={{ scale: 0.9 }}
             aria-label="Toggle theme"
         >
             <AnimatePresence mode="wait" initial={false}>
@@ -34,7 +34,7 @@ export function LoginThemeToggle() {
                         exit={{ opacity: 0, rotate: 90, scale: 0.5 }}
                         transition={{ duration: 0.2, ease: "easeInOut" }}
                     >
-                        <Moon className="size-4 text-white/70 group-hover:text-white transition-colors" />
+                        <Moon className="size-5 transition-colors" />
                     </motion.span>
                 ) : (
                     <motion.span
@@ -44,7 +44,7 @@ export function LoginThemeToggle() {
                         exit={{ opacity: 0, rotate: -90, scale: 0.5 }}
                         transition={{ duration: 0.2, ease: "easeInOut" }}
                     >
-                        <Sun className="size-4 text-white/70 group-hover:text-white transition-colors" />
+                        <Sun className="size-5 transition-colors" />
                     </motion.span>
                 )}
             </AnimatePresence>

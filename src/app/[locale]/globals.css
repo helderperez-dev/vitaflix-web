@@ -166,16 +166,15 @@
     @apply bg-background text-foreground antialiased selection:bg-primary/20 selection:text-primary;
   }
 
-  /* Fix for webkit autofill background — background-color is ignored by browsers;
-     the only reliable override is a large inset box-shadow that paints over the autofill color.
-     Color is rgba approximation of bg-background/40 dark composited over card + video. */
+  /* Fix for webkit autofill background — we use box-shadow to override the browser's 
+     default yellow/blue and force it to match the standard input bg-background. */
   input:-webkit-autofill,
   input:-webkit-autofill:hover,
   input:-webkit-autofill:focus,
   input:-webkit-autofill:active {
-    -webkit-text-fill-color: rgba(245, 248, 255, 1) !important;
-    -webkit-box-shadow: 0 0 0 1000px rgba(26, 32, 47, 1) inset !important;
-    box-shadow: 0 0 0 1000px rgba(26, 32, 47, 1) inset !important;
+    -webkit-text-fill-color: var(--foreground) !important;
+    -webkit-box-shadow: 0 0 0px 1000px var(--background) inset !important;
+    box-shadow: 0 0 0px 1000px var(--background) inset !important;
     transition: background-color 5000s ease-in-out 0s;
   }
 }

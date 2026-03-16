@@ -392,6 +392,7 @@
         "welcome": "Bem-vindo de volta",
         "description": "Insira suas credenciais para acessar o painel administrativo.",
         "email": "E-mail",
+        "emailPlaceholder": "E-mail de Administrador",
         "password": "Senha",
         "signIn": "Entrar",
         "signingIn": "Entrando...",

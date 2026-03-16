@@ -390,8 +390,9 @@
     },
     "Auth": {
         "welcome": "Welcome back",
-        "description": "Please sign in to your account.",
+        "description": "Enter your credentials to access the administrative panel.",
         "email": "Email",
+        "emailPlaceholder": "Admin E-mail",
         "password": "Password",
         "signIn": "Sign In",
         "signingIn": "Signing in...",
