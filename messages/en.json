@@ -706,6 +706,9 @@
         "translationsApplied": "Translations applied",
         "imageGenerated": "Image generated",
         "imageEnhanced": "Image enhanced",
+        "generateVariation": "New variation",
+        "newAngle": "New angle",
+        "newPhotography": "Different style",
         "missingSourceText": "Add source text first",
         "missingImage": "Upload an image first",
         "genericError": "Could not process AI request"

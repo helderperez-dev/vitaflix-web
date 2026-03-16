@@ -657,6 +657,9 @@
         "translationsApplied": "Traduções aplicadas",
         "imageGenerated": "Imagem gerada",
         "imageEnhanced": "Imagem melhorada",
+        "generateVariation": "Nova variação",
+        "newAngle": "Novo ângulo",
+        "newPhotography": "Novo estilo",
         "missingSourceText": "Adicione primeiro um texto de origem",
         "missingImage": "Envie primeiro uma imagem",
         "genericError": "Não foi possível processar a solicitação de IA"

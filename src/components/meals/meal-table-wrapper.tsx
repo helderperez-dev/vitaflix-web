@@ -244,7 +244,7 @@ export function MealTableWrapper({ initialMeals, userProfile }: MealTableWrapper
                                 </div>
                             )}
                         </motion.div>
-                        <div className="font-semibold text-sm truncate">{name}</div>
+                        <div className="font-medium truncate">{name}</div>
                     </div>
                 )
             },
@@ -258,7 +258,7 @@ export function MealTableWrapper({ initialMeals, userProfile }: MealTableWrapper
             cell: ({ row }) => {
                 const cookTime = row.original.mappedMeal.cookTime || 0;
                 return (
-                    <Badge variant="outline" className="font-mono text-[11px] h-6 px-2 bg-slate-50/50 dark:bg-white/5 border-slate-200 dark:border-white/10 text-muted-foreground flex items-center gap-1.5 w-fit">
+                    <Badge variant="outline" className="text-[11px] h-6 px-2 bg-slate-50/50 dark:bg-white/5 border-slate-200 dark:border-white/10 text-muted-foreground flex items-center gap-1.5 w-fit">
                         <Clock className="h-3 w-3" />
                         {cookTime} min
                     </Badge>
@@ -273,7 +273,7 @@ export function MealTableWrapper({ initialMeals, userProfile }: MealTableWrapper
             cell: ({ row }) => {
                 const count = row.original.meal_options?.length || 0;
                 return (
-                    <Badge variant="secondary" className="font-mono text-[10px] h-5 px-2 bg-primary/10 text-primary border-none rounded-md">
+                    <Badge variant="secondary" className="text-[10px] h-5 px-2 bg-primary/10 text-primary border-none rounded-md">
                         {t("optionCount", { count })}
                     </Badge>
                 )

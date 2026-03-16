@@ -21,7 +21,10 @@ type AIRuntimeContext = {
     fieldType?: string
     ingredientProductIds?: string[]
     ingredientNames?: string[]
+    ingredientsWithQuantities?: { productId?: string; name?: string; quantity: number; unit?: string }[]
     preparationModes?: string[]
+    preparationSteps?: string[]
+    detailedIngredients?: string[]
     cookTimeMinutes?: number
     extra?: string
 }
@@ -80,7 +83,11 @@ async function getPromptByKey(key: PromptKey): Promise<PromptRow | null> {
 }
 
 async function enrichMealIngredientsFromIds(runtimeContext?: AIRuntimeContext) {
-    const ingredientIds = Array.from(new Set(runtimeContext?.ingredientProductIds || []))
+    const ingredientIds = Array.from(new Set([
+        ...(runtimeContext?.ingredientProductIds || []),
+        ...(runtimeContext?.ingredientsWithQuantities || []).map(i => i.productId).filter(Boolean) as string[]
+    ]))
+
     if (ingredientIds.length === 0) {
         return runtimeContext?.ingredientNames || []
     }
@@ -88,14 +95,28 @@ async function enrichMealIngredientsFromIds(runtimeContext?: AIRuntimeContext) {
     const supabase = await createClient()
     const { data } = await supabase
         .from("products")
-        .select("name")
+        .select("id, name")
         .in("id", ingredientIds)
 
-    const resolvedNames = (data || [])
-        .map(row => extractLocalizedText((row as { name?: unknown }).name))
+    const productNameById: Record<string, string> = {}
+    ;(data || []).forEach(row => {
+        const name = extractLocalizedText((row as { name?: unknown }).name)
+        if (name) productNameById[row.id] = name
+    })
+
+    const resolvedWithQuantities = (runtimeContext?.ingredientsWithQuantities || []).map(ing => {
+        const name = ing.name || (ing.productId ? productNameById[ing.productId] : "") || "ingredient"
+        const qty = Number(ing.quantity || 0)
+        const unit = ing.unit || ""
+        return `${qty} ${unit} ${name}`.trim()
+    }).filter(Boolean)
+
+    const resolvedNamesOnly = (runtimeContext?.ingredientNames || [])
+    const resolvedFromIdsOnly = (runtimeContext?.ingredientProductIds || [])
+        .map(id => productNameById[id])
         .filter(Boolean)
 
-    const combined = [...(runtimeContext?.ingredientNames || []), ...resolvedNames]
+    const combined = [...resolvedWithQuantities, ...resolvedNamesOnly, ...resolvedFromIdsOnly]
     return Array.from(new Set(combined))
 }
 
@@ -111,7 +132,11 @@ async function buildContextText(baseContext?: string, runtimeContext?: AIRuntime
     }
 
     if ((runtimeContext?.preparationModes || []).length > 0) {
-        parts.push(`Preparation mode: ${(runtimeContext?.preparationModes || []).join(" | ")}`)
+        parts.push(`Preparation styles: ${(runtimeContext?.preparationModes || []).join(" | ")}`)
+    }
+
+    if ((runtimeContext?.preparationSteps || []).length > 0) {
+        parts.push(`Preparation steps: ${(runtimeContext?.preparationSteps || []).join(" -> ")}`)
     }
 
     if (typeof runtimeContext?.cookTimeMinutes === "number" && runtimeContext.cookTimeMinutes > 0) {
@@ -318,6 +343,62 @@ export async function generateImageWithAI(input: {
         return { imageDataUrl }
     } catch (error) {
         return { error: error instanceof Error ? error.message : "Failed to generate image with AI" }
+    }
+}
+
+export async function generateImageVariationWithAI(input: {
+    imageUrl: string
+    entityName: string
+    context?: string
+    runtimeContext?: AIRuntimeContext
+    variationType?: "angle" | "photography" | "sequence"
+}) {
+    try {
+        const promptRow = await getPromptByKey("image_generation")
+        if (!promptRow) return { error: "Prompt not configured" }
+        if (!input.imageUrl) return { error: "Image URL is required" }
+
+        const resolvedContext = await buildContextText(input.context, input.runtimeContext)
+        let variationInstructions = "Create a variation of the attached image."
+        if (input.variationType === "angle") {
+            variationInstructions = "Create a new image of the same dish but from a completely different camera angle (e.g., top-down, side view, or 45-degree angle)."
+        } else if (input.variationType === "photography") {
+            variationInstructions = "Create a new image of the same dish but with a different photography style (e.g., macro shot, lifestyle setting, or minimalist studio lighting)."
+        } else if (input.variationType === "sequence") {
+            variationInstructions = "Create a new image that looks like a sequence or a different moment of the same dish preparation/plating."
+        }
+
+        const prompt = fillPromptTemplate(promptRow.prompt_template, {
+            input_text: "",
+            target_language: "English",
+            source_language: "English",
+            system_language: "English",
+            field_label: "image",
+            entity_name: input.entityName || "food",
+            context: `${resolvedContext}. ${variationInstructions}. Maintain consistency with the original dish's ingredients and appearance.`,
+        })
+
+        const model = process.env.OPENROUTER_MODEL_TEXT_TO_IMAGE || "openai/gpt-5-image"
+        const json = await callOpenRouter({
+            model,
+            messages: [
+                {
+                    role: "user",
+                    content: [
+                        { type: "text", text: prompt },
+                        { type: "image_url", image_url: { url: input.imageUrl } },
+                    ],
+                },
+            ],
+            modalities: ["image", "text"],
+            image_config: promptRow.model_config || { aspect_ratio: "1:1", image_size: "2K" },
+        })
+
+        const imageDataUrl = extractImageDataUrl(json?.choices?.[0])
+        if (!imageDataUrl) return { error: "AI did not return a variation image" }
+        return { imageDataUrl }
+    } catch (error) {
+        return { error: error instanceof Error ? error.message : "Failed to generate image variation with AI" }
     }
 }
 

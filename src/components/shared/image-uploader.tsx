@@ -1,7 +1,7 @@
 "use client"
 
 import * as React from "react"
-import { UploadCloud, X, Star, Loader2, GripVertical, Sparkles, WandSparkles, ImagePlus } from "lucide-react"
+import { UploadCloud, X, Star, Loader2, GripVertical, Sparkles, WandSparkles, ImagePlus, Camera, Wand2, Layers } from "lucide-react"
 import { toast } from "sonner"
 import type { ProductImage } from "@/shared-schemas/product"
 import { createClient } from "@/lib/supabase/client"
@@ -15,7 +15,8 @@ import {
     DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu"
 import { Button } from "@/components/ui/button"
-import { enhanceImageWithAI, generateImageWithAI } from "@/app/actions/ai"
+import { enhanceImageWithAI, generateImageWithAI, generateImageVariationWithAI } from "@/app/actions/ai"
+import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from "@/components/ui/tooltip"
 
 interface ImageUploaderProps {
     folder: string
@@ -32,7 +33,8 @@ export function ImageUploader({ folder, value = [], onChange, maxImages = 10, en
     const t = useTranslations("Common")
     const aiT = useTranslations("AIActions")
     const [isUploading, setIsUploading] = React.useState(false)
-    const [isAiLoading, setIsAiLoading] = React.useState<"generate" | "enhance" | null>(null)
+    const [isAiLoading, setIsAiLoading] = React.useState<"generate" | "enhance" | "variation" | null>(null)
+    const [aiProcessingIndex, setAiProcessingIndex] = React.useState<number | null>(null)
     const [draggedItemIndex, setDraggedItemIndex] = React.useState<number | null>(null)
     const fileInputRef = React.useRef<HTMLInputElement>(null)
     const supabase = createClient()
@@ -139,6 +141,7 @@ export function ImageUploader({ folder, value = [], onChange, maxImages = 10, en
 
     const handleGenerateWithAI = async () => {
         setIsAiLoading("generate")
+        setAiProcessingIndex(null)
         try {
             const result = await generateImageWithAI({
                 entityName: resolveEntityName,
@@ -161,13 +164,15 @@ export function ImageUploader({ folder, value = [], onChange, maxImages = 10, en
         }
     }
 
-    const handleEnhanceWithAI = async () => {
-        const currentImage = value.find(image => image.isDefault) || value[0]
+    const handleEnhanceWithAI = async (index?: number) => {
+        const targetIndex = typeof index === 'number' ? index : value.findIndex(image => image.isDefault) || 0
+        const currentImage = value[targetIndex]
         if (!currentImage?.url) {
             toast.error(aiT("missingImage"))
             return
         }
         setIsAiLoading("enhance")
+        setAiProcessingIndex(targetIndex)
         try {
             const result = await enhanceImageWithAI({
                 imageUrl: currentImage.url,
@@ -180,14 +185,50 @@ export function ImageUploader({ folder, value = [], onChange, maxImages = 10, en
                 return
             }
             const publicUrl = await uploadDataUrl(result.imageDataUrl)
-            const newImages = value.map(image => ({ ...image, isDefault: false }))
-            newImages.push({ url: publicUrl, isDefault: true })
+            const newImages = [...value]
+            // Insert after current
+            newImages.splice(targetIndex + 1, 0, { url: publicUrl, isDefault: false })
             onChange(newImages)
             toast.success(aiT("imageEnhanced"))
         } catch (error) {
             toast.error(error instanceof Error ? error.message : aiT("genericError"))
         } finally {
             setIsAiLoading(null)
+            setAiProcessingIndex(null)
+        }
+    }
+
+    const handleGenerateVariationWithAI = async (index: number, variationType: "angle" | "photography" | "sequence") => {
+        const currentImage = value[index]
+        if (!currentImage?.url) {
+            toast.error(aiT("missingImage"))
+            return
+        }
+        setIsAiLoading("variation")
+        setAiProcessingIndex(index)
+        try {
+            const result = await generateImageVariationWithAI({
+                imageUrl: currentImage.url,
+                entityName: resolveEntityName,
+                context: aiContext,
+                runtimeContext: aiRuntimeContext,
+                variationType,
+            })
+            if (result.error || !result.imageDataUrl) {
+                toast.error(result.error || aiT("genericError"))
+                return
+            }
+            const publicUrl = await uploadDataUrl(result.imageDataUrl)
+            const newImages = [...value]
+            // Insert after current
+            newImages.splice(index + 1, 0, { url: publicUrl, isDefault: false })
+            onChange(newImages)
+            toast.success(aiT("imageGenerated"))
+        } catch (error) {
+            toast.error(error instanceof Error ? error.message : aiT("genericError"))
+        } finally {
+            setIsAiLoading(null)
+            setAiProcessingIndex(null)
         }
     }
 
@@ -216,99 +257,148 @@ export function ImageUploader({ folder, value = [], onChange, maxImages = 10, en
     }
 
     return (
-        <div className="space-y-4">
-            {enableAI && (
-                <div className="flex justify-end">
-                    <DropdownMenu>
-                        <DropdownMenuTrigger asChild>
-                            <Button
-                                type="button"
-                                variant="outline"
-                                className="h-8 px-3 text-xs font-semibold gap-2 border-border/60"
-                                disabled={isAiLoading !== null || isUploading}
-                            >
-                                {isAiLoading ? <Loader2 className="h-3.5 w-3.5 animate-spin" /> : <Sparkles className="h-3.5 w-3.5" />}
-                                {aiT("label")}
-                            </Button>
-                        </DropdownMenuTrigger>
-                        <DropdownMenuContent align="end" className="w-64">
-                            {value.length === 0 ? (
-                                <DropdownMenuItem onClick={handleGenerateWithAI} disabled={isAiLoading !== null}>
-                                    <ImagePlus className="mr-2 h-4 w-4" />
-                                    {aiT("generateImage")}
-                                </DropdownMenuItem>
-                            ) : (
-                                <>
-                                    <DropdownMenuItem onClick={handleEnhanceWithAI} disabled={isAiLoading !== null}>
-                                        <WandSparkles className="mr-2 h-4 w-4" />
-                                        {aiT("enhanceImage")}
-                                    </DropdownMenuItem>
-                                    <DropdownMenuItem onClick={handleGenerateWithAI} disabled={isAiLoading !== null}>
-                                        <ImagePlus className="mr-2 h-4 w-4" />
-                                        {aiT("generateImage")}
-                                    </DropdownMenuItem>
-                                </>
+        <TooltipProvider>
+            <div className="space-y-4">
+                {enableAI && (
+                    <div className="flex justify-end">
+                        <Button
+                            type="button"
+                            variant="outline"
+                            className="h-8 px-3 text-xs font-semibold gap-2 border-border/60"
+                            disabled={isAiLoading !== null || isUploading}
+                            onClick={handleGenerateWithAI}
+                        >
+                            {isAiLoading === "generate" ? <Loader2 className="h-3.5 w-3.5 animate-spin" /> : <Sparkles className="h-3.5 w-3.5" />}
+                            {aiT("label")}
+                        </Button>
+                    </div>
+                )}
+                <div className="grid grid-cols-2 sm:grid-cols-3 gap-4">
+                    {/* Existing Images */}
+                    {value.map((image, index) => (
+                        <div
+                            key={image.url}
+                            draggable
+                            onDragStart={(e) => handleDragStart(e, index)}
+                            onDragOver={(e) => handleDragOver(e, index)}
+                            onDragEnd={handleDragEnd}
+                            className={cn(
+                                "relative group aspect-square rounded-lg overflow-hidden border-2 transition-all cursor-move",
+                                image.isDefault ? "border-white ring-2 ring-black/5" : "border-border/30",
+                                draggedItemIndex === index && "opacity-50 scale-95"
                             )}
-                        </DropdownMenuContent>
-                    </DropdownMenu>
-                </div>
-            )}
-            <div className="grid grid-cols-2 sm:grid-cols-3 gap-4">
-                {/* Existing Images */}
-                {value.map((image, index) => (
-                    <div
-                        key={image.url}
-                        draggable
-                        onDragStart={(e) => handleDragStart(e, index)}
-                        onDragOver={(e) => handleDragOver(e, index)}
-                        onDragEnd={handleDragEnd}
-                        className={cn(
-                            "relative group aspect-square rounded-lg overflow-hidden border-2 transition-all cursor-move",
-                            image.isDefault ? "border-white ring-2 ring-black/5" : "border-border/30",
-                            draggedItemIndex === index && "opacity-50 scale-95"
-                        )}
-                    >
-                        <MediaDisplay
-                            src={image.url}
-                            alt={`Product ${index + 1}`}
-                            className="w-full h-full object-cover"
-                            autoPlay={true}
-                            muted={true}
-                            loop={true}
-                        />
+                        >
+                            <MediaDisplay
+                                src={image.url}
+                                alt={`Product ${index + 1}`}
+                                className="w-full h-full object-cover"
+                                autoPlay={true}
+                                muted={true}
+                                loop={true}
+                            />
 
-                        {/* Overlay Controls */}
-                        <div className="absolute inset-0 bg-black/40 opacity-0 group-hover:opacity-100 transition-opacity flex flex-col justify-between p-2.5">
-                            <div className="flex justify-between items-start">
-                                <div className="p-1.5 bg-black/40 rounded-lg text-white/70 backdrop-blur-md">
-                                    <GripVertical className="h-4 w-4" />
+                            {/* AI Processing Overlay */}
+                            {isAiLoading && aiProcessingIndex === index && (
+                                <div className="absolute inset-0 bg-black/60 backdrop-blur-sm flex flex-col items-center justify-center z-20">
+                                    <Loader2 className="h-8 w-8 text-white animate-spin mb-2" />
+                                    <p className="text-[10px] font-bold text-white uppercase tracking-widest animate-pulse">{t("loading")}</p>
                                 </div>
-                                <button
-                                    type="button"
-                                    onClick={() => removeImage(index)}
-                                    className="p-1.5 bg-red-500/80 hover:bg-red-500 text-white rounded-lg transition-colors backdrop-blur-md"
-                                >
-                                    <X className="h-3.5 w-3.5" />
-                                </button>
-                            </div>
-                            <div className="flex justify-center">
-                                <button
-                                    type="button"
-                                    onClick={() => setDefault(index)}
-                                    className={cn(
-                                        "px-3 py-2 rounded-lg text-xs font-semibold flex items-center gap-2 transition-all active:scale-95",
-                                        image.isDefault
-                                            ? "bg-primary text-primary-foreground border-primary"
-                                            : "bg-white/20 hover:bg-white/40 text-white backdrop-blur-md"
-                                    )}
-                                >
-                                    <Star className={cn("h-3 w-3", image.isDefault && "fill-current")} />
-                                    {image.isDefault ? t("defaultMedia") : t("setAsDefault")}
-                                </button>
+                            )}
+
+                            {/* Overlay Controls */}
+                            <div className="absolute inset-0 bg-black/40 opacity-0 group-hover:opacity-100 transition-opacity flex flex-col justify-between p-2.5 z-10">
+                                <div className="flex justify-between items-start">
+                                    <div className="p-1.5 bg-black/40 rounded-lg text-white/70 backdrop-blur-md">
+                                        <GripVertical className="h-4 w-4" />
+                                    </div>
+                                    <button
+                                        type="button"
+                                        onClick={() => removeImage(index)}
+                                        className="p-1.5 bg-red-500/80 hover:bg-red-500 text-white rounded-lg transition-colors backdrop-blur-md"
+                                    >
+                                        <X className="h-3.5 w-3.5" />
+                                    </button>
+                                </div>
+
+                                {/* AI Actions Bar */}
+                                {enableAI && (
+                                    <div className="flex justify-center gap-1.5 mb-2">
+                                        <Tooltip>
+                                            <TooltipTrigger asChild>
+                                                <button
+                                                    type="button"
+                                                    onClick={(e) => { e.stopPropagation(); handleEnhanceWithAI(index); }}
+                                                    disabled={isAiLoading !== null}
+                                                    className="p-2 bg-white/20 hover:bg-white/40 text-white rounded-lg transition-all backdrop-blur-md active:scale-90 disabled:opacity-50"
+                                                >
+                                                    <WandSparkles className="h-4 w-4" />
+                                                </button>
+                                            </TooltipTrigger>
+                                            <TooltipContent className="text-[10px] font-bold uppercase">{aiT("enhanceImage")}</TooltipContent>
+                                        </Tooltip>
+
+                                        <Tooltip>
+                                            <TooltipTrigger asChild>
+                                                <button
+                                                    type="button"
+                                                    onClick={(e) => { e.stopPropagation(); handleGenerateVariationWithAI(index, "angle"); }}
+                                                    disabled={isAiLoading !== null}
+                                                    className="p-2 bg-white/20 hover:bg-white/40 text-white rounded-lg transition-all backdrop-blur-md active:scale-90 disabled:opacity-50"
+                                                >
+                                                    <Camera className="h-4 w-4" />
+                                                </button>
+                                            </TooltipTrigger>
+                                            <TooltipContent className="text-[10px] font-bold uppercase">{aiT("newAngle")}</TooltipContent>
+                                        </Tooltip>
+
+                                        <Tooltip>
+                                            <TooltipTrigger asChild>
+                                                <button
+                                                    type="button"
+                                                    onClick={(e) => { e.stopPropagation(); handleGenerateVariationWithAI(index, "photography"); }}
+                                                    disabled={isAiLoading !== null}
+                                                    className="p-2 bg-white/20 hover:bg-white/40 text-white rounded-lg transition-all backdrop-blur-md active:scale-90 disabled:opacity-50"
+                                                >
+                                                    <Sparkles className="h-4 w-4" />
+                                                </button>
+                                            </TooltipTrigger>
+                                            <TooltipContent className="text-[10px] font-bold uppercase">{aiT("newPhotography")}</TooltipContent>
+                                        </Tooltip>
+
+                                        <Tooltip>
+                                            <TooltipTrigger asChild>
+                                                <button
+                                                    type="button"
+                                                    onClick={(e) => { e.stopPropagation(); handleGenerateVariationWithAI(index, "sequence"); }}
+                                                    disabled={isAiLoading !== null}
+                                                    className="p-2 bg-white/20 hover:bg-white/40 text-white rounded-lg transition-all backdrop-blur-md active:scale-90 disabled:opacity-50"
+                                                >
+                                                    <Layers className="h-4 w-4" />
+                                                </button>
+                                            </TooltipTrigger>
+                                            <TooltipContent className="text-[10px] font-bold uppercase">{aiT("generateVariation")}</TooltipContent>
+                                        </Tooltip>
+                                    </div>
+                                )}
+
+                                <div className="flex justify-center">
+                                    <button
+                                        type="button"
+                                        onClick={() => setDefault(index)}
+                                        className={cn(
+                                            "px-3 py-2 rounded-lg text-xs font-semibold flex items-center gap-2 transition-all active:scale-[0.98]",
+                                            image.isDefault
+                                                ? "bg-primary text-primary-foreground border-primary"
+                                                : "bg-white/20 hover:bg-white/40 text-white backdrop-blur-md"
+                                        )}
+                                    >
+                                        <Star className={cn("h-3 w-3", image.isDefault && "fill-current")} />
+                                        {image.isDefault ? t("defaultMedia") : t("setAsDefault")}
+                                    </button>
+                                </div>
                             </div>
                         </div>
-                    </div>
-                ))}
+                    ))}
 
                 {/* Upload Trigger */}
                 {value.length < maxImages && (
@@ -352,6 +442,7 @@ export function ImageUploader({ folder, value = [], onChange, maxImages = 10, en
                     </div>
                 )}
             </div>
-        </div >
-    )
+        </div>
+    </TooltipProvider>
+)
 }

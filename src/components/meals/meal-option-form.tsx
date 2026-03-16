@@ -27,6 +27,7 @@ import { MediaDisplay } from "@/components/shared/media-display"
 interface MealOptionFormProps {
     initialData?: Partial<MealOption>
     mealId: string
+    preparationSteps?: string[]
     onSave: (data: MealOption) => void
     onCancel: () => void
 }
@@ -42,6 +43,7 @@ function getProductReferenceAmount(product: any) {
 export function MealOptionForm({
     initialData,
     mealId,
+    preparationSteps = [],
     onSave,
     onCancel
 }: MealOptionFormProps) {
@@ -393,9 +395,9 @@ export function MealOptionForm({
                                     domain: "meals",
                                     entityType: "meal_option",
                                     fieldType: "image",
-                                    ingredientProductIds,
-                                    ingredientNames,
-                                    extra: "Use variation ingredients to style this option image.",
+                                    ingredientsWithQuantities: watchedIngredients,
+                                    preparationSteps,
+                                    extra: "Use variation ingredients and preparation steps to style this option image. The image should accurately reflect how ingredients are cooked and plated.",
                                 }}
                             />
                         </div>
@@ -412,8 +414,8 @@ export function MealOptionForm({
                                     domain: "meals",
                                     entityType: "meal_option",
                                     fieldType: "text",
-                                    ingredientProductIds,
-                                    ingredientNames,
+                                    ingredientsWithQuantities: watchedIngredients,
+                                    preparationSteps,
                                 }}
                             />
                         </div>

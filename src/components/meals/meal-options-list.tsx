@@ -31,11 +31,12 @@ import {
 interface MealOptionsListProps {
     mealId: string
     options: MealOption[]
+    preparationSteps?: string[]
     onOptionsChange: (options: MealOption[]) => void
     onEditingChange?: (isEditing: boolean) => void
 }
 
-export function MealOptionsList({ mealId, options, onOptionsChange, onEditingChange }: MealOptionsListProps) {
+export function MealOptionsList({ mealId, options, preparationSteps = [], onOptionsChange, onEditingChange }: MealOptionsListProps) {
     const t = useTranslations("Meals")
     const commonT = useTranslations("Common")
     const [isEditing, setIsEditing] = React.useState(false)
@@ -105,6 +106,7 @@ export function MealOptionsList({ mealId, options, onOptionsChange, onEditingCha
                 <MealOptionForm
                     initialData={editingOption}
                     mealId={mealId}
+                    preparationSteps={preparationSteps}
                     onSave={handleSaveOption}
                     onCancel={() => {
                         setIsEditing(false)

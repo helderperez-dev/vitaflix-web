@@ -207,6 +207,15 @@ export function MealDrawer({ open, onOpenChange, meal }: MealDrawerProps) {
     const optionsCount = watchedOptions.length
     const mealName = watchedName[locale] || Object.values(watchedName).find(value => typeof value === "string" && value.trim().length > 0) as string || "meal"
     const mealIngredientProductIds = Array.from(new Set(watchedOptions.flatMap(option => (option.ingredients || []).map(ingredient => ingredient.productId).filter(Boolean))))
+    
+    // Get ingredients from default option for better image context
+    const defaultOption = watchedOptions.find(o => o.isDefault) || watchedOptions[0]
+    const defaultOptionIngredients = (defaultOption?.ingredients || []).map(ing => ({
+        productId: ing.productId,
+        quantity: ing.quantity,
+        unit: ing.unit
+    }))
+
     const preparationModeTexts = watchedPreparationMode
         .map(step => step?.[locale] || Object.values(step || {}).find(value => typeof value === "string" && value.trim().length > 0))
         .filter((value): value is string => typeof value === "string" && value.trim().length > 0)
@@ -316,8 +325,8 @@ export function MealDrawer({ open, onOpenChange, meal }: MealDrawerProps) {
                                                 domain: "meals",
                                                 entityType: "meal",
                                                 fieldType: "text",
-                                                ingredientProductIds: mealIngredientProductIds,
-                                                preparationModes: preparationModeTexts,
+                                                ingredientsWithQuantities: defaultOptionIngredients,
+                                                preparationSteps: preparationModeTexts,
                                                 cookTimeMinutes: watchedCookTime,
                                             }}
                                         />
@@ -344,10 +353,10 @@ export function MealDrawer({ open, onOpenChange, meal }: MealDrawerProps) {
                                                     domain: "meals",
                                                     entityType: "meal",
                                                     fieldType: "image",
-                                                    ingredientProductIds: mealIngredientProductIds,
-                                                    preparationModes: preparationModeTexts,
+                                                    ingredientsWithQuantities: defaultOptionIngredients,
+                                                    preparationSteps: preparationModeTexts,
                                                     cookTimeMinutes: watchedCookTime,
-                                                    extra: "Base the meal image on title, ingredients and preparation style. Do not render ingredient packshots.",
+                                                    extra: "Base the meal image on title, ingredients and preparation style. The image should accurately reflect how ingredients are cooked and plated. Do not render ingredient packshots.",
                                                 }}
                                             />
                                         </div>
@@ -535,6 +544,7 @@ export function MealDrawer({ open, onOpenChange, meal }: MealDrawerProps) {
                                         <MealOptionsList
                                             mealId={form.watch("id") || formId}
                                             options={form.watch("options") || []}
+                                            preparationSteps={preparationModeTexts}
                                             onOptionsChange={(options) => form.setValue("options", options, { shouldDirty: true })}
                                             onEditingChange={setIsEditingOption}
                                         />

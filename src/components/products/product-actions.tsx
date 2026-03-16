@@ -1,19 +1,17 @@
 "use client"
 
 import * as React from "react"
-import { MoreHorizontal, Edit, Trash, Loader2 } from "lucide-react"
+import { MoreHorizontal, Loader2 } from "lucide-react"
 import { toast } from "sonner"
 
 import {
     DropdownMenu,
     DropdownMenuContent,
     DropdownMenuItem,
-    DropdownMenuLabel,
-    DropdownMenuSeparator,
     DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu"
 import { Button } from "@/components/ui/button"
-import { deleteProduct } from "@/app/actions/products"
+import { deleteProduct, upsertProduct } from "@/app/actions/products"
 import type { Product } from "@/shared-schemas/product"
 import {
     AlertDialog,
@@ -25,7 +23,9 @@ import {
     AlertDialogHeader,
     AlertDialogTitle,
 } from "@/components/ui/alert-dialog"
-import { useTranslations } from "next-intl"
+import { useLocale, useTranslations } from "next-intl"
+import { generateImageWithAI } from "@/app/actions/ai"
+import { createClient } from "@/lib/supabase/client"
 
 interface ProductActionsProps {
     product: Product
@@ -34,9 +34,77 @@ interface ProductActionsProps {
 
 export function ProductActions({ product, onEdit }: ProductActionsProps) {
     const [isDeleting, setIsDeleting] = React.useState(false)
+    const [isGenerating, setIsGenerating] = React.useState(false)
     const [showDeleteConfirm, setShowDeleteConfirm] = React.useState(false)
+    const locale = useLocale()
     const commonT = useTranslations("Common")
     const t = useTranslations("Products")
+    const aiT = useTranslations("AIActions")
+    const supabase = createClient()
+
+    const resolveProductName = React.useMemo(() => {
+        const translated = product.name?.[locale]
+        if (translated?.trim()) return translated.trim()
+        const fallback = Object.values(product.name || {}).find((value) => typeof value === "string" && value.trim().length > 0)
+        return typeof fallback === "string" ? fallback.trim() : "ingredient"
+    }, [locale, product.name])
+
+    async function uploadDataUrl(dataUrl: string) {
+        if (!dataUrl.startsWith("data:")) {
+            throw new Error("Invalid AI image payload")
+        }
+        if (!product.id) {
+            throw new Error("Product id is required")
+        }
+        const response = await fetch(dataUrl)
+        const blob = await response.blob()
+        const extension = blob.type.includes("png") ? "png" : "jpg"
+        const filePath = `products/${product.id}/${crypto.randomUUID()}.${extension}`
+        const { error } = await supabase.storage.from("vitaflix").upload(filePath, blob, {
+            contentType: blob.type || "image/png",
+            upsert: false,
+        })
+        if (error) {
+            throw new Error(error.message)
+        }
+        const { data } = supabase.storage.from("vitaflix").getPublicUrl(filePath)
+        return data.publicUrl
+    }
+
+    async function onGenerateMainImage() {
+        if (!product.id) return
+        setIsGenerating(true)
+        try {
+            const generation = await generateImageWithAI({
+                entityName: resolveProductName,
+                context: t("mediaGallery"),
+                runtimeContext: {
+                    domain: "products",
+                    entityType: "ingredient",
+                    fieldType: "image",
+                },
+            })
+            if (generation.error || !generation.imageDataUrl) {
+                toast.error(generation.error || aiT("genericError"))
+                return
+            }
+            const publicUrl = await uploadDataUrl(generation.imageDataUrl)
+            const images = [{ url: publicUrl, isDefault: true }, ...(product.images || []).map(image => ({ ...image, isDefault: false }))]
+            const saveResult = await upsertProduct({
+                ...product,
+                images,
+            })
+            if (saveResult?.error) {
+                toast.error(saveResult.error)
+                return
+            }
+            toast.success(aiT("imageGenerated"))
+        } catch (error) {
+            toast.error(error instanceof Error ? error.message : aiT("genericError"))
+        } finally {
+            setIsGenerating(false)
+        }
+    }
 
     async function onDelete() {
         if (!product.id) return
@@ -49,7 +117,7 @@ export function ProductActions({ product, onEdit }: ProductActionsProps) {
             } else {
                 toast.success(commonT("deletedSuccessfully"))
             }
-        } catch (err) {
+        } catch {
             toast.error(t("failedToDeleteProducts"))
         } finally {
             setIsDeleting(false)
@@ -63,10 +131,10 @@ export function ProductActions({ product, onEdit }: ProductActionsProps) {
                     <Button
                         variant="ghost"
                         className="h-9 w-9 p-0 rounded-lg hover:bg-primary/5 hover:text-primary transition-all active:scale-95"
-                        disabled={isDeleting}
+                        disabled={isDeleting || isGenerating}
                     >
                         <span className="sr-only">{commonT("actions")}</span>
-                        {isDeleting ? <Loader2 className="h-4 w-4 animate-spin" /> : <MoreHorizontal className="h-4 w-4" />}
+                        {isDeleting || isGenerating ? <Loader2 className="h-4 w-4 animate-spin" /> : <MoreHorizontal className="h-4 w-4" />}
                     </Button>
                 </DropdownMenuTrigger>
                 <DropdownMenuContent
@@ -78,6 +146,13 @@ export function ProductActions({ product, onEdit }: ProductActionsProps) {
                         className="rounded-lg text-[11px] font-semibold py-2.5 px-3 cursor-pointer"
                     >
                         {commonT("editDetails")}
+                    </DropdownMenuItem>
+                    <DropdownMenuItem
+                        onSelect={onGenerateMainImage}
+                        className="rounded-lg text-[11px] font-semibold py-2.5 px-3 cursor-pointer"
+                        disabled={isGenerating}
+                    >
+                        {aiT("generateImage")}
                     </DropdownMenuItem>
                     <DropdownMenuItem
                         onSelect={() => setShowDeleteConfirm(true)}
