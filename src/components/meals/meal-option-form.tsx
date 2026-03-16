@@ -172,6 +172,14 @@ export function MealOptionForm({
     }
 
     const locale = useLocale()
+    const ingredientProductIds = watchedIngredients.map(ingredient => ingredient.productId).filter(Boolean)
+    const ingredientNames = watchedIngredients
+        .map(ingredient => {
+            const entry = productMap[ingredient.productId]
+            if (!entry?.name) return ""
+            return entry.name[locale] || Object.values(entry.name).find(value => typeof value === "string" && value.trim().length > 0) as string || ""
+        })
+        .filter(Boolean)
 
     return (
         <div className="flex flex-col h-full bg-background relative overflow-hidden">
@@ -378,6 +386,17 @@ export function MealOptionForm({
                                 folder={`meal-options/${initialData?.id || 'new'}`}
                                 value={form.watch("images") || []}
                                 onChange={(imgs) => form.setValue("images", imgs)}
+                                enableAI
+                                aiEntityName="meal option"
+                                aiContext={t("optionImages")}
+                                aiRuntimeContext={{
+                                    domain: "meals",
+                                    entityType: "meal_option",
+                                    fieldType: "image",
+                                    ingredientProductIds,
+                                    ingredientNames,
+                                    extra: "Use variation ingredients to style this option image.",
+                                }}
                             />
                         </div>
 
@@ -388,6 +407,14 @@ export function MealOptionForm({
                                 namePrefix="substitutionNotes"
                                 label={t("substitutionNotes")}
                                 placeholder={t("substitutionNotesPlaceholder")}
+                                aiContext={t("substitutionNotesPlaceholder")}
+                                aiRuntimeContext={{
+                                    domain: "meals",
+                                    entityType: "meal_option",
+                                    fieldType: "text",
+                                    ingredientProductIds,
+                                    ingredientNames,
+                                }}
                             />
                         </div>
 
@@ -496,7 +523,7 @@ function IngredientItem({ index, form, productMap, onRemove, onProductCached }: 
                         <MediaDisplay src={product.image.url} alt={productName} />
                     ) : (
                         <div className="h-full w-full bg-muted/20 flex items-center justify-center">
-                            <span className="text-[10px] font-semibold text-muted-foreground/20 italic">PHOTO</span>
+                            <ImageIcon className="h-4 w-4 text-muted-foreground/35" />
                         </div>
                     )}
                 </div>
@@ -590,7 +617,7 @@ function IngredientItem({ index, form, productMap, onRemove, onProductCached }: 
                                             {subProduct?.image?.url ? (
                                                 <MediaDisplay src={subProduct.image.url} alt={subName} />
                                             ) : (
-                                                <div className="text-[8px] font-semibold text-muted-foreground/40">S</div>
+                                                <ImageIcon className="h-3.5 w-3.5 text-muted-foreground/35" />
                                             )}
                                         </div>
                                         <span className="flex-1 text-[11px] font-medium text-secondary truncate">

@@ -141,7 +141,7 @@ export function MealOptionsList({ mealId, options, onOptionsChange, onEditingCha
                         </div>
                         <div className="space-y-1">
                             <p className="text-sm font-semibold text-secondary dark:text-foreground">{t("noOptionsYet")}</p>
-                            <p className="text-[10px] text-muted-foreground/60 max-w-[200px] font-medium leading-relaxed">{t("addOptionDescription")}</p>
+                            <p className="text-[10px] text-muted-foreground/60 max-w-[200px] mx-auto text-center font-medium leading-relaxed">{t("addOptionDescription")}</p>
                         </div>
                     </div>
                 ) : (

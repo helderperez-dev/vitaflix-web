@@ -573,7 +573,9 @@
         "mealNowPublic": "Meal is now public",
         "mealNowPrivate": "Meal is now private",
         "failedToUpdateVisibility": "Failed to update visibility",
-        "step": "Step"
+        "step": "Step",
+        "generateWithAI": "Generate with AI",
+        "generatedWithAI": "Preparation steps generated"
     },
     "Users": {
         "title": "Users",
@@ -669,6 +671,7 @@
         "settings": "Settings",
         "systemHub": "System Hub",
         "platformConfig": "Platform Config",
+        "aiSettings": "AI Settings",
         "notifications": "Notifications",
         "logout": "Log out",
         "adminPanel": "Admin Panel",
@@ -677,6 +680,35 @@
         "darkMode": "Dark mode",
         "admin": "Admin",
         "plansSettings": "Plan Settings"
+    },
+    "AISettings": {
+        "title": "AI Configuration",
+        "description": "Manage prompts for text generation, translation, and image processing.",
+        "textGeneration": "Text Generation",
+        "textEnhancement": "Text Enhancement",
+        "textTranslation": "Text Translation",
+        "imageGeneration": "Image Generation",
+        "imageEnhancement": "Image Enhancement",
+        "promptTemplate": "Prompt Template",
+        "save": "Save Changes",
+        "saved": "Settings saved successfully",
+        "error": "Error saving settings"
+    },
+    "AIActions": {
+        "label": "AI",
+        "generate": "Generate text",
+        "enhance": "Enhance text",
+        "translateAll": "Translate to other languages",
+        "generateImage": "Generate image",
+        "enhanceImage": "Enhance current image",
+        "textGenerated": "Text generated",
+        "textEnhanced": "Text enhanced",
+        "translationsApplied": "Translations applied",
+        "imageGenerated": "Image generated",
+        "imageEnhanced": "Image enhanced",
+        "missingSourceText": "Add source text first",
+        "missingImage": "Upload an image first",
+        "genericError": "Could not process AI request"
     },
     "Plans": {
         "createNewPlan": "Create New Plan",

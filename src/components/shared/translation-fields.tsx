@@ -10,8 +10,8 @@ import { Button } from "@/components/ui/button"
 import { Popover, PopoverContent, PopoverTrigger } from "@/components/ui/popover"
 import { Command, CommandEmpty, CommandGroup, CommandInput, CommandItem, CommandList } from "@/components/ui/command"
 import { getSupportedLanguages } from "@/app/actions/settings"
-import { cn } from "@/lib/utils"
 import { useWatch } from "react-hook-form"
+import { AITextActions } from "./ai-text-actions"
 
 interface TranslationFieldsProps {
     form: any
@@ -20,6 +20,8 @@ interface TranslationFieldsProps {
     type?: "input" | "textarea"
     placeholder?: string
     isRichText?: boolean
+    aiContext?: string
+    aiRuntimeContext?: Record<string, unknown>
 }
 
 import { RichText } from "@/components/ui/rich-text"
@@ -30,7 +32,9 @@ export function TranslationFields({
     label,
     type = "input",
     placeholder,
-    isRichText = false
+    isRichText = false,
+    aiContext,
+    aiRuntimeContext
 }: TranslationFieldsProps) {
     const locale = useLocale()
     const commonT = useTranslations("Common")
@@ -52,6 +56,10 @@ export function TranslationFields({
     const currentTranslations = useWatch({
         control: form.control,
         name: namePrefix,
+    }) || {}
+    const nameTranslations = useWatch({
+        control: form.control,
+        name: "name",
     }) || {}
 
     const activeKeys = Object.keys(currentTranslations).filter(k => currentTranslations[k] !== undefined)
@@ -76,6 +84,14 @@ export function TranslationFields({
         const newTranslations = { ...currentTranslations }
         delete newTranslations[lang]
         form.setValue(namePrefix, newTranslations)
+    }
+
+    const getEntityName = () => {
+        if (typeof nameTranslations?.[locale] === "string" && nameTranslations[locale].trim()) {
+            return nameTranslations[locale].trim()
+        }
+        const fallback = Object.values(nameTranslations || {}).find(value => typeof value === "string" && value.trim().length > 0)
+        return (fallback as string | undefined)?.trim() || ""
     }
 
     const translateErrorMessage = (message: string | undefined) => {
@@ -186,6 +202,23 @@ export function TranslationFields({
                                         </div>
                                         <FormControl>
                                             <div className="relative group/input">
+                                                <div className={`absolute right-2 z-10 ${isRichText ? "top-14" : type === "textarea" ? "top-2" : "top-1/2 -translate-y-1/2"}`}>
+                                                    <AITextActions
+                                                        language={lang}
+                                                        availableLanguages={availableLanguages}
+                                                        value={field.value || ""}
+                                                        allValues={currentTranslations}
+                                                        fieldLabel={label}
+                                                        entityName={getEntityName()}
+                                                        context={aiContext}
+                                                        runtimeContext={aiRuntimeContext}
+                                                        onApply={(value) => form.setValue(`${namePrefix}.${lang}`, value, { shouldDirty: true })}
+                                                        onApplyMany={(values) => {
+                                                            const merged = { ...currentTranslations, ...values }
+                                                            form.setValue(namePrefix, merged, { shouldDirty: true })
+                                                        }}
+                                                    />
+                                                </div>
                                                 {isRichText ? (
                                                     <RichText
                                                         value={field.value}
@@ -195,13 +228,13 @@ export function TranslationFields({
                                                 ) : type === "textarea" ? (
                                                     <Textarea
                                                         placeholder={`${resolvedPlaceholder} (${lang.toUpperCase()})`}
-                                                        className="resize-none min-h-[140px] bg-muted/5 focus:bg-background transition-all duration-300 rounded-lg border-border/40 focus:ring-4 ring-primary/5 p-4 text-sm font-medium leading-relaxed"
+                                                        className="resize-none min-h-[140px] bg-muted/5 focus:bg-background transition-all duration-300 rounded-lg border-border/40 focus:ring-4 ring-primary/5 p-4 pr-12 text-sm font-medium leading-relaxed"
                                                         {...field}
                                                     />
                                                 ) : (
                                                     <Input
                                                         placeholder={`${resolvedPlaceholder} (${lang.toUpperCase()})`}
-                                                        className="h-12 bg-muted/5 focus:bg-background transition-all duration-300 rounded-lg border-border/40 focus:ring-4 ring-primary/5 px-4 text-sm font-medium"
+                                                        className="h-12 bg-muted/5 focus:bg-background transition-all duration-300 rounded-lg border-border/40 focus:ring-4 ring-primary/5 px-4 pr-10 text-sm font-medium"
                                                         {...field}
                                                     />
                                                 )}

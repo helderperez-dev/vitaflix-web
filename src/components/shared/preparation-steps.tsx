@@ -1,9 +1,10 @@
 "use client"
 
 import * as React from "react"
-import { Trash2, Plus, GripVertical, Pencil, MoreHorizontal } from "lucide-react"
+import { Trash2, Plus, GripVertical, Pencil, MoreHorizontal, Sparkles, Loader2 } from "lucide-react"
 import { useTranslations, useLocale } from "next-intl"
 import { useFieldArray } from "react-hook-form"
+import { toast } from "sonner"
 import {
     DndContext,
     closestCenter,
@@ -25,6 +26,7 @@ import { restrictToVerticalAxis, restrictToWindowEdges } from "@dnd-kit/modifier
 import { Button } from "@/components/ui/button"
 import { TranslationFields } from "@/components/shared/translation-fields"
 import { cn } from "@/lib/utils"
+import { generateMealPreparationStepsWithAI } from "@/app/actions/ai"
 import {
     DropdownMenu,
     DropdownMenuContent,
@@ -218,6 +220,7 @@ export function PreparationSteps({ form, namePrefix, label }: PreparationStepsPr
     const [isAdding, setIsAdding] = React.useState(false)
     const [editingIndex, setEditingIndex] = React.useState<number | null>(null)
     const [originalStepValues, setOriginalStepValues] = React.useState<any>(null)
+    const [isGeneratingWithAI, setIsGeneratingWithAI] = React.useState(false)
 
     // Temporary watch for the new step being added
     const newStepValues = form.watch("newPrepStep") || {}
@@ -267,6 +270,53 @@ export function PreparationSteps({ form, namePrefix, label }: PreparationStepsPr
         }
     }
 
+    const handleGenerateAllSteps = async () => {
+        const mealNameTranslations = form.getValues("name") || {}
+        const mealName =
+            mealNameTranslations[locale] ||
+            mealNameTranslations["en"] ||
+            Object.values(mealNameTranslations)[0] ||
+            "Meal"
+
+        const options = form.getValues("options") || []
+        const defaultOption = options.find((option: any) => option?.isDefault) || options[0]
+        const ingredients = (defaultOption?.ingredients || []).map((ingredient: any) => ({
+            productId: ingredient.productId,
+            quantity: Number(ingredient.quantity) || 0,
+            unit: ingredient.unit || "",
+        })).filter((ingredient: any) => ingredient.productId && ingredient.quantity > 0)
+
+        if (ingredients.length === 0) {
+            toast.error(t("noPrepSteps"))
+            return
+        }
+
+        const existingStepTexts = (form.getValues(namePrefix) || [])
+            .map((step: any) => step?.[locale] || step?.en || Object.values(step || {})[0])
+            .filter((step: any) => typeof step === "string" && step.trim().length > 0)
+
+        setIsGeneratingWithAI(true)
+        const result = await generateMealPreparationStepsWithAI({
+            targetLanguage: locale,
+            mealName: String(mealName),
+            ingredients,
+            existingPreparationModes: existingStepTexts,
+            cookTimeMinutes: Number(form.getValues("cookTime") || 0),
+        })
+        setIsGeneratingWithAI(false)
+
+        if (result.error || !result.steps?.length) {
+            toast.error(result.error || commonT("errorSaving"))
+            return
+        }
+
+        const generatedSteps = result.steps.map((step: string) => ({ [locale]: step }))
+        form.setValue(namePrefix, generatedSteps, { shouldDirty: true })
+        setIsAdding(false)
+        setEditingIndex(null)
+        toast.success(t("generatedWithAI"))
+    }
+
     return (
         <div className="space-y-8">
             <div className="flex items-center justify-between gap-4">
@@ -275,15 +325,27 @@ export function PreparationSteps({ form, namePrefix, label }: PreparationStepsPr
                     <div className="h-px w-full bg-border/60" />
                 </div>
                 {!isAdding && editingIndex === null && (
-                    <Button
-                        type="button"
-                        variant="outline"
-                        onClick={() => setIsAdding(true)}
-                        className="h-8 w-auto min-w-[80px] justify-center px-4 text-xs font-semibold border-border/50 bg-transparent text-muted-foreground hover:bg-muted/5 rounded-lg transition-all gap-2"
-                    >
-                        <Plus className="h-3.5 w-3.5 opacity-50" />
-                        {commonT("add")}
-                    </Button>
+                    <div className="flex items-center gap-2">
+                        <Button
+                            type="button"
+                            variant="outline"
+                            onClick={handleGenerateAllSteps}
+                            disabled={isGeneratingWithAI}
+                            className="h-8 w-auto min-w-[80px] justify-center px-4 text-xs font-semibold border-border/50 bg-transparent text-muted-foreground hover:bg-muted/5 rounded-lg transition-all gap-2"
+                        >
+                            {isGeneratingWithAI ? <Loader2 className="h-3.5 w-3.5 animate-spin" /> : <Sparkles className="h-3.5 w-3.5 opacity-60" />}
+                            {t("generateWithAI")}
+                        </Button>
+                        <Button
+                            type="button"
+                            variant="outline"
+                            onClick={() => setIsAdding(true)}
+                            className="h-8 w-auto min-w-[80px] justify-center px-4 text-xs font-semibold border-border/50 bg-transparent text-muted-foreground hover:bg-muted/5 rounded-lg transition-all gap-2"
+                        >
+                            <Plus className="h-3.5 w-3.5 opacity-50" />
+                            {commonT("add")}
+                        </Button>
+                    </div>
                 )}
             </div>
 

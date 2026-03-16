@@ -183,6 +183,12 @@ export function ProductDrawer({ open, onOpenChange, product }: ProductDrawerProp
                                     namePrefix="name"
                                     label={t("table.name")}
                                     placeholder={t("namePlaceholder")}
+                                    aiContext={t("description")}
+                                    aiRuntimeContext={{
+                                        domain: "products",
+                                        entityType: "ingredient",
+                                        fieldType: "text",
+                                    }}
                                 />
 
                                 {/* Media Gallery */}
@@ -197,6 +203,15 @@ export function ProductDrawer({ open, onOpenChange, product }: ProductDrawerProp
                                         folder={`products/${currentId}`}
                                         value={form.watch("images") || []}
                                         onChange={(images) => form.setValue("images", images, { shouldDirty: true })}
+                                        enableAI
+                                        aiEntityName={form.watch(`name.${locale}`) || Object.values(form.watch("name") || {}).find(value => typeof value === "string" && value.trim().length > 0) as string || "product"}
+                                        aiContext={t("mediaGallery")}
+                                        aiRuntimeContext={{
+                                            domain: "products",
+                                            entityType: "ingredient",
+                                            fieldType: "image",
+                                            extra: `Reference amount ${referenceAmount}${unitSymbol}. Focus on the ingredient itself, not a plated meal.`,
+                                        }}
                                     />
                                 </div>
 

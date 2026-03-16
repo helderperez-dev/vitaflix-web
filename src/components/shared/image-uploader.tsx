@@ -1,27 +1,66 @@
 "use client"
 
 import * as React from "react"
-import { UploadCloud, X, Star, Loader2, GripVertical } from "lucide-react"
+import { UploadCloud, X, Star, Loader2, GripVertical, Sparkles, WandSparkles, ImagePlus } from "lucide-react"
 import { toast } from "sonner"
 import type { ProductImage } from "@/shared-schemas/product"
 import { createClient } from "@/lib/supabase/client"
 import { cn } from "@/lib/utils"
 import { MediaDisplay } from "./media-display"
 import { useTranslations } from "next-intl"
+import {
+    DropdownMenu,
+    DropdownMenuContent,
+    DropdownMenuItem,
+    DropdownMenuTrigger,
+} from "@/components/ui/dropdown-menu"
+import { Button } from "@/components/ui/button"
+import { enhanceImageWithAI, generateImageWithAI } from "@/app/actions/ai"
 
 interface ImageUploaderProps {
     folder: string
     value: ProductImage[]
     onChange: (images: ProductImage[]) => void
     maxImages?: number
+    enableAI?: boolean
+    aiEntityName?: string
+    aiContext?: string
+    aiRuntimeContext?: Record<string, unknown>
 }
 
-export function ImageUploader({ folder, value = [], onChange, maxImages = 10 }: ImageUploaderProps) {
+export function ImageUploader({ folder, value = [], onChange, maxImages = 10, enableAI = false, aiEntityName, aiContext, aiRuntimeContext }: ImageUploaderProps) {
     const t = useTranslations("Common")
+    const aiT = useTranslations("AIActions")
     const [isUploading, setIsUploading] = React.useState(false)
+    const [isAiLoading, setIsAiLoading] = React.useState<"generate" | "enhance" | null>(null)
     const [draggedItemIndex, setDraggedItemIndex] = React.useState<number | null>(null)
     const fileInputRef = React.useRef<HTMLInputElement>(null)
     const supabase = createClient()
+
+    const resolveEntityName = React.useMemo(() => {
+        if (aiEntityName?.trim()) return aiEntityName.trim()
+        const folderName = folder.split("/").filter(Boolean).pop()
+        return folderName || "food"
+    }, [aiEntityName, folder])
+
+    const uploadDataUrl = async (dataUrl: string) => {
+        if (!dataUrl.startsWith("data:")) {
+            throw new Error("Invalid AI image payload")
+        }
+        const response = await fetch(dataUrl)
+        const blob = await response.blob()
+        const extension = blob.type.includes("png") ? "png" : "jpg"
+        const filePath = `${folder}/${crypto.randomUUID()}.${extension}`
+        const { error } = await supabase.storage.from("vitaflix").upload(filePath, blob, {
+            contentType: blob.type || "image/png",
+            upsert: false,
+        })
+        if (error) {
+            throw new Error(error.message)
+        }
+        const { data } = supabase.storage.from("vitaflix").getPublicUrl(filePath)
+        return data.publicUrl
+    }
 
     const handleUpload = async (e: React.ChangeEvent<HTMLInputElement>) => {
         const files = Array.from(e.target.files || [])
@@ -98,6 +137,60 @@ export function ImageUploader({ folder, value = [], onChange, maxImages = 10 }: 
         onChange(newImages)
     }
 
+    const handleGenerateWithAI = async () => {
+        setIsAiLoading("generate")
+        try {
+            const result = await generateImageWithAI({
+                entityName: resolveEntityName,
+                context: aiContext,
+                runtimeContext: aiRuntimeContext,
+            })
+            if (result.error || !result.imageDataUrl) {
+                toast.error(result.error || aiT("genericError"))
+                return
+            }
+            const publicUrl = await uploadDataUrl(result.imageDataUrl)
+            const newImages = value.map(image => ({ ...image, isDefault: false }))
+            newImages.push({ url: publicUrl, isDefault: newImages.length === 0 })
+            onChange(newImages)
+            toast.success(aiT("imageGenerated"))
+        } catch (error) {
+            toast.error(error instanceof Error ? error.message : aiT("genericError"))
+        } finally {
+            setIsAiLoading(null)
+        }
+    }
+
+    const handleEnhanceWithAI = async () => {
+        const currentImage = value.find(image => image.isDefault) || value[0]
+        if (!currentImage?.url) {
+            toast.error(aiT("missingImage"))
+            return
+        }
+        setIsAiLoading("enhance")
+        try {
+            const result = await enhanceImageWithAI({
+                imageUrl: currentImage.url,
+                entityName: resolveEntityName,
+                context: aiContext,
+                runtimeContext: aiRuntimeContext,
+            })
+            if (result.error || !result.imageDataUrl) {
+                toast.error(result.error || aiT("genericError"))
+                return
+            }
+            const publicUrl = await uploadDataUrl(result.imageDataUrl)
+            const newImages = value.map(image => ({ ...image, isDefault: false }))
+            newImages.push({ url: publicUrl, isDefault: true })
+            onChange(newImages)
+            toast.success(aiT("imageEnhanced"))
+        } catch (error) {
+            toast.error(error instanceof Error ? error.message : aiT("genericError"))
+        } finally {
+            setIsAiLoading(null)
+        }
+    }
+
     // Drag and Drop handlers for reordering
     const handleDragStart = (e: React.DragEvent, index: number) => {
         setDraggedItemIndex(index)
@@ -124,6 +217,42 @@ export function ImageUploader({ folder, value = [], onChange, maxImages = 10 }: 
 
     return (
         <div className="space-y-4">
+            {enableAI && (
+                <div className="flex justify-end">
+                    <DropdownMenu>
+                        <DropdownMenuTrigger asChild>
+                            <Button
+                                type="button"
+                                variant="outline"
+                                className="h-8 px-3 text-xs font-semibold gap-2 border-border/60"
+                                disabled={isAiLoading !== null || isUploading}
+                            >
+                                {isAiLoading ? <Loader2 className="h-3.5 w-3.5 animate-spin" /> : <Sparkles className="h-3.5 w-3.5" />}
+                                {aiT("label")}
+                            </Button>
+                        </DropdownMenuTrigger>
+                        <DropdownMenuContent align="end" className="w-64">
+                            {value.length === 0 ? (
+                                <DropdownMenuItem onClick={handleGenerateWithAI} disabled={isAiLoading !== null}>
+                                    <ImagePlus className="mr-2 h-4 w-4" />
+                                    {aiT("generateImage")}
+                                </DropdownMenuItem>
+                            ) : (
+                                <>
+                                    <DropdownMenuItem onClick={handleEnhanceWithAI} disabled={isAiLoading !== null}>
+                                        <WandSparkles className="mr-2 h-4 w-4" />
+                                        {aiT("enhanceImage")}
+                                    </DropdownMenuItem>
+                                    <DropdownMenuItem onClick={handleGenerateWithAI} disabled={isAiLoading !== null}>
+                                        <ImagePlus className="mr-2 h-4 w-4" />
+                                        {aiT("generateImage")}
+                                    </DropdownMenuItem>
+                                </>
+                            )}
+                        </DropdownMenuContent>
+                    </DropdownMenu>
+                </div>
+            )}
             <div className="grid grid-cols-2 sm:grid-cols-3 gap-4">
                 {/* Existing Images */}
                 {value.map((image, index) => (

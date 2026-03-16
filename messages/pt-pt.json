@@ -572,7 +572,9 @@
         "mealNowPublic": "A refeição está agora pública",
         "mealNowPrivate": "A refeição está agora privada",
         "failedToUpdateVisibility": "Falha ao atualizar visibilidade",
-        "step": "Passo"
+        "step": "Passo",
+        "generateWithAI": "Gerar com IA",
+        "generatedWithAI": "Passos de preparação gerados"
     },
     "Users": {
         "title": "Utilizadores",
@@ -621,12 +623,42 @@
         "adminPanel": "Painel Adm",
         "systemHub": "Centro do Sistema",
         "platformConfig": "Configuração da Plataforma",
+        "aiSettings": "Definições de IA",
         "language": "Idioma",
         "lightMode": "Modo claro",
         "darkMode": "Modo escuro",
         "admin": "Admin",
         "notifications": "Notificações",
         "plansSettings": "Ajustes de Planos"
+    },
+    "AISettings": {
+        "title": "Configuração de IA",
+        "description": "Gerir prompts para geração, tradução e melhoria de textos e imagens.",
+        "textGeneration": "Geração de Texto",
+        "textEnhancement": "Melhoria de Texto",
+        "textTranslation": "Tradução de Texto",
+        "imageGeneration": "Geração de Imagem",
+        "imageEnhancement": "Melhoria de Imagem",
+        "promptTemplate": "Modelo do Prompt",
+        "save": "Guardar Alterações",
+        "saved": "Definições guardadas com sucesso",
+        "error": "Erro ao guardar definições"
+    },
+    "AIActions": {
+        "label": "IA",
+        "generate": "Gerar texto",
+        "enhance": "Melhorar texto",
+        "translateAll": "Traduzir para outros idiomas",
+        "generateImage": "Gerar imagem",
+        "enhanceImage": "Melhorar imagem atual",
+        "textGenerated": "Texto gerado",
+        "textEnhanced": "Texto melhorado",
+        "translationsApplied": "Traduções aplicadas",
+        "imageGenerated": "Imagem gerada",
+        "imageEnhanced": "Imagem melhorada",
+        "missingSourceText": "Adicione primeiro um texto de origem",
+        "missingImage": "Carregue primeiro uma imagem",
+        "genericError": "Não foi possível processar o pedido de IA"
     },
     "Plans": {
         "createNewPlan": "Criar Novo Plano",

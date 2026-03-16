@@ -6,7 +6,8 @@ import { motion } from "framer-motion"
 import {
     Boxes,
     Settings2,
-    BellRing
+    BellRing,
+    Sparkles
 } from "lucide-react"
 import { Card, CardHeader, CardTitle, CardDescription } from "@/components/ui/card"
 import { Link } from "@/i18n/routing"
@@ -43,6 +44,15 @@ export default function SettingsHubPage_Client() {
                 : "Broadcast management, triggers and user groups.",
             icon: BellRing,
             href: '/settings/notifications',
+        },
+        {
+            id: 'ai',
+            label: navigationT("aiSettings"),
+            description: isPt
+                ? "Prompts para geração, melhoria, tradução de textos e imagens."
+                : "Prompts for generating, improving, and translating text and images.",
+            icon: Sparkles,
+            href: '/settings/ai',
         }
     ]), [isPt, navigationT])
 

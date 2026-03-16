@@ -6,7 +6,7 @@ import { zodResolver } from "@hookform/resolvers/zod"
 import { Loader2, FileText, Layers } from "lucide-react"
 import { motion, AnimatePresence } from "framer-motion"
 import { toast } from "sonner"
-import { useTranslations } from "next-intl"
+import { useLocale, useTranslations } from "next-intl"
 
 import { Button } from "@/components/ui/button"
 import {
@@ -49,6 +49,7 @@ interface MealDrawerProps {
 }
 
 export function MealDrawer({ open, onOpenChange, meal }: MealDrawerProps) {
+    const locale = useLocale()
     const t = useTranslations("Meals")
     const commonT = useTranslations("Common")
     const productsT = useTranslations("Products")
@@ -199,7 +200,16 @@ export function MealDrawer({ open, onOpenChange, meal }: MealDrawerProps) {
         toast.error(commonT("pleaseCheckForm"))
     }
 
-    const optionsCount = (form.watch("options") || []).length
+    const watchedName = form.watch("name") || {}
+    const watchedOptions = form.watch("options") || []
+    const watchedPreparationMode = form.watch("preparationMode") || []
+    const watchedCookTime = form.watch("cookTime") || 0
+    const optionsCount = watchedOptions.length
+    const mealName = watchedName[locale] || Object.values(watchedName).find(value => typeof value === "string" && value.trim().length > 0) as string || "meal"
+    const mealIngredientProductIds = Array.from(new Set(watchedOptions.flatMap(option => (option.ingredients || []).map(ingredient => ingredient.productId).filter(Boolean))))
+    const preparationModeTexts = watchedPreparationMode
+        .map(step => step?.[locale] || Object.values(step || {}).find(value => typeof value === "string" && value.trim().length > 0))
+        .filter((value): value is string => typeof value === "string" && value.trim().length > 0)
 
     return (
         <Sheet open={open} onOpenChange={onOpenChange}>
@@ -301,6 +311,15 @@ export function MealDrawer({ open, onOpenChange, meal }: MealDrawerProps) {
                                             namePrefix="name"
                                             label={t("table.name")}
                                             placeholder={t("namePlaceholder")}
+                                            aiContext={t("description")}
+                                            aiRuntimeContext={{
+                                                domain: "meals",
+                                                entityType: "meal",
+                                                fieldType: "text",
+                                                ingredientProductIds: mealIngredientProductIds,
+                                                preparationModes: preparationModeTexts,
+                                                cookTimeMinutes: watchedCookTime,
+                                            }}
                                         />
 
                                         {/* Media Gallery */}
@@ -318,6 +337,18 @@ export function MealDrawer({ open, onOpenChange, meal }: MealDrawerProps) {
                                                 folder={`meals/${form.watch("id") || formId}`}
                                                 value={form.watch("images") || []}
                                                 onChange={(images) => form.setValue("images", images, { shouldDirty: true })}
+                                                enableAI
+                                                aiEntityName={mealName}
+                                                aiContext={t("mediaGalleryDescription")}
+                                                aiRuntimeContext={{
+                                                    domain: "meals",
+                                                    entityType: "meal",
+                                                    fieldType: "image",
+                                                    ingredientProductIds: mealIngredientProductIds,
+                                                    preparationModes: preparationModeTexts,
+                                                    cookTimeMinutes: watchedCookTime,
+                                                    extra: "Base the meal image on title, ingredients and preparation style. Do not render ingredient packshots.",
+                                                }}
                                             />
                                         </div>
 
