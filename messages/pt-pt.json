@@ -6,7 +6,11 @@
             "testimonials": "Testemunhos",
             "pricing": "Preços",
             "faq": "FAQ",
+            "language": "Idioma",
             "cta": "Garantir acesso"
+        },
+        "WhatsApp": {
+            "text": "Fala comigo! 👋"
         },
         "Hero": {
             "badge": "Vagas limitadas para Beta",

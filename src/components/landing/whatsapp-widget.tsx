@@ -3,8 +3,11 @@
 import Image from "next/image"
 import Link from "next/link"
 import { motion } from "framer-motion"
+import { useTranslations } from "next-intl"
 
 export function WhatsAppWidget() {
+    const t = useTranslations("Landing.WhatsApp")
+
     return (
         <motion.div
             initial={{ opacity: 0, scale: 0.8, y: 20 }}
@@ -20,7 +23,7 @@ export function WhatsAppWidget() {
             >
                 {/* Tooltip-like bubble */}
                 <div className="absolute -top-10 right-0 bg-white px-3 py-1.5 rounded-2xl rounded-tr-none shadow-lg opacity-0 group-hover:opacity-100 transition-opacity duration-300 whitespace-nowrap border border-slate-100 pointer-events-none">
-                    <p className="text-xs font-bold text-slate-700">Fala comigo! 👋</p>
+                    <p className="text-xs font-bold text-slate-700">{t("text")}</p>
                 </div>
 
                 <Image

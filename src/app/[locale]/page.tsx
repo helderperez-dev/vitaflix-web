@@ -138,7 +138,7 @@ export default function LandingPage() {
 
                                 <div className="p-6 border-t border-slate-100 bg-slate-50/50 flex flex-col gap-4">
                                     <div className="flex items-center justify-between px-2">
-                                        <span className="text-sm font-medium text-slate-500">Language</span>
+                                        <span className="text-sm font-medium text-slate-500">{t("language")}</span>
                                         <LanguageSwitcher />
                                     </div>
                                     <Link 
