@@ -27,7 +27,7 @@ export function WhatsAppWidget() {
                 </div>
 
                 <Image
-                    src="/images/bruninho1.png"
+                    src="/images/bruninho.png"
                     alt="Fale com o Bruninho"
                     width={80}
                     height={80}

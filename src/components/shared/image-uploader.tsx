@@ -1,21 +1,14 @@
 "use client"
 
 import * as React from "react"
-import { UploadCloud, X, Star, Loader2, GripVertical, Sparkles, WandSparkles, ImagePlus, Camera, Wand2, Layers } from "lucide-react"
+import { UploadCloud, X, Star, Loader2, GripVertical, WandSparkles } from "lucide-react"
 import { toast } from "sonner"
 import type { ProductImage } from "@/shared-schemas/product"
 import { createClient } from "@/lib/supabase/client"
 import { cn } from "@/lib/utils"
 import { MediaDisplay } from "./media-display"
 import { useTranslations } from "next-intl"
-import {
-    DropdownMenu,
-    DropdownMenuContent,
-    DropdownMenuItem,
-    DropdownMenuTrigger,
-} from "@/components/ui/dropdown-menu"
-import { Button } from "@/components/ui/button"
-import { enhanceImageWithAI, generateImageWithAI, generateImageVariationWithAI } from "@/app/actions/ai"
+import { enhanceImageWithAI } from "@/app/actions/ai"
 import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from "@/components/ui/tooltip"
 
 interface ImageUploaderProps {
@@ -33,7 +26,7 @@ export function ImageUploader({ folder, value = [], onChange, maxImages = 10, en
     const t = useTranslations("Common")
     const aiT = useTranslations("AIActions")
     const [isUploading, setIsUploading] = React.useState(false)
-    const [isAiLoading, setIsAiLoading] = React.useState<"generate" | "enhance" | "variation" | null>(null)
+    const [isAiLoading, setIsAiLoading] = React.useState<"enhance" | null>(null)
     const [aiProcessingIndex, setAiProcessingIndex] = React.useState<number | null>(null)
     const [draggedItemIndex, setDraggedItemIndex] = React.useState<number | null>(null)
     const fileInputRef = React.useRef<HTMLInputElement>(null)
@@ -139,31 +132,6 @@ export function ImageUploader({ folder, value = [], onChange, maxImages = 10, en
         onChange(newImages)
     }
 
-    const handleGenerateWithAI = async () => {
-        setIsAiLoading("generate")
-        setAiProcessingIndex(null)
-        try {
-            const result = await generateImageWithAI({
-                entityName: resolveEntityName,
-                context: aiContext,
-                runtimeContext: aiRuntimeContext,
-            })
-            if (result.error || !result.imageDataUrl) {
-                toast.error(result.error || aiT("genericError"))
-                return
-            }
-            const publicUrl = await uploadDataUrl(result.imageDataUrl)
-            const newImages = value.map(image => ({ ...image, isDefault: false }))
-            newImages.push({ url: publicUrl, isDefault: newImages.length === 0 })
-            onChange(newImages)
-            toast.success(aiT("imageGenerated"))
-        } catch (error) {
-            toast.error(error instanceof Error ? error.message : aiT("genericError"))
-        } finally {
-            setIsAiLoading(null)
-        }
-    }
-
     const handleEnhanceWithAI = async (index?: number) => {
         const targetIndex = typeof index === 'number' ? index : value.findIndex(image => image.isDefault) || 0
         const currentImage = value[targetIndex]
@@ -190,40 +158,6 @@ export function ImageUploader({ folder, value = [], onChange, maxImages = 10, en
             newImages.splice(targetIndex + 1, 0, { url: publicUrl, isDefault: false })
             onChange(newImages)
             toast.success(aiT("imageEnhanced"))
-        } catch (error) {
-            toast.error(error instanceof Error ? error.message : aiT("genericError"))
-        } finally {
-            setIsAiLoading(null)
-            setAiProcessingIndex(null)
-        }
-    }
-
-    const handleGenerateVariationWithAI = async (index: number, variationType: "angle" | "photography" | "sequence") => {
-        const currentImage = value[index]
-        if (!currentImage?.url) {
-            toast.error(aiT("missingImage"))
-            return
-        }
-        setIsAiLoading("variation")
-        setAiProcessingIndex(index)
-        try {
-            const result = await generateImageVariationWithAI({
-                imageUrl: currentImage.url,
-                entityName: resolveEntityName,
-                context: aiContext,
-                runtimeContext: aiRuntimeContext,
-                variationType,
-            })
-            if (result.error || !result.imageDataUrl) {
-                toast.error(result.error || aiT("genericError"))
-                return
-            }
-            const publicUrl = await uploadDataUrl(result.imageDataUrl)
-            const newImages = [...value]
-            // Insert after current
-            newImages.splice(index + 1, 0, { url: publicUrl, isDefault: false })
-            onChange(newImages)
-            toast.success(aiT("imageGenerated"))
         } catch (error) {
             toast.error(error instanceof Error ? error.message : aiT("genericError"))
         } finally {
@@ -259,20 +193,6 @@ export function ImageUploader({ folder, value = [], onChange, maxImages = 10, en
     return (
         <TooltipProvider>
             <div className="space-y-4">
-                {enableAI && (
-                    <div className="flex justify-end">
-                        <Button
-                            type="button"
-                            variant="outline"
-                            className="h-8 px-3 text-xs font-semibold gap-2 border-border/60"
-                            disabled={isAiLoading !== null || isUploading}
-                            onClick={handleGenerateWithAI}
-                        >
-                            {isAiLoading === "generate" ? <Loader2 className="h-3.5 w-3.5 animate-spin" /> : <Sparkles className="h-3.5 w-3.5" />}
-                            {aiT("label")}
-                        </Button>
-                    </div>
-                )}
                 <div className="grid grid-cols-2 sm:grid-cols-3 gap-4">
                     {/* Existing Images */}
                     {value.map((image, index) => (
@@ -335,48 +255,6 @@ export function ImageUploader({ folder, value = [], onChange, maxImages = 10, en
                                                 </button>
                                             </TooltipTrigger>
                                             <TooltipContent className="text-[10px] font-bold uppercase">{aiT("enhanceImage")}</TooltipContent>
-                                        </Tooltip>
-
-                                        <Tooltip>
-                                            <TooltipTrigger asChild>
-                                                <button
-                                                    type="button"
-                                                    onClick={(e) => { e.stopPropagation(); handleGenerateVariationWithAI(index, "angle"); }}
-                                                    disabled={isAiLoading !== null}
-                                                    className="p-2 bg-white/20 hover:bg-white/40 text-white rounded-lg transition-all backdrop-blur-md active:scale-90 disabled:opacity-50"
-                                                >
-                                                    <Camera className="h-4 w-4" />
-                                                </button>
-                                            </TooltipTrigger>
-                                            <TooltipContent className="text-[10px] font-bold uppercase">{aiT("newAngle")}</TooltipContent>
-                                        </Tooltip>
-
-                                        <Tooltip>
-                                            <TooltipTrigger asChild>
-                                                <button
-                                                    type="button"
-                                                    onClick={(e) => { e.stopPropagation(); handleGenerateVariationWithAI(index, "photography"); }}
-                                                    disabled={isAiLoading !== null}
-                                                    className="p-2 bg-white/20 hover:bg-white/40 text-white rounded-lg transition-all backdrop-blur-md active:scale-90 disabled:opacity-50"
-                                                >
-                                                    <Sparkles className="h-4 w-4" />
-                                                </button>
-                                            </TooltipTrigger>
-                                            <TooltipContent className="text-[10px] font-bold uppercase">{aiT("newPhotography")}</TooltipContent>
-                                        </Tooltip>
-
-                                        <Tooltip>
-                                            <TooltipTrigger asChild>
-                                                <button
-                                                    type="button"
-                                                    onClick={(e) => { e.stopPropagation(); handleGenerateVariationWithAI(index, "sequence"); }}
-                                                    disabled={isAiLoading !== null}
-                                                    className="p-2 bg-white/20 hover:bg-white/40 text-white rounded-lg transition-all backdrop-blur-md active:scale-90 disabled:opacity-50"
-                                                >
-                                                    <Layers className="h-4 w-4" />
-                                                </button>
-                                            </TooltipTrigger>
-                                            <TooltipContent className="text-[10px] font-bold uppercase">{aiT("generateVariation")}</TooltipContent>
                                         </Tooltip>
                                     </div>
                                 )}
