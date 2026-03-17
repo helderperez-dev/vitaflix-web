@@ -5,6 +5,7 @@
             "description": "Esqueça as planilhas de excel e as dúvidas no supermercado. A Vitaflix cria seu plano semanal, lista de compras e receitas em segundos."
         },
         "Header": {
+            "video": "Como Funciona",
             "benefits": "Benefícios",
             "method": "Método",
             "testimonials": "Depoimentos",
@@ -14,10 +15,18 @@
             "cta": "Garantir acesso"
         },
         "WhatsApp": {
-            "text": "Fala comigo! 👋"
+            "text": "Fala comigo! 👋",
+            "cta": "Falar no WhatsApp",
+            "message": "Olá! Preciso de ajuda com a Vitaflix."
+        },
+        "PrivacyConsentModal": {
+            "badge": "Conformidade com a LGPD",
+            "title": "Usamos seus dados com responsabilidade",
+            "description": "Para melhorar sua experiência, tratamos dados essenciais conforme as diretrizes da LGPD. Ao continuar, você confirma que concorda com esse uso.",
+            "confirm": "Entendi e concordo"
         },
         "Hero": {
-            "badge": "Vagas limitadas para Beta",
+            "badge": "Vagas limitadas para acesso antecipado",
             "titlePrefix": "Sua nutrição,",
             "titleSuffix": "finalmente simples.",
             "subtitle": "Esqueça as planilhas de excel e as dúvidas no supermercado. A Vitaflix cria seu plano semanal, lista de compras e receitas em segundos.",
@@ -46,6 +55,13 @@
                     "title": "Progresso"
                 }
             }
+        },
+        "VideoIntro": {
+            "badge": "Mensagem do Bruno",
+            "title": "Bruno Cortez fala sobre a Vitaflix",
+            "subtitle": "Assista a este vídeo rápido para entender a visão por trás da Vitaflix e como ela simplifica sua rotina alimentar.",
+            "play": "Reproduzir vídeo de apresentação",
+            "urgency": "As primeiras vagas estão quase fechando. Garanta agora o seu lugar."
         },
         "PainPoints": {
             "label": "No dia a dia",
@@ -154,19 +170,32 @@
         "Testimonials": {
             "label": "Depoimentos",
             "title": "O que os nossos usuários dizem",
-            "subtitle": "Experiências reais de pessoas que simplificaram o planejamento alimentar e ganharam consistência no dia a dia.",
+            "subtitle": "Histórias reais de transformação, consistência e resultados sustentáveis.",
             "items": {
-                "marta": {
-                    "role": "Mãe de 2 filhos",
-                    "quote": "Antes perdia muito tempo decidindo o que cozinhar. Com a Vitaflix passei a planejar a semana em poucos minutos e a família come muito melhor."
+                "raquel": {
+                    "name": "Raquel Araújo",
+                    "role": "Lojista",
+                    "quote": "O teu acompanhamento ajudou bastante e ainda vai ajudar mais!\nTenho apoio, tenho bastantes receitas por onde escolher! Nunca se torna aborrecido e caso me apeteça algo dá sempre para incluir na dieta!"
                 },
-                "diogo": {
-                    "role": "Profissional de TI",
-                    "quote": "A maior diferença foi a consistência. Deixei de improvisar refeições e finalmente consegui manter uma rotina alimentar alinhada com meus objetivos."
+                "vania": {
+                    "name": "Vânia Gandra",
+                    "role": "Perdeu 35 kg",
+                    "quote": "Acabaste por te tornar parte das minhas rotinas.\nFoste de uma ajuda enorme a iniciar a jornada do exercício, a tua presença constante e o feedback dos vídeos.\nA tua ajuda a manter a motivação, o teu apoio nas semanas menos boas.\nTer alguém a empurrar sempre para o caminho certo para não me perder.\nSem ti não teria sido possível perder estes 35 kg.\nObrigada por tudo."
                 },
-                "ines": {
-                    "role": "Estudante-atleta",
-                    "quote": "Gosto da forma simples como tudo está organizado. Tenho variedade, sei as porções certas e não fico perdida quando a semana aperta."
+                "bia": {
+                    "name": "Bia Antunes",
+                    "role": "Atleta",
+                    "quote": "O teu acompanhamento é simplesmente incrível. Antes de me inscrever fazia dietas malucas porque metia na cabeça que estava gorda, mesmo não estando, e cheguei a um extremo.\nDecidi entrar porque já acompanhava o teu trabalho e, quando entrei, a minha visão mudou completamente.\nComecei a comer muito mais, a treinar para construir massa muscular e a ganhar auto-estima. Agora sinto-me muito melhor e com mais energia ao longo do dia.\nSempre que me perguntam o que faço, recomendo este acompanhamento, porque além de nos dar auto-estima também nos dá uma relação muito boa com a comida.\nNo meu caso deixei de ter medo de comer por medo de engordar.\nEstás sempre disponível para qualquer dúvida e não descansas enquanto não ajudares.\nSem dúvida, um acompanhamento completo na alimentação, nos treinos em casa ou no ginásio. Um acompanhamento incrível."
+                },
+                "filomena": {
+                    "name": "Filomena Brás",
+                    "role": "Mãe de dois filhos",
+                    "quote": "Desde que comecei a treinar com o Bruno, a minha relação com o exercício físico mudou completamente.\nTenho uma vida muito exigente e encontrar tempo para mim era quase impossível. Poder treinar em casa, quando consigo, fez toda a diferença.\nOs treinos são adaptados ao que tenho em casa e às minhas necessidades, tornando tudo realista e fácil de integrar na rotina.\nDurante a gravidez, o acompanhamento tornou-se ainda mais especial: os exercícios foram ajustados a cada fase para eu me manter ativa, segura e confiante.\nMesmo nos dias de cansaço, o acompanhamento próximo e a motivação constante ajudam-me a continuar.\nSinto que ganhei uma forma possível e sustentável de cuidar de mim no meio de uma vida cheia."
+                },
+                "carolina": {
+                    "name": "Carolina Pinto",
+                    "role": "Perdeu 20 kg em 1 ano",
+                    "quote": "Durante este ano ajudaste-me em várias coisas, mas a principal foi aprender que este processo é uma mudança de estilo de vida e não uma dieta maluca qualquer.\nUma das melhores partes é continuar a comer de tudo, inclusive os meus pratos favoritos, sem culpa.\nAlém disso, és realista e consegues adaptar tudo à minha vida, mesmo quando ela é imprevisível.\nNoutros acompanhamentos sentia culpa por não conseguir cumprir tudo a 100%, mas contigo nunca senti essa pressão.\nIsso fez-me olhar para o processo com mais carinho e aprender a valorizar cada passo desta caminhada."
                 }
             }
         },
@@ -198,7 +227,8 @@
                         "recipes": "Acesso total a +300 receitas",
                         "planning": "Planejamento semanal completo",
                         "list": "Lista de compras automática",
-                        "filters": "Filtros e variações de macros"
+                        "filters": "Filtros e variações de macros",
+                        "price": "Equivale a 12,99€"
                     }
                 },
                 "quarterly": {
@@ -211,7 +241,7 @@
                         "planning": "Planejamento semanal completo",
                         "list": "Lista de compras automática",
                         "filters": "Filtros e variações de macros",
-                        "price": "Equivale a R$ 55,00/mês"
+                        "price": "Equivale a 9,99€/mês"
                     }
                 },
                 "annual": {
@@ -224,7 +254,7 @@
                         "list": "Lista de compras automática",
                         "filters": "Filtros e variações de macros",
                         "updates": "Acesso aos novos updates",
-                        "price": "Equivale a R$ 32,00/mês"
+                        "price": "Equivale a 7,49€/mês"
                     }
                 }
             }
@@ -274,13 +304,193 @@
                 "contact": "Contato"
             },
             "contact": {
-                "help": "Dúvidas? Estamos aqui para ajudar na sua jornada."
+                "help": "Dúvidas? Estamos aqui para ajudar na sua jornada.",
+                "whatsapp": "Falar no WhatsApp",
+                "madeWith": "Feito com",
+                "inPortugal": "em Portugal"
             },
             "rights": "Todos os direitos reservados.",
             "links": {
                 "privacy": "Privacidade",
                 "terms": "Termos",
                 "contact": "Contatos"
+            },
+            "privacyModal": {
+                "title": "VITAFLIX — POLÍTICA DE PRIVACIDADE",
+                "intro": "Esta política explica como a Vitaflix coleta, usa e protege seus dados pessoais.",
+                "contactLabel": "Para exercer seus direitos, entre em contato:",
+                "sections": [
+                    {
+                        "title": "1. Dados Coletados",
+                        "bullets": [
+                            "Identificação: Nome, email, idade.",
+                            "Perfil: Gênero, peso, objetivos.",
+                            "Saúde e Hábitos: Dados inseridos voluntariamente sobre alimentação, exercícios e hábitos registrados.",
+                            "Dados Técnicos: Endereço IP, tipo de dispositivo, logs de acesso e geolocalização aproximada."
+                        ]
+                    },
+                    {
+                        "title": "2. Dados Sensíveis (Saúde)",
+                        "paragraphs": [
+                            "Os dados relacionados à saúde são considerados de categoria especial (Art. 9 do GDPR/RGPD). A Vitaflix trata esses dados apenas com seu consentimento explícito, manifestado ao usar as funcionalidades de registro e planejamento do aplicativo."
+                        ]
+                    },
+                    {
+                        "title": "3. Finalidade do Tratamento",
+                        "bullets": [
+                            "Personalizar a experiência do usuário e gerar sugestões de planos.",
+                            "Processar pagamentos e assinaturas.",
+                            "Garantir a segurança da plataforma e prevenir fraudes ou compartilhamento indevido de contas.",
+                            "Melhorar o desempenho técnico e funcional do aplicativo."
+                        ]
+                    },
+                    {
+                        "title": "4. Base Legal",
+                        "paragraphs": [
+                            "O tratamento se baseia na execução do contrato de assinatura, no consentimento do usuário e no cumprimento de obrigações legais e fiscais."
+                        ]
+                    },
+                    {
+                        "title": "5. Compartilhamento de Dados",
+                        "paragraphs": [
+                            "Os dados de pagamento são compartilhados exclusivamente com as plataformas Stripe e PayPal. A Vitaflix não vende nem comercializa dados pessoais de usuários para terceiros."
+                        ]
+                    },
+                    {
+                        "title": "6. Retenção de Dados e Segurança Técnica",
+                        "paragraphs": [
+                            "Os dados são mantidos enquanto a conta estiver ativa.",
+                            "Nota de segurança: Mesmo após o pedido de exclusão da conta, a Vitaflix manterá dados de transação, identificação e logs de acesso pelo período legal de 10 anos para fins fiscais e para defesa de direitos em caso de disputas financeiras ou chargebacks."
+                        ]
+                    },
+                    {
+                        "title": "7. Direitos do Usuário",
+                        "paragraphs": [
+                            "Nos termos do GDPR/RGPD, o usuário tem direito a: Acesso, Retificação, Eliminação, Portabilidade e Oposição."
+                        ]
+                    },
+                    {
+                        "title": "8. Transparência de Conteúdo Visual",
+                        "paragraphs": [
+                            "A Vitaflix utiliza fotografias originais de suas receitas. Informamos que as imagens podem passar por ajustes de cor e luz para melhorar a experiência visual na plataforma, sem prejuízo da veracidade dos ingredientes apresentados."
+                        ]
+                    },
+                    {
+                        "title": "9. Cookies e Tracking",
+                        "paragraphs": [
+                            "A plataforma utiliza cookies técnicos para gestão de sessão e ferramentas de análise para medir a eficiência e segurança do serviço. O usuário pode gerenciar as preferências de cookies no seu dispositivo."
+                        ]
+                    },
+                    {
+                        "title": "10. Segurança",
+                        "paragraphs": [
+                            "Adotamos medidas técnicas e organizacionais para proteger seus dados contra acessos não autorizados, perda ou destruição acidental."
+                        ]
+                    },
+                    {
+                        "title": "11. Alterações",
+                        "paragraphs": [
+                            "Esta política pode ser atualizada periodicamente. As alterações entram em vigor após sua publicação na plataforma e notificação aos usuários."
+                        ]
+                    }
+                ]
+            },
+            "termsModal": {
+                "title": "VITAFLIX — TERMOS & CONDIÇÕES",
+                "intro": "Estes termos definem as regras de uso da Vitaflix e os direitos e deveres da assinatura.",
+                "sections": [
+                    {
+                        "title": "1. Objeto e Licença de Utilização",
+                        "paragraphs": [
+                            "A Vitaflix é uma plataforma digital por assinatura que disponibiliza conteúdos educativos, receitas e ferramentas de planejamento para um estilo de vida saudável.",
+                            "Ao assinar, a Vitaflix concede ao usuário uma licença de utilização temporária, pessoal, revogável e não exclusiva, estritamente condicionada à manutenção de uma assinatura ativa.",
+                            "A Vitaflix não presta aconselhamento médico, nutricional ou terapêutico personalizado. O conteúdo é meramente informativo e não substitui o acompanhamento por profissionais de saúde qualificados."
+                        ]
+                    },
+                    {
+                        "title": "2. Elegibilidade",
+                        "paragraphs": [
+                            "A utilização da plataforma é permitida apenas a usuários com idade igual ou superior a 18 anos. O usuário declara que todas as informações fornecidas no cadastro são verdadeiras, completas e atualizadas."
+                        ]
+                    },
+                    {
+                        "title": "3. Conta de Usuário e Segurança",
+                        "paragraphs": [
+                            "A conta é pessoal, individual e intransferível."
+                        ],
+                        "bullets": [
+                            "Segurança: O usuário é o único responsável pela confidencialidade de suas credenciais.",
+                            "Limitação de Dispositivos: O acesso é limitado à utilização em dispositivos de uso pessoal.",
+                            "Monitoramento: A Vitaflix reserva-se o direito de monitorar padrões de acesso (incluindo endereços IP, geolocalização e identificação de dispositivos). O acesso sistemático por localizações geográficas incompatíveis ou IPs distintos em curtos intervalos de tempo será sinalizado como uso abusivo, resultando na suspensão imediata da conta sem direito a reembolso por violação dos termos."
+                        ]
+                    },
+                    {
+                        "title": "4. Assinaturas, Pagamentos e Renovação",
+                        "bullets": [
+                            "4.1 Tipos de Assinatura: A Vitaflix disponibiliza planos de assinatura trimestral e anual.",
+                            "4.2 Pagamentos: Processados de forma segura via Stripe ou PayPal. A Vitaflix não armazena dados bancários ou de cartões.",
+                            "4.3 Renovação Automática: As assinaturas renovam-se automaticamente ao final de cada período, salvo cancelamento efetuado pelo usuário antes da data de renovação.",
+                            "4.4 Cancelamento e Cessação de Acesso: O cancelamento impede renovações futuras, mantendo-se o acesso até o fim do período já pago. Após o término do período de assinatura ativa, o acesso à plataforma, receitas, planos salvos e histórico será imediatamente revogado, não existindo direito de posse, download ou acesso offline ao conteúdo."
+                        ]
+                    },
+                    {
+                        "title": "5. Renúncia ao Direito de Arrependimento (Conteúdo Digital)",
+                        "paragraphs": [
+                            "Ao assinar a Vitaflix, o usuário reconhece e aceita expressamente que:"
+                        ],
+                        "bullets": [
+                            "1. O acesso ao conteúdo digital é disponibilizado imediatamente após a confirmação do pagamento.",
+                            "2. Nos termos do Artigo 17.º do Decreto-Lei n.º 24/2014, o usuário consente na execução imediata do serviço.",
+                            "3. O usuário reconhece que perde o direito de arrependimento (reembolso em 14 dias) assim que inicia o acesso à plataforma ou realiza o primeiro login.",
+                            "Por este motivo, não são concedidos reembolsos após o início do uso do serviço."
+                        ]
+                    },
+                    {
+                        "title": "6. Chargebacks, Disputas e Prova de Utilização",
+                        "paragraphs": [
+                            "Em caso de disputa de pagamento (chargeback) ou reclamação junto a entidades financeiras:"
+                        ],
+                        "bullets": [
+                            "A Vitaflix apresentará os logs técnicos de acesso (IP, data, hora e histórico de utilização) como prova irrefutável de entrega e utilização efetiva do serviço digital.",
+                            "A Vitaflix reserva-se o direito de suspender a conta e bloquear futuras assinaturas associadas ao mesmo usuário, email ou método de pagamento em caso de fraude ou disputa injustificada."
+                        ]
+                    },
+                    {
+                        "title": "7. Responsabilidade do Usuário e Saúde",
+                        "paragraphs": [
+                            "O usuário assume total responsabilidade pelas decisões tomadas com base nos conteúdos. As sugestões de calorias e planos são orientativas. É obrigatória a consulta médica antes de seguir qualquer plano, especialmente em caso de alergias, doenças crônicas, gravidez ou amamentação. A Vitaflix não se responsabiliza por efeitos adversos decorrentes da má interpretação ou aplicação das receitas."
+                        ]
+                    },
+                    {
+                        "title": "8. Propriedade Intelectual e Conteúdo Visual",
+                        "paragraphs": [
+                            "Todo o conteúdo (textos, design, marcas e software) é propriedade exclusiva da Vitaflix."
+                        ],
+                        "bullets": [
+                            "Imagens Reais: As fotografias de receitas apresentadas são produções reais e originais.",
+                            "Edição Visual: O conteúdo visual pode ser submetido a processos de edição (otimização de cor, brilho e contraste) para fins estéticos e de clareza. O resultado final das receitas preparadas pelo usuário pode variar, tendo as imagens caráter ilustrativo do resultado potencial.",
+                            "Proibição: É proibida qualquer reprodução, cópia, distribuição ou utilização comercial do conteúdo sem autorização prévia por escrito."
+                        ]
+                    },
+                    {
+                        "title": "9. Comunicações",
+                        "paragraphs": [
+                            "A Vitaflix poderá enviar notificações relacionadas ao serviço e comunicações promocionais. O usuário pode optar por não receber estas últimas a qualquer momento nas configurações da conta."
+                        ]
+                    },
+                    {
+                        "title": "10. Alterações aos Termos",
+                        "paragraphs": [
+                            "A Vitaflix reserva-se o direito de atualizar estes Termos. As alterações serão notificadas no app ou por email. O uso continuado do serviço constitui aceitação dos novos termos."
+                        ]
+                    },
+                    {
+                        "title": "11. Lei Aplicável e Foro",
+                        "paragraphs": [
+                            "Os presentes termos regem-se pela legislação portuguesa e da União Europeia. Qualquer litígio será submetido aos tribunais portugueses da comarca da sede da plataforma."
+                        ]
+                    }
+                ]
             }
         }
     },

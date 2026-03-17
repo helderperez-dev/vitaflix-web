@@ -7,6 +7,7 @@ import { useTranslations } from "next-intl"
 
 export function WhatsAppWidget() {
     const t = useTranslations("Landing.WhatsApp")
+    const whatsappUrl = `https://wa.me/351915466286?text=${encodeURIComponent(t("message"))}`
 
     return (
         <motion.div
@@ -16,7 +17,7 @@ export function WhatsAppWidget() {
             className="fixed bottom-6 right-6 z-50 group"
         >
             <Link
-                href="https://api.whatsapp.com/send/?phone=351915466286&text=Ol%C3%A1+Bruno%21+Vi+que+fazes+acompanhamento+de+treino+e+alimenta%C3%A7%C3%A3o.+Podes+dar-me+mais+informa%C3%A7%C3%B5es%3F&type=phone_number&app_absent=0"
+                href={whatsappUrl}
                 target="_blank"
                 rel="noopener noreferrer"
                 className="relative block w-20 h-20 hover:scale-110 transition-transform duration-300 origin-bottom-right"

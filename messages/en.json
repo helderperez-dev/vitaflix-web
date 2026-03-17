@@ -5,6 +5,7 @@
             "description": "Forget Excel sheets and supermarket doubts. Vitaflix creates your weekly plan, shopping list, and recipes in seconds."
         },
         "Header": {
+            "video": "How It Works",
             "benefits": "Benefits",
             "method": "Method",
             "testimonials": "Testimonials",
@@ -14,10 +15,18 @@
             "cta": "Get Access"
         },
         "WhatsApp": {
-            "text": "Chat with me! 👋"
+            "text": "Chat with me! 👋",
+            "cta": "Chat on WhatsApp",
+            "message": "Hi! I need help with Vitaflix."
+        },
+        "PrivacyConsentModal": {
+            "badge": "GDPR compliance",
+            "title": "We use your data responsibly",
+            "description": "To improve your experience, we process essential data according to GDPR guidelines. By continuing, you confirm that you agree with this use.",
+            "confirm": "I understand and agree"
         },
         "Hero": {
-            "badge": "Limited Beta Spots",
+            "badge": "Limited early access spots",
             "titlePrefix": "Your nutrition,",
             "titleSuffix": "finally simple.",
             "subtitle": "Forget Excel sheets and supermarket doubts. Vitaflix creates your weekly plan, shopping list, and recipes in seconds.",
@@ -46,6 +55,13 @@
                     "title": "Progress"
                 }
             }
+        },
+        "VideoIntro": {
+            "badge": "A Message From Bruno",
+            "title": "Bruno Cortez talks about Vitaflix",
+            "subtitle": "Watch this quick video to see the vision behind Vitaflix and how it helps you simplify your nutrition routine.",
+            "play": "Play welcome video",
+            "urgency": "Early access spots are almost gone. Secure your place now."
         },
         "PainPoints": {
             "label": "Day to day",
@@ -154,19 +170,32 @@
         "Testimonials": {
             "label": "Testimonials",
             "title": "What our users say",
-            "subtitle": "Real experiences from people who simplified meal planning and gained consistency in their daily lives.",
+            "subtitle": "Real stories of change, consistency, and sustainable results.",
             "items": {
-                "marta": {
-                    "role": "Mother of 2",
-                    "quote": "Before I wasted so much time deciding what to cook. With Vitaflix I started planning the week in a few minutes and the family eats much better."
+                "raquel": {
+                    "name": "Raquel Araújo",
+                    "role": "Shop owner",
+                    "quote": "Your guidance helped a lot and it will help even more!\nI have support, I have plenty of recipes to choose from. It never gets boring, and if I feel like something different there is always a way to fit it into the diet!"
                 },
-                "diogo": {
-                    "role": "IT Professional",
-                    "quote": "The biggest difference was consistency. I stopped improvising meals and finally managed to maintain a diet routine aligned with my goals."
+                "vania": {
+                    "name": "Vânia Gandra",
+                    "role": "Lost 35 kg",
+                    "quote": "You ended up becoming part of my routines.\nYou were a huge help to start the exercise journey: your constant presence and your feedback on the videos.\nYour help to keep motivation and your support in the less good weeks.\nHaving someone always pushing me back to the right path so I wouldn’t get lost.\nWithout you, losing these 35 kg wouldn’t have been possible.\nThank you for everything."
                 },
-                "ines": {
-                    "role": "Student-athlete",
-                    "quote": "I like the simple way everything is organized. I have variety, I know the right portions, and I don't get lost when the week gets tight."
+                "bia": {
+                    "name": "Bia Antunes",
+                    "role": "Athlete",
+                    "quote": "Your guidance is simply incredible. Before joining, I did crazy diets because I kept thinking I was fat (even when I wasn’t), and it got extreme.\nI decided to join because I’d been following your work for a while, and when I joined my perspective completely changed.\nI started eating much more and training to build muscle and gain confidence. Now I feel so much better and I have more energy throughout the day.\nWhenever people ask what I’m doing, I always recommend this program. It builds confidence and gives you a much healthier relationship with food.\nIn my case, I stopped being afraid to eat because I was afraid of gaining weight.\nAnd you’re always available for any questions, and you don’t rest until everything is clear.\nA complete program with nutrition and training, whether at home or in the gym. Truly incredible."
+                },
+                "filomena": {
+                    "name": "Filomena Brás",
+                    "role": "Mother of two",
+                    "quote": "Since I started training with Bruno, my relationship with exercise has completely changed.\nI have a demanding life, long work hours, and two kids, so finding time for myself felt almost impossible. Being able to train at home, when I can, made all the difference.\nWorkouts are adapted to what I have at home and to my needs, which makes everything realistic and easier to fit into my routine.\nDuring my pregnancy, this support became even more special. Bruno adjusted the exercises for each phase so I could stay active, safe, and confident.\nEven on days when I’m tired, the close follow-up and constant motivation make it much easier to keep going.\nMore than workouts, I feel like I gained a sustainable way to take care of myself in the middle of a full life."
+                },
+                "carolina": {
+                    "name": "Carolina Pinto",
+                    "role": "Lost 20 kg in 1 year",
+                    "quote": "Over this year you helped me in many ways, but the most important was learning that weight loss is a lifestyle change, not a crazy diet.\nOne of the best parts is that I can still eat everything, including my favorite dishes, without guilt.\nOn top of that, you’re realistic and you adapt things to my life, even when life is unpredictable.\nIn other programs I often felt guilty for not following the plan perfectly, but I never felt that pressure from you.\nThat helped me look at this process with more kindness and appreciate every step along the way."
                 }
             }
         },
@@ -198,7 +227,8 @@
                         "recipes": "Full access to +300 recipes",
                         "planning": "Complete weekly planning",
                         "list": "Automatic shopping list",
-                        "filters": "Macro filters and variations"
+                        "filters": "Macro filters and variations",
+                        "price": "Equivalent to €12.99"
                     }
                 },
                 "quarterly": {
@@ -224,7 +254,7 @@
                         "list": "Automatic shopping list",
                         "filters": "Macro filters and variations",
                         "updates": "Access to new updates",
-                        "price": "Equivalent to €5.83/month"
+                        "price": "Equivalent to €7.49/month"
                     }
                 }
             }
@@ -274,13 +304,192 @@
                 "contact": "Contact"
             },
             "contact": {
-                "help": "Questions? We are here to help on your journey."
+                "help": "Questions? We are here to help on your journey.",
+                "whatsapp": "Chat on WhatsApp",
+                "madeWith": "Made with",
+                "inPortugal": "in Portugal"
             },
             "rights": "All rights reserved.",
             "links": {
                 "privacy": "Privacy",
                 "terms": "Terms",
                 "contact": "Contact"
+            },
+            "privacyModal": {
+                "title": "VITAFLIX — PRIVACY POLICY",
+                "intro": "This policy explains how Vitaflix collects, uses, and protects your personal data.",
+                "contactLabel": "To exercise your rights, contact:",
+                "sections": [
+                    {
+                        "title": "1. Data Collected",
+                        "bullets": [
+                            "Identification: Name, email, age.",
+                            "Profile: Gender, weight, goals.",
+                            "Health and Habits: Data voluntarily entered about nutrition, exercise, and recorded habits.",
+                            "Technical Data: IP address, device type, access logs, and approximate geolocation."
+                        ]
+                    },
+                    {
+                        "title": "2. Sensitive Data (Health)",
+                        "paragraphs": [
+                            "Health-related data is considered a special category of data (Art. 9 GDPR). Vitaflix processes this data only with your explicit consent, provided when using the app's logging and planning features."
+                        ]
+                    },
+                    {
+                        "title": "3. Purpose of Processing",
+                        "bullets": [
+                            "Personalize the user experience and generate plan suggestions.",
+                            "Process payments and subscriptions.",
+                            "Ensure platform security and prevent fraud or improper account sharing.",
+                            "Improve the app's technical and functional performance."
+                        ]
+                    },
+                    {
+                        "title": "4. Legal Basis",
+                        "paragraphs": [
+                            "Processing is based on subscription contract execution, user consent, and compliance with legal and tax obligations."
+                        ]
+                    },
+                    {
+                        "title": "5. Data Sharing",
+                        "paragraphs": [
+                            "Payment data is shared exclusively with Stripe and PayPal platforms. Vitaflix does not sell or trade users' personal data with third parties."
+                        ]
+                    },
+                    {
+                        "title": "6. Data Retention and Technical Security",
+                        "paragraphs": [
+                            "Data is retained while the account is active.",
+                            "Security note: Even after account deletion is requested, Vitaflix will retain transaction data, identification data, and access logs for the legal period of 10 years for tax purposes and defense of rights in financial disputes or chargebacks."
+                        ]
+                    },
+                    {
+                        "title": "7. User Rights",
+                        "paragraphs": [
+                            "Under GDPR, the user has the right to Access, Rectification, Erasure, Portability, and Objection."
+                        ]
+                    },
+                    {
+                        "title": "8. Visual Content Transparency",
+                        "paragraphs": [
+                            "Vitaflix uses original photographs of its recipes. We inform that images may undergo color and lighting editing to improve the visual experience on the platform, without affecting the truthfulness of the ingredients shown."
+                        ]
+                    },
+                    {
+                        "title": "9. Cookies and Tracking",
+                        "paragraphs": [
+                            "The platform uses technical cookies for session management and analytics tools to measure service efficiency and security. Users can manage cookie preferences on their device."
+                        ]
+                    },
+                    {
+                        "title": "10. Security",
+                        "paragraphs": [
+                            "We adopt technical and organizational measures to protect your data against unauthorized access, loss, or accidental destruction."
+                        ]
+                    },
+                    {
+                        "title": "11. Changes",
+                        "paragraphs": [
+                            "This policy may be updated periodically. Changes take effect after publication on the platform and notification to users."
+                        ]
+                    }
+                ]
+            },
+            "termsModal": {
+                "title": "VITAFLIX — TERMS & CONDITIONS",
+                "intro": "These terms define the rules for using Vitaflix and your subscription rights and obligations.",
+                "sections": [
+                    {
+                        "title": "1. Purpose and License of Use",
+                        "paragraphs": [
+                            "Vitaflix is a subscription-based digital platform that provides educational content, recipes, and planning tools for a healthy lifestyle. By subscribing, Vitaflix grants the user a temporary, personal, revocable, and non-exclusive license of use, strictly conditioned on maintaining an active subscription.",
+                            "Vitaflix does not provide personalized medical, nutritional, or therapeutic advice. The content is for informational purposes only and does not replace follow-up with qualified health professionals."
+                        ]
+                    },
+                    {
+                        "title": "2. Eligibility",
+                        "paragraphs": [
+                            "Use of the platform is only permitted for users aged 18 or older. The user declares that all information provided during registration is true, complete, and up to date."
+                        ]
+                    },
+                    {
+                        "title": "3. User Account and Security",
+                        "paragraphs": [
+                            "The account is personal, individual, and non-transferable."
+                        ],
+                        "bullets": [
+                            "Security: The user is solely responsible for the confidentiality of their credentials.",
+                            "Device Limitation: Access is limited to use on personal devices.",
+                            "Monitoring: Vitaflix reserves the right to monitor access patterns (including IP addresses, geolocation, and device identification). Systematic access through incompatible geographic locations or distinct IPs within short time intervals will be flagged as abusive use, resulting in immediate account suspension without refund for breach of terms."
+                        ]
+                    },
+                    {
+                        "title": "4. Subscriptions, Payments, and Renewal",
+                        "bullets": [
+                            "4.1 Subscription Types: Vitaflix offers quarterly and annual subscription plans.",
+                            "4.2 Payments: Processed securely via Stripe or PayPal. Vitaflix does not store bank or card data.",
+                            "4.3 Automatic Renewal: Subscriptions renew automatically at the end of each period unless canceled by the user before the renewal date.",
+                            "4.4 Cancellation and End of Access: Cancellation prevents future renewals, while access remains until the end of the already paid period. After the active subscription period ends, access to the platform, recipes, saved plans, and history is immediately revoked. There is no ownership right, download right, or offline access to the content."
+                        ]
+                    },
+                    {
+                        "title": "5. Waiver of the Right of Withdrawal (Digital Content)",
+                        "paragraphs": [
+                            "By subscribing to Vitaflix, the user acknowledges and expressly accepts that:"
+                        ],
+                        "bullets": [
+                            "1. Access to digital content is made available immediately after payment confirmation.",
+                            "2. Under Article 17 of Decree-Law no. 24/2014, the user consents to the immediate execution of the service.",
+                            "3. The user acknowledges that they lose the right of withdrawal (14-day refund) as soon as access to the platform begins or the first login is performed.",
+                            "For this reason, refunds are not granted after use of the service has started."
+                        ]
+                    },
+                    {
+                        "title": "6. Chargebacks, Disputes, and Proof of Use",
+                        "paragraphs": [
+                            "In case of a payment dispute (chargeback) or claim with financial institutions:"
+                        ],
+                        "bullets": [
+                            "Vitaflix will provide technical access logs (IP, date, time, and usage history) as irrefutable proof of delivery and effective use of the digital service.",
+                            "Vitaflix reserves the right to suspend the account and block future subscriptions associated with the same user, email, or payment method in case of fraud or unjustified dispute."
+                        ]
+                    },
+                    {
+                        "title": "7. User Responsibility and Health",
+                        "paragraphs": [
+                            "The user assumes full responsibility for decisions made based on the content. Calorie suggestions and plans are for guidance only. Medical consultation is mandatory before following any plan, especially in case of allergies, chronic diseases, pregnancy, or breastfeeding. Vitaflix is not liable for adverse effects resulting from misinterpretation or improper application of recipes."
+                        ]
+                    },
+                    {
+                        "title": "8. Intellectual Property and Visual Content",
+                        "paragraphs": [
+                            "All content (texts, design, trademarks, and software) is the exclusive property of Vitaflix."
+                        ],
+                        "bullets": [
+                            "Real Images: The recipe photographs shown are real and original productions.",
+                            "Visual Editing: Visual content may undergo editing processes (color, brightness, and contrast optimization) for aesthetic and clarity purposes. Final results of recipes prepared by the user may vary, and images have an illustrative character of the potential outcome.",
+                            "Prohibition: Any reproduction, copying, distribution, or commercial use of content without prior written authorization is prohibited."
+                        ]
+                    },
+                    {
+                        "title": "9. Communications",
+                        "paragraphs": [
+                            "Vitaflix may send service-related notifications and promotional communications. The user may opt out of promotional communications at any time in account settings."
+                        ]
+                    },
+                    {
+                        "title": "10. Changes to the Terms",
+                        "paragraphs": [
+                            "Vitaflix reserves the right to update these Terms. Changes will be notified in the app or by email. Continued use of the service constitutes acceptance of the new terms."
+                        ]
+                    },
+                    {
+                        "title": "11. Applicable Law and Jurisdiction",
+                        "paragraphs": [
+                            "These terms are governed by Portuguese and European Union law. Any dispute will be submitted to the Portuguese courts in the district of the platform's headquarters."
+                        ]
+                    }
+                ]
             }
         }
     },

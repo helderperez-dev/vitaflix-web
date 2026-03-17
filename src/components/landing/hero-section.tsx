@@ -10,19 +10,19 @@ import { useTranslations } from "next-intl"
 const heroPersonas = [
     {
         name: "Marta · Mãe ocupada",
-        avatar: "/avatars/persona-marta.svg",
+        avatar: "/avatars/user-1.png",
     },
     {
         name: "Diogo · Profissional ativo",
-        avatar: "/avatars/persona-diogo.svg",
+        avatar: "/avatars/user-2.png",
     },
     {
         name: "Inês · Estudante-atleta",
-        avatar: "/avatars/persona-ines.svg",
+        avatar: "/avatars/user-3.png",
     },
     {
         name: "Rui · Foco em recomposição",
-        avatar: "/avatars/persona-rui.svg",
+        avatar: "/avatars/user-4.png",
     }
 ]
 
@@ -118,7 +118,7 @@ export function HeroSection() {
                                     <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-primary opacity-75"></span>
                                     <span className="relative inline-flex rounded-full h-2 w-2 bg-primary"></span>
                                 </span>
-                                <span className="text-xs font-bold tracking-wide text-slate-700 uppercase">
+                                <span className="text-xs font-semibold tracking-normal text-slate-700">
                                     {t("badge")}
                                 </span>
                             </div>
@@ -169,7 +169,7 @@ export function HeroSection() {
                     </div>
 
                     {/* Right Column: Floating Cards Composition */}
-                    <div className="relative h-[450px] sm:h-[600px] lg:h-[700px] w-full mt-12 lg:mt-0 perspective-[1000px] flex items-center justify-center">
+                    <div className="relative h-[560px] sm:h-[600px] lg:h-[700px] w-full mt-12 lg:mt-0 perspective-[1000px] flex items-center justify-center">
                         <motion.div style={{ y: 0, opacity: 1 }} className="absolute inset-0 flex items-center justify-center">
                             
                             {/* Central High-Def iPhone Mockup */}

@@ -2,6 +2,7 @@
 
 import { useEffect, useState } from "react"
 import { HeroSection } from "@/components/landing/hero-section"
+import { WelcomeVideoSection } from "@/components/landing/welcome-video-section"
 import { PainPoints } from "@/components/landing/pain-points"
 import { SolutionFeatures } from "@/components/landing/solution-features"
 import { FounderSection } from "@/components/landing/founder-section"
@@ -11,6 +12,7 @@ import { FaqSection } from "@/components/landing/faq-section"
 import { CtaSection } from "@/components/landing/cta-section"
 import { Footer } from "@/components/landing/footer"
 import { WhatsAppWidget } from "@/components/landing/whatsapp-widget"
+import { PrivacyConsentModal } from "@/components/landing/privacy-consent-modal"
 import { LanguageSwitcher } from "@/components/landing/language-switcher"
 import { Sheet, SheetContent, SheetTrigger, SheetHeader, SheetTitle } from "@/components/ui/sheet"
 import { Menu } from "lucide-react"
@@ -65,6 +67,7 @@ export function LandingPage() {
                             "hidden items-center text-sm font-semibold text-slate-700 md:flex transition-all duration-300",
                             isScrolled ? "gap-7" : "gap-9"
                         )}>
+                            <Link href="#video" className="hover:text-primary transition-all">{t("video")}</Link>
                             <Link href="#beneficios" className="hover:text-primary transition-all">{t("benefits")}</Link>
                             <Link href="#sobre" className="hover:text-primary transition-all">{t("method")}</Link>
                             <Link href="#testemunhos" className="hover:text-primary transition-all">{t("testimonials")}</Link>
@@ -99,6 +102,13 @@ export function LandingPage() {
                                     </div>
                                 </SheetHeader>
                                 <nav className="flex flex-col p-4 gap-1 overflow-y-auto flex-1">
+                                    <Link 
+                                        href="#video" 
+                                        onClick={() => setIsMobileMenuOpen(false)} 
+                                        className="flex items-center h-12 px-4 text-base font-medium text-slate-700 hover:text-primary hover:bg-slate-50 rounded-xl transition-all"
+                                    >
+                                        {t("video")}
+                                    </Link>
                                     <Link 
                                         href="#beneficios" 
                                         onClick={() => setIsMobileMenuOpen(false)} 
@@ -160,6 +170,9 @@ export function LandingPage() {
 
             <main className="flex flex-col min-h-screen overflow-hidden">
                 <HeroSection />
+                <div id="video">
+                    <WelcomeVideoSection />
+                </div>
                 <div id="beneficios">
                     <PainPoints />
                     <SolutionFeatures />
@@ -180,6 +193,7 @@ export function LandingPage() {
             </main>
 
             <WhatsAppWidget />
+            <PrivacyConsentModal />
             <Footer />
         </div>
     )

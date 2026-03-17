@@ -161,6 +161,8 @@ export function DataTable<TData, TValue>({
     const [columnSizing, setColumnSizing] = React.useState<ColumnSizingState>(initialPreferences?.columnSizing || {})
     const [rowSelection, setRowSelection] = React.useState({})
     const [localGlobalFilter, setLocalGlobalFilter] = React.useState(globalFilter || "")
+    const tableContainerRef = React.useRef<HTMLDivElement>(null)
+    const [tableContainerWidth, setTableContainerWidth] = React.useState(0)
 
     // Sync global filter from props
     React.useEffect(() => {
@@ -168,6 +170,25 @@ export function DataTable<TData, TValue>({
             setLocalGlobalFilter(globalFilter)
         }
     }, [globalFilter])
+
+    React.useEffect(() => {
+        const element = tableContainerRef.current
+        if (!element) return
+
+        const updateWidth = () => {
+            setTableContainerWidth(element.clientWidth)
+        }
+
+        updateWidth()
+
+        const observer = new ResizeObserver(() => {
+            updateWidth()
+        })
+
+        observer.observe(element)
+
+        return () => observer.disconnect()
+    }, [])
 
     const allColumns = React.useMemo(() => {
         if (!enableRowSelection) return columns
@@ -284,6 +305,30 @@ export function DataTable<TData, TValue>({
         return table.getFilteredSelectedRowModel().rows.map(row => row.original)
     }, [rowSelection, table])
 
+    const getResponsiveVisibilityClass = React.useCallback((index: number, totalColumns: number) => {
+        const isFirst = index === 0
+        const isLast = index === totalColumns - 1
+        const isPenultimate = index === totalColumns - 2
+
+        if (isFirst || isPenultimate || isLast || tableContainerWidth <= 0) {
+            return ""
+        }
+
+        const hideableMiddleColumns = Math.max(totalColumns - 3, 0)
+        if (hideableMiddleColumns === 0) {
+            return ""
+        }
+
+        const reservedWidth = 440
+        const minMiddleColumnWidth = 130
+        const availableMiddleWidth = Math.max(tableContainerWidth - reservedWidth, 0)
+        const maxVisibleMiddleColumns = Math.floor(availableMiddleWidth / minMiddleColumnWidth)
+        const visibleMiddleColumns = Math.max(0, Math.min(hideableMiddleColumns, maxVisibleMiddleColumns))
+        const middlePosition = index
+
+        return middlePosition > visibleMiddleColumns ? "hidden" : ""
+    }, [tableContainerWidth])
+
     // Emit selection changes
     React.useEffect(() => {
         if (onSelectedRowsChange) {
@@ -294,7 +339,7 @@ export function DataTable<TData, TValue>({
     return (
         <div className={cn("flex flex-col min-h-0", className)}>
             <div className="bg-card overflow-hidden flex flex-col flex-1">
-                <div className="w-full flex-1 overflow-x-hidden overflow-y-auto relative custom-scrollbar">
+                <div ref={tableContainerRef} className="w-full flex-1 overflow-x-hidden overflow-y-auto relative custom-scrollbar">
                     <Table className="w-full border-separate border-spacing-0">
                         <TableHeader className="sticky top-0 z-30 transition-colors bg-white dark:bg-background">
                             {table.getHeaderGroups().map((headerGroup) => (
@@ -303,13 +348,7 @@ export function DataTable<TData, TValue>({
                                         const isFirst = index === 0
                                         const isLast = index === headerGroup.headers.length - 1
 
-                                        let responsiveClass = ""
-                                        if (!isFirst && !isLast) {
-                                            if (index === 1 || index === 2) responsiveClass = "hidden sm:table-cell"
-                                            else if (index === 3) responsiveClass = "hidden md:table-cell"
-                                            else if (index === 4) responsiveClass = "hidden lg:table-cell"
-                                            else responsiveClass = "hidden xl:table-cell"
-                                        }
+                                        const responsiveClass = getResponsiveVisibilityClass(index, headerGroup.headers.length)
 
                                         return (
                                             <TableHead
@@ -480,13 +519,7 @@ export function DataTable<TData, TValue>({
                                             const isFirst = index === 0
                                             const isLast = index === row.getVisibleCells().length - 1
 
-                                            let responsiveClass = ""
-                                            if (!isFirst && !isLast) {
-                                                if (index === 1 || index === 2) responsiveClass = "hidden sm:table-cell"
-                                                else if (index === 3) responsiveClass = "hidden md:table-cell"
-                                                else if (index === 4) responsiveClass = "hidden lg:table-cell"
-                                                else responsiveClass = "hidden xl:table-cell"
-                                            }
+                                            const responsiveClass = getResponsiveVisibilityClass(index, row.getVisibleCells().length)
 
                                             return (
                                                 <TableCell
