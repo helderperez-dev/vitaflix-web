@@ -1,0 +1,140 @@
+name: Supabase Release Phases
+
+on:
+  workflow_dispatch:
+    inputs:
+      direction:
+        description: "sandbox_to_prod | prod_to_sandbox"
+        required: true
+        default: sandbox_to_prod
+        type: choice
+        options:
+          - sandbox_to_prod
+          - prod_to_sandbox
+      run_schema_phase:
+        description: "Apply migrations (schema, RLS, functions, triggers, policies)"
+        required: true
+        default: true
+        type: boolean
+      sync_source_schema_phase:
+        description: "Pull latest source DB schema into migrations and fail if repository is outdated"
+        required: true
+        default: true
+        type: boolean
+      run_data_phase:
+        description: "Run catalog data sync"
+        required: true
+        default: true
+        type: boolean
+      run_storage_phase:
+        description: "Run storage objects sync"
+        required: true
+        default: true
+        type: boolean
+      dry_run:
+        description: "If true, data/storage are preview-only and schema phase is skipped"
+        required: true
+        default: true
+        type: boolean
+      confirm_text:
+        description: "Type RELEASE_APPROVED to continue"
+        required: true
+        type: string
+      catalog_tables:
+        description: "Optional comma-separated list for data phase"
+        required: false
+        type: string
+      storage_buckets:
+        description: "Optional comma-separated list for storage phase"
+        required: false
+        type: string
+
+jobs:
+  release:
+    runs-on: ubuntu-latest
+    environment: production
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Validate approval text
+        run: |
+          if [ "${{ github.event.inputs.confirm_text }}" != "RELEASE_APPROVED" ]; then
+            echo "Approval text mismatch. Aborting."
+            exit 1
+          fi
+
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 20
+          cache: npm
+
+      - uses: supabase/setup-cli@v1
+        with:
+          version: latest
+
+      - name: Install dependencies
+        run: npm ci
+
+      - name: Resolve source and target credentials
+        run: |
+          if [ "${{ github.event.inputs.direction }}" = "sandbox_to_prod" ]; then
+            echo "SOURCE_SUPABASE_URL=${{ secrets.SUPABASE_SANDBOX_URL }}" >> $GITHUB_ENV
+            echo "SOURCE_SUPABASE_SERVICE_ROLE_KEY=${{ secrets.SUPABASE_SANDBOX_SERVICE_ROLE_KEY }}" >> $GITHUB_ENV
+            echo "SOURCE_PROJECT_REF=${{ secrets.SUPABASE_SANDBOX_PROJECT_REF }}" >> $GITHUB_ENV
+            echo "SOURCE_DB_PASSWORD=${{ secrets.SUPABASE_SANDBOX_DB_PASSWORD }}" >> $GITHUB_ENV
+            echo "TARGET_SUPABASE_URL=${{ secrets.SUPABASE_PRODUCTION_URL }}" >> $GITHUB_ENV
+            echo "TARGET_SUPABASE_SERVICE_ROLE_KEY=${{ secrets.SUPABASE_PRODUCTION_SERVICE_ROLE_KEY }}" >> $GITHUB_ENV
+            echo "TARGET_PROJECT_REF=${{ secrets.SUPABASE_PRODUCTION_PROJECT_REF }}" >> $GITHUB_ENV
+            echo "TARGET_DB_PASSWORD=${{ secrets.SUPABASE_PRODUCTION_DB_PASSWORD }}" >> $GITHUB_ENV
+            echo "SUPABASE_ACCESS_TOKEN=${{ secrets.SUPABASE_PRODUCTION_ACCESS_TOKEN }}" >> $GITHUB_ENV
+            echo "SYNC_DIRECTION=sandbox->prod" >> $GITHUB_ENV
+          else
+            echo "SOURCE_SUPABASE_URL=${{ secrets.SUPABASE_PRODUCTION_URL }}" >> $GITHUB_ENV
+            echo "SOURCE_SUPABASE_SERVICE_ROLE_KEY=${{ secrets.SUPABASE_PRODUCTION_SERVICE_ROLE_KEY }}" >> $GITHUB_ENV
+            echo "SOURCE_PROJECT_REF=${{ secrets.SUPABASE_PRODUCTION_PROJECT_REF }}" >> $GITHUB_ENV
+            echo "SOURCE_DB_PASSWORD=${{ secrets.SUPABASE_PRODUCTION_DB_PASSWORD }}" >> $GITHUB_ENV
+            echo "TARGET_SUPABASE_URL=${{ secrets.SUPABASE_SANDBOX_URL }}" >> $GITHUB_ENV
+            echo "TARGET_SUPABASE_SERVICE_ROLE_KEY=${{ secrets.SUPABASE_SANDBOX_SERVICE_ROLE_KEY }}" >> $GITHUB_ENV
+            echo "TARGET_PROJECT_REF=${{ secrets.SUPABASE_SANDBOX_PROJECT_REF }}" >> $GITHUB_ENV
+            echo "TARGET_DB_PASSWORD=${{ secrets.SUPABASE_SANDBOX_DB_PASSWORD }}" >> $GITHUB_ENV
+            echo "SUPABASE_ACCESS_TOKEN=${{ secrets.SUPABASE_SANDBOX_ACCESS_TOKEN }}" >> $GITHUB_ENV
+            echo "SYNC_DIRECTION=prod->sandbox" >> $GITHUB_ENV
+          fi
+          echo "DRY_RUN=${{ github.event.inputs.dry_run }}" >> $GITHUB_ENV
+          echo "AUTO_CONFIRM=true" >> $GITHUB_ENV
+          echo "VERBOSE=true" >> $GITHUB_ENV
+
+      - name: Sync source schema into migrations
+        if: ${{ github.event.inputs.sync_source_schema_phase == 'true' }}
+        run: npm run schema:sync:source
+
+      - name: Verify migrations are up to date with source DB
+        if: ${{ github.event.inputs.sync_source_schema_phase == 'true' }}
+        run: |
+          if ! git diff --quiet -- supabase/migrations; then
+            echo "Migration drift detected. Commit generated migration files before release."
+            git --no-pager diff -- supabase/migrations
+            exit 1
+          fi
+
+      - name: Schema phase
+        if: ${{ github.event.inputs.run_schema_phase == 'true' && github.event.inputs.dry_run != 'true' }}
+        run: |
+          supabase link --project-ref "$TARGET_PROJECT_REF" --password "$TARGET_DB_PASSWORD"
+          supabase db push --linked
+
+      - name: Schema phase skipped in dry-run
+        if: ${{ github.event.inputs.run_schema_phase == 'true' && github.event.inputs.dry_run == 'true' }}
+        run: echo "Dry-run mode enabled. Schema phase intentionally skipped."
+
+      - name: Data phase
+        if: ${{ github.event.inputs.run_data_phase == 'true' }}
+        env:
+          CATALOG_TABLES: ${{ github.event.inputs.catalog_tables }}
+        run: npm run data:promote
+
+      - name: Storage phase
+        if: ${{ github.event.inputs.run_storage_phase == 'true' }}
+        env:
+          STORAGE_BUCKETS: ${{ github.event.inputs.storage_buckets }}
+        run: npm run storage:sync

@@ -1,0 +1,80 @@
+name: Supabase Manual Data and Storage Sync
+
+on:
+  workflow_dispatch:
+    inputs:
+      operation:
+        description: "data | storage | both"
+        required: true
+        default: data
+        type: choice
+        options:
+          - data
+          - storage
+          - both
+      direction:
+        description: "sandbox_to_prod | prod_to_sandbox"
+        required: true
+        default: sandbox_to_prod
+        type: choice
+        options:
+          - sandbox_to_prod
+          - prod_to_sandbox
+      dry_run:
+        description: "If true, no write operations happen"
+        required: true
+        default: true
+        type: boolean
+      confirm_text:
+        description: "Type I_UNDERSTAND to allow this workflow to run"
+        required: true
+        type: string
+      catalog_tables:
+        description: "Optional comma-separated table list for data sync"
+        required: false
+        type: string
+      storage_buckets:
+        description: "Optional comma-separated bucket list for storage sync"
+        required: false
+        type: string
+
+jobs:
+  sync:
+    runs-on: ubuntu-latest
+    environment: production
+    steps:
+      - uses: actions/checkout@v4
+      - name: Validate confirmation
+        run: |
+          if [ "${{ github.event.inputs.confirm_text }}" != "I_UNDERSTAND" ]; then
+            echo "Invalid confirmation text. Aborting."
+            exit 1
+          fi
+      - name: Resolve direction
+        run: |
+          if [ "${{ github.event.inputs.direction }}" = "sandbox_to_prod" ]; then
+            echo "SOURCE_SUPABASE_URL=${{ secrets.SUPABASE_SANDBOX_URL }}" >> $GITHUB_ENV
+            echo "SOURCE_SUPABASE_SERVICE_ROLE_KEY=${{ secrets.SUPABASE_SANDBOX_SERVICE_ROLE_KEY }}" >> $GITHUB_ENV
+            echo "TARGET_SUPABASE_URL=${{ secrets.SUPABASE_PRODUCTION_URL }}" >> $GITHUB_ENV
+            echo "TARGET_SUPABASE_SERVICE_ROLE_KEY=${{ secrets.SUPABASE_PRODUCTION_SERVICE_ROLE_KEY }}" >> $GITHUB_ENV
+            echo "SYNC_DIRECTION=sandbox->prod" >> $GITHUB_ENV
+          else
+            echo "SOURCE_SUPABASE_URL=${{ secrets.SUPABASE_PRODUCTION_URL }}" >> $GITHUB_ENV
+            echo "SOURCE_SUPABASE_SERVICE_ROLE_KEY=${{ secrets.SUPABASE_PRODUCTION_SERVICE_ROLE_KEY }}" >> $GITHUB_ENV
+            echo "TARGET_SUPABASE_URL=${{ secrets.SUPABASE_SANDBOX_URL }}" >> $GITHUB_ENV
+            echo "TARGET_SUPABASE_SERVICE_ROLE_KEY=${{ secrets.SUPABASE_SANDBOX_SERVICE_ROLE_KEY }}" >> $GITHUB_ENV
+            echo "SYNC_DIRECTION=prod->sandbox" >> $GITHUB_ENV
+          fi
+          echo "DRY_RUN=${{ github.event.inputs.dry_run }}" >> $GITHUB_ENV
+          echo "AUTO_CONFIRM=true" >> $GITHUB_ENV
+          echo "VERBOSE=true" >> $GITHUB_ENV
+      - name: Sync data
+        if: ${{ github.event.inputs.operation == 'data' || github.event.inputs.operation == 'both' }}
+        env:
+          CATALOG_TABLES: ${{ github.event.inputs.catalog_tables }}
+        run: npm run data:promote
+      - name: Sync storage
+        if: ${{ github.event.inputs.operation == 'storage' || github.event.inputs.operation == 'both' }}
+        env:
+          STORAGE_BUCKETS: ${{ github.event.inputs.storage_buckets }}
+        run: npm run storage:sync

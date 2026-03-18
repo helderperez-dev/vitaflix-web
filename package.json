@@ -7,7 +7,20 @@
     "build": "next build",
     "start": "next start",
     "lint": "eslint",
-    "i18n:audit": "node scripts/audit-translations.mjs"
+    "i18n:audit": "node scripts/audit-translations.mjs",
+    "schema:sync:source": "node scripts/sync-source-schema-migrations.mjs",
+    "schema:sync:sandbox": "SOURCE_ENV_FILE=.env.local node scripts/sync-source-schema-migrations.mjs",
+    "schema:check:sandbox": "CHECK_ONLY=true SOURCE_ENV_FILE=.env.local node scripts/sync-source-schema-migrations.mjs",
+    "data:promote": "node scripts/promote-catalog-data.mjs",
+    "data:promote:sandbox-to-prod": "SOURCE_ENV_FILE=.env.local TARGET_ENV_FILE=.env SYNC_DIRECTION='sandbox->prod' node scripts/promote-catalog-data.mjs",
+    "data:promote:prod-to-sandbox": "SOURCE_ENV_FILE=.env TARGET_ENV_FILE=.env.local SYNC_DIRECTION='prod->sandbox' node scripts/promote-catalog-data.mjs",
+    "data:promote:apply:sandbox-to-prod": "DRY_RUN=false SOURCE_ENV_FILE=.env.local TARGET_ENV_FILE=.env SYNC_DIRECTION='sandbox->prod' node scripts/promote-catalog-data.mjs",
+    "data:promote:apply:prod-to-sandbox": "DRY_RUN=false SOURCE_ENV_FILE=.env TARGET_ENV_FILE=.env.local SYNC_DIRECTION='prod->sandbox' node scripts/promote-catalog-data.mjs",
+    "storage:sync": "node scripts/sync-storage.mjs",
+    "storage:sync:sandbox-to-prod": "SOURCE_ENV_FILE=.env.local TARGET_ENV_FILE=.env SYNC_DIRECTION='sandbox->prod' node scripts/sync-storage.mjs",
+    "storage:sync:prod-to-sandbox": "SOURCE_ENV_FILE=.env TARGET_ENV_FILE=.env.local SYNC_DIRECTION='prod->sandbox' node scripts/sync-storage.mjs",
+    "storage:sync:apply:sandbox-to-prod": "DRY_RUN=false SOURCE_ENV_FILE=.env.local TARGET_ENV_FILE=.env SYNC_DIRECTION='sandbox->prod' node scripts/sync-storage.mjs",
+    "storage:sync:apply:prod-to-sandbox": "DRY_RUN=false SOURCE_ENV_FILE=.env TARGET_ENV_FILE=.env.local SYNC_DIRECTION='prod->sandbox' node scripts/sync-storage.mjs"
   },
   "dependencies": {
     "@dnd-kit/core": "^6.3.1",

@@ -1,0 +1,78 @@
+name: Supabase Sync Source Schema to Migrations
+
+on:
+  workflow_dispatch:
+    inputs:
+      source:
+        description: "sandbox | production"
+        required: true
+        default: sandbox
+        type: choice
+        options:
+          - sandbox
+          - production
+      confirm_text:
+        description: "Type SYNC_MIGRATIONS_APPROVED to continue"
+        required: true
+        type: string
+  schedule:
+    - cron: "0 3 * * *"
+
+permissions:
+  contents: write
+  pull-requests: write
+
+jobs:
+  sync:
+    runs-on: ubuntu-latest
+    concurrency:
+      group: supabase-sync-source-schema
+      cancel-in-progress: false
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 20
+          cache: npm
+      - uses: supabase/setup-cli@v1
+        with:
+          version: latest
+      - name: Validate approval
+        if: ${{ github.event_name == 'workflow_dispatch' }}
+        run: |
+          if [ "${{ github.event.inputs.confirm_text }}" != "SYNC_MIGRATIONS_APPROVED" ]; then
+            echo "Approval text mismatch. Aborting."
+            exit 1
+          fi
+      - name: Install dependencies
+        run: npm ci
+      - name: Resolve source credentials
+        run: |
+          if [ "${{ github.event_name }}" = "schedule" ]; then
+            SOURCE=sandbox
+          else
+            SOURCE="${{ github.event.inputs.source }}"
+          fi
+          if [ "$SOURCE" = "sandbox" ]; then
+            echo "SOURCE_SUPABASE_URL=${{ secrets.SUPABASE_SANDBOX_URL }}" >> $GITHUB_ENV
+            echo "SOURCE_PROJECT_REF=${{ secrets.SUPABASE_SANDBOX_PROJECT_REF }}" >> $GITHUB_ENV
+            echo "SOURCE_DB_PASSWORD=${{ secrets.SUPABASE_SANDBOX_DB_PASSWORD }}" >> $GITHUB_ENV
+            echo "SCHEMA_SYNC_PREFIX=sandbox_auth_storage_sync" >> $GITHUB_ENV
+          else
+            echo "SOURCE_SUPABASE_URL=${{ secrets.SUPABASE_PRODUCTION_URL }}" >> $GITHUB_ENV
+            echo "SOURCE_PROJECT_REF=${{ secrets.SUPABASE_PRODUCTION_PROJECT_REF }}" >> $GITHUB_ENV
+            echo "SOURCE_DB_PASSWORD=${{ secrets.SUPABASE_PRODUCTION_DB_PASSWORD }}" >> $GITHUB_ENV
+            echo "SCHEMA_SYNC_PREFIX=production_auth_storage_sync" >> $GITHUB_ENV
+          fi
+          echo "SYNC_SOURCE_LABEL=$SOURCE" >> $GITHUB_ENV
+      - name: Sync schema migrations
+        run: npm run schema:sync:source
+      - name: Create pull request with migration updates
+        uses: peter-evans/create-pull-request@v7
+        with:
+          commit-message: "chore: sync source schema migrations (${{ env.SYNC_SOURCE_LABEL }})"
+          branch: "chore/sync-source-schema-migrations-${{ env.SYNC_SOURCE_LABEL }}"
+          title: "chore: sync source schema migrations (${{ env.SYNC_SOURCE_LABEL }})"
+          body: "Automated schema migration sync from selected Supabase source."
+          add-paths: |
+            supabase/migrations/**
