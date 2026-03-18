@@ -123,10 +123,20 @@ jobs:
             exit 1
           fi
 
+      - name: Block snapshot migrations in release
+        run: |
+          if ls supabase/migrations/*_snapshot.sql >/dev/null 2>&1; then
+            echo "Snapshot migrations are not safe for release db push."
+            echo "Remove snapshot files and replace with incremental migrations."
+            ls -1 supabase/migrations/*_snapshot.sql
+            exit 1
+          fi
+
       - name: Sync source schema into migrations
         if: ${{ github.event.inputs.sync_source_schema_phase == 'true' }}
         env:
           SUPABASE_ACCESS_TOKEN: ${{ env.SOURCE_SUPABASE_ACCESS_TOKEN }}
+          SCHEMA_SYNC_FALLBACK_DUMP: "false"
         run: npm run schema:sync:source
 
       - name: Verify migrations are up to date with source DB

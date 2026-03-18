@@ -75,6 +75,8 @@ jobs:
             exit 1
           fi
       - name: Sync schema migrations
+        env:
+          SCHEMA_SYNC_FALLBACK_DUMP: "false"
         run: npm run schema:sync:source
       - name: Create pull request with migration updates
         uses: peter-evans/create-pull-request@v7

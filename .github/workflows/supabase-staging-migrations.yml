@@ -32,5 +32,13 @@ jobs:
             echo "Required: SUPABASE_SANDBOX_ACCESS_TOKEN, SUPABASE_SANDBOX_PROJECT_REF, SUPABASE_SANDBOX_DB_PASSWORD"
             exit 1
           fi
+      - name: Block snapshot migrations
+        run: |
+          if ls supabase/migrations/*_snapshot.sql >/dev/null 2>&1; then
+            echo "Snapshot migrations are not safe for db push."
+            echo "Remove snapshot files and replace with incremental migrations."
+            ls -1 supabase/migrations/*_snapshot.sql
+            exit 1
+          fi
       - run: supabase link --project-ref "$SUPABASE_PROJECT_REF" --password "$SUPABASE_DB_PASSWORD"
       - run: supabase db push --linked
