@@ -74,6 +74,14 @@ jobs:
             echo "Add SUPABASE_${SYNC_SOURCE_LABEL^^}_ACCESS_TOKEN in GitHub repository secrets."
             exit 1
           fi
+      - name: Block unsafe generated schema migrations
+        run: |
+          if ls supabase/migrations/*_remote_schema.sql >/dev/null 2>&1; then
+            echo "Found unsafe generated migration file(s):"
+            ls -1 supabase/migrations/*_remote_schema.sql
+            echo "Remove or fix these files before running schema sync."
+            exit 1
+          fi
       - name: Sync schema migrations
         env:
           SCHEMA_SYNC_DB_PULL_RETRIES: "3"

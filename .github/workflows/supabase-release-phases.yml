@@ -158,6 +158,14 @@ jobs:
             ls -1 supabase/migrations/*_snapshot.sql
             exit 1
           fi
+      - name: Block unsafe generated schema migrations
+        run: |
+          if ls supabase/migrations/*_remote_schema.sql >/dev/null 2>&1; then
+            echo "Found unsafe generated migration file(s):"
+            ls -1 supabase/migrations/*_remote_schema.sql
+            echo "Remove or fix these files before release."
+            exit 1
+          fi
       - name: Apply schema migrations
         if: ${{ github.event.inputs.run_schema_phase == 'true' && github.event.inputs.dry_run != 'true' }}
         env:
