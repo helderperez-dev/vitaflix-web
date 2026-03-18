@@ -78,6 +78,7 @@ jobs:
         env:
           SCHEMA_SYNC_DB_PULL_RETRIES: "3"
           SCHEMA_SYNC_DEBUG_DB_PULL: "false"
+          SCHEMA_SYNC_PUBLIC_DIFF_FALLBACK: "false"
           SCHEMA_SYNC_FALLBACK_DUMP: "false"
         run: npm run schema:sync:source
       - name: Create pull request with migration updates

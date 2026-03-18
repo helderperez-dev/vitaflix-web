@@ -110,6 +110,7 @@ jobs:
           SUPABASE_ACCESS_TOKEN: ${{ env.SOURCE_SUPABASE_ACCESS_TOKEN }}
           SCHEMA_SYNC_DB_PULL_RETRIES: "3"
           SCHEMA_SYNC_DEBUG_DB_PULL: "false"
+          SCHEMA_SYNC_PUBLIC_DIFF_FALLBACK: "false"
           SCHEMA_SYNC_FALLBACK_DUMP: "false"
         run: npm run schema:sync:source
       - name: Verify migrations are up to date with source DB
