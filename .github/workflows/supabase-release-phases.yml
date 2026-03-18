@@ -125,7 +125,7 @@ jobs:
     needs:
       - plan
       - source_schema_preflight
-    if: ${{ fromJSON(github.event.inputs.run_schema_phase) && !fromJSON(github.event.inputs.dry_run) && (needs.source_schema_preflight.result == 'success' || needs.source_schema_preflight.result == 'skipped') }}
+    if: ${{ always() && fromJSON(github.event.inputs.run_schema_phase) && !fromJSON(github.event.inputs.dry_run) && (needs.source_schema_preflight.result == 'success' || needs.source_schema_preflight.result == 'skipped') }}
     environment: production
     steps:
       - uses: actions/checkout@v4
@@ -179,7 +179,7 @@ jobs:
       - plan
       - source_schema_preflight
       - schema_phase
-    if: ${{ fromJSON(github.event.inputs.run_data_phase) && (needs.source_schema_preflight.result == 'success' || needs.source_schema_preflight.result == 'skipped') && (needs.schema_phase.result == 'success' || needs.schema_phase.result == 'skipped') }}
+    if: ${{ always() && fromJSON(github.event.inputs.run_data_phase) && (needs.source_schema_preflight.result == 'success' || needs.source_schema_preflight.result == 'skipped') && (needs.schema_phase.result == 'success' || needs.schema_phase.result == 'skipped') }}
     environment: production
     steps:
       - uses: actions/checkout@v4
@@ -225,7 +225,7 @@ jobs:
       - source_schema_preflight
       - schema_phase
       - data_phase
-    if: ${{ fromJSON(github.event.inputs.run_storage_phase) && (needs.source_schema_preflight.result == 'success' || needs.source_schema_preflight.result == 'skipped') && (needs.schema_phase.result == 'success' || needs.schema_phase.result == 'skipped') && (needs.data_phase.result == 'success' || needs.data_phase.result == 'skipped') }}
+    if: ${{ always() && fromJSON(github.event.inputs.run_storage_phase) && (needs.source_schema_preflight.result == 'success' || needs.source_schema_preflight.result == 'skipped') && (needs.schema_phase.result == 'success' || needs.schema_phase.result == 'skipped') && (needs.data_phase.result == 'success' || needs.data_phase.result == 'skipped') }}
     environment: production
     steps:
       - uses: actions/checkout@v4
