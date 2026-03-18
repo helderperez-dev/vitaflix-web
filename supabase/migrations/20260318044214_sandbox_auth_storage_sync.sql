@@ -8,7 +8,7 @@ CREATE TRIGGER on_auth_user_created AFTER INSERT ON auth.users FOR EACH ROW EXEC
   to public
 using (((bucket_id = 'vitaflix'::text) AND (EXISTS ( SELECT 1
    FROM public.users
-  WHERE ((users.id = auth.uid()) AND (users.role = 'admin'::text))))));
+  WHERE ((users.id = auth.uid()) AND (users.role = 'admin'))))));
 
 
 
