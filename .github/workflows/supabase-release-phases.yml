@@ -74,7 +74,6 @@ jobs:
           version: latest
       - name: Install dependencies
         run: npm ci
-      - name: Resolve source and target credentials
       - name: Resolve source credentials
         run: |
           if [ "${{ github.event.inputs.direction }}" = "sandbox_to_prod" ]; then
