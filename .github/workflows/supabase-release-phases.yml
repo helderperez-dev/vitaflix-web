@@ -215,7 +215,7 @@ jobs:
           DRY_RUN: ${{ github.event.inputs.dry_run }}
           AUTO_CONFIRM: "true"
           VERBOSE: "true"
-          CATALOG_TABLES: ${{ github.event.inputs.catalog_tables }}
+          CATALOG_TABLES: ${{ github.event.inputs.catalog_tables || 'store_markets,countries,measurement_units,tags,dietary_tags,meal_categories,product_groups,meal_plan_sizes,wellness_objectives,user_roles,brands,products,meals,meal_options,meal_day_configurations,brand_store_markets,product_tags,product_brands,product_group_links,product_countries,meal_category_links,meal_dietary_tags,meal_countries' }}
         run: npm run data:promote
 
   storage_phase:
