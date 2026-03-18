@@ -63,7 +63,7 @@ jobs:
   source_schema_preflight:
     runs-on: ubuntu-latest
     needs: plan
-    if: ${{ github.event.inputs.sync_source_schema_phase == 'true' }}
+    if: ${{ fromJSON(github.event.inputs.sync_source_schema_phase) }}
     steps:
       - uses: actions/setup-node@v4
         with:
@@ -125,7 +125,7 @@ jobs:
     needs:
       - plan
       - source_schema_preflight
-    if: ${{ github.event.inputs.run_schema_phase == 'true' && github.event.inputs.dry_run != 'true' && (needs.source_schema_preflight.result == 'success' || needs.source_schema_preflight.result == 'skipped') }}
+    if: ${{ fromJSON(github.event.inputs.run_schema_phase) && !fromJSON(github.event.inputs.dry_run) && (needs.source_schema_preflight.result == 'success' || needs.source_schema_preflight.result == 'skipped') }}
     environment: production
     steps:
       - uses: actions/checkout@v4
@@ -166,7 +166,7 @@ jobs:
             exit 1
           fi
       - name: Apply schema migrations
-        if: ${{ github.event.inputs.run_schema_phase == 'true' && github.event.inputs.dry_run != 'true' }}
+        if: ${{ fromJSON(github.event.inputs.run_schema_phase) && !fromJSON(github.event.inputs.dry_run) }}
         env:
           SUPABASE_ACCESS_TOKEN: ${{ env.TARGET_SUPABASE_ACCESS_TOKEN }}
         run: |
@@ -179,7 +179,7 @@ jobs:
       - plan
       - source_schema_preflight
       - schema_phase
-    if: ${{ github.event.inputs.run_data_phase == 'true' && (needs.source_schema_preflight.result == 'success' || needs.source_schema_preflight.result == 'skipped') && (needs.schema_phase.result == 'success' || needs.schema_phase.result == 'skipped') }}
+    if: ${{ fromJSON(github.event.inputs.run_data_phase) && (needs.source_schema_preflight.result == 'success' || needs.source_schema_preflight.result == 'skipped') && (needs.schema_phase.result == 'success' || needs.schema_phase.result == 'skipped') }}
     environment: production
     steps:
       - uses: actions/checkout@v4
@@ -225,7 +225,7 @@ jobs:
       - source_schema_preflight
       - schema_phase
       - data_phase
-    if: ${{ github.event.inputs.run_storage_phase == 'true' && (needs.source_schema_preflight.result == 'success' || needs.source_schema_preflight.result == 'skipped') && (needs.schema_phase.result == 'success' || needs.schema_phase.result == 'skipped') && (needs.data_phase.result == 'success' || needs.data_phase.result == 'skipped') }}
+    if: ${{ fromJSON(github.event.inputs.run_storage_phase) && (needs.source_schema_preflight.result == 'success' || needs.source_schema_preflight.result == 'skipped') && (needs.schema_phase.result == 'success' || needs.schema_phase.result == 'skipped') && (needs.data_phase.result == 'success' || needs.data_phase.result == 'skipped') }}
     environment: production
     steps:
       - uses: actions/checkout@v4
