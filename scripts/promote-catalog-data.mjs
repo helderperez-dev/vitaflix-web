@@ -61,6 +61,8 @@ const autoConfirm = process.env.AUTO_CONFIRM === 'true'
 const direction = process.env.SYNC_DIRECTION || `${sourceEnvFile} -> ${targetEnvFile}`
 const defaultConflictColumn = process.env.DEFAULT_CONFLICT_COLUMN || 'id'
 const autoDiscoverTables = process.env.AUTO_DISCOVER_TABLES !== 'false'
+const schemaCacheRetryAttempts = Math.max(1, Number(process.env.CATALOG_SCHEMA_CACHE_RETRY_ATTEMPTS || 8))
+const schemaCacheRetryDelayMs = Math.max(250, Number(process.env.CATALOG_SCHEMA_CACHE_RETRY_DELAY_MS || 4000))
 const excludedTables = (process.env.CATALOG_EXCLUDE_TABLES || '')
     .split(',')
     .map((table) => table.trim())
@@ -118,6 +120,14 @@ function applyTableExclusions(tables) {
 
     const blocked = new Set(excludedTables)
     return tables.filter((table) => !blocked.has(table))
+}
+
+function sleep(ms) {
+    return new Promise((resolveSleep) => setTimeout(resolveSleep, ms))
+}
+
+function isSchemaCacheError(message) {
+    return /schema cache/i.test(message) || /could not find the table/i.test(message)
 }
 
 async function discoverPublicTables() {
@@ -243,10 +253,21 @@ async function upsertBatch(table, rows) {
     }
 
     const options = onConflict ? { onConflict } : undefined
-    const query = target.from(table)
-    const { error } = options ? await query.upsert(rows, options) : await query.upsert(rows)
 
-    if (error) {
+    for (let attempt = 1; attempt <= schemaCacheRetryAttempts; attempt += 1) {
+        const query = target.from(table)
+        const { error } = options ? await query.upsert(rows, options) : await query.upsert(rows)
+
+        if (!error) {
+            return
+        }
+
+        if (isSchemaCacheError(error.message) && attempt < schemaCacheRetryAttempts) {
+            console.log(`Retrying ${table} upsert due to API schema cache delay (${attempt}/${schemaCacheRetryAttempts})`)
+            await sleep(schemaCacheRetryDelayMs)
+            continue
+        }
+
         throw new Error(`Failed upserting ${table}: ${error.message}`)
     }
 }

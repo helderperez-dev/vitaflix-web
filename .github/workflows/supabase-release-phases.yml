@@ -189,6 +189,8 @@ jobs:
           cache: npm
       - name: Install dependencies
         run: npm ci
+      - name: Wait for target API schema cache refresh
+        run: sleep 20
       - name: Resolve source and target credentials
         run: |
           if [ "${{ github.event.inputs.direction }}" = "sandbox_to_prod" ]; then
