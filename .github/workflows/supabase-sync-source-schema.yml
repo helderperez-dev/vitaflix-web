@@ -11,10 +11,6 @@ on:
         options:
           - sandbox
           - production
-      confirm_text:
-        description: "Type SYNC_MIGRATIONS_APPROVED to continue"
-        required: true
-        type: string
   schedule:
     - cron: "0 3 * * *"
 
@@ -37,13 +33,17 @@ jobs:
       - uses: supabase/setup-cli@v1
         with:
           version: latest
-      - name: Validate approval
-        if: ${{ github.event_name == 'workflow_dispatch' }}
+      - name: Execution plan
         run: |
-          if [ "${{ github.event.inputs.confirm_text }}" != "SYNC_MIGRATIONS_APPROVED" ]; then
-            echo "Approval text mismatch. Aborting."
-            exit 1
+          if [ "${{ github.event_name }}" = "schedule" ]; then
+            SOURCE_PLAN=sandbox
+          else
+            SOURCE_PLAN="${{ github.event.inputs.source }}"
           fi
+          echo "## Supabase Schema Sync Plan" >> "$GITHUB_STEP_SUMMARY"
+          echo "- Trigger: ${{ github.event_name }}" >> "$GITHUB_STEP_SUMMARY"
+          echo "- Source: $SOURCE_PLAN" >> "$GITHUB_STEP_SUMMARY"
+          echo "- Action: pull source schema and open/update migration PR" >> "$GITHUB_STEP_SUMMARY"
       - name: Install dependencies
         run: npm ci
       - name: Resolve source credentials

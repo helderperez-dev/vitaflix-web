@@ -16,6 +16,12 @@ jobs:
       SUPABASE_PROJECT_REF: ${{ secrets.SUPABASE_PRODUCTION_PROJECT_REF }}
     steps:
       - uses: actions/checkout@v4
+      - name: Execution plan
+        run: |
+          echo "## Supabase Production Migration Plan" >> "$GITHUB_STEP_SUMMARY"
+          echo "- Trigger: ${{ github.event_name }}" >> "$GITHUB_STEP_SUMMARY"
+          echo "- Target environment: production" >> "$GITHUB_STEP_SUMMARY"
+          echo "- Action: link production project and run supabase db push --linked" >> "$GITHUB_STEP_SUMMARY"
       - uses: supabase/setup-cli@v1
         with:
           version: latest

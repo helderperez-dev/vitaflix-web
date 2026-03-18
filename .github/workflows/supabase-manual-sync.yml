@@ -25,10 +25,6 @@ on:
         required: true
         default: true
         type: boolean
-      confirm_text:
-        description: "Type I_UNDERSTAND to allow this workflow to run"
-        required: true
-        type: string
       catalog_tables:
         description: "Optional comma-separated table list for data sync"
         required: false
@@ -44,12 +40,14 @@ jobs:
     environment: production
     steps:
       - uses: actions/checkout@v4
-      - name: Validate confirmation
+      - name: Execution plan
         run: |
-          if [ "${{ github.event.inputs.confirm_text }}" != "I_UNDERSTAND" ]; then
-            echo "Invalid confirmation text. Aborting."
-            exit 1
-          fi
+          echo "## Supabase Manual Sync Plan" >> "$GITHUB_STEP_SUMMARY"
+          echo "- Operation: ${{ github.event.inputs.operation }}" >> "$GITHUB_STEP_SUMMARY"
+          echo "- Direction: ${{ github.event.inputs.direction }}" >> "$GITHUB_STEP_SUMMARY"
+          echo "- Dry run: ${{ github.event.inputs.dry_run }}" >> "$GITHUB_STEP_SUMMARY"
+          echo "- Catalog tables: ${{ github.event.inputs.catalog_tables || 'default set' }}" >> "$GITHUB_STEP_SUMMARY"
+          echo "- Storage buckets: ${{ github.event.inputs.storage_buckets || 'default set' }}" >> "$GITHUB_STEP_SUMMARY"
       - name: Resolve direction
         run: |
           if [ "${{ github.event.inputs.direction }}" = "sandbox_to_prod" ]; then
