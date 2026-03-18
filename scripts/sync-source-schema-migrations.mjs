@@ -64,16 +64,20 @@ function runCommand(command, args, options = {}) {
         const stdout = typeof error.stdout === 'string' ? error.stdout : (error.stdout ? String(error.stdout) : '')
         const stderr = typeof error.stderr === 'string' ? error.stderr : (error.stderr ? String(error.stderr) : '')
         const combined = [stdout, stderr].filter(Boolean).join('\n').trim()
+        const originalMessage = String(error?.message || '').trim()
 
         if (combined) {
             console.error(combined)
+        } else if (originalMessage) {
+            console.error(originalMessage)
         }
 
         const timeoutHint = isTimeout && options.timeoutMs
             ? `\nTimed out after ${options.timeoutMs}ms. Increase SCHEMA_SYNC_TIMEOUT_MS (or SCHEMA_SYNC_DUMP_TIMEOUT_MS for dumps).`
             : ''
+        const detail = combined || originalMessage
 
-        throw new Error(`Command failed: ${command} ${args.join(' ')}${timeoutHint}${combined ? `\n${combined}` : ''}`)
+        throw new Error(`Command failed: ${command} ${args.join(' ')}${timeoutHint}${detail ? `\n${detail}` : ''}`)
     }
 }
 
@@ -132,7 +136,9 @@ const timeoutMs = Number(process.env.SCHEMA_SYNC_TIMEOUT_MS || 300000)
 const dumpTimeoutMs = Number(process.env.SCHEMA_SYNC_DUMP_TIMEOUT_MS || Math.max(timeoutMs, 900000))
 const debugDbPull = process.env.SCHEMA_SYNC_DEBUG_DB_PULL !== 'false'
 const fallbackToDump = process.env.SCHEMA_SYNC_FALLBACK_DUMP !== 'false'
+const publicDiffFallback = process.env.SCHEMA_SYNC_PUBLIC_DIFF_FALLBACK !== 'false'
 const includeAuthStorageInDump = process.env.SCHEMA_SYNC_DUMP_INCLUDE_AUTH_STORAGE !== 'false'
+const dbPullRetries = Math.max(1, Number(process.env.SCHEMA_SYNC_DB_PULL_RETRIES || 2))
 
 if (!sourceProjectRef) {
     throw new Error(`Missing source project ref. Checked SOURCE_PROJECT_REF and URL in ${sourceEnvFile}`)
@@ -148,8 +154,10 @@ console.log(`Mode: ${checkOnly ? 'check' : 'sync'}`)
 console.log(`Auto migration repair: ${autoMigrationRepair ? 'enabled' : 'disabled'}`)
 console.log(`Command timeout (ms): ${timeoutMs}`)
 console.log(`Dump timeout (ms): ${dumpTimeoutMs}`)
+console.log(`DB pull retries: ${dbPullRetries}`)
 console.log(`DB pull debug: ${debugDbPull ? 'enabled' : 'disabled'}`)
 console.log(`Fallback to schema dump: ${fallbackToDump ? 'enabled' : 'disabled'}`)
+console.log(`Fallback to public db diff: ${publicDiffFallback ? 'enabled' : 'disabled'}`)
 
 runSupabase(['link', '--project-ref', sourceProjectRef, '--password', sourceDbPassword], { timeoutMs })
 
@@ -157,6 +165,40 @@ function runDbPull() {
     console.log('Starting remote schema pull. This can take a few minutes on unstable connections.')
     const args = debugDbPull ? ['--debug', 'db', 'pull'] : ['db', 'pull']
     return runSupabase(args, { timeoutMs })
+}
+
+function runDbPullWithRetries() {
+    let lastError
+    for (let attempt = 1; attempt <= dbPullRetries; attempt += 1) {
+        try {
+            return runDbPull()
+        } catch (error) {
+            lastError = error
+            if (attempt < dbPullRetries) {
+                console.log(`db pull attempt ${attempt}/${dbPullRetries} failed. Retrying...`)
+            }
+        }
+    }
+    throw lastError
+}
+
+function createPublicMigrationFromDiff() {
+    const diffSql = runSupabase(['db', 'diff', '--linked', '--schema', 'public'], { capture: true, timeoutMs })
+    if (hasSqlStatements(diffSql)) {
+        const migrationsDir = join(rootPath, 'supabase', 'migrations')
+        mkdirSync(migrationsDir, { recursive: true })
+        const filePath = join(migrationsDir, `${timestamp()}_${migrationPrefix}_public.sql`)
+        if (!checkOnly) {
+            writeFileSync(filePath, `${diffSql.trim()}\n`, 'utf8')
+            console.log(`Created public schema migration from diff: ${filePath}`)
+        } else {
+            console.log('Public schema drift detected')
+            console.log(diffSql.trim())
+            process.exit(2)
+        }
+    } else {
+        console.log('No public schema drift detected')
+    }
 }
 
 function createSnapshotMigrationFromDump() {
@@ -191,27 +233,39 @@ function createSnapshotMigrationFromDump() {
 
 let usedDumpFallback = false
 try {
-    runDbPull()
+    runDbPullWithRetries()
 } catch (error) {
+    let handledWithPublicDiffFallback = false
     if (!autoMigrationRepair && !(fallbackToDump && !checkOnly)) {
-        throw error
-    }
-    try {
-        const repairCommands = parseRepairCommands(String(error.message || ''))
-        if (repairCommands.length > 0 && autoMigrationRepair) {
-            console.log(`Detected migration history drift. Running ${repairCommands.length} repair commands.`)
-            applyRepairCommands(repairCommands)
-            runDbPull()
+        if (publicDiffFallback) {
+            console.log('db pull failed. Falling back to public schema diff migration.')
+            createPublicMigrationFromDiff()
+            handledWithPublicDiffFallback = true
         } else {
             throw error
         }
-    } catch (retryError) {
-        if (fallbackToDump && !checkOnly) {
-            console.log('Falling back to schema dump snapshot because db pull did not complete.')
-            createSnapshotMigrationFromDump()
-            usedDumpFallback = true
-        } else {
-            throw retryError
+    }
+    if (!handledWithPublicDiffFallback) {
+        try {
+            const repairCommands = parseRepairCommands(String(error.message || ''))
+            if (repairCommands.length > 0 && autoMigrationRepair) {
+                console.log(`Detected migration history drift. Running ${repairCommands.length} repair commands.`)
+                applyRepairCommands(repairCommands)
+                runDbPullWithRetries()
+            } else {
+                throw error
+            }
+        } catch (retryError) {
+            if (fallbackToDump && !checkOnly) {
+                console.log('Falling back to schema dump snapshot because db pull did not complete.')
+                createSnapshotMigrationFromDump()
+                usedDumpFallback = true
+            } else if (publicDiffFallback) {
+                console.log('db pull did not complete. Falling back to public schema diff migration.')
+                createPublicMigrationFromDiff()
+            } else {
+                throw retryError
+            }
         }
     }
 }
