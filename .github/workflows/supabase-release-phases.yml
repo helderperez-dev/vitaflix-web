@@ -104,6 +104,14 @@ jobs:
           echo "AUTO_CONFIRM=true" >> $GITHUB_ENV
           echo "VERBOSE=true" >> $GITHUB_ENV
 
+      - name: Validate Supabase credentials
+        run: |
+          if [ -z "$SUPABASE_ACCESS_TOKEN" ] || [ -z "$TARGET_PROJECT_REF" ] || [ -z "$TARGET_DB_PASSWORD" ] || [ -z "$SOURCE_PROJECT_REF" ] || [ -z "$SOURCE_DB_PASSWORD" ]; then
+            echo "Missing required Supabase secrets for release workflow."
+            echo "Required: *_ACCESS_TOKEN, *_PROJECT_REF, *_DB_PASSWORD for source and target."
+            exit 1
+          fi
+
       - name: Sync source schema into migrations
         if: ${{ github.event.inputs.sync_source_schema_phase == 'true' }}
         run: npm run schema:sync:source

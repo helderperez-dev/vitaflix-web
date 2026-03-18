@@ -68,6 +68,13 @@ jobs:
           echo "DRY_RUN=${{ github.event.inputs.dry_run }}" >> $GITHUB_ENV
           echo "AUTO_CONFIRM=true" >> $GITHUB_ENV
           echo "VERBOSE=true" >> $GITHUB_ENV
+      - name: Validate Supabase credentials
+        run: |
+          if [ -z "$SOURCE_SUPABASE_URL" ] || [ -z "$SOURCE_SUPABASE_SERVICE_ROLE_KEY" ] || [ -z "$TARGET_SUPABASE_URL" ] || [ -z "$TARGET_SUPABASE_SERVICE_ROLE_KEY" ]; then
+            echo "Missing required Supabase URL/service role secrets for manual sync."
+            echo "Required: SUPABASE_SANDBOX_URL, SUPABASE_SANDBOX_SERVICE_ROLE_KEY, SUPABASE_PRODUCTION_URL, SUPABASE_PRODUCTION_SERVICE_ROLE_KEY"
+            exit 1
+          fi
       - name: Sync data
         if: ${{ github.event.inputs.operation == 'data' || github.event.inputs.operation == 'both' }}
         env:

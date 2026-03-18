@@ -57,14 +57,23 @@ jobs:
             echo "SOURCE_SUPABASE_URL=${{ secrets.SUPABASE_SANDBOX_URL }}" >> $GITHUB_ENV
             echo "SOURCE_PROJECT_REF=${{ secrets.SUPABASE_SANDBOX_PROJECT_REF }}" >> $GITHUB_ENV
             echo "SOURCE_DB_PASSWORD=${{ secrets.SUPABASE_SANDBOX_DB_PASSWORD }}" >> $GITHUB_ENV
+            echo "SUPABASE_ACCESS_TOKEN=${{ secrets.SUPABASE_SANDBOX_ACCESS_TOKEN }}" >> $GITHUB_ENV
             echo "SCHEMA_SYNC_PREFIX=sandbox_auth_storage_sync" >> $GITHUB_ENV
           else
             echo "SOURCE_SUPABASE_URL=${{ secrets.SUPABASE_PRODUCTION_URL }}" >> $GITHUB_ENV
             echo "SOURCE_PROJECT_REF=${{ secrets.SUPABASE_PRODUCTION_PROJECT_REF }}" >> $GITHUB_ENV
             echo "SOURCE_DB_PASSWORD=${{ secrets.SUPABASE_PRODUCTION_DB_PASSWORD }}" >> $GITHUB_ENV
+            echo "SUPABASE_ACCESS_TOKEN=${{ secrets.SUPABASE_PRODUCTION_ACCESS_TOKEN }}" >> $GITHUB_ENV
             echo "SCHEMA_SYNC_PREFIX=production_auth_storage_sync" >> $GITHUB_ENV
           fi
           echo "SYNC_SOURCE_LABEL=$SOURCE" >> $GITHUB_ENV
+      - name: Validate Supabase access token
+        run: |
+          if [ -z "$SUPABASE_ACCESS_TOKEN" ]; then
+            echo "Missing Supabase access token secret for source '$SYNC_SOURCE_LABEL'."
+            echo "Add SUPABASE_${SYNC_SOURCE_LABEL^^}_ACCESS_TOKEN in GitHub repository secrets."
+            exit 1
+          fi
       - name: Sync schema migrations
         run: npm run schema:sync:source
       - name: Create pull request with migration updates
