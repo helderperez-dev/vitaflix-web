@@ -287,6 +287,10 @@ try {
     }
 }
 
+if (!checkOnly) {
+    removeGeneratedRemoteSchemaMigrations()
+}
+
 if (writeAuthStorageDiff && !usedDumpFallback) {
     const diffSql = runSupabase(['db', 'diff', '--linked', '--schema', 'auth,storage'], { capture: true, timeoutMs })
     if (hasSqlStatements(diffSql)) {
