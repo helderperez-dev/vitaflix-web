@@ -91,6 +91,7 @@ const conflictByTable = {
     meal_dietary_tags: 'meal_id,dietary_tag_id',
     meal_countries: 'meal_id,country_id'
 }
+const defaultCatalogTables = Object.keys(conflictByTable)
 
 const source = createClient(
     sourceSupabaseUrl,
@@ -150,7 +151,14 @@ async function resolveTables() {
         throw new Error('No tables selected. Use CATALOG_TABLES or enable AUTO_DISCOVER_TABLES.')
     }
 
-    const discovered = await discoverPublicTables()
+    let discovered = []
+    try {
+        discovered = await discoverPublicTables()
+    } catch (error) {
+        console.log(`Table auto-discovery failed, using default catalog tables. Reason: ${error.message}`)
+        discovered = defaultCatalogTables
+    }
+
     const selected = applyTableExclusions(discovered)
     if (selected.length === 0) {
         throw new Error('No public tables found after exclusions.')
