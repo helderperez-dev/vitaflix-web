@@ -1,4 +1,4 @@
-import { appendFileSync, existsSync, mkdirSync, readFileSync, rmSync, writeFileSync } from 'node:fs'
+import { appendFileSync, existsSync, mkdirSync, readdirSync, readFileSync, rmSync, writeFileSync } from 'node:fs'
 import { resolve, join } from 'node:path'
 import { execFileSync } from 'node:child_process'
 
@@ -183,6 +183,7 @@ function runDbPullWithRetries() {
 }
 
 function createPublicMigrationFromDiff() {
+    removeGeneratedRemoteSchemaMigrations()
     const diffSql = runSupabase(['db', 'diff', '--linked', '--schema', 'public'], { capture: true, timeoutMs })
     if (hasSqlStatements(diffSql)) {
         const migrationsDir = join(rootPath, 'supabase', 'migrations')
@@ -229,6 +230,22 @@ function createSnapshotMigrationFromDump() {
     }
 
     console.log(`Created snapshot migration from source DB: ${filePath}`)
+}
+
+function removeGeneratedRemoteSchemaMigrations() {
+    const migrationsDir = join(rootPath, 'supabase', 'migrations')
+    if (!existsSync(migrationsDir)) {
+        return
+    }
+
+    const remoteSchemaFiles = readdirSync(migrationsDir)
+        .filter((fileName) => fileName.endsWith('_remote_schema.sql'))
+        .map((fileName) => join(migrationsDir, fileName))
+
+    for (const filePath of remoteSchemaFiles) {
+        rmSync(filePath, { force: true })
+        console.log(`Removed generated remote schema migration: ${filePath}`)
+    }
 }
 
 let usedDumpFallback = false
