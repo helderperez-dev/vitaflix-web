@@ -3,6 +3,7 @@
 import { createClient } from "@/lib/supabase/server"
 import { revalidatePath } from "next/cache"
 import { sendEmail, sendSms, sendPush } from "@/lib/notifications"
+import { getMediaUrl } from "@/lib/utils"
 
 export async function sendBroadcastAction(formData: FormData) {
     const supabase = await createClient()
@@ -112,13 +113,13 @@ export async function sendBroadcastAction(formData: FormData) {
             if (channel === "email" && target.email) {
                 const formattedAttachments = attachments.map(url => ({
                     filename: url.split('/').pop() || "attachment",
-                    path: url
+                    path: getMediaUrl(url)
                 }));
                 res = await sendEmail({ to: target.email, subject: notif.title, body: notif.body, html: notif.html || undefined, attachments: formattedAttachments });
             } else if (channel === "sms" && target.phone) {
                 res = await sendSms({ to: target.phone, body: `${notif.title}\n\n${notif.body}` });
             } else if (channel === "push" && target.push_token) {
-                res = await sendPush({ token: target.push_token, title: notif.title, body: notif.body });
+                res = await sendPush({ token: target.push_token, title: notif.title, body: notif.body, data: media_url ? { image: getMediaUrl(media_url) } : undefined });
             } else if (channel === "app" && target.id) {
                 res = { success: true };
             }

@@ -46,6 +46,8 @@ const sourceSupabaseUrl = process.env.SOURCE_SUPABASE_URL || sourceFileEnv.NEXT_
 const sourceServiceRoleKey = process.env.SOURCE_SUPABASE_SERVICE_ROLE_KEY || sourceFileEnv.SUPABASE_SERVICE_ROLE_KEY
 const targetSupabaseUrl = process.env.TARGET_SUPABASE_URL || targetFileEnv.NEXT_PUBLIC_SUPABASE_URL
 const targetServiceRoleKey = process.env.TARGET_SUPABASE_SERVICE_ROLE_KEY || targetFileEnv.SUPABASE_SERVICE_ROLE_KEY
+const sourceSupabaseHost = sourceSupabaseUrl ? new URL(sourceSupabaseUrl).host : ''
+const targetSupabaseHost = targetSupabaseUrl ? new URL(targetSupabaseUrl).host : ''
 
 if (!sourceSupabaseUrl || !sourceServiceRoleKey) {
     throw new Error(`Missing source Supabase credentials. Checked SOURCE_* env vars and file ${sourceEnvFile}`)
@@ -260,6 +262,39 @@ async function readBatch(table, from) {
     return data || []
 }
 
+function normalizeStringForTarget(value) {
+    let normalized = value
+    if (sourceSupabaseUrl && targetSupabaseUrl) {
+        normalized = normalized.split(sourceSupabaseUrl).join(targetSupabaseUrl)
+    }
+    if (sourceSupabaseHost && targetSupabaseHost) {
+        normalized = normalized.split(sourceSupabaseHost).join(targetSupabaseHost)
+    }
+    return normalized
+}
+
+function normalizeValueForTarget(value) {
+    if (typeof value === 'string') {
+        return normalizeStringForTarget(value)
+    }
+
+    if (Array.isArray(value)) {
+        return value.map((item) => normalizeValueForTarget(item))
+    }
+
+    if (value && typeof value === 'object') {
+        return Object.fromEntries(
+            Object.entries(value).map(([key, entryValue]) => [key, normalizeValueForTarget(entryValue)])
+        )
+    }
+
+    return value
+}
+
+function normalizeRowsForTarget(rows) {
+    return rows.map((row) => normalizeValueForTarget(row))
+}
+
 async function upsertBatch(table, rows) {
     if (rows.length === 0) {
         return
@@ -270,11 +305,12 @@ async function upsertBatch(table, rows) {
         console.log(`Using default conflict column for ${table}: ${onConflict}`)
     }
 
+    const normalizedRows = normalizeRowsForTarget(rows)
     const options = onConflict ? { onConflict } : undefined
 
     for (let attempt = 1; attempt <= schemaCacheRetryAttempts; attempt += 1) {
         const query = target.from(table)
-        const { error } = options ? await query.upsert(rows, options) : await query.upsert(rows)
+        const { error } = options ? await query.upsert(normalizedRows, options) : await query.upsert(normalizedRows)
 
         if (!error) {
             return

@@ -52,11 +52,7 @@ export function FileUploader({
                 continue
             }
 
-            const { data: { publicUrl } } = supabase.storage
-                .from('vitaflix')
-                .getPublicUrl(filePath)
-
-            newUrls.push(publicUrl)
+            newUrls.push(filePath)
         }
 
         onChange(newUrls)
@@ -68,7 +64,10 @@ export function FileUploader({
         const urlToRemove = value[indexToRemove]
         if (!urlToRemove) return
 
-        const path = urlToRemove.split('vitaflix/').pop()
+        const path = urlToRemove.includes('vitaflix/') 
+            ? urlToRemove.split('vitaflix/').pop() 
+            : urlToRemove
+            
         if (path) {
             const { error } = await supabase.storage.from('vitaflix').remove([path])
             if (error) {
@@ -85,6 +84,7 @@ export function FileUploader({
         <div className="space-y-3">
             <div className="flex flex-wrap gap-2">
                 {value.map((url, index) => {
+                    // Get filename from path or URL
                     const fileName = url.split('/').pop()?.split('-').slice(5).join('-') || "Document"
                     return (
                         <div key={url} className="flex items-center gap-2 p-2 rounded-lg bg-muted/10 border border-border/40 group max-w-[200px]">

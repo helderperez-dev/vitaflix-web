@@ -1,5 +1,5 @@
 import React from 'react'
-import { cn } from "@/lib/utils"
+import { cn, getMediaUrl } from "@/lib/utils"
 
 interface MediaDisplayProps extends React.ImgHTMLAttributes<HTMLImageElement> {
     src?: string;
@@ -23,16 +23,18 @@ export function MediaDisplay({
     muted = true,
     ...props
 }: MediaDisplayProps) {
-    if (!src) return null
+    const fullUrl = React.useMemo(() => getMediaUrl(src), [src])
+    
+    if (!fullUrl) return null
 
     // Clean URL from query parameters if any to parse the extension correctly
-    const cleanUrl = src.split('?')[0]
+    const cleanUrl = fullUrl.split('?')[0]
     const isVideo = cleanUrl.match(/\.(mp4|webm|mov|ogg|m4v|3gp|mkv)$/i)
 
     if (isVideo) {
         return (
             <video
-                src={src}
+                src={fullUrl}
                 className={cn("w-full h-full object-cover", className, videoClassName)}
                 muted={muted}
                 playsInline
@@ -45,7 +47,7 @@ export function MediaDisplay({
 
     return (
         <img
-            src={src}
+            src={fullUrl}
             alt={alt || "Media"}
             className={cn("w-full h-full object-cover", className)}
             {...props}

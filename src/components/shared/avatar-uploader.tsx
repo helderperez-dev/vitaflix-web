@@ -4,7 +4,7 @@ import * as React from "react"
 import { Camera, X, Loader2, User } from "lucide-react"
 import { toast } from "sonner"
 import { createClient } from "@/lib/supabase/client"
-import { cn } from "@/lib/utils"
+import { cn, getMediaUrl } from "@/lib/utils"
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar"
 
 import { CropModal } from "./crop-modal"
@@ -62,11 +62,7 @@ export function AvatarUploader({
 
             if (uploadError) throw uploadError
 
-            const { data: { publicUrl } } = supabase.storage
-                .from('vitaflix')
-                .getPublicUrl(filePath)
-
-            onChange(publicUrl)
+            onChange(filePath)
             toast.success("Profile picture updated.")
         } catch (error) {
             toast.error("Failed to upload image.")
@@ -82,7 +78,10 @@ export function AvatarUploader({
         if (!value) return
 
         try {
-            const path = value.split('vitaflix/').pop()
+            const path = value.includes('vitaflix/') 
+                ? value.split('vitaflix/').pop() 
+                : value
+            
             if (path) {
                 const { error } = await supabase.storage.from('vitaflix').remove([path])
                 if (error) {
@@ -110,7 +109,7 @@ export function AvatarUploader({
                     size === "sm" ? "size-16" : size === "md" ? "size-24 border-3 border-white" : "size-32 border-4 border-white"
                 )}>
                     {value ? (
-                        <AvatarImage src={value} alt={displayName || "User"} className="object-cover" />
+                        <AvatarImage src={getMediaUrl(value)} alt={displayName || "User"} className="object-cover" />
                     ) : null}
                     <AvatarFallback className={cn(
                         "bg-primary/5 text-primary font-bold",

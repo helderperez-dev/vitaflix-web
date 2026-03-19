@@ -2,6 +2,7 @@
 
 import { createClient } from "@/lib/supabase/server"
 import { type SearchResult } from "@/shared-schemas/search"
+import { getMediaUrl } from "@/lib/utils"
 
 type ProductSearchRow = { id: string; name: unknown; images: unknown }
 type MealSearchRow = { id: string; name: unknown }
@@ -128,7 +129,7 @@ export async function globalSearch(query: string): Promise<SearchResult[]> {
                 title: name,
                 subtitle: "Product",
                 url: `/products?search=${encodeURIComponent(name)}`,
-                imageUrl: defaultImg?.url,
+                imageUrl: getMediaUrl(defaultImg?.url),
             })
         })
 
@@ -151,7 +152,7 @@ export async function globalSearch(query: string): Promise<SearchResult[]> {
                 title,
                 subtitle: u.display_name ? u.email : (u.phone || "User"),
                 url: `/users?search=${encodeURIComponent(title)}`,
-                imageUrl: u.avatar_url || undefined,
+                imageUrl: getMediaUrl(u.avatar_url),
             })
         })
 

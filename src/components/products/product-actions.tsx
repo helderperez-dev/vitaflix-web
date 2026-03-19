@@ -67,8 +67,7 @@ export function ProductActions({ product, onEdit }: ProductActionsProps) {
         if (error) {
             throw new Error(error.message)
         }
-        const { data } = supabase.storage.from("vitaflix").getPublicUrl(filePath)
-        return data.publicUrl
+        return filePath
     }
 
     async function onGenerateMainImage() {
@@ -88,8 +87,8 @@ export function ProductActions({ product, onEdit }: ProductActionsProps) {
                 toast.error(generation.error || aiT("genericError"))
                 return
             }
-            const publicUrl = await uploadDataUrl(generation.imageDataUrl)
-            const images = [{ url: publicUrl, isDefault: true }, ...(product.images || []).map(image => ({ ...image, isDefault: false }))]
+            const imagePath = await uploadDataUrl(generation.imageDataUrl)
+            const images = [{ url: imagePath, isDefault: true }, ...(product.images || []).map(image => ({ ...image, isDefault: false }))]
             const saveResult = await upsertProduct({
                 ...product,
                 images,

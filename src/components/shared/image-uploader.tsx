@@ -54,8 +54,7 @@ export function ImageUploader({ folder, value = [], onChange, maxImages = 10, en
         if (error) {
             throw new Error(error.message)
         }
-        const { data } = supabase.storage.from("vitaflix").getPublicUrl(filePath)
-        return data.publicUrl
+        return filePath
     }
 
     const handleUpload = async (e: React.ChangeEvent<HTMLInputElement>) => {
@@ -85,12 +84,8 @@ export function ImageUploader({ folder, value = [], onChange, maxImages = 10, en
                 continue
             }
 
-            const { data: { publicUrl } } = supabase.storage
-                .from('vitaflix')
-                .getPublicUrl(filePath)
-
             newImages.push({
-                url: publicUrl,
+                url: filePath,
                 isDefault: newImages.length === 0, // First image is default
             })
         }
@@ -104,8 +99,10 @@ export function ImageUploader({ folder, value = [], onChange, maxImages = 10, en
         const imageToRemove = value[indexToRemove]
         if (!imageToRemove) return
 
-        // Extract path from public URL
-        const path = imageToRemove.url.split('vitaflix/').pop()
+        // Extract path from public URL if it's a full URL, otherwise use it as is
+        const path = imageToRemove.url.includes('vitaflix/') 
+            ? imageToRemove.url.split('vitaflix/').pop() 
+            : imageToRemove.url
 
         if (path) {
             const { error } = await supabase.storage.from('vitaflix').remove([path])
@@ -146,9 +143,9 @@ export function ImageUploader({ folder, value = [], onChange, maxImages = 10, en
                 toast.error(result.error || aiT("genericError"))
                 return
             }
-            const publicUrl = await uploadDataUrl(result.imageDataUrl)
+            const imagePath = await uploadDataUrl(result.imageDataUrl)
             const newImages = value.map(image => ({ ...image, isDefault: false }))
-            newImages.push({ url: publicUrl, isDefault: newImages.length === 0 })
+            newImages.push({ url: imagePath, isDefault: newImages.length === 0 })
             onChange(newImages)
             toast.success(aiT("imageGenerated"))
         } catch (error) {
@@ -178,10 +175,10 @@ export function ImageUploader({ folder, value = [], onChange, maxImages = 10, en
                 toast.error(result.error || aiT("genericError"))
                 return
             }
-            const publicUrl = await uploadDataUrl(result.imageDataUrl)
+            const imagePath = await uploadDataUrl(result.imageDataUrl)
             const newImages = [...value]
             // Insert after current
-            newImages.splice(targetIndex + 1, 0, { url: publicUrl, isDefault: false })
+            newImages.splice(targetIndex + 1, 0, { url: imagePath, isDefault: false })
             onChange(newImages)
             toast.success(aiT("imageEnhanced"))
         } catch (error) {

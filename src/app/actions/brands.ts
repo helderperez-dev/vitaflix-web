@@ -84,7 +84,10 @@ export async function deleteBrand(id: string) {
     const { data: brand } = await supabase.from('brands').select('id, logo_url').eq('id', id).single()
 
     if (brand?.logo_url) {
-        const path = brand.logo_url.split('vitaflix/').pop()
+        const path = brand.logo_url.includes('vitaflix/') 
+            ? brand.logo_url.split('vitaflix/').pop() 
+            : brand.logo_url
+            
         if (path) {
             await supabase.storage.from('vitaflix').remove([path])
         }

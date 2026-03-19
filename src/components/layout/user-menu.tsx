@@ -3,7 +3,7 @@
 import * as React from "react"
 import { useTranslations, useLocale } from "next-intl"
 import { LogOut, ChevronDown, Languages, User } from "lucide-react"
-import { cn } from "@/lib/utils"
+import { cn, getMediaUrl } from "@/lib/utils"
 import {
     DropdownMenu,
     DropdownMenuContent,
@@ -50,7 +50,7 @@ export function UserMenu({ user }: UserMenuProps) {
                 >
                     <Avatar className="h-8 w-8 rounded-lg border border-primary/10 transition-all ring-4 ring-primary/[0.03]">
                         {user.avatar ? (
-                            <img src={user.avatar} alt={user.name || "User"} className="h-full w-full object-cover rounded-lg" />
+                            <img src={getMediaUrl(user.avatar)} alt={user.name || "User"} className="h-full w-full object-cover rounded-lg" />
                         ) : null}
                         <AvatarFallback className="rounded-lg bg-primary/10 text-primary text-[10px] font-semibold border border-primary/20">
                             {user.name ? user.name.substring(0, 2).toUpperCase() : user.email.substring(0, 2).toUpperCase()}
@@ -70,7 +70,7 @@ export function UserMenu({ user }: UserMenuProps) {
                     <div className="flex items-center gap-3 p-2 bg-sidebar-accent/20 rounded-lg">
                         <Avatar className="h-8 w-8 rounded-lg border border-sidebar-border/50">
                             {user.avatar ? (
-                                <img src={user.avatar} alt={user.name || "User"} className="h-full w-full object-cover rounded-lg" />
+                                <img src={getMediaUrl(user.avatar)} alt={user.name || "User"} className="h-full w-full object-cover rounded-lg" />
                             ) : null}
                             <AvatarFallback className="bg-primary/10 text-primary text-xs font-semibold">
                                 {user.name ? user.name.substring(0, 2).toUpperCase() : user.email.substring(0, 2).toUpperCase()}
