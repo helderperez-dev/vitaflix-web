@@ -93,6 +93,7 @@ export function UserTableWrapper({ initialUsers, userProfile }: UserTableWrapper
                 )
             },
             size: 300,
+            meta: { label: t("table.user") },
         },
         {
             accessorKey: "role",
@@ -103,6 +104,7 @@ export function UserTableWrapper({ initialUsers, userProfile }: UserTableWrapper
                 </Badge>
             ),
             size: 100,
+            meta: { label: t("table.role") },
         },
         {
             accessorKey: "objective",
@@ -116,6 +118,7 @@ export function UserTableWrapper({ initialUsers, userProfile }: UserTableWrapper
                 )
             },
             size: 150,
+            meta: { label: t("table.goal") },
         },
         {
             accessorKey: "extraDataComplete",
@@ -128,6 +131,7 @@ export function UserTableWrapper({ initialUsers, userProfile }: UserTableWrapper
                 )
             ),
             size: 120,
+            meta: { label: t("table.status") },
         },
         {
             id: "actions",

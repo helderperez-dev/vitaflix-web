@@ -253,6 +253,7 @@ export function DictionaryManager() {
                     const localizedName = row.name as Record<string, string> | undefined
                     return localizedName?.[locale] || localizedName?.en || Object.values(row.name || {})[0] || ""
                 },
+                meta: { label: isPt ? "Nome" : "Name" },
             },
             {
                 id: "languages",
@@ -269,7 +270,8 @@ export function DictionaryManager() {
                             ))}
                         </div>
                     )
-                }
+                },
+                meta: { label: isPt ? "Idiomas" : "Languages" },
             },
             {
                 id: "actions",

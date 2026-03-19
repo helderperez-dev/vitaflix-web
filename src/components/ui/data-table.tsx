@@ -308,22 +308,26 @@ export function DataTable<TData, TValue>({
     const getResponsiveVisibilityClass = React.useCallback((index: number, totalColumns: number) => {
         const isFirst = index === 0
         const isLast = index === totalColumns - 1
-        const isPenultimate = index === totalColumns - 2
 
-        if (isFirst || isPenultimate || isLast || tableContainerWidth <= 0) {
+        if (isFirst || isLast || tableContainerWidth <= 0) {
             return ""
         }
 
-        const hideableMiddleColumns = Math.max(totalColumns - 3, 0)
+        const hideableMiddleColumns = Math.max(totalColumns - 2, 0)
         if (hideableMiddleColumns === 0) {
             return ""
         }
 
+        // Increase reserved width for first (sticky name) and last (sticky actions) columns
+        // Name column is ~260px, Actions is ~80px, with padding/borders ~440px total reserved
         const reservedWidth = 440
-        const minMiddleColumnWidth = 130
+        const minMiddleColumnWidth = 140
         const availableMiddleWidth = Math.max(tableContainerWidth - reservedWidth, 0)
         const maxVisibleMiddleColumns = Math.floor(availableMiddleWidth / minMiddleColumnWidth)
         const visibleMiddleColumns = Math.max(0, Math.min(hideableMiddleColumns, maxVisibleMiddleColumns))
+
+        // index 0 is first, index 1 to totalColumns - 2 are middle, index totalColumns - 1 is last
+        // We want to show middle columns starting from the left
         const middlePosition = index
 
         return middlePosition > visibleMiddleColumns ? "hidden" : ""
@@ -340,7 +344,7 @@ export function DataTable<TData, TValue>({
         <div className={cn("flex flex-col min-h-0", className)}>
             <div className="bg-card overflow-hidden flex flex-col flex-1">
                 <div ref={tableContainerRef} className="w-full flex-1 overflow-x-hidden overflow-y-auto relative custom-scrollbar">
-                    <Table className="w-full border-separate border-spacing-0">
+                    <Table className="w-full border-separate border-spacing-0 table-fixed">
                         <TableHeader className="sticky top-0 z-30 transition-colors bg-white dark:bg-background">
                             {table.getHeaderGroups().map((headerGroup) => (
                                 <TableRow key={headerGroup.id} className="hover:bg-transparent">
@@ -359,7 +363,7 @@ export function DataTable<TData, TValue>({
                                                     responsiveClass,
                                                     !isLast && "border-r border-border/40",
                                                     isFirst && "pl-8 pr-6 sticky left-0 z-40 bg-white dark:bg-background",
-                                                    isLast && "px-4 pr-8 sticky right-0 z-40 bg-white dark:bg-background border-l border-border/40"
+                                                    isLast && "px-4 pr-8 sticky right-0 z-40 bg-white dark:bg-background"
                                                 )}
                                                 style={{ width: header.getSize() }}
                                             >
@@ -460,21 +464,21 @@ export function DataTable<TData, TValue>({
                                                                 <DropdownMenuContent align="end" className="w-[200px] rounded-lg shadow-2xl border-sidebar-border/50 p-1.5 animate-in slide-in-from-top-1">
                                                                     <DropdownMenuLabel className="text-[11px] font-semibold text-muted-foreground/70 px-2 py-1.5">{t("displayColumns")}</DropdownMenuLabel>
                                                                     <DropdownMenuSeparator className="bg-border/30" />
-                                                                    <div className="max-h-[300px] overflow-auto py-1 custom-scrollbar">
-                                                                        {table
-                                                                            .getAllColumns()
-                                                                            .filter((column) => column.getCanHide())
-                                                                            .map((column) => (
-                                                                                <DropdownMenuCheckboxItem
-                                                                                    key={column.id}
-                                                                                    className="capitalize text-[11px] font-medium rounded-lg cursor-pointer mx-1 mb-1 focus:bg-primary/5 focus:text-primary"
-                                                                                    checked={column.getIsVisible()}
-                                                                                    onCheckedChange={(value) => column.toggleVisibility(!!value)}
-                                                                                >
-                                                                                    {column.id.replace("_", "")}
-                                                                                </DropdownMenuCheckboxItem>
-                                                                            ))}
-                                                                    </div>
+                                                    <div className="max-h-[300px] overflow-auto py-1 custom-scrollbar">
+                                                        {table
+                                                            .getAllColumns()
+                                                            .filter((column) => column.getCanHide())
+                                                            .map((column) => (
+                                                                <DropdownMenuCheckboxItem
+                                                                    key={column.id}
+                                                                    className="capitalize text-[11px] font-medium rounded-lg cursor-pointer mx-1 mb-1 focus:bg-primary/5 focus:text-primary"
+                                                                    checked={column.getIsVisible()}
+                                                                    onCheckedChange={(value) => column.toggleVisibility(!!value)}
+                                                                >
+                                                                    {(column.columnDef.meta as any)?.label || column.id.replace("_", "")}
+                                                                </DropdownMenuCheckboxItem>
+                                                            ))}
+                                                    </div>
                                                                 </DropdownMenuContent>
                                                             </DropdownMenu>
                                                         </div>
@@ -487,14 +491,19 @@ export function DataTable<TData, TValue>({
                                                         onMouseDown={header.getResizeHandler()}
                                                         onTouchStart={header.getResizeHandler()}
                                                         className={cn(
-                                                            "absolute right-[-2px] top-0 h-full w-[4px] cursor-col-resize select-none touch-none z-40 group/resizer transition-opacity",
-                                                            header.column.getIsResizing() ? "opacity-100" : "opacity-0 hover:opacity-100"
+                                                            "absolute right-[-5px] top-0 h-full w-[10px] cursor-col-resize select-none touch-none z-50 group/resizer transition-all",
+                                                            header.column.getIsResizing() ? "bg-primary/5 opacity-100" : "opacity-0 hover:opacity-100"
                                                         )}
                                                     >
                                                         <div className={cn(
-                                                            "w-[1.5px] h-full mx-auto transition-colors",
-                                                            header.column.getIsResizing() ? "bg-primary" : "bg-primary/60"
+                                                            "w-[1.5px] h-full mx-auto transition-all",
+                                                            header.column.getIsResizing() ? "bg-primary scale-x-150" : "bg-primary/30 group-hover/resizer:bg-primary/60"
                                                         )} />
+                                                        
+                                                        {/* Full-height vertical guide line during resize */}
+                                                        {header.column.getIsResizing() && (
+                                                            <div className="absolute top-0 left-1/2 -translate-x-1/2 w-[1px] h-[2000px] bg-primary/20 pointer-events-none z-[100]" />
+                                                        )}
                                                     </div>
                                                 )}
                                             </TableHead>
@@ -524,15 +533,18 @@ export function DataTable<TData, TValue>({
                                             return (
                                                 <TableCell
                                                     key={cell.id}
+                                                    style={{ width: cell.column.getSize() }}
                                                     className={cn(
                                                         "h-14 py-4 transition-all border-b border-border/40 text-[13px] text-foreground/70 relative group transition-colors",
                                                         !isFirst && !isLast && "px-4",
                                                         rowIndex % 2 === 0 ? "bg-white dark:bg-background" : "bg-slate-50/40 dark:bg-white/5",
                                                         row.getIsSelected() && "!bg-primary/5 group-hover/row:!bg-primary/[0.08]",
                                                         responsiveClass,
-                                                        (isFirst || isLast) && "z-10 sticky",
-                                                        isFirst && "pl-8 pr-6 left-0",
-                                                        isLast && "px-4 pr-8 right-0",
+                                                        (isFirst || isLast) && "z-20 sticky",
+                                                        isFirst && "pl-8 pr-6 left-0 bg-white dark:bg-background",
+                                                        isLast && "px-4 pr-8 right-0 bg-white dark:bg-background",
+                                                        // Override the alternating background for sticky columns to ensure opacity
+                                                        (isFirst || isLast) && rowIndex % 2 !== 0 && "bg-slate-50 dark:bg-slate-900/90"
                                                     )}
                                                 >
                                                     <div className={cn("truncate", isLast && "flex justify-end")}>

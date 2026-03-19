@@ -225,6 +225,7 @@ export function ProductTableWrapper({ initialProducts, userProfile }: ProductTab
             },
             size: 260,
             enableHiding: false,
+            meta: { label: t("table.name") },
         },
         {
             id: "brand",
@@ -263,6 +264,7 @@ export function ProductTableWrapper({ initialProducts, userProfile }: ProductTab
                 )
             },
             size: 150,
+            meta: { label: t("brand") },
         },
         {
             id: "unit",
@@ -280,30 +282,35 @@ export function ProductTableWrapper({ initialProducts, userProfile }: ProductTab
                 )
             },
             size: 90,
+            meta: { label: t("unit") },
         },
         {
             accessorKey: "kcal",
             header: ({ column }) => <SortableHeader column={column} title={t("table.kcal")} />,
             cell: ({ row }) => <div>{row.getValue("kcal")} kcal</div>,
             size: 100,
+            meta: { label: t("table.kcal") },
         },
         {
             accessorKey: "protein",
             header: ({ column }) => <SortableHeader column={column} title={t("table.p")} />,
             cell: ({ row }) => <div>{row.getValue("protein")}g</div>,
-            size: 80
+            size: 80,
+            meta: { label: t("table.p") },
         },
         {
             accessorKey: "carbs",
             header: ({ column }) => <SortableHeader column={column} title={t("table.c")} />,
             cell: ({ row }) => <div>{row.getValue("carbs")}g</div>,
-            size: 80
+            size: 80,
+            meta: { label: t("table.c") },
         },
         {
             accessorKey: "fat",
             header: ({ column }) => <SortableHeader column={column} title={t("table.f")} />,
             cell: ({ row }) => <div>{row.getValue("fat")}g</div>,
-            size: 80
+            size: 80,
+            meta: { label: t("table.f") },
         },
         {
             id: "countries",
@@ -330,6 +337,7 @@ export function ProductTableWrapper({ initialProducts, userProfile }: ProductTab
                 )
             },
             size: 180,
+            meta: { label: t("countries") },
         },
         {
             id: "tags",
@@ -359,16 +367,24 @@ export function ProductTableWrapper({ initialProducts, userProfile }: ProductTab
                 )
             },
             size: 150,
+            meta: { label: t("tags") },
         },
         {
             accessorKey: "is_public",
             header: ({ column }) => <SortableHeader column={column} title={t("table.status")} />,
-            cell: ({ row }) => (
-                <Badge variant={row.getValue("is_public") ? "default" : "outline"} className="capitalize">
-                    {row.getValue("is_public") ? commonT("public") : commonT("private")}
-                </Badge>
-            ),
+            cell: ({ row }) => {
+                const isPublic = row.original.mappedProduct.isPublic
+                return (
+                    <Badge variant={isPublic ? "secondary" : "outline"} className={cn(
+                        "capitalize text-[10px] h-5 px-2 border-none",
+                        isPublic ? "bg-emerald-500/10 text-emerald-600 dark:text-emerald-400" : "bg-slate-100 text-slate-600 dark:bg-white/5 dark:text-slate-400"
+                    )}>
+                        {isPublic ? commonT("public") : commonT("private")}
+                    </Badge>
+                )
+            },
             size: 100,
+            meta: { label: t("table.status") },
         },
         {
             id: "actions",

@@ -250,6 +250,7 @@ export function MealTableWrapper({ initialMeals, userProfile }: MealTableWrapper
             },
             size: 260,
             enableHiding: false,
+            meta: { label: t("table.name") },
         },
         {
             id: "cookTime",
@@ -265,6 +266,7 @@ export function MealTableWrapper({ initialMeals, userProfile }: MealTableWrapper
                 )
             },
             size: 100,
+            meta: { label: t("table.cookTime") },
         },
         {
             id: "variations",
@@ -279,6 +281,7 @@ export function MealTableWrapper({ initialMeals, userProfile }: MealTableWrapper
                 )
             },
             size: 100,
+            meta: { label: t("mealVariations") },
         },
         {
             id: "mealTypes",
@@ -302,6 +305,7 @@ export function MealTableWrapper({ initialMeals, userProfile }: MealTableWrapper
                 )
             },
             size: 150,
+            meta: { label: t("table.categories") },
         },
         {
             id: "restrictions",
@@ -325,6 +329,7 @@ export function MealTableWrapper({ initialMeals, userProfile }: MealTableWrapper
                 )
             },
             size: 150,
+            meta: { label: t("table.dietaryTags") },
         },
         {
             id: "satiety",
@@ -345,6 +350,7 @@ export function MealTableWrapper({ initialMeals, userProfile }: MealTableWrapper
                 )
             },
             size: 120,
+            meta: { label: t("table.satiety") },
         },
         {
             accessorKey: "is_public",
@@ -361,6 +367,7 @@ export function MealTableWrapper({ initialMeals, userProfile }: MealTableWrapper
                 )
             },
             size: 100,
+            meta: { label: t("table.status") },
         },
         {
             id: "actions",

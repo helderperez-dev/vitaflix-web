@@ -59,6 +59,7 @@ export function LeadsDatagrid({ funnels, activeFunnelId, leads, onRowClick, onDe
                 <div className="font-semibold text-sm">{row.getValue("name")}</div>
             ),
             size: 200,
+            meta: { label: tLeads("tableName") },
         },
         {
             id: "contact",
@@ -84,6 +85,7 @@ export function LeadsDatagrid({ funnels, activeFunnelId, leads, onRowClick, onDe
                 )
             },
             size: 220,
+            meta: { label: tLeads("contact") },
         },
         {
             accessorKey: "source",
@@ -94,6 +96,7 @@ export function LeadsDatagrid({ funnels, activeFunnelId, leads, onRowClick, onDe
                 </Badge>
             ),
             size: 120,
+            meta: { label: tLeads("tableSource") },
         },
         {
             accessorKey: "created_at",
@@ -104,6 +107,7 @@ export function LeadsDatagrid({ funnels, activeFunnelId, leads, onRowClick, onDe
                 </div>
             ),
             size: 120,
+            meta: { label: tLeads("created") },
         },
         {
             id: "step",

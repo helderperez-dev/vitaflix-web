@@ -41,6 +41,7 @@ export function GroupsTab({
                 </div>
             ),
             size: 300,
+            meta: { label: t("table.name") },
         },
         {
             id: "members",
@@ -51,6 +52,7 @@ export function GroupsTab({
                 </Badge>
             ),
             size: 150,
+            meta: { label: t("table.members") },
         },
         {
             accessorKey: "created_at",
@@ -65,6 +67,7 @@ export function GroupsTab({
                 )
             },
             size: 150,
+            meta: { label: commonT("date") },
         },
         {
             id: "actions",

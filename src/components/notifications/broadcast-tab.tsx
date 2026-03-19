@@ -40,6 +40,7 @@ export function BroadcastTab({
                 </div>
             ),
             size: 350,
+            meta: { label: t("subject") },
         },
         {
             accessorKey: "type",
@@ -53,6 +54,7 @@ export function BroadcastTab({
                 )
             },
             size: 120,
+            meta: { label: t("type") },
         },
         {
             accessorKey: "channel",
@@ -70,6 +72,7 @@ export function BroadcastTab({
                 )
             },
             size: 150,
+            meta: { label: t("channel") },
         },
         {
             accessorKey: "status",
@@ -86,6 +89,7 @@ export function BroadcastTab({
                 )
             },
             size: 100,
+            meta: { label: commonT("status") },
         },
         {
             accessorKey: "created_at",
@@ -100,6 +104,7 @@ export function BroadcastTab({
                 )
             },
             size: 150,
+            meta: { label: commonT("date") },
         },
         {
             id: "actions",

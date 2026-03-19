@@ -38,6 +38,7 @@ export function TriggersTab({
                 </div>
             ),
             size: 250,
+            meta: { label: t("table.name") },
         },
         {
             accessorKey: "type",
@@ -51,6 +52,7 @@ export function TriggersTab({
                 )
             },
             size: 120,
+            meta: { label: t("type") },
         },
         {
             accessorKey: "channels",
@@ -72,6 +74,7 @@ export function TriggersTab({
                 )
             },
             size: 200,
+            meta: { label: t("table.channels") },
         },
         {
             accessorKey: "is_active",
@@ -88,6 +91,7 @@ export function TriggersTab({
                 )
             },
             size: 100,
+            meta: { label: commonT("status") },
         },
         {
             accessorKey: "created_at",
@@ -102,6 +106,7 @@ export function TriggersTab({
                 )
             },
             size: 150,
+            meta: { label: commonT("date") },
         },
         {
             id: "actions",
