@@ -4,7 +4,7 @@
   "private": true,
   "scripts": {
     "dev": "next dev",
-    "dev:sandbox": "npx dotenv-cli -e .env.local -- next dev",
+    "dev:sandbox": "next dev",
     "dev:prod": "npx dotenv-cli -e .env.prod -- next dev",
     "build": "next build",
     "build:sandbox": "npx dotenv-cli -e .env.local -- next build",

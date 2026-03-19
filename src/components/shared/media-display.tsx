@@ -23,7 +23,21 @@ export function MediaDisplay({
     muted = true,
     ...props
 }: MediaDisplayProps) {
-    const fullUrl = React.useMemo(() => getMediaUrl(src), [src])
+    const fullUrl = React.useMemo(() => {
+        if (!src) return ""
+        if (src.startsWith("http") || src.startsWith("data:")) return src
+        
+        const baseUrl = process.env.NEXT_PUBLIC_SUPABASE_URL
+        const cleanPath = src.startsWith("/") ? src.slice(1) : src
+        
+        const finalUrl = `${baseUrl}/storage/v1/object/public/vitaflix/${cleanPath}`
+        
+        if (process.env.NODE_ENV === 'development' && !baseUrl) {
+            console.warn("MediaDisplay: NEXT_PUBLIC_SUPABASE_URL is missing!")
+        }
+        
+        return finalUrl
+    }, [src])
     
     if (!fullUrl) return null
 

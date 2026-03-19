@@ -15,9 +15,6 @@ export function getMediaUrl(path: string | null | undefined): string {
     if (path.startsWith("http") || path.startsWith("data:")) return path
 
     const supabaseUrl = process.env.NEXT_PUBLIC_SUPABASE_URL
-    if (!supabaseUrl) return path
-
-    // Clean leading slash from path if any
     const cleanPath = path.startsWith("/") ? path.slice(1) : path
 
     return `${supabaseUrl}/storage/v1/object/public/vitaflix/${cleanPath}`
