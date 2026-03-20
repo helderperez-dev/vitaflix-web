@@ -6,7 +6,7 @@ import { type NextRequest } from 'next/server';
 const intlMiddleware = createMiddleware(routing);
 const posthogProxyConfig = {
     pathPrefix: '/ingest',
-    host: process.env.POSTHOG_HOST || process.env.NEXT_PUBLIC_POSTHOG_HOST || 'https://p.vitaflix.app',
+    host: process.env.NEXT_PUBLIC_POSTHOG_HOST || 'https://p.vitaflix.app',
 };
 const posthogProxyMiddleware = postHogMiddleware({ proxy: posthogProxyConfig });
 
