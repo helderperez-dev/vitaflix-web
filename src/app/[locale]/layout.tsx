@@ -62,10 +62,8 @@ export default async function RootLayout({
   // Providing all messages to the client
   // side is the easiest way to get started
   const messages = await getMessages();
-  const isPostHogEnabled =
-    process.env.NODE_ENV === "production" &&
-    process.env.NEXT_PUBLIC_ENVIRONMENT === "production" &&
-    Boolean(process.env.NEXT_PUBLIC_POSTHOG_KEY);
+  const posthogKey = process.env.NEXT_PUBLIC_POSTHOG_KEY?.trim();
+  const isPostHogEnabled = Boolean(posthogKey);
 
   const appContent = (
     <NextIntlClientProvider locale={locale} messages={messages}>
@@ -93,6 +91,7 @@ export default async function RootLayout({
       >
         {isPostHogEnabled ? (
           <PostHogProvider
+            apiKey={posthogKey}
             clientOptions={{
               api_host: "/ingest",
               defaults: "2026-01-30",

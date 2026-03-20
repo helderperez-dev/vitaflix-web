@@ -4,7 +4,11 @@ import { postHogMiddleware } from '@posthog/next';
 import { type NextRequest } from 'next/server';
 
 const intlMiddleware = createMiddleware(routing);
-const posthogProxyMiddleware = postHogMiddleware({ proxy: true });
+const posthogProxyConfig = {
+    pathPrefix: '/ingest',
+    host: process.env.POSTHOG_HOST || 'https://us.i.posthog.com',
+};
+const posthogProxyMiddleware = postHogMiddleware({ proxy: posthogProxyConfig });
 
 export default async function middleware(request: NextRequest) {
     if (request.nextUrl.pathname.startsWith('/ingest')) {
@@ -12,14 +16,9 @@ export default async function middleware(request: NextRequest) {
     }
 
     const response = intlMiddleware(request);
-    return postHogMiddleware({ response })(request);
+    return postHogMiddleware({ response, proxy: posthogProxyConfig })(request);
 }
 
 export const config = {
-    // Match all pathnames except for
-    // - … if they contain a dot (e.g. `favicon.ico`)
-    // - api routes
-    // - _next (internal paths)
-    // - metadata files (e.g. `robots.txt`, `icon`, `apple-icon`)
-    matcher: ['/((?!api|_next|_vercel|icon|apple-icon|.*\\..*).*)']
+    matcher: ['/ingest/:path*', '/((?!api|_next|_vercel|icon|apple-icon|.*\\..*).*)']
 };

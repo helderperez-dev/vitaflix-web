@@ -16,8 +16,6 @@ const posthogKey = process.env.POSTHOG_KEY || process.env.NEXT_PUBLIC_POSTHOG_KE
 const posthogHost = process.env.POSTHOG_HOST || process.env.NEXT_PUBLIC_POSTHOG_HOST || "https://us.i.posthog.com"
 
 export const isPostHogEnabled =
-    process.env.NODE_ENV === "production" &&
-    (process.env.NEXT_PUBLIC_ENVIRONMENT ?? process.env.ENVIRONMENT) === "production" &&
     Boolean(posthogKey)
 
 function createPostHogClient(): PostHogClient {
