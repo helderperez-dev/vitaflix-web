@@ -1,7 +1,19 @@
 import createMiddleware from 'next-intl/middleware';
 import { routing } from './i18n/routing';
+import { postHogMiddleware } from '@posthog/next';
+import { type NextRequest } from 'next/server';
 
-export default createMiddleware(routing);
+const intlMiddleware = createMiddleware(routing);
+const posthogProxyMiddleware = postHogMiddleware({ proxy: true });
+
+export default async function middleware(request: NextRequest) {
+    if (request.nextUrl.pathname.startsWith('/ingest')) {
+        return posthogProxyMiddleware(request);
+    }
+
+    const response = intlMiddleware(request);
+    return postHogMiddleware({ response })(request);
+}
 
 export const config = {
     // Match all pathnames except for

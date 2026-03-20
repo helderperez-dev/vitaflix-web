@@ -14,7 +14,7 @@ on:
       run_schema_phase:
         description: "Apply migrations (schema, RLS, functions, triggers, policies)"
         required: true
-        default: true
+        default: false
         type: boolean
       sync_source_schema_phase:
         description: "Optional preflight: validate source schema drift before release (usually false if sync PR already merged)"

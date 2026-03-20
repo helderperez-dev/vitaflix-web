@@ -1,6 +1,6 @@
 "use client"
 
-import { useState } from "react"
+import { useRef, useState } from "react"
 import { motion } from "framer-motion"
 import { z } from "zod"
 import { useForm } from "react-hook-form"
@@ -17,11 +17,15 @@ import {
 import { CheckCircle2 } from "lucide-react"
 import { toast } from "sonner"
 import { useTranslations } from "next-intl"
+import { usePostHog } from "@posthog/next"
 
 export function WaitlistForm({ inputId }: { inputId?: string }) {
     const t = useTranslations("Landing.WaitlistForm")
+    const posthog = usePostHog()
     const [isSubmitting, setIsSubmitting] = useState(false)
     const [isSuccess, setIsSuccess] = useState(false)
+    const hasTrackedNameFocus = useRef(false)
+    const hasTrackedEmailFocus = useRef(false)
 
     const waitlistSchema = z.object({
         name: z.string().min(2, { message: t("validation.nameRequired") }),
@@ -38,24 +42,31 @@ export function WaitlistForm({ inputId }: { inputId?: string }) {
 
     async function onSubmit(values: z.infer<typeof waitlistSchema>) {
         setIsSubmitting(true)
+        posthog.capture("landing_waitlist_submit_clicked", {
+            source: "landing_waitlist",
+        })
 
         try {
-            // We'll post to our internal leads API
             const response = await fetch("/api/leads", {
                 method: "POST",
                 headers: { "Content-Type": "application/json" },
                 body: JSON.stringify({
                     ...values,
                     source: "landing_waitlist",
-                    // We don't have a specific funnel ID yet, the webhook or admin will assign.
                 }),
             })
 
             if (!response.ok) throw new Error("Failed to submit")
 
             setIsSuccess(true)
+            posthog.capture("landing_waitlist_submitted", {
+                source: "landing_waitlist",
+            })
             toast.success(t("success.toast"))
         } catch (error) {
+            posthog.capture("landing_waitlist_submit_failed", {
+                source: "landing_waitlist",
+            })
             console.error(error)
             toast.error(t("error.toast"))
         } finally {
@@ -96,6 +107,14 @@ export function WaitlistForm({ inputId }: { inputId?: string }) {
                                         id={inputId}
                                         placeholder={t("placeholders.name")}
                                         className="h-12 border-0 bg-transparent text-slate-900 placeholder:text-slate-500 focus-visible:ring-0 shadow-none px-3 font-medium text-sm"
+                                        onFocus={() => {
+                                            if (!hasTrackedNameFocus.current) {
+                                                hasTrackedNameFocus.current = true
+                                                posthog.capture("landing_waitlist_name_input_focused", {
+                                                    source: "landing_waitlist",
+                                                })
+                                            }
+                                        }}
                                         {...field}
                                     />
                                 </FormControl>
@@ -112,6 +131,14 @@ export function WaitlistForm({ inputId }: { inputId?: string }) {
                                     <Input
                                         placeholder={t("placeholders.email")}
                                         className="h-12 border-0 bg-transparent text-slate-900 placeholder:text-slate-500 focus-visible:ring-0 shadow-none px-3 font-medium text-sm"
+                                        onFocus={() => {
+                                            if (!hasTrackedEmailFocus.current) {
+                                                hasTrackedEmailFocus.current = true
+                                                posthog.capture("landing_waitlist_email_input_focused", {
+                                                    source: "landing_waitlist",
+                                                })
+                                            }
+                                        }}
                                         {...field}
                                     />
                                 </FormControl>

@@ -10,7 +10,7 @@ import { getMessages, setRequestLocale } from 'next-intl/server';
 import { notFound } from 'next/navigation';
 import { routing } from '@/i18n/routing';
 import { NuqsAdapter } from 'nuqs/adapters/next/app';
-import { PHProvider } from "@/components/posthog-provider";
+import { PostHogProvider, PostHogPageView } from "@posthog/next";
 
 const geistMono = Geist_Mono({
   variable: "--font-geist-mono",
@@ -52,7 +52,7 @@ export default async function RootLayout({
   const { locale } = await params;
 
   // Ensure that the incoming `locale` is valid
-  if (!routing.locales.includes(locale as any)) {
+  if (!routing.locales.includes(locale as (typeof routing.locales)[number])) {
     notFound();
   }
 
@@ -62,30 +62,51 @@ export default async function RootLayout({
   // Providing all messages to the client
   // side is the easiest way to get started
   const messages = await getMessages();
+  const isPostHogEnabled =
+    process.env.NODE_ENV === "production" &&
+    process.env.NEXT_PUBLIC_ENVIRONMENT === "production" &&
+    Boolean(process.env.NEXT_PUBLIC_POSTHOG_KEY);
+
+  const appContent = (
+    <NextIntlClientProvider locale={locale} messages={messages}>
+      <ThemeProvider
+        attribute="class"
+        defaultTheme="system"
+        enableSystem
+        disableTransitionOnChange
+      >
+        <ThemeColorMeta />
+        <NuqsAdapter>
+          <TooltipProvider>
+            {children}
+            <Toaster />
+          </TooltipProvider>
+        </NuqsAdapter>
+      </ThemeProvider>
+    </NextIntlClientProvider>
+  );
 
   return (
     <html lang={locale} suppressHydrationWarning className={`scroll-smooth ${plusJakartaSans.variable} ${nunito.variable} ${poppins.variable}`}>
       <body
         className={`${geistMono.variable} font-sans bg-[#FAFCFF] text-slate-900 antialiased selection:bg-primary/20 selection:text-primary`}
       >
-        <PHProvider>
-          <NextIntlClientProvider locale={locale} messages={messages}>
-            <ThemeProvider
-              attribute="class"
-              defaultTheme="system"
-              enableSystem
-              disableTransitionOnChange
-            >
-              <ThemeColorMeta />
-              <NuqsAdapter>
-                <TooltipProvider>
-                  {children}
-                  <Toaster />
-                </TooltipProvider>
-              </NuqsAdapter>
-            </ThemeProvider>
-          </NextIntlClientProvider>
-        </PHProvider>
+        {isPostHogEnabled ? (
+          <PostHogProvider
+            clientOptions={{
+              api_host: "/ingest",
+              defaults: "2026-01-30",
+              person_profiles: "always",
+              capture_pageview: false,
+              capture_pageleave: true,
+            }}
+          >
+            <PostHogPageView />
+            {appContent}
+          </PostHogProvider>
+        ) : (
+          appContent
+        )}
       </body>
     </html>
   );
