@@ -12,7 +12,8 @@ export function PHProvider({ children }: { children: ReactNode }) {
 
         if (isProduction && key) {
             posthog.init(key, {
-                api_host: host || 'https://us.i.posthog.com',
+                api_host: host || 'https://p.vitaflix.app',
+                defaults: '2026-01-30',
                 person_profiles: 'always',
                 capture_pageview: true,
                 capture_pageleave: true,

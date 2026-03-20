@@ -13,7 +13,7 @@ const posthogNoopClient: PostHogClient = {
 }
 
 const posthogKey = process.env.NEXT_PUBLIC_POSTHOG_KEY
-const posthogHost = process.env.NEXT_PUBLIC_POSTHOG_HOST || "https://us.i.posthog.com"
+const posthogHost = process.env.NEXT_PUBLIC_POSTHOG_HOST || "https://p.vitaflix.app"
 
 export const isPostHogEnabled =
     (process.env.NEXT_PUBLIC_ENVIRONMENT ?? process.env.ENVIRONMENT) === "production" &&
