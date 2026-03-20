@@ -1,0 +1,48 @@
+import { PostHog } from "posthog-node"
+
+type PostHogClient = {
+    capture: (payload: { distinctId: string; event: string; properties?: Record<string, unknown> }) => void
+    identify: (payload: { distinctId: string; properties?: Record<string, unknown> }) => void
+    shutdown: () => Promise<void>
+}
+
+const posthogNoopClient: PostHogClient = {
+    capture: () => undefined,
+    identify: () => undefined,
+    shutdown: async () => undefined,
+}
+
+const posthogKey = process.env.NEXT_PUBLIC_POSTHOG_KEY
+const posthogHost = process.env.NEXT_PUBLIC_POSTHOG_HOST || "https://us.i.posthog.com"
+
+export const isPostHogEnabled =
+    (process.env.NEXT_PUBLIC_ENVIRONMENT ?? process.env.ENVIRONMENT) === "production" &&
+    Boolean(posthogKey)
+
+function createPostHogClient(): PostHogClient {
+    if (!isPostHogEnabled || !posthogKey) {
+        return posthogNoopClient
+    }
+
+    return new PostHog(posthogKey, {
+        host: posthogHost,
+        flushAt: 1,
+        flushInterval: 0,
+    })
+}
+
+declare global {
+    var posthog: undefined | PostHogClient
+}
+
+export function getPostHogClient(): PostHogClient {
+    if (!globalThis.posthog) {
+        globalThis.posthog = createPostHogClient()
+    }
+
+    return globalThis.posthog
+}
+
+const posthogServer = getPostHogClient()
+
+export default posthogServer

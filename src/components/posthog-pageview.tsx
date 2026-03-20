@@ -8,9 +8,10 @@ function PostHogPageViewContent() {
     const pathname = usePathname()
     const searchParams = useSearchParams()
     const posthog = usePostHog()
+    const isProduction = process.env.NEXT_PUBLIC_ENVIRONMENT === "production"
 
     useEffect(() => {
-        if (pathname && posthog) {
+        if (isProduction && pathname && posthog) {
             let url = window.origin + pathname
             if (searchParams.toString()) {
                 url = url + "?" + searchParams.toString()
@@ -19,7 +20,7 @@ function PostHogPageViewContent() {
                 '$current_url': url,
             })
         }
-    }, [pathname, searchParams, posthog])
+    }, [isProduction, pathname, searchParams, posthog])
 
     return null
 }

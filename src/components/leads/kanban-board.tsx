@@ -7,6 +7,7 @@ import { Mail, Phone, Calendar, GripVertical } from "lucide-react"
 import { updateLeadStepAction } from "@/app/actions/leads"
 import { Badge } from "@/components/ui/badge"
 import { useTranslations } from "next-intl"
+import posthog from "posthog-js"
 import { LeadActions } from "./lead-actions"
 import { cn } from "@/lib/utils"
 import {
@@ -328,6 +329,7 @@ export function KanbanBoard({ funnel, leads: initialLeads, onLeadStepChange, onL
         const finalLead = leads.find(l => l.id === activeId)
         if (finalLead) {
             onLeadStepChange(activeId, finalLead.step_id as any)
+            posthog.capture('lead_step_changed', { lead_id: activeId, lead_name: finalLead.name, new_step_id: finalLead.step_id })
             await updateLeadStepAction(activeId, finalLead.step_id)
         }
     }

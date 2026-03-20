@@ -24,6 +24,7 @@ import {
 import { deleteLeadAction } from "@/app/actions/leads"
 import { useTranslations } from "next-intl"
 import { Database } from "@/types/database.types"
+import posthog from "posthog-js"
 
 type Lead = Database['public']['Tables']['leads']['Row']
 
@@ -48,6 +49,7 @@ export function LeadActions({ lead, onEdit, onDelete }: LeadActionsProps) {
                 toast.error(result.error)
             } else {
                 toast.success(commonT("deletedSuccessfully"))
+                posthog.capture('lead_deleted', { lead_id: lead.id, lead_name: lead.name, source: lead.source })
                 onDelete?.(lead.id)
             }
         } catch (error) {

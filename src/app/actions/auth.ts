@@ -3,18 +3,28 @@
 import { createClient } from "@/lib/supabase/server"
 import { redirect } from "@/i18n/routing"
 import { getLocale } from 'next-intl/server'
+import posthogServer from "@/lib/posthog-server"
 
 
 export async function loginAction(data: { email: string; password: string; locale: string }) {
     const supabase = await createClient()
 
-    const { error } = await supabase.auth.signInWithPassword({
+    const { data: authData, error } = await supabase.auth.signInWithPassword({
         email: data.email,
         password: data.password,
     })
 
     if (error) {
         return { error: error.message }
+    }
+
+    if (authData.user) {
+        posthogServer.identify({
+            distinctId: authData.user.id,
+            properties: {
+                email: authData.user.email,
+            },
+        })
     }
 
     // After successful login, fetch user profile to find their locale

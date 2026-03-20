@@ -2,6 +2,7 @@ import { NextResponse } from "next/server"
 import Stripe from "stripe"
 import { createClient } from "@supabase/supabase-js"
 import { triggerAppEvent } from "@/app/actions/notifications"
+import { getPostHogClient } from "@/lib/posthog-server"
 
 // Initialize Stripe and Supabase clients
 const stripe = new Stripe(process.env.STRIPE_SECRET_KEY as string, {
@@ -65,10 +66,21 @@ export async function POST(req: Request) {
             }
 
             // Fire notification triggers based on subscription status
+            const posthog = getPostHogClient()
             if (status === "active" && event.type === "customer.subscription.created") {
                 await triggerAppEvent("subscription_activated", { userId })
+                posthog.capture({
+                    distinctId: userId,
+                    event: 'subscription_activated',
+                    properties: { subscription_id: subscription.id, status },
+                })
             } else if (status === "canceled") {
                 await triggerAppEvent("subscription_cancelled", { userId })
+                posthog.capture({
+                    distinctId: userId,
+                    event: 'subscription_cancelled',
+                    properties: { subscription_id: subscription.id, status },
+                })
             }
 
             break
@@ -93,6 +105,14 @@ export async function POST(req: Request) {
                         status: "succeeded"
                     })
                 }
+            }
+            const invoiceUserId = invoice.subscription_details?.metadata?.userId || invoice.metadata?.userId
+            if (invoiceUserId) {
+                getPostHogClient().capture({
+                    distinctId: invoiceUserId,
+                    event: 'payment_succeeded',
+                    properties: { amount: invoice.amount_paid, currency: invoice.currency, subscription_id: invoice.subscription },
+                })
             }
             break
         }

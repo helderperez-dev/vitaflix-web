@@ -1,6 +1,7 @@
 import { NextResponse } from "next/server"
 import { createClient } from "@supabase/supabase-js"
 import { Database } from "@/types/database.types"
+import { getPostHogClient } from "@/lib/posthog-server"
 
 // This is a server-side API route, so it's safe to use the service role key.
 // The service role bypasses RLS entirely, ensuring public lead inserts always work.
@@ -56,6 +57,13 @@ export async function POST(req: Request) {
                 { status: 500, headers: corsHeaders }
             )
         }
+
+        const posthog = getPostHogClient()
+        posthog.capture({
+            distinctId: email || phone || data.id,
+            event: 'lead_submitted',
+            properties: { lead_id: data.id, name, source: source || null, funnel_id: funnel_id || null, has_email: !!email, has_phone: !!phone },
+        })
 
         return NextResponse.json({ success: true, lead: data }, { status: 201, headers: corsHeaders })
     } catch (err: any) {
