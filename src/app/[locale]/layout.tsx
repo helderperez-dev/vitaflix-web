@@ -10,6 +10,8 @@ import { getMessages, setRequestLocale } from 'next-intl/server';
 import { notFound } from 'next/navigation';
 import { routing } from '@/i18n/routing';
 import { NuqsAdapter } from 'nuqs/adapters/next/app';
+import { PHProvider } from "@/components/posthog-provider";
+import PostHogPageView from "@/components/posthog-pageview";
 
 const geistMono = Geist_Mono({
   variable: "--font-geist-mono",
@@ -67,22 +69,25 @@ export default async function RootLayout({
       <body
         className={`${geistMono.variable} font-sans bg-[#FAFCFF] text-slate-900 antialiased selection:bg-primary/20 selection:text-primary`}
       >
-        <NextIntlClientProvider locale={locale} messages={messages}>
-          <ThemeProvider
-            attribute="class"
-            defaultTheme="system"
-            enableSystem
-            disableTransitionOnChange
-          >
-            <ThemeColorMeta />
-            <NuqsAdapter>
-              <TooltipProvider>
-                {children}
-                <Toaster />
-              </TooltipProvider>
-            </NuqsAdapter>
-          </ThemeProvider>
-        </NextIntlClientProvider>
+        <PHProvider>
+          <PostHogPageView />
+          <NextIntlClientProvider locale={locale} messages={messages}>
+            <ThemeProvider
+              attribute="class"
+              defaultTheme="system"
+              enableSystem
+              disableTransitionOnChange
+            >
+              <ThemeColorMeta />
+              <NuqsAdapter>
+                <TooltipProvider>
+                  {children}
+                  <Toaster />
+                </TooltipProvider>
+              </NuqsAdapter>
+            </ThemeProvider>
+          </NextIntlClientProvider>
+        </PHProvider>
       </body>
     </html>
   );
