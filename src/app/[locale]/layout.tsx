@@ -63,6 +63,7 @@ export default async function RootLayout({
   // side is the easiest way to get started
   const messages = await getMessages();
   const posthogKey = process.env.NEXT_PUBLIC_POSTHOG_KEY?.trim();
+  const posthogHost = process.env.NEXT_PUBLIC_POSTHOG_HOST || "https://p.vitaflix.app";
   const isPostHogEnabled =
     Boolean(posthogKey) &&
     (process.env.NEXT_PUBLIC_ENVIRONMENT ?? process.env.ENVIRONMENT) === "production";
@@ -95,7 +96,7 @@ export default async function RootLayout({
           <PostHogProvider
             apiKey={posthogKey}
             clientOptions={{
-              api_host: "/ingest",
+              api_host: posthogHost,
               defaults: "2026-01-30",
               person_profiles: "always",
               capture_pageview: false,
