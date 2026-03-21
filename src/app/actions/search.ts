@@ -12,18 +12,28 @@ type TagSearchRow = { id: string; name: unknown }
 type LeadSearchRow = { id: string; name: string | null; email: string | null; phone: string | null; source: string | null }
 type PlanSearchRow = { id: string; name: string | null; daily_meals_count: number | null; user_id: string }
 
-function getLocalizedName(value: unknown, fallback: string) {
+function getLocaleCandidates(locale?: string) {
+    const normalized = locale?.toLowerCase().trim()
+    if (!normalized) return ["en", "pt-pt", "pt-br", "pt", "es"]
+
+    const candidates = [normalized]
+    const [baseLocale] = normalized.split("-")
+    if (baseLocale && baseLocale !== normalized) candidates.push(baseLocale)
+
+    return [...new Set([...candidates, "en", "pt-pt", "pt-br", "pt", "es"])]
+}
+
+function getLocalizedName(value: unknown, fallback: string, locale?: string) {
     if (!value || typeof value !== "object") return fallback
     const record = value as Record<string, string>
-    return (
-        record.en ||
-        record["pt-pt"] ||
-        record["pt-br"] ||
-        record.pt ||
-        record.es ||
-        Object.values(record).find(Boolean) ||
-        fallback
-    )
+    const localeCandidates = getLocaleCandidates(locale)
+
+    for (const key of localeCandidates) {
+        const localizedValue = record[key]
+        if (localizedValue) return localizedValue
+    }
+
+    return Object.values(record).find(Boolean) || fallback
 }
 
 function escapeOrValue(value: string) {
@@ -34,7 +44,7 @@ function escapeOrValue(value: string) {
         .replace(/\)/g, "\\)")
 }
 
-export async function globalSearch(query: string): Promise<SearchResult[]> {
+export async function globalSearch(query: string, locale?: string): Promise<SearchResult[]> {
     const trimmedQuery = query.trim()
     if (!trimmedQuery || trimmedQuery.length < 2) return []
 
@@ -121,7 +131,7 @@ export async function globalSearch(query: string): Promise<SearchResult[]> {
         }
 
         products.forEach((p) => {
-            const name = getLocalizedName(p.name, "Unknown Product")
+            const name = getLocalizedName(p.name, "Unknown Product", locale)
             const images = Array.isArray(p.images) ? p.images as { url?: string; isDefault?: boolean }[] : []
             const defaultImg = images.find((img) => img.isDefault) || images[0]
             results.push({
@@ -135,7 +145,7 @@ export async function globalSearch(query: string): Promise<SearchResult[]> {
         })
 
         meals.forEach((m) => {
-            const name = getLocalizedName(m.name, "Unknown Meal")
+            const name = getLocalizedName(m.name, "Unknown Meal", locale)
             results.push({
                 id: m.id,
                 type: "meal",
@@ -158,7 +168,7 @@ export async function globalSearch(query: string): Promise<SearchResult[]> {
         })
 
         brands.forEach((b) => {
-            const name = getLocalizedName(b.name, "Unknown Brand")
+            const name = getLocalizedName(b.name, "Unknown Brand", locale)
             results.push({
                 id: b.id,
                 type: "brand",
@@ -169,7 +179,7 @@ export async function globalSearch(query: string): Promise<SearchResult[]> {
         })
 
         tags.forEach((tag) => {
-            const name = getLocalizedName(tag.name, "Unknown Tag")
+            const name = getLocalizedName(tag.name, "Unknown Tag", locale)
             results.push({
                 id: tag.id,
                 type: "tag",

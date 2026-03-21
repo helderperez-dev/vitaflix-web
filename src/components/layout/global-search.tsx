@@ -106,7 +106,7 @@ export function GlobalSearch() {
 
             setIsLoading(true)
             try {
-                const searchResults = await globalSearch(debouncedQuery)
+                const searchResults = await globalSearch(debouncedQuery, locale)
                 if (latestRequestRef.current !== currentRequest) return
                 React.startTransition(() => {
                     setResults(searchResults)
@@ -121,7 +121,7 @@ export function GlobalSearch() {
         }
 
         fetchResults()
-    }, [debouncedQuery])
+    }, [debouncedQuery, locale])
 
     React.useEffect(() => {
         setSelectedIndex(-1)

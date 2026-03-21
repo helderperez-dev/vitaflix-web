@@ -245,27 +245,18 @@ export function DataTable<TData, TValue>({
             const value = filterValue.toLowerCase().trim()
             if (!value) return true
 
-            // Split search terms by space and filter out empty strings
-            const terms = value.split(/\s+/).filter(Boolean)
-            if (terms.length === 0) return true
-
-            // Get all searchable content from the row
-            // We focus on visible columns that have data
             const rowValue = row.getAllCells()
                 .map(cell => {
                     const val = cell.getValue()
                     if (typeof val === 'string' || typeof val === 'number') return String(val).toLowerCase()
-                    // Handle complex objects if they have a 'name' or 'label'
                     if (val && typeof val === 'object') {
-                        // Check common locale structures like { en: '...', pt: '...' }
                         return JSON.stringify(val).toLowerCase()
                     }
                     return ""
                 })
                 .join("")
 
-            // AND logic: all terms must match
-            return terms.every((term: string) => rowValue.includes(term))
+            return rowValue.includes(value)
         },
         state: {
             sorting,
@@ -411,32 +402,28 @@ export function DataTable<TData, TValue>({
                                                                         </div>
                                                                         <div className="p-3 bg-white dark:bg-background">
                                                                             <span className="text-[10px] font-semibold text-muted-foreground/50 capitalize tracking-wider mb-2 block">
-                                                                                {localGlobalFilter.trim().split(/\s+/).filter(Boolean).length > 0 ? t("activeFilterTags") : t("filterTags")}
+                                                                                {localGlobalFilter.trim().length > 0 ? t("activeFilterTags") : t("filterTags")}
                                                                             </span>
-                                                                            {localGlobalFilter.trim().split(/\s+/).filter(Boolean).length > 0 ? (
+                                                                            {localGlobalFilter.trim().length > 0 ? (
                                                                                 <div className="flex flex-wrap gap-1.5">
-                                                                                    {localGlobalFilter.trim().split(/\s+/).filter(Boolean).map((term, idx) => (
-                                                                                        <Badge
-                                                                                            key={idx}
-                                                                                            variant="secondary"
-                                                                                            className="text-[10px] h-6 px-2 font-semibold flex items-center gap-1 bg-primary/10 text-primary hover:bg-primary/20 border-primary/20 transition-colors"
+                                                                                    <Badge
+                                                                                        variant="secondary"
+                                                                                        className="text-[10px] min-h-6 h-auto px-2 py-1 font-semibold flex items-start gap-1 bg-primary/10 text-primary hover:bg-primary/20 border-primary/20 transition-colors max-w-full whitespace-normal break-words"
+                                                                                    >
+                                                                                        <span className="leading-tight break-words">
+                                                                                            {localGlobalFilter.trim()}
+                                                                                        </span>
+                                                                                        <span
+                                                                                            className="cursor-pointer ml-0.5 mt-[1px] opacity-70 hover:opacity-100 flex items-center justify-center p-0.5 rounded-lg hover:bg-primary/20 transition-colors shrink-0"
+                                                                                            onClick={(e) => {
+                                                                                                e.stopPropagation()
+                                                                                                setLocalGlobalFilter("")
+                                                                                                onGlobalFilterChange?.("")
+                                                                                            }}
                                                                                         >
-                                                                                            {term}
-                                                                                            <span
-                                                                                                className="cursor-pointer ml-0.5 opacity-70 hover:opacity-100 flex items-center justify-center p-0.5 rounded-lg hover:bg-primary/20 transition-colors"
-                                                                                                onClick={(e) => {
-                                                                                                    e.stopPropagation();
-                                                                                                    const terms = localGlobalFilter.trim().split(/\s+/).filter(Boolean);
-                                                                                                    const newTerms = terms.filter((_, i) => i !== idx);
-                                                                                                    const newFilter = newTerms.join(' ');
-                                                                                                    setLocalGlobalFilter(newFilter);
-                                                                                                    onGlobalFilterChange?.(newFilter);
-                                                                                                }}
-                                                                                            >
-                                                                                                <X className="h-3 w-3" />
-                                                                                            </span>
-                                                                                        </Badge>
-                                                                                    ))}
+                                                                                            <X className="h-3 w-3" />
+                                                                                        </span>
+                                                                                    </Badge>
                                                                                 </div>
                                                                             ) : (
                                                                                 <div className="text-[11px] font-medium text-muted-foreground/60 text-center py-2 h-6 flex items-center justify-center">

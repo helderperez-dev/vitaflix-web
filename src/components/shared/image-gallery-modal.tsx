@@ -149,31 +149,29 @@ export function ImageGalleryModal({
                             </AnimatePresence>
 
                             <div
-                                className="absolute inset-x-0 bottom-0 p-6 md:p-8 flex items-center justify-between bg-gradient-to-t from-black/60 to-transparent"
+                                className="absolute inset-y-0 left-0 right-0 z-20 flex items-center justify-between px-3 md:px-4 pointer-events-none"
                                 onClick={(event) => event.stopPropagation()}
                             >
-                                <div className="flex gap-2 ml-auto">
-                                    <Button
-                                        variant="outline"
-                                        size="icon"
-                                        onClick={handlePrev}
-                                        type="button"
-                                        className="h-10 w-10 rounded-lg bg-white/5 border-white/10 hover:bg-white/10 hover:border-white/20 text-white transition-all disabled:opacity-40"
-                                        disabled={totalImages <= 1}
-                                    >
-                                        <ChevronLeft className="h-5 w-5" />
-                                    </Button>
-                                    <Button
-                                        variant="outline"
-                                        size="icon"
-                                        onClick={handleNext}
-                                        type="button"
-                                        className="h-10 w-10 rounded-lg bg-white/5 border-white/10 hover:bg-white/10 hover:border-white/20 text-white transition-all disabled:opacity-40"
-                                        disabled={totalImages <= 1}
-                                    >
-                                        <ChevronRight className="h-5 w-5" />
-                                    </Button>
-                                </div>
+                                <Button
+                                    variant="outline"
+                                    size="icon"
+                                    onClick={handlePrev}
+                                    type="button"
+                                    className="h-11 w-11 rounded-xl bg-black/35 backdrop-blur border-white/20 hover:bg-black/55 hover:border-white/40 text-white hover:text-white active:text-white focus:text-white [&_svg]:text-white transition-all disabled:opacity-30 pointer-events-auto"
+                                    disabled={totalImages <= 1}
+                                >
+                                    <ChevronLeft className="h-5 w-5" />
+                                </Button>
+                                <Button
+                                    variant="outline"
+                                    size="icon"
+                                    onClick={handleNext}
+                                    type="button"
+                                    className="h-11 w-11 rounded-xl bg-black/35 backdrop-blur border-white/20 hover:bg-black/55 hover:border-white/40 text-white hover:text-white active:text-white focus:text-white [&_svg]:text-white transition-all disabled:opacity-30 pointer-events-auto"
+                                    disabled={totalImages <= 1}
+                                >
+                                    <ChevronRight className="h-5 w-5" />
+                                </Button>
                             </div>
                         </div>
 
@@ -224,7 +222,7 @@ export function ImageGalleryModal({
                                 size="icon"
                                 onClick={() => onOpenChange(false)}
                                 type="button"
-                                className="h-10 w-10 rounded-lg bg-white/5 border-white/10 hover:bg-white/10 hover:border-white/20 text-white transition-all"
+                                className="h-10 w-10 rounded-lg bg-white/5 border-white/10 hover:bg-white/10 hover:border-white/20 text-white hover:text-white active:text-white focus:text-white [&_svg]:text-white transition-all"
                             >
                                 <X className="h-5 w-5" />
                             </Button>
