@@ -97,13 +97,14 @@ export default async function RootLayout({
           <PostHogProvider
             apiKey={posthogKey}
             clientOptions={{
-              api_host: "https://p.vitaflix.app",
-              ui_host: 'https://us.posthog.com',
+              api_host: posthogHost,
+              ui_host: "https://us.posthog.com",
               defaults: "2026-01-30",
               person_profiles: "always",
-              capture_pageview: false,
+              capture_pageview: true,
               capture_pageleave: true,
               advanced_disable_feature_flags: true,
+              disable_external_dependency_loading: true,
             }}
           >
             <PostHogPageView />
