@@ -64,8 +64,16 @@ export default async function RootLayout({
   const messages = await getMessages();
   const posthogKey = process.env.NEXT_PUBLIC_POSTHOG_KEY?.trim();
   const posthogHost = process.env.NEXT_PUBLIC_POSTHOG_HOST || "https://us.i.posthog.com";
-  const runtimeEnvironment = process.env.NEXT_PUBLIC_ENVIRONMENT ?? process.env.NODE_ENV;
-  const isPostHogEnabled = Boolean(posthogKey) && runtimeEnvironment === "production";
+  const runtimeEnvironment = (
+    process.env.VERCEL_ENV ??
+    process.env.NODE_ENV ??
+    process.env.NEXT_PUBLIC_ENVIRONMENT ??
+    process.env.ENVIRONMENT ??
+    ""
+  ).toLowerCase();
+  const isPostHogEnabled =
+    Boolean(posthogKey) &&
+    (runtimeEnvironment === "production" || runtimeEnvironment === "prod");
 
   const appContent = (
     <NextIntlClientProvider locale={locale} messages={messages}>
