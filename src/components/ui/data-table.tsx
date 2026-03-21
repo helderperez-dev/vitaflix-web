@@ -359,7 +359,7 @@ export function DataTable<TData, TValue>({
                                                     responsiveClass,
                                                     !isLast && "border-r border-border/40",
                                                     isFirst && "pl-8 pr-6 sticky left-0 z-40 bg-white dark:bg-background",
-                                                    isLast && "px-4 pr-8 sticky right-0 z-40 bg-white dark:bg-background border-l border-border/40"
+                                                    isLast && "px-4 pr-8 sticky right-0 z-40 bg-white dark:bg-background"
                                                 )}
                                                 style={{ width: header.getSize() }}
                                             >
@@ -534,6 +534,11 @@ export function DataTable<TData, TValue>({
                                                         isFirst && "pl-8 pr-6 left-0",
                                                         isLast && "px-4 pr-8 right-0",
                                                     )}
+                                                    style={{
+                                                        width: cell.column.getSize(),
+                                                        minWidth: cell.column.getSize(),
+                                                        maxWidth: cell.column.getSize(),
+                                                    }}
                                                 >
                                                     <div className={cn("truncate", isLast && "flex justify-end")}>
                                                         {flexRender(cell.column.columnDef.cell, cell.getContext())}
