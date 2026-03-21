@@ -49,7 +49,7 @@ export function MediaDisplay({
         return (
             <video
                 src={fullUrl}
-                className={cn("w-full h-full object-cover", className, videoClassName)}
+                className={cn("w-full h-full object-cover bg-white", className, videoClassName)}
                 muted={muted}
                 playsInline
                 autoPlay={autoPlay}
@@ -63,7 +63,7 @@ export function MediaDisplay({
         <img
             src={fullUrl}
             alt={alt || "Media"}
-            className={cn("w-full h-full object-cover", className)}
+            className={cn("w-full h-full object-cover bg-white", className)}
             {...props}
         />
     )

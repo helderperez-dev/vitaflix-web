@@ -199,7 +199,7 @@ export function ProductTableWrapper({ initialProducts, userProfile }: ProductTab
                             }}
                             className={cn(
                                 "h-10 w-10 rounded-md overflow-hidden border border-border/40 flex-shrink-0 relative group",
-                                hasImage ? "bg-muted cursor-pointer" : "bg-muted/30 cursor-default"
+                                hasImage ? "bg-white cursor-pointer" : "bg-white cursor-default"
                             )}
                         >
                             {hasImage ? (
@@ -248,7 +248,7 @@ export function ProductTableWrapper({ initialProducts, userProfile }: ProductTab
                             return (
                                 <div key={pb.brand_id} className="flex items-center gap-1.5">
                                     {brandData.logo_url && (
-                                        <div className="h-6 w-6 rounded-md overflow-hidden bg-muted border border-border/40 flex-shrink-0">
+                                        <div className="h-6 w-6 rounded-md overflow-hidden bg-white border border-border/40 flex-shrink-0">
                                             <img src={brandData.logo_url} alt="brand" className="h-full w-full object-cover" />
                                         </div>
                                     )}

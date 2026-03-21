@@ -1,9 +1,9 @@
 "use client"
 
 import * as React from "react"
-import { Check, Plus, Search, Loader2 } from "lucide-react"
+import { Check, Plus, Loader2, Image as ImageIcon } from "lucide-react"
 import { useTranslations, useLocale } from "next-intl"
-import { cn } from "@/lib/utils"
+import { cn, getMediaUrl } from "@/lib/utils"
 import { Button } from "@/components/ui/button"
 import {
     Command,
@@ -169,11 +169,13 @@ export function ProductSelector({ onSelect, onMultiSelect, multiSelect, placehol
                                             isSelected ? "bg-primary/10" : "hover:bg-primary/5"
                                         )}
                                     >
-                                        <div className="h-10 w-10 rounded-lg bg-muted border border-input flex items-center justify-center overflow-hidden shrink-0 group-hover:border-primary/20 transition-colors">
+                                        <div className="h-10 w-10 rounded-md overflow-hidden border border-border/40 flex-shrink-0 relative group bg-white">
                                             {product.images?.[0]?.url ? (
-                                                <img src={product.images[0].url} alt="" className="h-full w-full object-cover" />
+                                                <img src={getMediaUrl(product.images[0].url)} alt="" className="h-full w-full object-cover" />
                                             ) : (
-                                                <span className="text-[10px] font-semibold text-muted-foreground/30 italic">P</span>
+                                                <div className="h-full w-full flex items-center justify-center">
+                                                    <ImageIcon className="h-4 w-4 text-muted-foreground/35" />
+                                                </div>
                                             )}
                                         </div>
                                         <div className="flex flex-col min-w-0">

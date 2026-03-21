@@ -274,14 +274,14 @@ export function GlobalSearch() {
                                                     }}
                                                 >
                                                     {item.imageUrl ? (
-                                                        <div className="size-8 shrink-0 rounded-md overflow-hidden bg-muted border border-border/40">
+                                                        <div className="size-8 shrink-0 rounded-md overflow-hidden bg-white border border-border/40">
                                                             <MediaDisplay
                                                                 src={item.imageUrl}
                                                                 alt={item.title}
                                                             />
                                                         </div>
                                                     ) : (
-                                                        <div className="flex size-8 shrink-0 items-center justify-center rounded-md bg-muted/60 dark:bg-muted/30">
+                                                        <div className="flex size-8 shrink-0 items-center justify-center rounded-md bg-white">
                                                             <ItemIcon className="size-3.5 text-muted-foreground/70" />
                                                         </div>
                                                     )}

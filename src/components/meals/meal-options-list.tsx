@@ -222,7 +222,7 @@ export function MealOptionsList({ mealId, options, preparationSteps = [], onOpti
                                                     {(option as any).ingredients?.length || 0} {t("ingredients")}
                                                 </span>
                                             </div>
-                                            <div className="h-8 w-8 rounded-lg overflow-hidden border border-border/40 transition-transform group-hover:scale-105 bg-muted/30">
+                                            <div className="h-8 w-8 rounded-lg overflow-hidden border border-border/40 transition-transform group-hover:scale-105 bg-white">
                                                 {option.images && option.images.length > 0 ? (
                                                     <MediaDisplay
                                                         src={option.images[0].url}

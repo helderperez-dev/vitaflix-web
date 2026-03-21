@@ -520,11 +520,11 @@ function IngredientItem({ index, form, productMap, onRemove, onProductCached }: 
         <div className="group border border-border/40 rounded-lg overflow-hidden bg-background divide-y divide-border/40">
             {/* Header / Primary Ingredient */}
             <div className="flex items-center gap-4 p-4 bg-muted/5">
-                <div className="h-12 w-12 rounded-lg bg-muted border border-border/40 flex items-center justify-center overflow-hidden shrink-0">
+                <div className="h-12 w-12 rounded-lg bg-white border border-border/40 flex items-center justify-center overflow-hidden shrink-0">
                     {product?.image?.url ? (
                         <MediaDisplay src={product.image.url} alt={productName} />
                     ) : (
-                        <div className="h-full w-full bg-muted/20 flex items-center justify-center">
+                        <div className="h-full w-full bg-white flex items-center justify-center">
                             <ImageIcon className="h-4 w-4 text-muted-foreground/35" />
                         </div>
                     )}
@@ -615,7 +615,7 @@ function IngredientItem({ index, form, productMap, onRemove, onProductCached }: 
                             return (
                                 <div key={sub.id} className="flex flex-col rounded-lg bg-muted/10 border border-border/20 transition-colors overflow-hidden">
                                     <div className="flex items-center gap-3 p-2">
-                                        <div className="h-8 w-8 rounded-md bg-muted border border-border/40 flex items-center justify-center overflow-hidden shrink-0">
+                                        <div className="h-8 w-8 rounded-md bg-white border border-border/40 flex items-center justify-center overflow-hidden shrink-0">
                                             {subProduct?.image?.url ? (
                                                 <MediaDisplay src={subProduct.image.url} alt={subName} />
                                             ) : (

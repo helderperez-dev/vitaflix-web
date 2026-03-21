@@ -17,6 +17,7 @@ function getLocalizedName(value: unknown, fallback: string) {
     const record = value as Record<string, string>
     return (
         record.en ||
+        record["pt-pt"] ||
         record["pt-br"] ||
         record.pt ||
         record.es ||
@@ -55,12 +56,12 @@ export async function globalSearch(query: string): Promise<SearchResult[]> {
             supabase
                 .from("products")
                 .select("id, name, images")
-                .or(`name->>en.ilike.${searchTerm},name->>pt.ilike.${searchTerm},name->>pt-br.ilike.${searchTerm},name->>es.ilike.${searchTerm}`)
+                .or(`name->>en.ilike.${searchTerm},name->>pt-pt.ilike.${searchTerm},name->>pt-br.ilike.${searchTerm},name->>pt.ilike.${searchTerm},name->>es.ilike.${searchTerm}`)
                 .limit(6),
             supabase
                 .from("meals")
                 .select("id, name")
-                .or(`name->>en.ilike.${searchTerm},name->>pt.ilike.${searchTerm},name->>pt-br.ilike.${searchTerm},name->>es.ilike.${searchTerm}`)
+                .or(`name->>en.ilike.${searchTerm},name->>pt-pt.ilike.${searchTerm},name->>pt-br.ilike.${searchTerm},name->>pt.ilike.${searchTerm},name->>es.ilike.${searchTerm}`)
                 .limit(6),
             supabase
                 .from("users")
@@ -70,12 +71,12 @@ export async function globalSearch(query: string): Promise<SearchResult[]> {
             supabase
                 .from("brands")
                 .select("id, name")
-                .or(`name->>en.ilike.${searchTerm},name->>pt.ilike.${searchTerm},name->>pt-br.ilike.${searchTerm},name->>es.ilike.${searchTerm}`)
+                .or(`name->>en.ilike.${searchTerm},name->>pt-pt.ilike.${searchTerm},name->>pt-br.ilike.${searchTerm},name->>pt.ilike.${searchTerm},name->>es.ilike.${searchTerm}`)
                 .limit(5),
             supabase
                 .from("tags")
                 .select("id, name")
-                .or(`name->>en.ilike.${searchTerm},name->>pt.ilike.${searchTerm},name->>pt-br.ilike.${searchTerm},name->>es.ilike.${searchTerm}`)
+                .or(`name->>en.ilike.${searchTerm},name->>pt-pt.ilike.${searchTerm},name->>pt-br.ilike.${searchTerm},name->>pt.ilike.${searchTerm},name->>es.ilike.${searchTerm}`)
                 .limit(5),
             supabase
                 .from("leads")

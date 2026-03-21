@@ -224,7 +224,7 @@ export function MealTableWrapper({ initialMeals, userProfile }: MealTableWrapper
                             }}
                             className={cn(
                                 "h-10 w-10 rounded-md overflow-hidden border border-border/40 flex-shrink-0 relative group",
-                                hasImage ? "bg-muted cursor-pointer" : "bg-muted/30 cursor-default"
+                                hasImage ? "bg-white cursor-pointer" : "bg-white cursor-default"
                             )}
                         >
                             {hasImage ? (

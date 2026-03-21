@@ -151,7 +151,7 @@ export async function getProducts(query?: string, groupId?: string, countryId?: 
         .order("created_at", { ascending: false })
 
     if (query) {
-        q = q.or(`name->>en.ilike.%${query}%,name->>pt.ilike.%${query}%,name->>pt-br.ilike.%${query}%`)
+        q = q.or(`name->>en.ilike.%${query}%,name->>pt-pt.ilike.%${query}%,name->>pt-br.ilike.%${query}%,name->>pt.ilike.%${query}%,name->>es.ilike.%${query}%`)
     }
 
     if (groupId) {

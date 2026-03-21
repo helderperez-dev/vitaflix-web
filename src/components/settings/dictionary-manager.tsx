@@ -224,7 +224,7 @@ export function DictionaryManager() {
                         const storeMarkets = (row.original.store_markets || []) as Array<{ id: string; name?: Record<string, string> }>
                         return (
                             <div className="flex items-start gap-3">
-                                <div className="h-10 w-10 mt-0.5 rounded-md overflow-hidden bg-muted border border-border/40 flex-shrink-0 flex items-center justify-center">
+                                <div className="h-10 w-10 mt-0.5 rounded-md overflow-hidden bg-white border border-border/40 flex-shrink-0 flex items-center justify-center">
                                     {row.original.logo_url ? <img src={row.original.logo_url} alt="" className="w-full h-full object-cover" /> : <Store className="size-4 text-muted-foreground/30" />}
                                 </div>
                                 <div className="space-y-1.5">

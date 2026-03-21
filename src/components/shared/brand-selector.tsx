@@ -116,7 +116,7 @@ export function BrandSelector({ title, selectedBrandIds, onBrandsChange }: Brand
                                                     className="pointer-events-none translate-y-[1px]"
                                                 />
                                                 {brand.logoUrl && (
-                                                    <div className="h-6 w-6 rounded-md overflow-hidden bg-muted border border-border/40 flex-shrink-0">
+                                                    <div className="h-6 w-6 rounded-md overflow-hidden bg-white border border-border/40 flex-shrink-0">
                                                         <img src={brand.logoUrl} alt="" className="h-full w-full object-cover" />
                                                     </div>
                                                 )}
@@ -173,7 +173,7 @@ export function BrandSelector({ title, selectedBrandIds, onBrandsChange }: Brand
                             className="h-8 px-4 flex items-center gap-3 bg-muted/20 hover:bg-muted/30 text-secondary dark:text-foreground/80 border-none transition-all rounded-lg"
                         >
                             {brand.logoUrl && (
-                                <div className="h-5 w-5 rounded-md overflow-hidden bg-muted border border-border/40 flex-shrink-0">
+                                <div className="h-5 w-5 rounded-md overflow-hidden bg-white border border-border/40 flex-shrink-0">
                                     <img src={brand.logoUrl} alt="" className="h-full w-full object-cover" />
                                 </div>
                             )}
