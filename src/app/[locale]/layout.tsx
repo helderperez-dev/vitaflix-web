@@ -63,9 +63,10 @@ export default async function RootLayout({
   // side is the easiest way to get started
   const messages = await getMessages();
   const posthogKey = process.env.NEXT_PUBLIC_POSTHOG_KEY?.trim();
-  const posthogHost = "https://us.i.posthog.com";
+  const posthogHost = process.env.NEXT_PUBLIC_POSTHOG_HOST || "https://p.vitaflix.app";
   const isPostHogEnabled =
     Boolean(posthogKey) &&
+    process.env.NODE_ENV === "production" &&
     (process.env.NEXT_PUBLIC_ENVIRONMENT ?? process.env.ENVIRONMENT) === "production";
 
   const appContent = (
@@ -101,6 +102,7 @@ export default async function RootLayout({
               person_profiles: "always",
               capture_pageview: false,
               capture_pageleave: true,
+              advanced_disable_feature_flags: true,
             }}
           >
             <PostHogPageView />

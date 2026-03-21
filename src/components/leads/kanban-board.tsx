@@ -7,7 +7,7 @@ import { Mail, Phone, Calendar, GripVertical } from "lucide-react"
 import { updateLeadStepAction } from "@/app/actions/leads"
 import { Badge } from "@/components/ui/badge"
 import { useTranslations } from "next-intl"
-import posthog from "posthog-js"
+import { usePostHog } from "@posthog/next"
 import { LeadActions } from "./lead-actions"
 import { cn } from "@/lib/utils"
 import {
@@ -197,6 +197,7 @@ function KanbanColumn({ id, title, color, leads, onLeadClick, onDeleteLead }: { 
 
 export function KanbanBoard({ funnel, leads: initialLeads, onLeadStepChange, onLeadClick, onDeleteLead }: KanbanBoardProps) {
     const tLeads = useTranslations("Leads")
+    const posthog = usePostHog()
     const [mounted, setMounted] = React.useState(false)
     const [leads, setLeads] = React.useState<Lead[]>(initialLeads)
     const [activeLead, setActiveLead] = React.useState<Lead | null>(null)
@@ -329,7 +330,7 @@ export function KanbanBoard({ funnel, leads: initialLeads, onLeadStepChange, onL
         const finalLead = leads.find(l => l.id === activeId)
         if (finalLead) {
             onLeadStepChange(activeId, finalLead.step_id as any)
-            posthog.capture('lead_step_changed', { lead_id: activeId, lead_name: finalLead.name, new_step_id: finalLead.step_id })
+            posthog.capture("lead_step_changed", { lead_id: activeId, lead_name: finalLead.name, new_step_id: finalLead.step_id })
             await updateLeadStepAction(activeId, finalLead.step_id)
         }
     }

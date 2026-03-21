@@ -24,7 +24,7 @@ import { Loader2, Plus } from "lucide-react"
 import { createMealPlan } from "@/app/actions/plans"
 import { toast } from "sonner"
 import { DictionarySelector } from "@/components/shared/dictionary-selector"
-import posthog from "posthog-js"
+import { usePostHog } from "@posthog/next"
 
 interface CreatePlanModalProps {
     userId: string
@@ -36,6 +36,7 @@ interface CreatePlanModalProps {
 
 export function CreatePlanModal({ userId, userCountryId, isOpen, onOpenChange, onSuccess }: CreatePlanModalProps) {
     const t = useTranslations("Plans")
+    const posthog = usePostHog()
     const [isLoading, setIsLoading] = useState(false)
     const [name, setName] = useState("")
     const [quantity, setQuantity] = useState("3")
@@ -60,7 +61,7 @@ export function CreatePlanModal({ userId, userCountryId, isOpen, onOpenChange, o
                 toast.error(result.error)
             } else {
                 toast.success(t("successCreated"))
-                posthog.capture('meal_plan_created', { user_id: userId, plan_name: name, daily_meals_count: parseInt(quantity) })
+                posthog.capture("meal_plan_created", { user_id: userId, plan_name: name, daily_meals_count: parseInt(quantity) })
                 setName("")
                 setQuantity("3")
                 onOpenChange(false)

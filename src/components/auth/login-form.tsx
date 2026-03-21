@@ -17,7 +17,7 @@ import { Loader2 } from "lucide-react"
 import { useState } from "react"
 import { loginAction } from "@/app/actions/auth"
 import { useLocale, useTranslations } from "next-intl"
-import posthog from "posthog-js"
+import { usePostHog } from "@posthog/next"
 
 const loginSchema = z.object({
     email: z.string().email({ message: "Invalid email address." }),
@@ -29,6 +29,7 @@ export function LoginForm() {
     const [error, setError] = useState<string | null>(null)
     const locale = useLocale()
     const t = useTranslations("Auth")
+    const posthog = usePostHog()
 
     const form = useForm<z.infer<typeof loginSchema>>({
         resolver: zodResolver(loginSchema),
@@ -47,10 +48,10 @@ export function LoginForm() {
         if (result?.error) {
             setError(result.error)
             setIsLoading(false)
-            posthog.capture('login_failed', { error: result.error })
+            posthog.capture("login_failed", { error: result.error })
         } else {
             posthog.identify(values.email, { email: values.email })
-            posthog.capture('user_logged_in', { email: values.email })
+            posthog.capture("user_logged_in", { email: values.email })
         }
     }
 
