@@ -31,9 +31,8 @@ export function Footer() {
                             <Image 
                                 src="/vitaflix_logo_light_mode.png" 
                                 alt="Vitaflix" 
-                                width={140} 
+                                width={140}
                                 height={32} 
-                                className="h-8 w-auto"
                             />
                         </Link>
                         <p className="text-slate-500 mb-8 max-w-sm">

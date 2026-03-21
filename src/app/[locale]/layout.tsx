@@ -63,7 +63,7 @@ export default async function RootLayout({
   // side is the easiest way to get started
   const messages = await getMessages();
   const posthogKey = process.env.NEXT_PUBLIC_POSTHOG_KEY?.trim();
-  const posthogHost = process.env.NEXT_PUBLIC_POSTHOG_HOST || "https://p.vitaflix.app";
+  const posthogHost = "https://us.i.posthog.com";
   const isPostHogEnabled =
     Boolean(posthogKey) &&
     (process.env.NEXT_PUBLIC_ENVIRONMENT ?? process.env.ENVIRONMENT) === "production";
@@ -90,7 +90,7 @@ export default async function RootLayout({
   return (
     <html lang={locale} suppressHydrationWarning className={`scroll-smooth ${plusJakartaSans.variable} ${nunito.variable} ${poppins.variable}`}>
       <body
-        className={`${geistMono.variable} font-sans bg-[#FAFCFF] text-slate-900 antialiased selection:bg-primary/20 selection:text-primary`}
+        className={`${geistMono.variable} relative font-sans bg-[#FAFCFF] text-slate-900 antialiased selection:bg-primary/20 selection:text-primary`}
       >
         {isPostHogEnabled ? (
           <PostHogProvider

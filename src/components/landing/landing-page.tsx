@@ -60,7 +60,7 @@ export function LandingPage() {
                         isScrolled ? "gap-8" : "gap-12"
                     )}>
                         <div className="flex items-center justify-center">
-                            <Image src="/vitaflix_logo_light_mode.png" alt="Vitaflix" width={130} height={30} className="h-8 w-auto opacity-100" priority />
+                            <Image src="/vitaflix_logo_light_mode.png" alt="Vitaflix" width={139} height={32} className="opacity-100" priority />
                         </div>
                         
                         <nav className={cn(
@@ -98,7 +98,7 @@ export function LandingPage() {
                                 <SheetHeader className="p-6 border-b border-slate-100">
                                     <SheetTitle className="sr-only">Menu</SheetTitle>
                                     <div className="flex items-center justify-start">
-                                        <Image src="/vitaflix_logo_light_mode.png" alt="Vitaflix" width={110} height={25} className="h-7 w-auto" priority />
+                                        <Image src="/vitaflix_logo_light_mode.png" alt="Vitaflix" width={123} height={28} priority />
                                     </div>
                                 </SheetHeader>
                                 <nav className="flex flex-col p-4 gap-1 overflow-y-auto flex-1">
