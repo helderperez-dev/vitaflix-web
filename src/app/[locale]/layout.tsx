@@ -63,7 +63,9 @@ export default async function RootLayout({
   // side is the easiest way to get started
   const messages = await getMessages();
   const posthogKey = process.env.NEXT_PUBLIC_POSTHOG_KEY?.trim();
-  const isPostHogEnabled = Boolean(posthogKey);
+  const isPostHogEnabled =
+    Boolean(posthogKey) &&
+    (process.env.NEXT_PUBLIC_ENVIRONMENT ?? process.env.ENVIRONMENT) === "production";
 
   const appContent = (
     <NextIntlClientProvider locale={locale} messages={messages}>
