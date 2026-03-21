@@ -3,7 +3,6 @@
 import * as React from "react"
 import { ChevronDown, ChevronUp } from "lucide-react"
 import { cn } from "@/lib/utils"
-import { Button } from "./button"
 
 interface StepperProps {
     value: number
@@ -25,7 +24,13 @@ export function Stepper({
     className,
 }: StepperProps) {
     const inputRef = React.useRef<HTMLInputElement>(null)
+    const containerRef = React.useRef<HTMLDivElement>(null)
     const [isEditing, setIsEditing] = React.useState(false)
+
+    const focusInput = React.useCallback(() => {
+        setIsEditing(true)
+        requestAnimationFrame(() => inputRef.current?.focus())
+    }, [])
 
     const onIncrement = (e: React.MouseEvent) => {
         e.preventDefault()
@@ -52,13 +57,28 @@ export function Stepper({
 
     return (
         <div
+            ref={containerRef}
             className={cn(
                 "relative flex h-9 w-full items-center rounded-lg border border-input bg-muted/5 px-1.5 transition-all focus-within:border-primary/30 focus-within:ring-4 focus-within:ring-primary/5 cursor-text select-none",
                 className
             )}
+            tabIndex={0}
             onClick={() => {
-                setIsEditing(true)
-                setTimeout(() => inputRef.current?.focus(), 0)
+                focusInput()
+            }}
+            onKeyDown={(e) => {
+                if (e.key === "ArrowUp") {
+                    e.preventDefault()
+                    const newValue = parseFloat((value + step).toFixed(1))
+                    onChange(Math.min(newValue, max))
+                } else if (e.key === "ArrowDown") {
+                    e.preventDefault()
+                    const newValue = parseFloat((value - step).toFixed(1))
+                    onChange(Math.max(newValue, min))
+                } else if (e.key === "Enter" || e.key === " ") {
+                    e.preventDefault()
+                    focusInput()
+                }
             }}
         >
             {/* Value Badge */}
@@ -74,6 +94,8 @@ export function Stepper({
                         onKeyDown={(e) => {
                             if (e.key === 'Enter') {
                                 inputRef.current?.blur()
+                            } else if (e.key === 'Tab') {
+                                setIsEditing(false)
                             }
                         }}
                         onClick={(e) => e.stopPropagation()}
@@ -94,6 +116,7 @@ export function Stepper({
                     type="button"
                     onClick={onDecrement}
                     disabled={value <= min}
+                    tabIndex={-1}
                     className="flex h-4 w-4 items-center justify-center rounded-sm transition-all hover:bg-primary/10 hover:text-primary active:scale-[0.9] text-muted-foreground/40 disabled:opacity-5 disabled:hover:bg-transparent"
                 >
                     <ChevronDown className="h-3 w-3 stroke-[3]" />
@@ -103,6 +126,7 @@ export function Stepper({
                     type="button"
                     onClick={onIncrement}
                     disabled={value >= max}
+                    tabIndex={-1}
                     className="flex h-4 w-4 items-center justify-center rounded-sm transition-all hover:bg-primary/10 hover:text-primary active:scale-[0.9] text-muted-foreground/40 disabled:opacity-5 disabled:hover:bg-transparent"
                 >
                     <ChevronUp className="h-3 w-3 stroke-[3]" />
@@ -118,5 +142,3 @@ export function Stepper({
         </div>
     )
 }
-
-

@@ -5,7 +5,7 @@ import { motion, useScroll, useTransform, useSpring } from "framer-motion"
 import { useState, useEffect, useRef } from "react"
 import { Apple, Check, ChevronRight } from "lucide-react"
 import Image from "next/image"
-import { useTranslations } from "next-intl"
+import { useLocale, useTranslations } from "next-intl"
 
 const heroPersonas = [
     {
@@ -28,6 +28,8 @@ const heroPersonas = [
 
 export function HeroSection() {
     const t = useTranslations("Landing.Hero")
+    const locale = useLocale()
+    const isEnglish = locale.startsWith("en")
     const heroRef = useRef<HTMLElement>(null)
     const [activeCard, setActiveCard] = useState(0)
     const [checkedItems, setCheckedItems] = useState<number[]>([])
@@ -123,9 +125,15 @@ export function HeroSection() {
                                 </span>
                             </div>
 
-                            <h1 className="text-4xl sm:text-5xl lg:text-6xl xl:text-[4.5rem] font-bold tracking-tight text-slate-900 leading-[1.05] mb-5 font-['Poppins',sans-serif]">
+                            <h1 className={`
+                                ${isEnglish ? "text-4xl sm:text-5xl lg:text-[3.5rem] xl:text-[3.9rem]" : "text-4xl sm:text-5xl lg:text-6xl xl:text-[4.5rem]"}
+                                font-bold tracking-tight text-slate-900 leading-[1.05] mb-5 font-['Poppins',sans-serif]
+                            `}>
                                 {t("titlePrefix")} <br className="hidden lg:block" />
-                                <span className="text-transparent bg-clip-text bg-gradient-to-r from-primary via-emerald-500 to-teal-500 whitespace-nowrap font-extrabold">
+                                <span className={`
+                                    text-transparent bg-clip-text bg-gradient-to-r from-primary via-emerald-500 to-teal-500 font-extrabold
+                                    ${isEnglish ? "" : "whitespace-nowrap"}
+                                `}>
                                     {t("titleSuffix")}
                                 </span>
                             </h1>
