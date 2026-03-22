@@ -207,19 +207,25 @@ export function MealOptionForm({
                         </p>
                     </div>
                     <div className="rounded-lg border border-border/60 bg-background shadow-sm shadow-black/[0.03] px-3 py-2 w-fit max-w-full">
-                        <div className="flex flex-wrap items-center gap-x-3 gap-y-1 text-[11px] font-semibold">
-                            <span className="text-muted-foreground/55 whitespace-nowrap">{t("totalKcal")}</span>
-                            <div className="flex items-end gap-1 mr-1">
-                                <span className="text-xl font-bold text-primary leading-none">{totalKcal}</span>
-                                <span className="text-[10px] text-muted-foreground/50 mb-0.5">KCAL</span>
+                        {isLoadingProducts ? (
+                            <div className="flex items-center text-[11px] font-semibold text-muted-foreground/60">
+                                <Loader2 className="h-4 w-4 animate-spin text-primary" />
                             </div>
-                            <span className="text-muted-foreground/30">|</span>
-                            <span className="text-muted-foreground/60">P <span className="text-secondary dark:text-foreground">{totalProtein}g</span></span>
-                            <span className="text-muted-foreground/30">|</span>
-                            <span className="text-muted-foreground/60">C <span className="text-secondary dark:text-foreground">{totalCarbs}g</span></span>
-                            <span className="text-muted-foreground/30">|</span>
-                            <span className="text-muted-foreground/60">F <span className="text-secondary dark:text-foreground">{totalFat}g</span></span>
-                        </div>
+                        ) : (
+                            <div className="flex flex-wrap items-center gap-x-3 gap-y-1 text-[11px] font-semibold">
+                                <span className="text-muted-foreground/55 whitespace-nowrap">{t("totalKcal")}</span>
+                                <div className="flex items-end gap-1 mr-1">
+                                    <span className="text-xl font-bold text-primary leading-none">{totalKcal}</span>
+                                    <span className="text-[10px] text-muted-foreground/50 mb-0.5">KCAL</span>
+                                </div>
+                                <span className="text-muted-foreground/30">|</span>
+                                <span className="text-muted-foreground/60">P <span className="text-secondary dark:text-foreground">{totalProtein}g</span></span>
+                                <span className="text-muted-foreground/30">|</span>
+                                <span className="text-muted-foreground/60">C <span className="text-secondary dark:text-foreground">{totalCarbs}g</span></span>
+                                <span className="text-muted-foreground/30">|</span>
+                                <span className="text-muted-foreground/60">F <span className="text-secondary dark:text-foreground">{totalFat}g</span></span>
+                            </div>
+                        )}
                     </div>
                 </div>
             </div>
