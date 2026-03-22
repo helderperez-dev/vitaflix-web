@@ -77,6 +77,7 @@ export function MealDrawer({ open, onOpenChange, meal }: MealDrawerProps) {
     const [activeView, setActiveView] = React.useState<DrawerView>("details")
     const [isEditingOption, setIsEditingOption] = React.useState(false)
     const [saveMode, setSaveMode] = React.useState<"stay" | "close">("close")
+    const shouldSkipSaveOnCloseRef = React.useRef(false)
 
     const form = useForm<Meal>({
         resolver: zodResolver(mealSchema) as never,
@@ -153,6 +154,7 @@ export function MealDrawer({ open, onOpenChange, meal }: MealDrawerProps) {
         if (open) {
             setActiveView("details")
             setIsEditingOption(false)
+            shouldSkipSaveOnCloseRef.current = false
         }
     }, [open])
 
@@ -235,9 +237,19 @@ export function MealDrawer({ open, onOpenChange, meal }: MealDrawerProps) {
         void form.handleSubmit((values) => onSubmit(values, false), onInvalid)()
     }
 
+    const handleCancel = () => {
+        shouldSkipSaveOnCloseRef.current = true
+        onOpenChange(false)
+    }
+
     return (
         <Sheet open={open} onOpenChange={(isOpen) => {
             if (!isOpen) {
+                if (shouldSkipSaveOnCloseRef.current) {
+                    shouldSkipSaveOnCloseRef.current = false
+                    onOpenChange(false)
+                    return
+                }
                 handleSheetClose()
             } else {
                 onOpenChange(isOpen)
@@ -586,7 +598,7 @@ export function MealDrawer({ open, onOpenChange, meal }: MealDrawerProps) {
                                         type="button"
                                         variant="outline"
                                         className="h-10 px-6 font-semibold text-xs border-border hover:bg-muted/30 transition-colors"
-                                        onClick={handleSheetClose}
+                                        onClick={handleCancel}
                                         disabled={isSubmitting}
                                     >
                                         {commonT("cancel")}
