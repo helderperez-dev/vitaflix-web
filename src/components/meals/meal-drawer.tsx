@@ -39,6 +39,7 @@ import { ImageUploader } from "@/components/shared/image-uploader"
 import { MealOptionsList } from "./meal-options-list"
 import { getMealOptions } from "@/app/actions/meals"
 import { cn } from "@/lib/utils"
+import { SaveSplitButton } from "@/components/shared/save-split-button"
 
 type DrawerView = "details" | "variations"
 
@@ -75,6 +76,7 @@ export function MealDrawer({ open, onOpenChange, meal }: MealDrawerProps) {
     const [formId] = React.useState(() => crypto.randomUUID())
     const [activeView, setActiveView] = React.useState<DrawerView>("details")
     const [isEditingOption, setIsEditingOption] = React.useState(false)
+    const [saveMode, setSaveMode] = React.useState<"stay" | "close">("close")
 
     const form = useForm<Meal>({
         resolver: zodResolver(mealSchema) as never,
@@ -154,21 +156,29 @@ export function MealDrawer({ open, onOpenChange, meal }: MealDrawerProps) {
         }
     }, [open])
 
-    async function onSubmit(values: Meal) {
+    async function persistMeal(values: Meal) {
         setIsSubmitting(true)
         try {
             const result = await upsertMeal(values)
             if (result?.error) {
                 toast.error(result.error)
-            } else {
-                toast.success(meal ? commonT("updatedSuccessfully") : commonT("createdSuccessfully"))
-                onOpenChange(false)
+                return false
             }
+            toast.success(meal ? commonT("updatedSuccessfully") : commonT("createdSuccessfully"))
+            return true
         } catch (error) {
             console.error("Error saving meal:", error)
             toast.error(commonT("errorSaving"))
+            return false
         } finally {
             setIsSubmitting(false)
+        }
+    }
+
+    async function onSubmit(values: Meal, shouldCloseAfterSave: boolean) {
+        const saved = await persistMeal(values)
+        if (saved && shouldCloseAfterSave) {
+            onOpenChange(false)
         }
     }
 
@@ -220,8 +230,19 @@ export function MealDrawer({ open, onOpenChange, meal }: MealDrawerProps) {
         .map(step => step?.[locale] || Object.values(step || {}).find(value => typeof value === "string" && value.trim().length > 0))
         .filter((value): value is string => typeof value === "string" && value.trim().length > 0)
 
+    const handleSheetClose = () => {
+        // Save the form but don't close the sheet (save and stay behavior)
+        void form.handleSubmit((values) => onSubmit(values, false), onInvalid)()
+    }
+
     return (
-        <Sheet open={open} onOpenChange={onOpenChange}>
+        <Sheet open={open} onOpenChange={(isOpen) => {
+            if (!isOpen) {
+                handleSheetClose()
+            } else {
+                onOpenChange(isOpen)
+            }
+        }}>
             <SheetContent className="sm:max-w-2xl p-0 flex flex-col bg-background border-l border-border">
                 {/* High-End Ambient Glow */}
                 <div className="absolute top-0 left-0 right-0 h-[500px] bg-gradient-to-b from-slate-50 via-white to-white dark:from-white/[0.04] dark:via-transparent dark:to-transparent pointer-events-none -z-10" />
@@ -302,7 +323,7 @@ export function MealDrawer({ open, onOpenChange, meal }: MealDrawerProps) {
                     <Form {...form}>
                         <form
                             id="meal-form"
-                            onSubmit={form.handleSubmit(onSubmit, onInvalid)}
+                            onSubmit={form.handleSubmit((values) => onSubmit(values, saveMode === "close"), onInvalid)}
                             className="flex-1 flex flex-col min-h-0 overflow-hidden"
                         >
                             <div className={cn(
@@ -546,6 +567,13 @@ export function MealDrawer({ open, onOpenChange, meal }: MealDrawerProps) {
                                             options={form.watch("options") || []}
                                             preparationSteps={preparationModeTexts}
                                             onOptionsChange={(options) => form.setValue("options", options, { shouldDirty: true })}
+                                            onPersistOptions={async (options) => {
+                                                const values = form.getValues()
+                                                return persistMeal({
+                                                    ...values,
+                                                    options,
+                                                })
+                                            }}
                                             onEditingChange={setIsEditingOption}
                                         />
                                     </div>
@@ -558,21 +586,22 @@ export function MealDrawer({ open, onOpenChange, meal }: MealDrawerProps) {
                                         type="button"
                                         variant="outline"
                                         className="h-10 px-6 font-semibold text-xs border-border hover:bg-muted/30 transition-colors"
-                                        onClick={() => onOpenChange(false)}
+                                        onClick={handleSheetClose}
                                         disabled={isSubmitting}
                                     >
                                         {commonT("cancel")}
                                     </Button>
-                                    <Button
-                                        type="submit"
-                                        className="h-10 px-8 bg-primary hover:bg-primary/90 text-white font-semibold text-xs shadow-sm shadow-primary/5 transition-all active:scale-[0.98]"
+                                    <SaveSplitButton
                                         disabled={isSubmitting}
-                                    >
-                                        {isSubmitting ? (
-                                            <Loader2 className="mr-2 h-4 w-4 animate-spin" />
-                                        ) : null}
-                                        {commonT("save")}
-                                    </Button>
+                                        loading={isSubmitting}
+                                        saveAndStayLabel={commonT("saveAndStay")}
+                                        saveAndCloseLabel={commonT("saveAndClose")}
+                                        initialMode={saveMode}
+                                        onSaveMode={(mode) => {
+                                            setSaveMode(mode)
+                                            void form.handleSubmit((values) => onSubmit(values, mode === "close"), onInvalid)()
+                                        }}
+                                    />
                                 </SheetFooter>
                             )}
                         </form>

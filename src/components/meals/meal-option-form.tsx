@@ -4,7 +4,7 @@ import * as React from "react"
 import { useForm, useFieldArray, useWatch } from "react-hook-form"
 import { zodResolver } from "@hookform/resolvers/zod"
 import { useTranslations, useLocale } from "next-intl"
-import { Trash2, Soup, Info, Image as ImageIcon, Save, X, Loader2 } from "lucide-react"
+import { Trash2, Soup, Info, Image as ImageIcon, Loader2 } from "lucide-react"
 import { mealOptionSchema, type MealOption } from "@/shared-schemas/meal"
 import { Button } from "@/components/ui/button"
 import {
@@ -23,12 +23,14 @@ import { Separator } from "@/components/ui/separator"
 import { Checkbox } from "@/components/ui/checkbox"
 import { cn } from "@/lib/utils"
 import { MediaDisplay } from "@/components/shared/media-display"
+import { SaveSplitButton } from "@/components/shared/save-split-button"
 
 interface MealOptionFormProps {
     initialData?: Partial<MealOption>
     mealId: string
     preparationSteps?: string[]
-    onSave: (data: MealOption) => void
+    isSaving?: boolean
+    onSave: (data: MealOption, shouldCloseAfterSave: boolean) => Promise<boolean>
     onCancel: () => void
 }
 
@@ -44,6 +46,7 @@ export function MealOptionForm({
     initialData,
     mealId,
     preparationSteps = [],
+    isSaving = false,
     onSave,
     onCancel
 }: MealOptionFormProps) {
@@ -169,8 +172,8 @@ export function MealOptionForm({
         form.setValue("macros.fat", Number(totalF.toFixed(1)))
     }, [watchedIngredients, productMap, form])
 
-    const handleSubmit = (values: MealOption) => {
-        onSave(values)
+    const handleSubmit = async (values: MealOption, shouldCloseAfterSave: boolean) => {
+        await onSave(values, shouldCloseAfterSave)
     }
 
     const locale = useLocale()
@@ -182,6 +185,10 @@ export function MealOptionForm({
             return entry.name[locale] || Object.values(entry.name).find(value => typeof value === "string" && value.trim().length > 0) as string || ""
         })
         .filter(Boolean)
+    const totalKcal = form.watch("kcal") || 0
+    const totalProtein = form.watch("macros.protein") || 0
+    const totalCarbs = form.watch("macros.carbs") || 0
+    const totalFat = form.watch("macros.fat") || 0
 
     return (
         <div className="flex flex-col h-full bg-background relative overflow-hidden">
@@ -189,14 +196,31 @@ export function MealOptionForm({
             <div className="absolute top-0 left-0 right-0 h-[500px] bg-gradient-to-b from-slate-50 via-white to-white dark:from-white/[0.04] dark:via-transparent dark:to-transparent pointer-events-none -z-10" />
 
             {/* Header */}
-            <div className="px-8 py-6 space-y-3 relative z-10">
-                <div>
-                    <h3 className="text-2xl font-semibold tracking-tight text-secondary dark:text-foreground">
-                        {initialData?.id ? t("editMealOption") : t("addMealOption")}
-                    </h3>
-                    <p className="text-sm text-muted-foreground font-medium">
-                        {initialData?.id ? t("syncingMetrics") : t("creatingNewVariation")}
-                    </p>
+            <div className="px-8 py-3 relative z-20 border-b border-border/40 bg-background/95 backdrop-blur supports-[backdrop-filter]:bg-background/75">
+                <div className="flex flex-col gap-3">
+                    <div className="space-y-2">
+                        <h3 className="text-2xl font-semibold tracking-tight text-secondary dark:text-foreground">
+                            {initialData?.id ? t("editMealOption") : t("addMealOption")}
+                        </h3>
+                        <p className="text-sm text-muted-foreground font-medium">
+                            {initialData?.id ? t("syncingMetrics") : t("creatingNewVariation")}
+                        </p>
+                    </div>
+                    <div className="rounded-lg border border-border/60 bg-background shadow-sm shadow-black/[0.03] px-3 py-2 w-fit max-w-full">
+                        <div className="flex flex-wrap items-center gap-x-3 gap-y-1 text-[11px] font-semibold">
+                            <span className="text-muted-foreground/55 whitespace-nowrap">{t("totalKcal")}</span>
+                            <div className="flex items-end gap-1 mr-1">
+                                <span className="text-xl font-bold text-primary leading-none">{totalKcal}</span>
+                                <span className="text-[10px] text-muted-foreground/50 mb-0.5">KCAL</span>
+                            </div>
+                            <span className="text-muted-foreground/30">|</span>
+                            <span className="text-muted-foreground/60">P <span className="text-secondary dark:text-foreground">{totalProtein}g</span></span>
+                            <span className="text-muted-foreground/30">|</span>
+                            <span className="text-muted-foreground/60">C <span className="text-secondary dark:text-foreground">{totalCarbs}g</span></span>
+                            <span className="text-muted-foreground/30">|</span>
+                            <span className="text-muted-foreground/60">F <span className="text-secondary dark:text-foreground">{totalFat}g</span></span>
+                        </div>
+                    </div>
                 </div>
             </div>
 
@@ -454,17 +478,22 @@ export function MealOptionForm({
                     type="button"
                     variant="outline"
                     onClick={onCancel}
+                    disabled={isSaving}
                     className="h-10 px-6 font-semibold text-xs border-border hover:bg-muted/30 transition-colors"
                 >
                     {commonT("cancel")}
                 </Button>
-                <Button
-                    type="button"
-                    onClick={form.handleSubmit(handleSubmit)}
-                    className="h-10 px-8 bg-primary hover:bg-primary/90 text-white font-semibold text-xs shadow-sm shadow-primary/5 transition-all active:scale-[0.98]"
-                >
-                    {commonT("save")}
-                </Button>
+                <SaveSplitButton
+                    disabled={isSaving}
+                    loading={isSaving}
+                    saveAndStayLabel={commonT("saveAndStay")}
+                    saveAndCloseLabel={commonT("saveAndClose")}
+                    onSaveMode={(mode) => {
+                        void form.handleSubmit(async (data) => {
+                            await handleSubmit(data, mode === "close")
+                        })()
+                    }}
+                />
             </div>
         </div>
     )

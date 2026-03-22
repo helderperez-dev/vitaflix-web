@@ -3,7 +3,7 @@
 import * as React from "react"
 import { useForm } from "react-hook-form"
 import { zodResolver } from "@hookform/resolvers/zod"
-import { Loader2, Trash2 } from "lucide-react"
+import { Trash2 } from "lucide-react"
 import { toast } from "sonner"
 
 import {
@@ -22,6 +22,7 @@ import { tagSchema, type Tag, type TagTable } from "@/shared-schemas/tag"
 import { upsertTag, deleteTag } from "@/app/actions/tags"
 import { useLocale, useTranslations } from "next-intl"
 import { sanitizeBrandLocalizedNames } from "@/lib/brand-market"
+import { SaveSplitButton } from "@/components/shared/save-split-button"
 
 interface TagModalProps {
     open: boolean
@@ -80,7 +81,7 @@ export function TagModal({ open, onOpenChange, tag, onSuccess, table = "tags" }:
         setSelectedStoreMarketIds(tag?.store_market_ids || [])
     }, [tag, form, open, table])
 
-    async function onSubmit(values: Tag) {
+    async function onSubmit(values: Tag, shouldCloseAfterSave: boolean) {
         setIsSubmitting(true)
         try {
             const payload = table === "brands"
@@ -98,7 +99,9 @@ export function TagModal({ open, onOpenChange, tag, onSuccess, table = "tags" }:
                     tag ? commonT("updatedSuccessfully") : commonT("createdSuccessfully")
                 )
                 onSuccess?.()
-                onOpenChange(false)
+                if (shouldCloseAfterSave) {
+                    onOpenChange(false)
+                }
             }
         } catch (error) {
             toast.error(commonT("errorSaving"))
@@ -147,7 +150,7 @@ export function TagModal({ open, onOpenChange, tag, onSuccess, table = "tags" }:
                     </DialogHeader>
 
                     <Form {...form}>
-                        <form id="tag-form" onSubmit={form.handleSubmit(onSubmit)} className="space-y-8">
+                        <form id="tag-form" onSubmit={form.handleSubmit((values) => onSubmit(values, true))} className="space-y-8">
                             <TranslationFields
                                 form={form}
                                 namePrefix="name"
@@ -191,17 +194,16 @@ export function TagModal({ open, onOpenChange, tag, onSuccess, table = "tags" }:
                         >
                             {commonT("cancel")}
                         </Button>
-                        <Button
-                            type="submit"
-                            form="tag-form"
-                            className="h-9 px-8 bg-primary hover:bg-primary/90 text-white font-semibold text-xs shadow-sm shadow-primary/5 transition-all active:scale-[0.98]"
+                        <SaveSplitButton
+                            size="sm"
                             disabled={isSubmitting || isDeleting}
-                        >
-                            {isSubmitting ? (
-                                <Loader2 className="mr-2 h-4 w-4 animate-spin" />
-                            ) : null}
-                            {commonT("save")}
-                        </Button>
+                            loading={isSubmitting}
+                            saveAndStayLabel={commonT("saveAndStay")}
+                            saveAndCloseLabel={commonT("saveAndClose")}
+                            onSaveMode={(mode) => {
+                                void form.handleSubmit((values) => onSubmit(values, mode === "close"))()
+                            }}
+                        />
                     </div>
                 </DialogFooter>
             </DialogContent>

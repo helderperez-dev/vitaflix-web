@@ -5,7 +5,6 @@ import { useForm } from "react-hook-form"
 import { zodResolver } from "@hookform/resolvers/zod"
 import { useLocale, useTranslations } from "next-intl"
 import {
-    Loader2
 } from "lucide-react"
 import { toast } from "sonner"
 
@@ -41,6 +40,7 @@ import { ImageUploader } from "@/components/shared/image-uploader"
 import { Stepper } from "@/components/ui/stepper"
 import { getTags } from "@/app/actions/tags"
 import type { Tag } from "@/shared-schemas/tag"
+import { SaveSplitButton } from "@/components/shared/save-split-button"
 
 interface ProductDrawerProps {
     open: boolean
@@ -141,7 +141,7 @@ export function ProductDrawer({ open, onOpenChange, product }: ProductDrawerProp
         }
     }, [open, selectedUnitId, unitOptions, form])
 
-    async function onSubmit(values: Product) {
+    async function onSubmit(values: Product, shouldCloseAfterSave: boolean) {
         setIsSubmitting(true)
         try {
             const result = await upsertProduct(values)
@@ -149,7 +149,9 @@ export function ProductDrawer({ open, onOpenChange, product }: ProductDrawerProp
                 toast.error(result.error)
             } else {
                 toast.success(product ? commonT("updatedSuccessfully") : commonT("createdSuccessfully"))
-                onOpenChange(false)
+                if (shouldCloseAfterSave) {
+                    onOpenChange(false)
+                }
             }
         } catch (error) {
             toast.error(commonT("errorSaving"))
@@ -176,7 +178,7 @@ export function ProductDrawer({ open, onOpenChange, product }: ProductDrawerProp
 
                     <div className="flex-1 overflow-y-auto px-8 py-4 custom-scrollbar">
                         <Form {...form}>
-                            <form id="product-form" onSubmit={form.handleSubmit(onSubmit)} className="space-y-12">
+                            <form id="product-form" onSubmit={form.handleSubmit((values) => onSubmit(values, true))} className="space-y-12">
                                 {/* Product Names */}
                                 <TranslationFields
                                     form={form}
@@ -407,17 +409,15 @@ export function ProductDrawer({ open, onOpenChange, product }: ProductDrawerProp
                         >
                             {commonT("cancel")}
                         </Button>
-                        <Button
-                            type="submit"
-                            form="product-form"
-                            className="h-10 px-8 bg-primary hover:bg-primary/90 text-white font-semibold text-xs shadow-sm shadow-primary/5 transition-all active:scale-[0.98]"
+                        <SaveSplitButton
                             disabled={isSubmitting}
-                        >
-                            {isSubmitting ? (
-                                <Loader2 className="mr-2 h-4 w-4 animate-spin" />
-                            ) : null}
-                            {commonT("save")}
-                        </Button>
+                            loading={isSubmitting}
+                            saveAndStayLabel={commonT("saveAndStay")}
+                            saveAndCloseLabel={commonT("saveAndClose")}
+                            onSaveMode={(mode) => {
+                                void form.handleSubmit((values) => onSubmit(values, mode === "close"))()
+                            }}
+                        />
                     </SheetFooter>
                 </div>
             </SheetContent>

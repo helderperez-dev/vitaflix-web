@@ -496,6 +496,8 @@
     "Common": {
         "all": "All",
         "save": "Save",
+        "saveAndStay": "Save and Continue",
+        "saveAndClose": "Save and Close",
         "edit": "Edit",
         "editDetails": "Edit Details",
         "duplicate": "Duplicate",

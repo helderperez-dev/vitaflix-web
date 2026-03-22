@@ -3,7 +3,7 @@
 import * as React from "react"
 import { useForm } from "react-hook-form"
 import { zodResolver } from "@hookform/resolvers/zod"
-import { Loader2, User, Phone, Mail, Kanban, Info } from "lucide-react"
+import { User, Phone, Mail, Kanban, Info } from "lucide-react"
 import { motion, AnimatePresence } from "framer-motion"
 import { toast } from "sonner"
 import { useTranslations } from "next-intl"
@@ -36,6 +36,7 @@ import {
 import { leadSchema, type Lead } from "@/shared-schemas/lead"
 import { upsertLeadAction } from "@/app/actions/leads"
 import { cn } from "@/lib/utils"
+import { SaveSplitButton } from "@/components/shared/save-split-button"
 
 interface LeadDrawerProps {
     open: boolean
@@ -105,7 +106,7 @@ export function LeadDrawer({ open, onOpenChange, lead, funnels }: LeadDrawerProp
         toast.error(commonT("pleaseCheckForm"))
     }
 
-    async function onSubmit(values: any) {
+    async function onSubmit(values: any, shouldCloseAfterSave: boolean) {
         setIsSubmitting(true)
         try {
             const submissionValues = { ...values }
@@ -115,7 +116,9 @@ export function LeadDrawer({ open, onOpenChange, lead, funnels }: LeadDrawerProp
             const result = await upsertLeadAction(submissionValues)
             if (result.success) {
                 toast.success(lead ? commonT("updatedSuccessfully") : commonT("createdSuccessfully"))
-                onOpenChange(false)
+                if (shouldCloseAfterSave) {
+                    onOpenChange(false)
+                }
             } else {
                 toast.error(result.error || commonT("errorSaving"))
             }
@@ -201,7 +204,7 @@ export function LeadDrawer({ open, onOpenChange, lead, funnels }: LeadDrawerProp
                     <Form {...form}>
                         <form
                             id="lead-form"
-                            onSubmit={form.handleSubmit(onSubmit, onInvalid)}
+                            onSubmit={form.handleSubmit((values: any) => onSubmit(values, true), onInvalid)}
                             className="flex-1 flex flex-col min-h-0 overflow-hidden"
                         >
                             <div className="flex-1 px-8 py-6 overflow-y-auto custom-scrollbar">
@@ -353,16 +356,15 @@ export function LeadDrawer({ open, onOpenChange, lead, funnels }: LeadDrawerProp
                                 >
                                     {commonT("cancel")}
                                 </Button>
-                                <Button
-                                    type="submit"
-                                    className="h-10 px-8 bg-primary hover:bg-primary/90 text-white font-semibold text-xs shadow-sm shadow-primary/5 transition-all active:scale-[0.98]"
+                                <SaveSplitButton
                                     disabled={isSubmitting}
-                                >
-                                    {isSubmitting ? (
-                                        <Loader2 className="mr-2 h-4 w-4 animate-spin" />
-                                    ) : null}
-                                    {commonT("save")}
-                                </Button>
+                                    loading={isSubmitting}
+                                    saveAndStayLabel={commonT("saveAndStay")}
+                                    saveAndCloseLabel={commonT("saveAndClose")}
+                                    onSaveMode={(mode) => {
+                                        void form.handleSubmit((values: any) => onSubmit(values, mode === "close"), onInvalid)()
+                                    }}
+                                />
                             </SheetFooter>
                         </form>
                     </Form>

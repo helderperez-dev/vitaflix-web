@@ -33,15 +33,17 @@ interface MealOptionsListProps {
     options: MealOption[]
     preparationSteps?: string[]
     onOptionsChange: (options: MealOption[]) => void
+    onPersistOptions: (options: MealOption[]) => Promise<boolean>
     onEditingChange?: (isEditing: boolean) => void
 }
 
-export function MealOptionsList({ mealId, options, preparationSteps = [], onOptionsChange, onEditingChange }: MealOptionsListProps) {
+export function MealOptionsList({ mealId, options, preparationSteps = [], onOptionsChange, onPersistOptions, onEditingChange }: MealOptionsListProps) {
     const t = useTranslations("Meals")
     const commonT = useTranslations("Common")
     const [isEditing, setIsEditing] = React.useState(false)
     const [editingOption, setEditingOption] = React.useState<MealOption | undefined>()
     const [deleteConfirmId, setDeleteConfirmId] = React.useState<string | null>(null)
+    const [isSavingOption, setIsSavingOption] = React.useState(false)
 
     const handleAddOption = () => {
         setEditingOption(undefined)
@@ -55,15 +57,23 @@ export function MealOptionsList({ mealId, options, preparationSteps = [], onOpti
         onEditingChange?.(true)
     }
 
-    const handleSaveOption = (data: MealOption) => {
+    const handleSaveOption = async (data: MealOption, shouldCloseAfterSave: boolean) => {
+        let savedOption = data
+        let updatedOptions: MealOption[] = options
+
         if (editingOption) {
-            onOptionsChange(options.map(o => o.id === editingOption.id ? data : o))
+            savedOption = {
+                ...data,
+                id: data.id || editingOption.id,
+            }
+            updatedOptions = options.map(o => o.id === editingOption.id ? savedOption : o)
         } else {
             const newOption = {
                 ...data,
                 id: data.id || crypto.randomUUID(),
                 isDefault: options.length === 0 || data.isDefault
             }
+            savedOption = newOption
 
             // If new option is default, unset others
             let newOptions = [...options]
@@ -71,10 +81,32 @@ export function MealOptionsList({ mealId, options, preparationSteps = [], onOpti
                 newOptions = newOptions.map(o => ({ ...o, isDefault: false }))
             }
 
-            onOptionsChange([...newOptions, newOption])
+            updatedOptions = [...newOptions, newOption]
         }
-        setIsEditing(false)
-        onEditingChange?.(false)
+
+        setIsSavingOption(true)
+        let persisted = false
+        try {
+            persisted = await onPersistOptions(updatedOptions)
+        } finally {
+            setIsSavingOption(false)
+        }
+
+        if (!persisted) {
+            return false
+        }
+        onOptionsChange(updatedOptions)
+
+        if (shouldCloseAfterSave) {
+            setIsEditing(false)
+            onEditingChange?.(false)
+            return true
+        }
+
+        setEditingOption(savedOption)
+        setIsEditing(true)
+        onEditingChange?.(true)
+        return true
     }
 
     const handleDeleteOption = (id: string) => {
@@ -107,8 +139,10 @@ export function MealOptionsList({ mealId, options, preparationSteps = [], onOpti
                     initialData={editingOption}
                     mealId={mealId}
                     preparationSteps={preparationSteps}
+                    isSaving={isSavingOption}
                     onSave={handleSaveOption}
                     onCancel={() => {
+                        if (isSavingOption) return
                         setIsEditing(false)
                         onEditingChange?.(false)
                     }}

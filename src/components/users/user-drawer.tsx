@@ -55,6 +55,7 @@ import { Stepper } from "@/components/ui/stepper"
 import { Separator } from "@/components/ui/separator"
 import { cn } from "@/lib/utils"
 import { DictionarySelector } from "@/components/shared/dictionary-selector"
+import { SaveSplitButton } from "@/components/shared/save-split-button"
 
 interface UserDrawerProps {
     open: boolean
@@ -145,7 +146,7 @@ export function UserDrawer({ open, onOpenChange, user }: UserDrawerProps) {
         }
     }
 
-    async function onSubmit(values: UserProfile) {
+    async function onSubmit(values: UserProfile, shouldCloseAfterSave: boolean) {
         setIsSubmitting(true)
         try {
             const result = await upsertUser(values)
@@ -153,7 +154,9 @@ export function UserDrawer({ open, onOpenChange, user }: UserDrawerProps) {
                 toast.error(result.error)
             } else {
                 toast.success(user ? commonT("updatedSuccessfully") : commonT("createdSuccessfully"))
-                onOpenChange(false)
+                if (shouldCloseAfterSave) {
+                    onOpenChange(false)
+                }
             }
         } catch (error) {
             toast.error(commonT("errorSaving"))
@@ -349,7 +352,7 @@ export function UserDrawer({ open, onOpenChange, user }: UserDrawerProps) {
                         <div className="flex-1 overflow-y-auto custom-scrollbar">
                             <TabsContent value="profile" className="px-8 pt-6 outline-none m-0">
                                 <Form {...form}>
-                                    <form id="user-form" onSubmit={form.handleSubmit(onSubmit)} className="space-y-12 pb-12" autoComplete="off">
+                                    <form id="user-form" onSubmit={form.handleSubmit((values: UserProfile) => onSubmit(values, true))} className="space-y-12 pb-12" autoComplete="off">
                                         <div className="space-y-12">
                                             <div className="space-y-8">
                                                 <div className="flex items-center justify-between gap-4">
@@ -914,17 +917,15 @@ export function UserDrawer({ open, onOpenChange, user }: UserDrawerProps) {
                         >
                             {commonT("cancel")}
                         </Button>
-                        <Button
-                            type="submit"
-                            form="user-form"
-                            className="h-10 px-8 bg-primary hover:bg-primary/90 text-white font-semibold text-xs  transition-all active:scale-[0.98]"
+                        <SaveSplitButton
                             disabled={isSubmiting}
-                        >
-                            {isSubmiting ? (
-                                <Loader2 className="mr-2 h-4 w-4 animate-spin" />
-                            ) : null}
-                            {commonT("save")}
-                        </Button>
+                            loading={isSubmiting}
+                            saveAndStayLabel={commonT("saveAndStay")}
+                            saveAndCloseLabel={commonT("saveAndClose")}
+                            onSaveMode={(mode) => {
+                                void form.handleSubmit((values: UserProfile) => onSubmit(values, mode === "close"))()
+                            }}
+                        />
                     </SheetFooter>
                 </div>
             </SheetContent>

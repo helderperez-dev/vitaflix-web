@@ -3,7 +3,7 @@
 import * as React from"react"
 import { useForm } from"react-hook-form"
 import { zodResolver } from"@hookform/resolvers/zod"
-import { Loader2, Trash2 } from"lucide-react"
+import { Trash2 } from"lucide-react"
 import { toast } from"sonner"
 
 import {
@@ -23,6 +23,7 @@ import { upsertBrand, deleteBrand } from"@/app/actions/brands"
 import { ImageUploader } from"./image-uploader"
 import { useLocale } from"next-intl"
 import { sanitizeBrandLocalizedNames } from"@/lib/brand-market"
+import { SaveSplitButton } from "@/components/shared/save-split-button"
 
 interface BrandModalProps {
     open: boolean
@@ -36,6 +37,7 @@ export function BrandModal({ open, onOpenChange, brand, onSuccess }: BrandModalP
     const [isDeleting, setIsDeleting] = React.useState(false)
     const [selectedStoreMarketIds, setSelectedStoreMarketIds] = React.useState<string[]>([])
     const locale = useLocale()
+    const isPt = locale.startsWith("pt")
 
     // Generate stable ID for new brands so images can be uploaded into a specific folder
     const [formId] = React.useState(() => crypto.randomUUID())
@@ -65,7 +67,7 @@ export function BrandModal({ open, onOpenChange, brand, onSuccess }: BrandModalP
         setSelectedStoreMarketIds(brand?.storeMarketIds || [])
     }, [brand, form, open])
 
-    async function onSubmit(values: Brand) {
+    async function onSubmit(values: Brand, shouldCloseAfterSave: boolean) {
         setIsSubmitting(true)
         try {
             const payload = {
@@ -79,7 +81,9 @@ export function BrandModal({ open, onOpenChange, brand, onSuccess }: BrandModalP
             } else {
                 toast.success(brand ?"Brand updated successfully":"Brand created successfully")
                 onSuccess?.()
-                onOpenChange(false)
+                if (shouldCloseAfterSave) {
+                    onOpenChange(false)
+                }
             }
         } catch (error) {
             toast.error("Failed to save brand")
@@ -135,7 +139,7 @@ export function BrandModal({ open, onOpenChange, brand, onSuccess }: BrandModalP
                     </DialogHeader>
 
                     <Form {...form}>
-                        <form id="brand-form"onSubmit={form.handleSubmit(onSubmit)} className="space-y-8">
+                        <form id="brand-form"onSubmit={form.handleSubmit((values) => onSubmit(values, true))} className="space-y-8">
                             <TranslationFields
                                 form={form}
                                 namePrefix="name"
@@ -189,17 +193,16 @@ export function BrandModal({ open, onOpenChange, brand, onSuccess }: BrandModalP
                         >
                             Cancel
                         </Button>
-                        <Button
-                            type="submit"
-                            form="brand-form"
-                            className="h-9 px-8 bg-primary hover:bg-primary/90 text-white font-semibold text-[10px] shadow-sm shadow-primary/10 transition-all active:scale-[0.98]"
+                        <SaveSplitButton
+                            size="sm"
                             disabled={isSubmitting || isDeleting}
-                        >
-                            {isSubmitting ? (
-                                <Loader2 className="mr-2 h-4 w-4 animate-spin"/>
-                            ) : null}
-                            Save
-                        </Button>
+                            loading={isSubmitting}
+                            saveAndStayLabel={isPt ? "Guardar e continuar" : "Save and continue"}
+                            saveAndCloseLabel={isPt ? "Guardar e fechar" : "Save and close"}
+                            onSaveMode={(mode) => {
+                                void form.handleSubmit((values) => onSubmit(values, mode === "close"))()
+                            }}
+                        />
                     </div>
                 </DialogFooter>
             </DialogContent>

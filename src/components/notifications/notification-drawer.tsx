@@ -52,6 +52,7 @@ import { PlaceholderSelector } from "./placeholder-selector"
 import { RichText } from "@/components/ui/rich-text"
 import { ImageUploader } from "@/components/shared/image-uploader"
 import { FileUploader } from "@/components/shared/file-uploader"
+import { SaveSplitButton } from "@/components/shared/save-split-button"
 import { createClient } from "@/lib/supabase/client"
 
 export type NotificationDrawerMode = "broadcast" | "trigger" | "group" | "view-notification"
@@ -235,7 +236,7 @@ export function NotificationDrawer({ open, onOpenChange, mode, groups, users, ed
         toast.success(`Template "${template.name}" loaded`)
     }
 
-    const onTriggerSubmit = async (data: any) => {
+    const onTriggerSubmit = async (data: any, shouldCloseAfterSave: boolean) => {
         setIsSubmitting(true)
         const formData = new FormData()
         Object.entries(data).forEach(([key, value]) => {
@@ -250,7 +251,9 @@ export function NotificationDrawer({ open, onOpenChange, mode, groups, users, ed
             const { success, error } = await saveTriggerAction(formData)
             if (success) {
                 toast.success(commonT("savedSuccessfully"))
-                onOpenChange(false)
+                if (shouldCloseAfterSave) {
+                    onOpenChange(false)
+                }
             } else {
                 toast.error(error || commonT("errorSaving"))
             }
@@ -261,7 +264,7 @@ export function NotificationDrawer({ open, onOpenChange, mode, groups, users, ed
         }
     }
 
-    const onGroupSubmit = async (data: any) => {
+    const onGroupSubmit = async (data: any, shouldCloseAfterSave: boolean) => {
         setIsSubmitting(true)
         const formData = new FormData()
         if (editingData?.id) formData.append("id", editingData.id)
@@ -273,7 +276,9 @@ export function NotificationDrawer({ open, onOpenChange, mode, groups, users, ed
             const { success, error } = await saveGroupAction(formData)
             if (success) {
                 toast.success(commonT("savedSuccessfully"))
-                onOpenChange(false)
+                if (shouldCloseAfterSave) {
+                    onOpenChange(false)
+                }
             } else {
                 toast.error(error || commonT("errorSaving"))
             }
@@ -713,7 +718,7 @@ export function NotificationDrawer({ open, onOpenChange, mode, groups, users, ed
 
     const renderTriggerForm = () => (
         <Form {...triggerForm}>
-            <form onSubmit={triggerForm.handleSubmit(onTriggerSubmit)} className="flex-1 flex flex-col min-h-0 overflow-hidden">
+            <form onSubmit={triggerForm.handleSubmit((data) => onTriggerSubmit(data, true))} className="flex-1 flex flex-col min-h-0 overflow-hidden">
                 <div className="flex-1 overflow-y-auto px-8 py-6 custom-scrollbar">
                     <div className="flex flex-col gap-8">
                         {/* Template Selection & Designer Entry (Trigger Mode) */}
@@ -859,10 +864,15 @@ export function NotificationDrawer({ open, onOpenChange, mode, groups, users, ed
                     <Button type="button" variant="outline" onClick={() => onOpenChange(false)} className="h-10 px-6 font-semibold text-xs border-border hover:bg-muted/30 transition-colors">
                         {commonT("cancel")}
                     </Button>
-                    <Button type="submit" disabled={isSubmitting} className="h-10 px-8 bg-primary hover:bg-primary/90 text-white font-semibold text-xs shadow-sm shadow-primary/5 transition-all active:scale-[0.98]">
-                        {isSubmitting && <Loader2 className="mr-2 size-4 animate-spin" />}
-                        {editingData ? commonT("update") : commonT("save")}
-                    </Button>
+                    <SaveSplitButton
+                        disabled={isSubmitting}
+                        loading={isSubmitting}
+                        saveAndStayLabel={commonT("saveAndStay")}
+                        saveAndCloseLabel={commonT("saveAndClose")}
+                        onSaveMode={(mode) => {
+                            void triggerForm.handleSubmit((data) => onTriggerSubmit(data, mode === "close"))()
+                        }}
+                    />
                 </SheetFooter>
             </form>
         </Form>
@@ -904,7 +914,7 @@ export function NotificationDrawer({ open, onOpenChange, mode, groups, users, ed
 
     const renderGroupForm = () => (
         <Form {...groupForm}>
-            <form onSubmit={groupForm.handleSubmit(onGroupSubmit)} className="flex-1 flex flex-col min-h-0 overflow-hidden">
+            <form onSubmit={groupForm.handleSubmit((data) => onGroupSubmit(data, true))} className="flex-1 flex flex-col min-h-0 overflow-hidden">
                 {/* Tabs */}
                 <div className="flex items-center gap-8 px-8 border-b border-border/40">
                     {(["details", "members"] as const).map((tab) => (
@@ -1095,10 +1105,15 @@ export function NotificationDrawer({ open, onOpenChange, mode, groups, users, ed
                         {commonT("cancel")}
                     </Button>
                     {groupTab === "details" ? (
-                        <Button type="submit" disabled={isSubmitting} className="h-10 px-8 bg-primary hover:bg-primary/90 text-white font-semibold text-xs shadow-sm shadow-primary/5 transition-all active:scale-[0.98]">
-                            {isSubmitting && <Loader2 className="mr-2 size-4 animate-spin" />}
-                            {editingData ? commonT("update") : commonT("save")}
-                        </Button>
+                        <SaveSplitButton
+                            disabled={isSubmitting}
+                            loading={isSubmitting}
+                            saveAndStayLabel={commonT("saveAndStay")}
+                            saveAndCloseLabel={commonT("saveAndClose")}
+                            onSaveMode={(mode) => {
+                                void groupForm.handleSubmit((data) => onGroupSubmit(data, mode === "close"))()
+                            }}
+                        />
                     ) : (
                         <Button
                             type="button"
