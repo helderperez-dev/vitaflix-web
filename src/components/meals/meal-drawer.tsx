@@ -77,7 +77,6 @@ export function MealDrawer({ open, onOpenChange, meal }: MealDrawerProps) {
     const [activeView, setActiveView] = React.useState<DrawerView>("details")
     const [isEditingOption, setIsEditingOption] = React.useState(false)
     const [saveMode, setSaveMode] = React.useState<"stay" | "close">("close")
-    const shouldSkipSaveOnCloseRef = React.useRef(false)
 
     const form = useForm<Meal>({
         resolver: zodResolver(mealSchema) as never,
@@ -154,7 +153,6 @@ export function MealDrawer({ open, onOpenChange, meal }: MealDrawerProps) {
         if (open) {
             setActiveView("details")
             setIsEditingOption(false)
-            shouldSkipSaveOnCloseRef.current = false
         }
     }, [open])
 
@@ -232,30 +230,15 @@ export function MealDrawer({ open, onOpenChange, meal }: MealDrawerProps) {
         .map(step => step?.[locale] || Object.values(step || {}).find(value => typeof value === "string" && value.trim().length > 0))
         .filter((value): value is string => typeof value === "string" && value.trim().length > 0)
 
-    const handleSheetClose = () => {
-        // Save the form but don't close the sheet (save and stay behavior)
-        void form.handleSubmit((values) => onSubmit(values, false), onInvalid)()
-    }
-
     const handleCancel = () => {
-        shouldSkipSaveOnCloseRef.current = true
         onOpenChange(false)
     }
 
     return (
-        <Sheet open={open} onOpenChange={(isOpen) => {
-            if (!isOpen) {
-                if (shouldSkipSaveOnCloseRef.current) {
-                    shouldSkipSaveOnCloseRef.current = false
-                    onOpenChange(false)
-                    return
-                }
-                handleSheetClose()
-            } else {
-                onOpenChange(isOpen)
-            }
-        }}>
-            <SheetContent className="sm:max-w-2xl p-0 flex flex-col bg-background border-l border-border">
+        <Sheet open={open} onOpenChange={onOpenChange}>
+            <SheetContent
+                className="sm:max-w-2xl p-0 flex flex-col bg-background border-l border-border"
+            >
                 {/* High-End Ambient Glow */}
                 <div className="absolute top-0 left-0 right-0 h-[500px] bg-gradient-to-b from-slate-50 via-white to-white dark:from-white/[0.04] dark:via-transparent dark:to-transparent pointer-events-none -z-10" />
 
