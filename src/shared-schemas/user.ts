@@ -14,7 +14,7 @@ export const userProfileSchema = z.object({
     extraDataComplete: z.boolean().default(false),
     role: z.string().default("user"),
     locale: z.enum(["en", "es", "pt-pt", "pt-br"]).default("en"),
-    avatarUrl: z.string().url().optional().nullable(),
+    avatarUrl: z.string().trim().min(1).optional().nullable(),
     phone: z.string().optional().nullable(),
     pushToken: z.string().optional().nullable(),
     countryId: z.string().uuid().optional().nullable(),

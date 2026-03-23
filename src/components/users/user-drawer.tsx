@@ -3,6 +3,7 @@
 import * as React from "react"
 import { useForm } from "react-hook-form"
 import { useLocale, useTranslations } from "next-intl"
+import { useRouter } from "next/navigation"
 import { zodResolver } from "@hookform/resolvers/zod"
 import {
     Loader2, Camera, ShieldCheck, KeyRound, UserCog, AlertCircle, CheckCircle2, MoreVertical,
@@ -64,6 +65,7 @@ interface UserDrawerProps {
 }
 
 export function UserDrawer({ open, onOpenChange, user }: UserDrawerProps) {
+    const router = useRouter()
     const locale = useLocale()
     const t = useTranslations("Users")
     const tp = useTranslations("Plans")
@@ -154,6 +156,7 @@ export function UserDrawer({ open, onOpenChange, user }: UserDrawerProps) {
                 toast.error(result.error)
             } else {
                 toast.success(user ? commonT("updatedSuccessfully") : commonT("createdSuccessfully"))
+                router.refresh()
                 if (shouldCloseAfterSave) {
                     onOpenChange(false)
                 }

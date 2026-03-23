@@ -14,39 +14,40 @@ export async function upsertUser(data: UserProfile) {
     if (!result.success) {
         return { error: result.error.issues[0].message }
     }
+    const validData = result.data
 
     // If locale is not provided, use system default
-    let finalLocale = data.locale;
+    let finalLocale = validData.locale
     if (!finalLocale) {
         const { data: settingData } = await supabase
             .from('system_settings')
             .select('value')
             .eq('key', 'default_locale')
-            .single();
-        finalLocale = (settingData?.value as any) || 'en';
+            .single()
+        finalLocale = (settingData?.value as any) || 'en'
     }
 
     const { error } = await supabase
         .from('users')
         .upsert({
-            id: data.id || undefined,
-            email: data.email,
-            display_name: data.displayName,
-            avatar_url: data.avatarUrl,
-            genre: data.genre,
-            height: data.height,
-            weight: data.weight,
-            birthday: data.birthday,
-            objective: data.objective,
-            tmb: data.tmb,
-            recommended_kcal_intake: data.recommendedKcalIntake,
-            extra_data_complete: data.extraDataComplete,
-            role: data.role,
+            id: validData.id || undefined,
+            email: validData.email,
+            display_name: validData.displayName,
+            avatar_url: validData.avatarUrl || null,
+            genre: validData.genre,
+            height: validData.height,
+            weight: validData.weight,
+            birthday: validData.birthday,
+            objective: validData.objective,
+            tmb: validData.tmb,
+            recommended_kcal_intake: validData.recommendedKcalIntake,
+            extra_data_complete: validData.extraDataComplete,
+            role: validData.role,
             locale: finalLocale,
-            phone: data.phone,
-            push_token: data.pushToken,
-            country_id: data.countryId || null,
-            preferences: data.preferences || {},
+            phone: validData.phone,
+            push_token: validData.pushToken,
+            country_id: validData.countryId || null,
+            preferences: validData.preferences || {},
             updated_at: new Date().toISOString()
         })
         .select()
@@ -57,23 +58,23 @@ export async function upsertUser(data: UserProfile) {
     }
 
     // Fire triggers for new users
-    const isNewUser = !data.id
+    const isNewUser = !validData.id
     if (isNewUser) {
         // Try to get the newly created user id by email
         const { data: newUser } = await supabase
             .from('users')
             .select('id')
-            .eq('email', data.email)
+            .eq('email', validData.email)
             .single()
         if (newUser?.id) {
             await triggerAppEvent('user_signed_up', { userId: newUser.id })
         }
-    } else if (data.extraDataComplete && data.id) {
+    } else if (validData.extraDataComplete && validData.id) {
         // Fire profile_complete trigger when onboarding finishes
         await triggerAppEvent('profile_complete', {
-            userId: data.id,
+            userId: validData.id,
             data: {
-                recommended_kcal: String(data.recommendedKcalIntake || '')
+                recommended_kcal: String(validData.recommendedKcalIntake || '')
             }
         })
     }
