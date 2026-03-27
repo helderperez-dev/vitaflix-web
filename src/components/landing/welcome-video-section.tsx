@@ -1,6 +1,6 @@
 "use client"
 
-import { useRef, useState } from "react"
+import { useEffect, useRef, useState } from "react"
 import { motion, useScroll, useSpring, useTransform } from "framer-motion"
 import { Play } from "lucide-react"
 import { useTranslations } from "next-intl"
@@ -11,6 +11,9 @@ export function WelcomeVideoSection() {
     const sectionRef = useRef<HTMLElement>(null)
     const videoRef = useRef<HTMLVideoElement>(null)
     const [isPlaying, setIsPlaying] = useState(false)
+    const [shouldLoadVideo, setShouldLoadVideo] = useState(false)
+    const [isLowBandwidth, setIsLowBandwidth] = useState(false)
+    const [isReducedMotion, setIsReducedMotion] = useState(false)
 
     const { scrollYProgress } = useScroll({
         target: sectionRef,
@@ -24,8 +27,54 @@ export function WelcomeVideoSection() {
     const posterY = useTransform(smoothScroll, [0, 1], [-56, 56])
     const posterScale = useTransform(smoothScroll, [0, 1], [1.08, 1.2])
 
+    useEffect(() => {
+        if (typeof window === "undefined") return
+        const nav = navigator as Navigator & {
+            connection?: {
+                effectiveType?: string
+                saveData?: boolean
+                addEventListener?: (type: "change", listener: () => void) => void
+                removeEventListener?: (type: "change", listener: () => void) => void
+            }
+        }
+        const connection = nav.connection
+        const mediaQuery = window.matchMedia("(prefers-reduced-motion: reduce)")
+        const updateConnection = () => {
+            const effectiveType = connection?.effectiveType ?? ""
+            const saveData = connection?.saveData ?? false
+            const slowConnection = effectiveType.includes("2g") || effectiveType.includes("3g")
+            setIsLowBandwidth(saveData || slowConnection)
+        }
+        const updateReducedMotion = () => setIsReducedMotion(mediaQuery.matches)
+        updateConnection()
+        updateReducedMotion()
+        connection?.addEventListener?.("change", updateConnection)
+        mediaQuery.addEventListener("change", updateReducedMotion)
+        return () => {
+            connection?.removeEventListener?.("change", updateConnection)
+            mediaQuery.removeEventListener("change", updateReducedMotion)
+        }
+    }, [])
+
+    useEffect(() => {
+        const element = sectionRef.current
+        if (!element || typeof window === "undefined") return
+        const observer = new IntersectionObserver(
+            (entries) => {
+                const entry = entries[0]
+                if (entry?.isIntersecting) {
+                    setShouldLoadVideo(true)
+                    observer.disconnect()
+                }
+            },
+            { rootMargin: "200px 0px", threshold: 0.2 }
+        )
+        observer.observe(element)
+        return () => observer.disconnect()
+    }, [])
+
     const handlePlay = () => {
-        if (!videoRef.current) return
+        setShouldLoadVideo(true)
         requestAnimationFrame(async () => {
             if (!videoRef.current) return
             try {
@@ -77,9 +126,9 @@ export function WelcomeVideoSection() {
                                     aria-hidden
                                     className="absolute inset-0"
                                     style={{
-                                        y: posterY,
-                                        scale: posterScale,
-                                        backgroundImage: "url('/images/thumbnail-welcome.png')",
+                                        y: isLowBandwidth || isReducedMotion ? 0 : posterY,
+                                        scale: isLowBandwidth || isReducedMotion ? 1 : posterScale,
+                                        backgroundImage: "url('/videos/thumbnails/welcome.jpg')",
                                         backgroundSize: "cover",
                                         backgroundPosition: "center",
                                     }}
@@ -88,9 +137,9 @@ export function WelcomeVideoSection() {
                             <motion.video
                                 ref={videoRef}
                                 controls={isPlaying}
-                                poster="/images/thumbnail-welcome.png"
+                                poster="/videos/thumbnails/welcome.jpg"
                                 className="block h-full w-full object-cover"
-                                preload="metadata"
+                                preload={shouldLoadVideo ? "auto" : "metadata"}
                                 style={{ opacity: isPlaying ? 1 : 0 }}
                                 onPlay={() => setIsPlaying(true)}
                                 onPause={() => setIsPlaying(false)}
@@ -101,7 +150,8 @@ export function WelcomeVideoSection() {
                                     }
                                 }}
                             >
-                                <source src="/videos/welcome.mp4" type="video/mp4" />
+                                {shouldLoadVideo && <source src="/videos/welcome.webm" type="video/webm" />}
+                                {shouldLoadVideo && <source src="/videos/welcome.mp4" type="video/mp4" />}
                             </motion.video>
 
                             {!isPlaying && (

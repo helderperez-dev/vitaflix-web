@@ -34,8 +34,11 @@ export function HeroSection() {
     const [activeCard, setActiveCard] = useState(0)
     const [checkedItems, setCheckedItems] = useState<number[]>([])
     const [videoIndex, setVideoIndex] = useState(0)
+    const [isLowBandwidth, setIsLowBandwidth] = useState(false)
+    const [isHeroVisible, setIsHeroVisible] = useState(true)
+    const [isReducedMotion, setIsReducedMotion] = useState(false)
     
-    const videos = ["1.mp4", "2.mp4", "3.mp4", "4.mp4", "5.mp4"]
+    const videos = isLowBandwidth ? ["1.mp4"] : ["1.mp4", "2.mp4", "3.mp4", "4.mp4", "5.mp4"]
 
     const { scrollYProgress } = useScroll({
         target: heroRef,
@@ -60,22 +63,75 @@ export function HeroSection() {
     const shoppingListItems = ['eggs', 'spinach', 'oats', 'blueberries']
 
     useEffect(() => {
+        if (typeof window === "undefined") return
+        const nav = navigator as Navigator & {
+            connection?: {
+                effectiveType?: string
+                saveData?: boolean
+                addEventListener?: (type: "change", listener: () => void) => void
+                removeEventListener?: (type: "change", listener: () => void) => void
+            }
+        }
+        const connection = nav.connection
+        const mediaQuery = window.matchMedia("(prefers-reduced-motion: reduce)")
+        const updateConnection = () => {
+            const effectiveType = connection?.effectiveType ?? ""
+            const saveData = connection?.saveData ?? false
+            const slowConnection = effectiveType.includes("2g") || effectiveType.includes("3g")
+            setIsLowBandwidth(saveData || slowConnection)
+        }
+        const updateReducedMotion = () => setIsReducedMotion(mediaQuery.matches)
+        updateConnection()
+        updateReducedMotion()
+        connection?.addEventListener?.("change", updateConnection)
+        mediaQuery.addEventListener("change", updateReducedMotion)
+        return () => {
+            connection?.removeEventListener?.("change", updateConnection)
+            mediaQuery.removeEventListener("change", updateReducedMotion)
+        }
+    }, [])
+
+    useEffect(() => {
+        const element = heroRef.current
+        if (!element || typeof window === "undefined") return
+        const observer = new IntersectionObserver(
+            (entries) => {
+                const entry = entries[0]
+                if (!entry) return
+                setIsHeroVisible(entry.isIntersecting)
+            },
+            { threshold: 0.2 }
+        )
+        observer.observe(element)
+        return () => observer.disconnect()
+    }, [])
+
+    useEffect(() => {
+        if (isReducedMotion) return
         const interval = setInterval(() => {
             setActiveCard((prev) => (prev + 1) % 3)
         }, 4000)
         return () => clearInterval(interval)
-    }, [])
+    }, [isReducedMotion])
 
     useEffect(() => {
+        if (!isHeroVisible || videos.length <= 1) return
         const videoInterval = setInterval(() => {
             setVideoIndex((prev) => (prev + 1) % videos.length)
         }, 8000)
         return () => clearInterval(videoInterval)
+    }, [isHeroVisible, videos.length])
+
+    useEffect(() => {
+        setVideoIndex((prev) => (prev >= videos.length ? 0 : prev))
     }, [videos.length])
 
     useEffect(() => {
+        if (isReducedMotion) {
+            setCheckedItems([])
+            return
+        }
         if (activeCard === 1) {
-            // Animate checkboxes when shopping list is active
             let current = 0;
             setCheckedItems([]);
             const checkInterval = setInterval(() => {
@@ -90,7 +146,7 @@ export function HeroSection() {
         } else {
             setCheckedItems([]);
         }
-    }, [activeCard])
+    }, [activeCard, isReducedMotion])
 
     return (
         <section
@@ -101,9 +157,9 @@ export function HeroSection() {
             {/* Background Effects */}
             <div className="absolute inset-0 z-0 bg-[#FAFCFF]" />
             <div className="absolute inset-0 z-0 overflow-hidden pointer-events-none">
-                <motion.div style={{ y: yBlob1 }} className="absolute top-[-10%] left-[-10%] h-[600px] w-[600px] rounded-full bg-primary/5 blur-[120px]" />
-                <motion.div style={{ y: yBlob2 }} className="absolute top-[20%] right-[-10%] h-[500px] w-[500px] rounded-full bg-sky-100/60 blur-[100px]" />
-                <motion.div style={{ y: yBlob3 }} className="absolute bottom-[-10%] left-[20%] h-[400px] w-[400px] rounded-full bg-teal-50/80 blur-[80px]" />
+                <motion.div style={{ y: isReducedMotion ? 0 : yBlob1 }} className="absolute top-[-10%] left-[-10%] h-[600px] w-[600px] rounded-full bg-primary/5 blur-[120px]" />
+                <motion.div style={{ y: isReducedMotion ? 0 : yBlob2 }} className="absolute top-[20%] right-[-10%] h-[500px] w-[500px] rounded-full bg-sky-100/60 blur-[100px]" />
+                <motion.div style={{ y: isReducedMotion ? 0 : yBlob3 }} className="absolute bottom-[-10%] left-[20%] h-[400px] w-[400px] rounded-full bg-teal-50/80 blur-[80px]" />
             </div>
 
             <div className="w-full max-w-[90rem] mx-auto px-4 sm:px-6 lg:px-8 relative z-10">
@@ -181,7 +237,7 @@ export function HeroSection() {
                         <motion.div style={{ y: 0, opacity: 1 }} className="absolute inset-0 flex items-center justify-center">
                             
                             {/* Central High-Def iPhone Mockup */}
-                            <motion.div style={{ y: yPhone }} className="relative z-20 w-[260px] sm:w-[290px] h-[530px] sm:h-[590px]">
+                            <motion.div style={{ y: isReducedMotion ? 0 : yPhone }} className="relative z-20 w-[260px] sm:w-[290px] h-[530px] sm:h-[590px]">
                                 <motion.div
                                     initial={{ opacity: 0, scale: 0.9, y: 20 }}
                                     animate={{ opacity: 1, scale: 1, y: 0 }}
@@ -208,13 +264,17 @@ export function HeroSection() {
                                     <div className="relative w-full h-full rounded-[34px] sm:rounded-[37px] overflow-hidden bg-black z-10">
                                         <video
                                             key={videos[videoIndex]}
-                                            autoPlay
+                                            autoPlay={!isLowBandwidth}
                                             loop
                                             muted
                                             playsInline
+                                            preload={isLowBandwidth ? "none" : "auto"}
+                                            poster={`/videos/thumbnails/hero-${videos[videoIndex].split('.')[0]}.jpg`}
                                             className="absolute inset-0 w-full h-full object-cover"
-                                            src={`/videos/${videos[videoIndex]}`}
-                                        />
+                                        >
+                                            <source src={`/videos/${videos[videoIndex].replace(".mp4", ".webm")}`} type="video/webm" />
+                                            <source src={`/videos/${videos[videoIndex]}`} type="video/mp4" />
+                                        </video>
                                         
                                         {/* Glass Overlay for realism */}
                                         <div className="absolute inset-0 shadow-[inset_0_0_20px_rgba(0,0,0,0.5)] z-20 pointer-events-none" />
@@ -224,7 +284,7 @@ export function HeroSection() {
                             </motion.div>
 
                             {/* Main Card (Center Right) - Meal Card */}
-                            <motion.div style={{ y: yCard1 }} className={`absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[260px] sm:w-[300px] lg:!translate-x-[calc(-50%+80px)] ${activeCard === 0 ? 'z-30' : 'z-10'}`}>
+                            <motion.div style={{ y: isReducedMotion ? 0 : yCard1 }} className={`absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[260px] sm:w-[300px] lg:!translate-x-[calc(-50%+80px)] ${activeCard === 0 ? 'z-30' : 'z-10'}`}>
                                 <motion.div
                                     animate={{ 
                                         scale: activeCard === 0 ? 1 : 0.85,
@@ -280,7 +340,7 @@ export function HeroSection() {
                             </motion.div>
 
                             {/* Back Card 1 (Top Left) - Shopping List */}
-                            <motion.div style={{ y: yCard2 }} className={`absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[240px] sm:w-[260px] lg:!translate-x-[calc(-50%-60px)] ${activeCard === 1 ? 'z-30' : 'z-10'}`}>
+                            <motion.div style={{ y: isReducedMotion ? 0 : yCard2 }} className={`absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[240px] sm:w-[260px] lg:!translate-x-[calc(-50%-60px)] ${activeCard === 1 ? 'z-30' : 'z-10'}`}>
                                 <motion.div
                                     animate={{ 
                                         scale: activeCard === 1 ? 1 : 0.85,
@@ -321,7 +381,7 @@ export function HeroSection() {
                             </motion.div>
 
                             {/* Back Card 2 (Bottom Left) - Progress */}
-                            <motion.div style={{ y: yCard3 }} className={`absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[220px] sm:w-[240px] lg:!translate-x-[calc(-50%-40px)] ${activeCard === 2 ? 'z-30' : 'z-10'}`}>
+                            <motion.div style={{ y: isReducedMotion ? 0 : yCard3 }} className={`absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[220px] sm:w-[240px] lg:!translate-x-[calc(-50%-40px)] ${activeCard === 2 ? 'z-30' : 'z-10'}`}>
                                 <motion.div
                                     animate={{ 
                                         scale: activeCard === 2 ? 1.1 : 0.85,

@@ -1,25 +1,70 @@
 "use client"
 
 import { useRef, useState, useEffect } from "react"
-import { motion, useScroll, useTransform, useSpring, useMotionValue, animate } from "framer-motion"
-import { Play, Pause, ChevronLeft, ChevronRight } from "lucide-react"
+import { motion } from "framer-motion"
+import { Play, ChevronLeft, ChevronRight } from "lucide-react"
 import { cn } from "@/lib/utils"
 import { useTranslations } from "next-intl"
+import Image from "next/image"
 
 const recipeKeys = [
-    { id: 1, key: "rice", video: "/videos/recipes/1.mp4" },
-    { id: 2, key: "shepherd", video: "/videos/recipes/2.mp4" },
-    { id: 3, key: "cake", video: "/videos/recipes/3.mp4" },
-    { id: 4, key: "sandwich", video: "/videos/recipes/4.mp4" },
-    { id: 5, key: "breakfast", video: "/videos/recipes/5.mp4" },
-    { id: 6, key: "lasagna", video: "/videos/recipes/6.mp4" },
+    { id: 1, key: "rice", video: "/videos/recipes/1.mp4", poster: "/videos/recipes/thumbnails/1.jpg" },
+    { id: 2, key: "shepherd", video: "/videos/recipes/2.mp4", poster: "/videos/recipes/thumbnails/2.jpg" },
+    { id: 3, key: "cake", video: "/videos/recipes/3.mp4", poster: "/videos/recipes/thumbnails/3.jpg" },
+    { id: 4, key: "sandwich", video: "/videos/recipes/4.mp4", poster: "/videos/recipes/thumbnails/4.jpg" },
+    { id: 5, key: "breakfast", video: "/videos/recipes/5.mp4", poster: "/videos/recipes/thumbnails/5.jpg" },
+    { id: 6, key: "lasagna", video: "/videos/recipes/6.mp4", poster: "/videos/recipes/thumbnails/6.jpg" },
 ]
 
 export function RecipeCarousel() {
     const t = useTranslations("Landing.Recipes")
     const containerRef = useRef<HTMLDivElement>(null)
+    const cardRefs = useRef<Array<HTMLDivElement | null>>([])
     const [playingIndex, setPlayingIndex] = useState<number | null>(null)
-    const x = useMotionValue(0)
+    const [loadedIndexes, setLoadedIndexes] = useState<number[]>([0, 1])
+
+    useEffect(() => {
+        const root = containerRef.current
+        if (!root || typeof window === "undefined") return
+        
+        const observerOptions = {
+            root,
+            threshold: 0.6,
+        }
+
+        const handleIntersection = (entries: IntersectionObserverEntry[]) => {
+            let mostCenteredIdx: number | null = null;
+            let maxRatio = 0;
+
+            entries.forEach((entry) => {
+                const idx = Number((entry.target as HTMLElement).dataset.index)
+                
+                if (entry.isIntersecting) {
+                    setLoadedIndexes((prev) => {
+                        if (prev.includes(idx)) return prev
+                        return [...prev, idx]
+                    })
+
+                    if (entry.intersectionRatio > maxRatio) {
+                        maxRatio = entry.intersectionRatio
+                        mostCenteredIdx = idx
+                    }
+                }
+            })
+
+            if (mostCenteredIdx !== null) {
+                setPlayingIndex(mostCenteredIdx)
+            }
+        }
+
+        const observer = new IntersectionObserver(handleIntersection, observerOptions)
+        
+        cardRefs.current.forEach((card) => {
+            if (card) observer.observe(card)
+        })
+
+        return () => observer.disconnect()
+    }, [])
 
     const scrollLeft = () => {
         const container = containerRef.current
@@ -36,6 +81,9 @@ export function RecipeCarousel() {
     }
 
     const togglePlay = (index: number) => {
+        if (!loadedIndexes.includes(index)) {
+            setLoadedIndexes((prev) => [...prev, index])
+        }
         if (playingIndex === index) {
             setPlayingIndex(null)
         } else {
@@ -76,18 +124,30 @@ export function RecipeCarousel() {
                     {recipeKeys.map((recipe, index) => (
                         <motion.div
                             key={`${recipe.id}-${index}`}
+                            data-index={index}
+                            ref={(el) => {
+                                cardRefs.current[index] = el
+                            }}
                             className={cn(
                                 "relative shrink-0 w-[240px] sm:w-[280px] aspect-[9/16] rounded-[2rem] overflow-hidden bg-slate-900 group cursor-pointer transition-all duration-500 snap-center",
                                 playingIndex === index ? "scale-105 z-20" : ""
                             )}
                             onClick={() => togglePlay(index)}
                         >
+                        <Image
+                            src={recipe.poster}
+                            alt={t(`items.${recipe.key}`)}
+                            fill
+                            className="absolute inset-0 object-cover"
+                            sizes="(max-width: 640px) 240px, 280px"
+                        />
                         <video
-                            src={recipe.video}
+                            src={loadedIndexes.includes(index) ? recipe.video : undefined}
                             className="absolute inset-0 w-full h-full object-cover"
                             loop
-                            muted={false}
+                            muted
                             playsInline
+                            preload={playingIndex === index ? "auto" : "metadata"}
                             ref={(el) => {
                                 if (el) {
                                     if (playingIndex === index) {
@@ -100,12 +160,10 @@ export function RecipeCarousel() {
                             }}
                         />
                         
-                        {/* Overlay Gradient */}
                         <div className="absolute inset-0 bg-gradient-to-t from-black/80 via-black/20 to-transparent pointer-events-none transition-opacity duration-300" 
                              style={{ opacity: playingIndex === index ? 0.4 : 0.7 }}
                         />
 
-                        {/* Play Button Overlay */}
                         <div className={cn(
                             "absolute inset-0 flex items-center justify-center transition-all duration-300",
                             playingIndex === index ? "opacity-0 scale-110" : "opacity-100 scale-100 group-hover:scale-110"
@@ -115,7 +173,6 @@ export function RecipeCarousel() {
                             </div>
                         </div>
 
-                        {/* Content */}
                         <div className="absolute bottom-0 left-0 right-0 p-6 transition-transform duration-300 transform translate-y-0 group-hover:-translate-y-1">
                             <div className="flex items-center gap-2 mb-2">
                                 <div className="px-2 py-1 rounded-full bg-emerald-500/90 backdrop-blur text-[10px] font-bold text-white uppercase tracking-wider shadow-sm">

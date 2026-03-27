@@ -1,8 +1,9 @@
 "use client"
 
+import { useEffect, useRef, useState } from "react"
 import { motion } from "framer-motion"
 import { GraduationCap, TrendingUp, HeartPulse, Users, ArrowUp } from "lucide-react"
-import { RecipeCarousel } from "./recipe-carousel"
+import dynamic from "next/dynamic"
 import { Button } from "@/components/ui/button"
 import { useTranslations } from "next-intl"
 
@@ -14,19 +15,43 @@ const pillarIcons = {
     routine: HeartPulse
 }
 
+const RecipeCarousel = dynamic(
+    () => import("./recipe-carousel").then((mod) => mod.RecipeCarousel),
+    { ssr: false }
+)
+
 export function FounderSection() {
     const t = useTranslations("Landing.Founder")
-    const scrollToWaitlist = () => {
-        const element = document.getElementById('waitlist');
-        if (element) {
-            element.scrollIntoView({ behavior: 'smooth' });
-            // Try to find the first input within the waitlist section to focus
-            setTimeout(() => {
-                const input = element.querySelector('input');
-                if (input) {
-                    (input as HTMLInputElement).focus();
+    const carouselWrapperRef = useRef<HTMLDivElement>(null)
+    const [shouldRenderCarousel, setShouldRenderCarousel] = useState(false)
+
+    useEffect(() => {
+        const element = carouselWrapperRef.current
+        if (!element || typeof window === "undefined") return
+        const observer = new IntersectionObserver(
+            (entries) => {
+                if (entries[0]?.isIntersecting) {
+                    setShouldRenderCarousel(true)
+                    observer.disconnect()
                 }
-            }, 800);
+            },
+            { rootMargin: "300px 0px", threshold: 0.01 }
+        )
+        observer.observe(element)
+        return () => observer.disconnect()
+    }, [])
+
+    const scrollToWaitlist = () => {
+        const element = document.getElementById('waitlist')
+        if (element) {
+            element.scrollIntoView({ behavior: 'smooth' })
+            setTimeout(() => {
+                const input = element.querySelector('input')
+                if (input) {
+                    const htmlInput = input as HTMLInputElement
+                    htmlInput.focus()
+                }
+            }, 800)
         }
     }
 
@@ -83,8 +108,12 @@ export function FounderSection() {
                     </div>
                 </motion.div>
 
-                <div className="mt-16">
-                    <RecipeCarousel />
+                <div ref={carouselWrapperRef} className="mt-16">
+                    {shouldRenderCarousel ? (
+                        <RecipeCarousel />
+                    ) : (
+                        <div className="h-[34rem] rounded-[2rem] border border-slate-200/70 bg-gradient-to-b from-white to-slate-100/70" />
+                    )}
                     <div className="mt-10 flex justify-center">
                         <Button 
                             size="lg" 
