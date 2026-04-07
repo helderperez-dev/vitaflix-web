@@ -35,11 +35,26 @@ export function UserMenu({ user }: UserMenuProps) {
     const locale = useLocale()
     const router = useRouter()
     const pathname = usePathname()
+    const [isMounted, setIsMounted] = React.useState(false)
+
+    React.useEffect(() => {
+        setIsMounted(true)
+    }, [])
 
     const handleLocaleChange = async (newLocale: string) => {
         await updateUserLocale(user.id, newLocale)
         router.replace(pathname, { locale: newLocale })
     }
+
+    if (!isMounted) return (
+        <Button
+            variant="ghost"
+            className="h-10 px-2 gap-2 hover:bg-primary/5 transition-all duration-300 rounded-lg border border-transparent hover:border-sidebar-border/50 group"
+        >
+            <div className="h-8 w-8 rounded-lg bg-primary/10 animate-pulse" />
+            <div className="hidden md:block h-3 w-16 bg-primary/10 animate-pulse" />
+        </Button>
+    )
 
     return (
         <DropdownMenu>

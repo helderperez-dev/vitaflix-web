@@ -127,7 +127,7 @@ export default async function DashboardPage({ params }: { params: { locale: stri
                     {stats.map((stat) => (
                         <Card key={stat.title} className="border-border/60 bg-card shadow-none min-h-[70px] flex flex-col justify-center">
                             <CardHeader className="flex flex-row items-center justify-between space-y-0 p-2 px-4">
-                                <CardTitle className="text-[11px] font-semibold text-muted-foreground/80 tracking-tight">
+                                <CardTitle className="text-[11px] font-semibold text-foreground/80 tracking-tight">
                                     {stat.title}
                                 </CardTitle>
                                 <div className={cn("p-1 rounded-sm bg-primary/5 text-primary/70 border border-primary/5")}>

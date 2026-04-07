@@ -11,6 +11,7 @@ import { notFound } from 'next/navigation';
 import { routing } from '@/i18n/routing';
 import { NuqsAdapter } from 'nuqs/adapters/next/app';
 import { PostHogProvider, PostHogPageView } from "@posthog/next";
+import { MetaPixel } from "@/components/tracking/meta-pixel";
 
 const geistMono = Geist_Mono({
   variable: "--font-geist-mono",
@@ -36,6 +37,11 @@ const poppins = Poppins({
 export const metadata: Metadata = {
   title: "Vitaflix",
   description: "Vitaflix - Your nutrition, finally simple",
+  verification: {
+    other: {
+      "facebook-domain-verification": ["qm1fgzdqa4xk9nom1bm4lyqrpoupb7"],
+    },
+  },
 };
 
 export function generateStaticParams() {
@@ -84,6 +90,7 @@ export default async function RootLayout({
         disableTransitionOnChange
       >
         <ThemeColorMeta />
+        <MetaPixel />
         <NuqsAdapter>
           <TooltipProvider>
             {children}

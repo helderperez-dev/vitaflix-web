@@ -45,14 +45,14 @@ export function GrowthChart({ id, data, color = "var(--color-value)", locale }: 
                                     const date = new Date(str)
                                     return date.toLocaleDateString(locale, { month: 'short', day: 'numeric' })
                                 }}
-                                style={{ fontSize: '9px', fontWeight: 500, fill: 'hsl(var(--muted-foreground)/0.4)' }}
+                                style={{ fontSize: '9px', fontWeight: 500, fill: 'hsl(var(--foreground)/0.8)' }}
                             />
                             <YAxis
                                 axisLine={false}
                                 tickLine={false}
                                 allowDecimals={false}
                                 domain={[0, "dataMax"]}
-                                style={{ fontSize: '9px', fontWeight: 500, fill: 'hsl(var(--muted-foreground)/0.4)' }}
+                                style={{ fontSize: '9px', fontWeight: 500, fill: 'hsl(var(--foreground)/0.8)' }}
                             />
                             <ChartTooltip cursor={false} content={<ChartTooltipContent indicator="dot" className="bg-popover border-border/50" />} />
                             <Area
