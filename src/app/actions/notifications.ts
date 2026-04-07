@@ -5,6 +5,50 @@ import { revalidatePath } from "next/cache"
 import { sendEmail, sendSms, sendPush } from "@/lib/notifications"
 import { getMediaUrl } from "@/lib/utils"
 
+function getEffectivePushToken(user: {
+    push_token?: string | null
+    preferences?: Record<string, any> | null
+}) {
+    const directToken = user.push_token?.trim()
+    if (directToken) return directToken
+
+    const fallbackToken = user.preferences?.push_notifications?.fcm_token
+    return typeof fallbackToken === "string" && fallbackToken.trim()
+        ? fallbackToken.trim()
+        : null
+}
+
+function buildPushData({
+    title,
+    body,
+    mediaUrl,
+    actionLink,
+}: {
+    title: string
+    body: string
+    mediaUrl?: string | null
+    actionLink?: string | null
+}) {
+    const data: Record<string, string> = {
+        title,
+        body,
+    }
+
+    if (mediaUrl) {
+        data.image = getMediaUrl(mediaUrl)
+    }
+
+    const normalizedActionLink = actionLink?.trim()
+    if (normalizedActionLink) {
+        data.action_link = normalizedActionLink
+        if (normalizedActionLink.startsWith("/")) {
+            data.target = normalizedActionLink
+        }
+    }
+
+    return data
+}
+
 export async function sendBroadcastAction(formData: FormData) {
     const supabase = await createClient()
 
@@ -22,19 +66,26 @@ export async function sendBroadcastAction(formData: FormData) {
     }
 
     try {
-        let targets: { id?: string, email: string, phone: string | null, push_token: string | null, display_name?: string | null }[] = []
+        let targets: {
+            id?: string
+            email: string
+            phone: string | null
+            push_token: string | null
+            preferences?: Record<string, any> | null
+            display_name?: string | null
+        }[] = []
 
         const targetType = formData.get("targetType") as string // "everyone", "group", "specific-user", "manual"
         const targetValue = formData.get("targetValue") as string
 
         if (targetType === "everyone") {
-            const { data, error } = await supabase.from("users").select("id, email, phone, push_token, display_name")
+            const { data, error } = await supabase.from("users").select("id, email, phone, push_token, preferences, display_name")
             if (error) throw error
             targets = data || []
         } else if (targetType === "group") {
             const { data, error } = await supabase
                 .from("user_group_members")
-                .select("user_id, users(email, phone, push_token, display_name)")
+                .select("user_id, users(email, phone, push_token, preferences, display_name)")
                 .eq("group_id", targetValue)
             if (error) throw error
             targets = data?.map((m: any) => ({
@@ -42,12 +93,13 @@ export async function sendBroadcastAction(formData: FormData) {
                 email: m.users.email,
                 phone: m.users.phone,
                 push_token: m.users.push_token,
+                preferences: m.users.preferences,
                 display_name: m.users.display_name
             })) || []
         } else if (targetType === "specific-user") {
             const { data, error } = await supabase
                 .from("users")
-                .select("id, email, phone, push_token, display_name")
+                .select("id, email, phone, push_token, preferences, display_name")
                 .eq("id", targetValue)
                 .single()
             if (error) throw error
@@ -108,6 +160,7 @@ export async function sendBroadcastAction(formData: FormData) {
         // External Delivery
         const sendPromises = dbNotifications.map(async (notif, index) => {
             const target = targets[index];
+            const pushToken = getEffectivePushToken(target)
             let res: { success: boolean; error?: string } = { success: false, error: "Unknown channel" };
 
             if (channel === "email" && target.email) {
@@ -118,8 +171,18 @@ export async function sendBroadcastAction(formData: FormData) {
                 res = await sendEmail({ to: target.email, subject: notif.title, body: notif.body, html: notif.html || undefined, attachments: formattedAttachments });
             } else if (channel === "sms" && target.phone) {
                 res = await sendSms({ to: target.phone, body: `${notif.title}\n\n${notif.body}` });
-            } else if (channel === "push" && target.push_token) {
-                res = await sendPush({ token: target.push_token, title: notif.title, body: notif.body, data: media_url ? { image: getMediaUrl(media_url) } : undefined });
+            } else if (channel === "push" && pushToken) {
+                res = await sendPush({
+                    token: pushToken,
+                    title: notif.title,
+                    body: notif.body,
+                    data: buildPushData({
+                        title: notif.title,
+                        body: notif.body,
+                        mediaUrl: media_url,
+                        actionLink: action_link,
+                    })
+                });
             } else if (channel === "app" && target.id) {
                 res = { success: true };
             }
@@ -168,7 +231,7 @@ export async function triggerAppEvent(actionType: string, context: { userId: str
         // Fetch user info for external channels
         const { data: user, error: userError } = await supabase
             .from("users")
-            .select("email, phone, push_token")
+            .select("email, phone, push_token, preferences")
             .eq("id", context.userId)
             .single()
 
@@ -190,6 +253,7 @@ export async function triggerAppEvent(actionType: string, context: { userId: str
         }
 
         const sendPromises = trigger.channels.map(async (channel: string) => {
+            const pushToken = getEffectivePushToken(user)
             // Log in DB first (as pending)
             const { data: notification, error: insertError } = await supabase
                 .from("notifications")
@@ -214,8 +278,13 @@ export async function triggerAppEvent(actionType: string, context: { userId: str
             } else if (channel === "sms" && user.phone) {
                 const result = await sendSms({ to: user.phone, body: `${title}\n\n${body}` });
                 res = { success: result.success, error: result.error };
-            } else if (channel === "push" && user.push_token) {
-                const result = await sendPush({ token: user.push_token, title, body });
+            } else if (channel === "push" && pushToken) {
+                const result = await sendPush({
+                    token: pushToken,
+                    title,
+                    body,
+                    data: buildPushData({ title, body })
+                });
                 res = { success: result.success, error: result.error };
             } else if (channel === "app") {
                 res = { success: true };
@@ -352,13 +421,13 @@ export async function retryNotificationAction(notificationId: string) {
         if (notification.user_id) {
             const { data: user } = await supabase
                 .from("users")
-                .select("email, phone, push_token")
+                .select("email, phone, push_token, preferences")
                 .eq("id", notification.user_id)
                 .single()
             if (user) {
                 if (user.email) targetEmail = user.email
                 if (user.phone) targetPhone = user.phone
-                pushToken = user.push_token
+                pushToken = getEffectivePushToken(user)
             }
         }
 
@@ -379,7 +448,17 @@ export async function retryNotificationAction(notificationId: string) {
         } else if (notification.channel === "sms" && targetPhone) {
             res = await sendSms({ to: targetPhone, body: `${notification.title}\n\n${notification.body}` });
         } else if (notification.channel === "push" && pushToken) {
-            res = await sendPush({ token: pushToken, title: notification.title, body: notification.body });
+            res = await sendPush({
+                token: pushToken,
+                title: notification.title,
+                body: notification.body,
+                data: buildPushData({
+                    title: notification.title,
+                    body: notification.body,
+                    mediaUrl: notification.media_url,
+                    actionLink: notification.metadata?.action_link,
+                })
+            });
         } else if (notification.channel === "app") {
             res = { success: true };
         }

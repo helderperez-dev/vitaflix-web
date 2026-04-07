@@ -8,6 +8,7 @@ type PromptKey =
     | "text_translation"
     | "image_generation"
     | "image_enhancement"
+    | "meal_preparation_mode_generation"
 
 type PromptRow = {
     key: PromptKey
@@ -487,25 +488,43 @@ export async function generateMealPreparationStepsWithAI(input: {
             return `${quantity} ${unit}`.trim() + ` ${resolvedName}`.trim()
         })
 
-        const prompt = [
-            `You are a professional recipe writer for a nutrition app.`,
-            `Generate clear preparation steps in ${normalizeLanguage(input.targetLanguage)}.`,
-            `Meal: "${input.mealName || "Meal"}".`,
-            `Ingredients with quantities: ${ingredientLines.join("; ")}.`,
-            input.cookTimeMinutes ? `Target cook time: about ${input.cookTimeMinutes} minutes.` : "",
+        const promptRow = await getPromptByKey("meal_preparation_mode_generation")
+
+        const fallbackPrompt = [
+            `És um redator culinário da Vitaflix.`,
+            `Gera passos de modo de preparação em ${normalizeLanguage(input.targetLanguage)} para serem lidos no telemóvel.`,
+            `Refeição: "${input.mealName || "Refeição"}".`,
+            `Ingredientes com quantidades: ${ingredientLines.join("; ")}.`,
+            input.cookTimeMinutes ? `Tempo alvo de confeção: cerca de ${input.cookTimeMinutes} minutos.` : "",
             input.existingPreparationModes?.length
-                ? `If useful, improve and incorporate this existing preparation context: ${input.existingPreparationModes.join(" | ")}.`
+                ? `Contexto de preparação existente: ${input.existingPreparationModes.join(" | ")}.`
                 : "",
-            `Return ONLY a valid JSON array of strings.`,
-            `Each item must be one concise actionable step.`,
-            `Do not include markdown or explanations.`,
+            `Devolve APENAS um array JSON válido de strings.`,
+            `Cada item deve conter uma ação principal e linguagem simples.`,
+            `Não incluir markdown nem explicações fora dos passos.`,
         ].filter(Boolean).join(" ")
+
+        const prompt = promptRow
+            ? fillPromptTemplate(promptRow.prompt_template, {
+                input_text: "",
+                target_language: normalizeLanguage(input.targetLanguage),
+                source_language: normalizeLanguage(input.targetLanguage),
+                system_language: normalizeLanguage(input.targetLanguage),
+                field_label: "preparation_mode",
+                entity_name: input.mealName || "Refeição",
+                context: "",
+                meal_name: input.mealName || "Refeição",
+                ingredients_with_quantities: ingredientLines.join("; "),
+                cook_time_minutes: input.cookTimeMinutes ? String(input.cookTimeMinutes) : "",
+                existing_preparation_modes: input.existingPreparationModes?.join(" | ") || "",
+            })
+            : fallbackPrompt
 
         const model = process.env.OPENROUTER_MODEL_TEXT_TO_TEXT || "openai/gpt-5"
         const json = await callOpenRouter({
             model,
             messages: [{ role: "user", content: prompt }],
-            temperature: 0.5,
+            temperature: Number((promptRow?.model_config?.temperature as number) ?? 0.5),
         })
 
         const text = extractTextFromChoice(json?.choices?.[0])

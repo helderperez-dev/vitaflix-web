@@ -53,6 +53,7 @@ export default function AISettingsClient({ prompts }: { prompts: Prompt[] }) {
         if (key === 'text_translation') return t('textTranslation')
         if (key === 'image_generation') return t('imageGeneration')
         if (key === 'image_enhancement') return t('imageEnhancement')
+        if (key === 'meal_preparation_mode_generation') return t('mealPreparationModeGeneration')
         return key
     }
 

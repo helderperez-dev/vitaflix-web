@@ -57,6 +57,14 @@ import { createClient } from "@/lib/supabase/client"
 
 export type NotificationDrawerMode = "broadcast" | "trigger" | "group" | "view-notification"
 
+function hasRegisteredPushChannel(user: any) {
+    if (user == null) return false
+    if (typeof user.push_token === "string" && user.push_token.trim()) return true
+
+    const fallbackToken = user.preferences?.push_notifications?.fcm_token
+    return typeof fallbackToken === "string" && fallbackToken.trim().length > 0
+}
+
 interface NotificationDrawerProps {
     open: boolean
     onOpenChange: (open: boolean) => void
@@ -1132,6 +1140,7 @@ export function NotificationDrawer({ open, onOpenChange, mode, groups, users, ed
 
     const renderNotificationView = () => {
         const targetUser = editingData?.user_id ? users.find((u: any) => u.id === editingData.user_id) : null;
+        const hasPushChannel = hasRegisteredPushChannel(targetUser)
 
         return (
             <div className="flex-1 flex flex-col min-h-0 overflow-hidden">
@@ -1293,7 +1302,7 @@ export function NotificationDrawer({ open, onOpenChange, mode, groups, users, ed
                                         </div>
                                         <div className="flex items-center gap-2">
                                             <Smartphone className="size-3.5 text-muted-foreground/30" />
-                                            <span className="text-[11px] font-semibold text-muted-foreground/60">Push: {targetUser?.push_token ? (isPt ? 'Registado' : 'Registered') : '—'}</span>
+                                            <span className="text-[11px] font-semibold text-muted-foreground/60">Push: {hasPushChannel ? (isPt ? 'Registado' : 'Registered') : '—'}</span>
                                         </div>
                                     </div>
                                 )}

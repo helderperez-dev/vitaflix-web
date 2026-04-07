@@ -851,6 +851,7 @@
         "textTranslation": "Tradução de Texto",
         "imageGeneration": "Geração de Imagem",
         "imageEnhancement": "Melhoria de Imagem",
+        "mealPreparationModeGeneration": "Geração de Modo de Preparação",
         "promptTemplate": "Modelo do Prompt",
         "save": "Guardar Alterações",
         "saved": "Definições guardadas com sucesso",

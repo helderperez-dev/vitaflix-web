@@ -1,6 +1,7 @@
 import { Resend } from "resend";
 import twilio from "twilio";
 import admin from "firebase-admin";
+import { createPrivateKey } from "node:crypto";
 
 // Initialize Resend
 const resend = process.env.RESEND_API_KEY ? new Resend(process.env.RESEND_API_KEY) : null;
@@ -10,24 +11,53 @@ const twilioClient = (process.env.TWILIO_ACCOUNT_SID && process.env.TWILIO_AUTH_
     ? twilio(process.env.TWILIO_ACCOUNT_SID, process.env.TWILIO_AUTH_TOKEN)
     : null;
 
+let firebaseAdminInitError: string | null = null;
+
 // Initialize Firebase Admin
-if (
-    process.env.FIREBASE_PROJECT_ID &&
-    process.env.FIREBASE_CLIENT_EMAIL &&
-    process.env.FIREBASE_PRIVATE_KEY &&
-    admin.apps.length === 0
-) {
-    try {
-        admin.initializeApp({
-            credential: admin.credential.cert({
-                projectId: process.env.FIREBASE_PROJECT_ID,
-                clientEmail: process.env.FIREBASE_CLIENT_EMAIL,
-                privateKey: process.env.FIREBASE_PRIVATE_KEY.replace(/\\n/g, "\n"),
-            }),
-        });
-    } catch (error: any) {
-        console.error("Firebase Admin initialization error:", error.message);
+function getFirebaseAdmin() {
+    if (admin.apps.length > 0) return admin;
+
+    const projectId = process.env.FIREBASE_PROJECT_ID;
+    const clientEmail = process.env.FIREBASE_CLIENT_EMAIL;
+    const privateKey = process.env.FIREBASE_PRIVATE_KEY;
+
+    if (projectId && clientEmail && privateKey) {
+        try {
+            firebaseAdminInitError = null;
+
+            // Robust private key formatting
+            const formattedKey = privateKey
+                .trim()
+                .replace(/^['"]|['"]$/g, '') // Remove surrounding quotes
+                .replace(/\\r\\n/g, "\n")
+                .replace(/\\n/g, "\n")
+                .replace(/\r\n/g, "\n");
+
+            createPrivateKey({ key: formattedKey, format: "pem" });
+
+            admin.initializeApp({
+                credential: admin.credential.cert({
+                    projectId,
+                    clientEmail,
+                    privateKey: formattedKey,
+                }),
+            });
+            console.log("Firebase Admin initialized successfully");
+            return admin;
+        } catch (error: any) {
+            firebaseAdminInitError = "Invalid FIREBASE_PRIVATE_KEY. Replace it with the exact private_key from your Firebase service account JSON and restart the dev server.";
+            console.error("Firebase Admin initialization error:", error.message);
+        }
+    } else {
+        const missing = [];
+        if (!projectId) missing.push("FIREBASE_PROJECT_ID");
+        if (!clientEmail) missing.push("FIREBASE_CLIENT_EMAIL");
+        if (!privateKey) missing.push("FIREBASE_PRIVATE_KEY");
+        firebaseAdminInitError = `Missing Firebase Admin configuration: ${missing.join(", ")}`;
+        console.warn(`Firebase Admin missing configuration: ${missing.join(", ")}`);
     }
+
+    return null;
 }
 
 export interface SendEmailParams {
@@ -98,9 +128,11 @@ export interface SendPushParams {
 }
 
 export async function sendPush({ token, title, body, data }: SendPushParams) {
-    if (admin.apps.length === 0) {
-        console.warn("Firebase Admin is not configured. Skipping Push.");
-        return { success: false, error: "Firebase not configured" };
+    const firebaseAdmin = getFirebaseAdmin();
+    if (!firebaseAdmin) {
+        const errorMessage = firebaseAdminInitError || "Firebase not configured";
+        console.warn(`Push skipped: ${errorMessage}`);
+        return { success: false, error: errorMessage };
     }
 
     try {
@@ -113,7 +145,7 @@ export async function sendPush({ token, title, body, data }: SendPushParams) {
             token,
         };
 
-        const response = await admin.messaging().send(message);
+        const response = await firebaseAdmin.messaging().send(message);
         return { success: true, id: response };
     } catch (error: any) {
         console.error("Firebase FCM Error:", error);

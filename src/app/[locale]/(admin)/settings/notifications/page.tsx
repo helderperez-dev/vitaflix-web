@@ -22,7 +22,7 @@ export default async function NotificationsSettingsPage() {
     // Fetch users for member management / broadcast selection
     const { data: users } = await supabase
         .from("users")
-        .select("id, email, display_name")
+        .select("id, email, display_name, locale, push_token, preferences")
         .order("created_at", { ascending: false })
 
     // Fetch notifications (sent/broadcast history)
@@ -59,7 +59,7 @@ export default async function NotificationsSettingsPage() {
             initialGroups={groups || []}
             initialTriggers={triggers || []}
             initialNotifications={[...exampleNotifications, ...(notifications || [])]}
-            users={(users || []).map(u => ({ id: u.id, email: u.email, display_name: u.display_name }))}
+            users={(users || []).map(u => ({ id: u.id, email: u.email, display_name: u.display_name, locale: u.locale, push_token: u.push_token, preferences: u.preferences }))}
             isSettingsMode={true}
         />
     )
