@@ -1,7 +1,6 @@
 "use client"
 
 import { useRef, useState } from "react"
-import { motion } from "framer-motion"
 import { z } from "zod"
 import { useForm } from "react-hook-form"
 import { zodResolver } from "@hookform/resolvers/zod"
@@ -12,18 +11,17 @@ import {
     FormControl,
     FormField,
     FormItem,
-    FormMessage,
 } from "@/components/ui/form"
-import { CheckCircle2 } from "lucide-react"
 import { toast } from "sonner"
 import { useTranslations } from "next-intl"
 import { usePostHog } from "@posthog/next"
+import { useRouter } from "@/i18n/routing"
 
 export function WaitlistForm({ inputId }: { inputId?: string }) {
     const t = useTranslations("Landing.WaitlistForm")
     const posthog = usePostHog()
+    const router = useRouter()
     const [isSubmitting, setIsSubmitting] = useState(false)
-    const [isSuccess, setIsSuccess] = useState(false)
     const hasTrackedNameFocus = useRef(false)
     const hasTrackedEmailFocus = useRef(false)
 
@@ -58,17 +56,13 @@ export function WaitlistForm({ inputId }: { inputId?: string }) {
 
             if (!response.ok) throw new Error("Failed to submit")
 
-            setIsSuccess(true)
-            
-            // Meta Pixel Lead tracking
-            if (typeof window !== "undefined" && (window as any).fbq) {
-                (window as any).fbq('track', 'Lead')
-            }
-
             posthog.capture("landing_waitlist_submitted", {
                 source: "landing_waitlist",
             })
             toast.success(t("success.toast"))
+            
+            // Redirect to thank you page
+            router.push("/thank-you")
         } catch (error) {
             posthog.capture("landing_waitlist_submit_failed", {
                 source: "landing_waitlist",
@@ -78,25 +72,6 @@ export function WaitlistForm({ inputId }: { inputId?: string }) {
         } finally {
             setIsSubmitting(false)
         }
-    }
-
-    if (isSuccess) {
-        return (
-            <motion.div
-                initial={{ opacity: 0, scale: 0.95 }}
-                animate={{ opacity: 1, scale: 1 }}
-                className="bg-primary/10 border border-primary/20 rounded-2xl px-5 py-6 md:px-6 md:py-7 flex items-center justify-center max-w-[600px] mx-auto"
-            >
-                <div className="inline-flex items-center gap-3 text-center">
-                    <div className="size-9 bg-primary/20 rounded-full flex items-center justify-center shrink-0">
-                        <CheckCircle2 className="size-5 text-primary" />
-                    </div>
-                    <p className="text-sm md:text-[15px] font-semibold text-slate-800 whitespace-nowrap">
-                        {t("success.message")}
-                    </p>
-                </div>
-            </motion.div>
-        )
     }
 
     return (
@@ -142,6 +117,7 @@ export function WaitlistForm({ inputId }: { inputId?: string }) {
                                                 hasTrackedEmailFocus.current = true
                                                 posthog.capture("landing_waitlist_email_input_focused", {
                                                     source: "landing_waitlist",
+                                                    email: field.value
                                                 })
                                             }
                                         }}
