@@ -63,6 +63,32 @@ FIREBASE_PRIVATE_KEY=
 
 ---
 
+## 🚀 Development & Deployment
+
+### Environments & URLs
+
+| Environment | Branch | URL |
+| :--- | :--- | :--- |
+| **Production** | `main` | [www.vitaflix.app](https://www.vitaflix.app) |
+| **Staging** | `staging` | [sandbox.vitaflix.app](https://sandbox.vitaflix.app) |
+| **Development** | `dev` (local) | Local development |
+
+### Branching Strategy & Pull Requests
+
+To maintain code quality and stability, please follow this workflow:
+
+1. **Feature Development**: Always create a new feature branch from `main`.
+   ```bash
+   git checkout main
+   git checkout -b feature/your-feature-name
+   ```
+2. **Pull Requests**: Once the feature is ready, create a Pull Request (PR) to update `main` from your feature branch.
+3. **Testing**:
+   - Use the local `dev` branch for integration.
+   - The `staging` branch reflects the `sandbox.vitaflix.app` environment for final verification.
+
+---
+
 ## Documentation
 
 Detailed system documentation lives in the [`/docs`](./docs) folder:
