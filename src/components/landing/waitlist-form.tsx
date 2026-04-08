@@ -59,7 +59,7 @@ export function WaitlistForm({ inputId }: { inputId?: string }) {
             posthog.capture("landing_waitlist_submitted", {
                 source: "landing_waitlist",
             })
-            toast.success(t("success.toast"))
+            // Success toast removed as we now redirect to a dedicated page
             
             // Redirect to thank you page
             router.push("/thank-you")
