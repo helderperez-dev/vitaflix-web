@@ -59,6 +59,12 @@ export function WaitlistForm({ inputId }: { inputId?: string }) {
             if (!response.ok) throw new Error("Failed to submit")
 
             setIsSuccess(true)
+            
+            // Meta Pixel Lead tracking
+            if (typeof window !== "undefined" && (window as any).fbq) {
+                (window as any).fbq('track', 'Lead')
+            }
+
             posthog.capture("landing_waitlist_submitted", {
                 source: "landing_waitlist",
             })

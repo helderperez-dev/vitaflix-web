@@ -47,7 +47,7 @@ export function LeadsFunnelChart({ data, title, description }: LeadsFunnelChartP
                                 tickLine={false}
                                 tickMargin={12}
                                 axisLine={false}
-                                style={{ fontSize: '10px', fontWeight: 600, fill: 'hsl(var(--muted-foreground)/0.6)' }}
+                                style={{ fontSize: '10px', fontWeight: 600, fill: 'hsl(var(--foreground)/0.85)' }}
                                 width={128}
                             />
                             <XAxis dataKey="count" type="number" hide />

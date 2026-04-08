@@ -188,7 +188,7 @@ export function GlobalSearch() {
                 )}
                 onClick={() => inputRef.current?.focus()}
             >
-                <Search className="size-4 shrink-0 text-muted-foreground/60 ml-1" />
+                <Search className="size-4 shrink-0 text-muted-foreground/80 ml-1" />
 
                 <div className="flex-1 flex items-center gap-1.5 overflow-x-auto no-scrollbar scroll-smooth py-1">
                     <input
@@ -200,14 +200,14 @@ export function GlobalSearch() {
                         onFocus={() => setIsFocused(true)}
                         onKeyDown={handleKeyDown}
                         autoComplete="off"
-                        className="min-w-[80px] bg-transparent text-sm text-foreground placeholder:text-muted-foreground/60 outline-none py-1"
+                        className="min-w-[80px] bg-transparent text-sm text-foreground placeholder:text-muted-foreground/90 outline-none py-1"
                     />
                 </div>
 
                 {isLoading ? (
                     <Loader2 className="size-4 shrink-0 animate-spin text-muted-foreground/60 mx-1" />
                 ) : (
-                    <kbd className="pointer-events-none hidden h-5 select-none items-center gap-0.5 rounded border bg-muted/60 px-1.5 font-mono text-[10px] font-medium text-muted-foreground/70 sm:inline-flex ml-1">
+                    <kbd className="pointer-events-none hidden h-5 select-none items-center gap-0.5 rounded border bg-muted/60 px-1.5 font-mono text-[10px] font-medium text-muted-foreground/90 sm:inline-flex ml-1">
                         <span className="text-xs">⌘</span>K
                     </kbd>
                 )}
