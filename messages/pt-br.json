@@ -296,6 +296,13 @@
             "subtitle": "Junte-se à lista de espera e seja um dos primeiros a experimentar a Vitaflix. Simplifique seu planejamento e atinja seus objetivos.",
             "footer": "Acesso exclusivo para os primeiros inscritos."
         },
+        "ThankYou": {
+            "metaTitle": "Lugar Garantido! | Vitaflix",
+            "title": "Lugar garantido!",
+            "subtitle": "Obrigado por se juntar à nossa comunidade.",
+            "description": "Fique atento ao seu e-mail — você será um dos primeiros a saber quando a Vitaflix estiver pronta para você. Estamos preparando tudo para simplificar sua nutrição.",
+            "buttonHome": "Voltar ao Início"
+        },
         "Footer": {
             "desc": "Planejamento alimentar simplificado para pessoas ocupadas. Ganhe tempo, coma melhor e atinja seus objetivos sem estresse.",
             "cols": {

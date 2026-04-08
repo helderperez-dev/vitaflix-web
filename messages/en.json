@@ -296,6 +296,13 @@
             "subtitle": "Join the waitlist and be one of the first to try Vitaflix. Simplify your planning and reach your goals.",
             "footer": "Exclusive access for the first subscribers."
         },
+        "ThankYou": {
+            "metaTitle": "Spot Guaranteed! | Vitaflix",
+            "title": "Spot guaranteed!",
+            "subtitle": "Thank you for joining our community.",
+            "description": "Keep an eye on your email — you'll be the first to know when Vitaflix is ready for you. We're getting everything ready to simplify your nutrition.",
+            "buttonHome": "Back to Home"
+        },
         "Footer": {
             "desc": "Simplified meal planning for busy people. Save time, eat better, and reach your goals without stress.",
             "cols": {

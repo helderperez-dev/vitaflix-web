@@ -138,7 +138,7 @@ export function AppSidebar({ user }: AppSidebarProps) {
                                                     "group-data-[collapsible=icon]:!size-10 group-data-[collapsible=icon]:!rounded-lg group-data-[collapsible=icon]:!p-0",
                                                     isActive
                                                         ? "bg-primary/10 text-primary"
-                                                        : "hover:bg-sidebar-accent/50 text-sidebar-foreground/60 hover:text-sidebar-foreground"
+                                                        : "hover:bg-sidebar-accent/50 text-sidebar-foreground/70 hover:text-sidebar-foreground"
                                                 )}
                                             >
                                                 <Link href={item.url} className="flex items-center gap-3 px-3 w-full h-full relative group-data-[collapsible=icon]:justify-center group-data-[collapsible=icon]:!px-0">
@@ -146,11 +146,11 @@ export function AppSidebar({ user }: AppSidebarProps) {
                                                         "size-[18px] transition-colors duration-300 shrink-0",
                                                         isActive
                                                             ? "text-primary scale-110"
-                                                            : "text-muted-foreground/70 group-hover/button:text-sidebar-foreground group-hover/button:scale-105"
+                                                            : "text-sidebar-foreground/50 group-hover/button:text-sidebar-foreground group-hover/button:scale-105"
                                                     )} />
                                                     <span className={cn(
                                                         "font-medium text-[13px] tracking-tight transition-colors duration-300 group-data-[collapsible=icon]:hidden",
-                                                        isActive ? "text-primary" : "text-sidebar-foreground/80"
+                                                        isActive ? "text-primary" : "text-sidebar-foreground"
                                                     )}>{t(item.title)}</span>
                                                 </Link>
                                             </SidebarMenuButton>
@@ -175,7 +175,7 @@ export function AppSidebar({ user }: AppSidebarProps) {
                                     <Sun className="h-[1.2rem] w-[1.2rem] rotate-0 scale-100 transition-all dark:-rotate-90 dark:scale-0 text-sidebar-foreground/50 group-hover/theme-toggle:text-primary" />
                                     <Moon className="absolute h-[1.2rem] w-[1.2rem] rotate-90 scale-0 transition-all dark:rotate-0 dark:scale-100 text-sidebar-foreground/50 group-hover/theme-toggle:text-primary" />
                                 </div>
-                                <span className="text-[13px] font-medium text-sidebar-foreground/70 group-hover/theme-toggle:text-sidebar-foreground transition-colors group-data-[collapsible=icon]:hidden">
+                                <span className="text-[13px] font-medium text-sidebar-foreground/90 group-hover/theme-toggle:text-sidebar-foreground transition-colors group-data-[collapsible=icon]:hidden">
                                     {mounted ? (theme === "dark" ? t("darkMode") : t("lightMode")) : t("darkMode")}
                                 </span>
                             </div>

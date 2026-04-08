@@ -13,7 +13,13 @@ export function NotificationBell({ userId }: { userId: string }) {
     const router = useRouter()
     const [notifications, setNotifications] = React.useState<any[]>([])
     const [unreadCount, setUnreadCount] = React.useState(0)
+    const [isMounted, setIsMounted] = React.useState(false)
     const supabase = createClient()
+
+    // Handle mounting
+    React.useEffect(() => {
+        setIsMounted(true)
+    }, [])
 
     // Fetch initial notifications
     React.useEffect(() => {
@@ -98,6 +104,12 @@ export function NotificationBell({ userId }: { userId: string }) {
             }
         }
     }
+
+    if (!isMounted) return (
+        <Button variant="ghost" size="icon" className="relative h-10 w-10 shrink-0 text-muted-foreground hover:bg-muted hover:text-foreground">
+            <Bell className="size-5" />
+        </Button>
+    )
 
     return (
         <Popover>
