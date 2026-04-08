@@ -2,7 +2,7 @@ import { NextResponse } from "next/server"
 import { createClient } from "@supabase/supabase-js"
 import { Database } from "@/types/database.types"
 import { getPostHogClient } from "@/lib/posthog-server"
-
+import { syncContactWithBrevo } from "@/lib/brevo"
 // This is a server-side API route, so it's safe to use the service role key.
 // The service role bypasses RLS entirely, ensuring public lead inserts always work.
 const supabaseUrl = process.env.NEXT_PUBLIC_SUPABASE_URL!
@@ -64,6 +64,11 @@ export async function POST(req: Request) {
             event: 'lead_submitted',
             properties: { lead_id: data.id, name, source: source || null, funnel_id: funnel_id || null, has_email: !!email, has_phone: !!phone },
         })
+
+        // Sync with Brevo marketing list if an email is provided
+        if (email) {
+            await syncContactWithBrevo(email, name);
+        }
 
         return NextResponse.json({ success: true, lead: data }, { status: 201, headers: corsHeaders })
     } catch (err: any) {
