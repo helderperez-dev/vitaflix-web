@@ -114,6 +114,21 @@ export function LeadsManager({ initialFunnels, initialLeads, userProfile }: Lead
         setLeads(prev => prev.filter(l => !leadIds.includes(l.id)))
     }
 
+    const handleSaveSuccess = (savedLead: Lead) => {
+        setLeads(prev => {
+            const index = prev.findIndex(l => l.id === savedLead.id)
+            if (index !== -1) {
+                // Update existing
+                const newLeads = [...prev]
+                newLeads[index] = savedLead
+                return newLeads
+            } else {
+                // Add new
+                return [savedLead, ...prev]
+            }
+        })
+    }
+
     // Only show empty state when there are no funnels at all
     if (funnels.length === 0) {
         return (
@@ -285,6 +300,7 @@ export function LeadsManager({ initialFunnels, initialLeads, userProfile }: Lead
                 onOpenChange={setIsDrawerOpen}
                 lead={selectedLead}
                 funnels={funnels}
+                onSuccess={handleSaveSuccess}
             />
         </div>
     )
