@@ -33,21 +33,25 @@ import {
     SelectTrigger,
     SelectValue,
 } from "@/components/ui/select"
-import { leadSchema, type Lead } from "@/shared-schemas/lead"
+import { leadSchema, type Lead as FormLead } from "@/shared-schemas/lead"
 import { upsertLeadAction } from "@/app/actions/leads"
 import { cn } from "@/lib/utils"
 import { SaveSplitButton } from "@/components/shared/save-split-button"
+import { Database } from "@/types/database.types"
+
+type DbLead = Database['public']['Tables']['leads']['Row']
 
 interface LeadDrawerProps {
     open: boolean
     onOpenChange: (open: boolean) => void
-    lead?: Lead | null
+    lead?: DbLead | null
     funnels: any[]
+    onSuccess?: (lead: DbLead) => void
 }
 
 type DrawerView = "personal" | "pipeline"
 
-export function LeadDrawer({ open, onOpenChange, lead, funnels }: LeadDrawerProps) {
+export function LeadDrawer({ open, onOpenChange, lead, funnels, onSuccess }: LeadDrawerProps) {
     const t = useTranslations("Leads")
     const commonT = useTranslations("Common")
     const [isSubmitting, setIsSubmitting] = React.useState(false)
@@ -116,6 +120,12 @@ export function LeadDrawer({ open, onOpenChange, lead, funnels }: LeadDrawerProp
             const result = await upsertLeadAction(submissionValues)
             if (result.success) {
                 toast.success(lead ? commonT("updatedSuccessfully") : commonT("createdSuccessfully"))
+                
+                // Update local state via callback
+                if (result.lead) {
+                    onSuccess?.(result.lead as DbLead)
+                }
+
                 if (shouldCloseAfterSave) {
                     onOpenChange(false)
                 }

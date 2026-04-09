@@ -8,10 +8,11 @@ import { Badge } from "@/components/ui/badge"
 import { Button } from "@/components/ui/button"
 import { MoreHorizontal, Mail, Phone, Trash2 } from "lucide-react"
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select"
-import { updateLeadStepAction, bulkDeleteLeads } from "@/app/actions/leads"
+import { updateLeadStepAction, bulkDeleteLeads, syncLeadsWithBrevoAction } from "@/app/actions/leads"
 import { DataTable, SortableHeader } from "@/components/ui/data-table"
 import { LeadActions } from "./lead-actions"
 import { toast } from "sonner"
+import { CloudUpload } from "lucide-react"
 import {
     AlertDialog,
     AlertDialogAction,
@@ -44,6 +45,7 @@ export function LeadsDatagrid({ funnels, activeFunnelId, leads, onRowClick, onDe
     const commonT = useTranslations("Common")
     const locale = useLocale()
     const [deleteModalOpen, setDeleteModalOpen] = React.useState(false)
+    const [isBulkSyncing, setIsBulkSyncing] = React.useState(false)
     const [rowsToDelete, setRowsToDelete] = React.useState<Lead[]>([])
     const [clearSelectionRef, setClearSelectionRef] = React.useState<{ fn: () => void } | null>(null)
 
@@ -200,12 +202,37 @@ export function LeadsDatagrid({ funnels, activeFunnelId, leads, onRowClick, onDe
                     <div className="flex items-center gap-6 w-full">
                         <Button
                             variant="ghost"
-                            className="h-9 px-4 text-[11px] font-semibold hover:bg-slate-100 dark:hover:bg-white/5 text-muted-foreground dark:text-white/80 hover:text-foreground dark:hover:text-white transition-all shrink-0"
+                            className="h-9 px-4 text-[11px] font-semibold hover:bg-white/10 text-white/90 hover:text-white transition-all shrink-0"
+                            onClick={async () => {
+                                setIsBulkSyncing(true)
+                                try {
+                                    const ids = selectedRows.map(r => r.id)
+                                    const result = await syncLeadsWithBrevoAction(ids)
+                                    if (result.success) {
+                                        toast.success(tLeads("syncBrevoBulkSuccess", { count: result.summary?.succeeded || 0 }))
+                                        clearSelection()
+                                    } else {
+                                        toast.error(result.error || tLeads("syncBrevoError"))
+                                    }
+                                } finally {
+                                    setIsBulkSyncing(false)
+                                }
+                            }}
+                            disabled={isBulkSyncing}
+                        >
+                            <CloudUpload className={`h-4 w-4 mr-2 ${isBulkSyncing ? "animate-pulse" : ""}`} />
+                            {tLeads("syncBrevo")} ({selectedRows.length})
+                        </Button>
+
+                        <Button
+                            variant="ghost"
+                            className="h-9 px-4 text-[11px] font-semibold hover:bg-white/10 text-white/90 hover:text-white transition-all shrink-0"
                             onClick={() => {
                                 setRowsToDelete(selectedRows)
                                 setClearSelectionRef({ fn: clearSelection })
                                 setDeleteModalOpen(true)
                             }}
+                            disabled={isBulkSyncing}
                         >
                             <Trash2 className="h-4 w-4 mr-2" />
                             {commonT("delete")} ({selectedRows.length})

@@ -982,6 +982,11 @@
         "dropLeadsHere": "Arraste leads aqui",
         "pipelineFilter": "Filtro de Funil",
         "activeFunnels": "Funis Ativos",
-        "allFunnels": "Todos os Funis"
+        "allFunnels": "Todos os Funis",
+        "syncBrevo": "Sincronizar Brevo",
+        "syncingBrevo": "A sincronizar...",
+        "syncBrevoSuccess": "Sincronizado com Brevo com sucesso!",
+        "syncBrevoError": "Erro ao sincronizar com Brevo.",
+        "syncBrevoBulkSuccess": "{count} leads sincronizados!"
     }
 }

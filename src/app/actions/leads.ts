@@ -158,6 +158,17 @@ export async function upsertLeadAction(lead: Database['public']['Tables']['leads
 
     if (result.error) return { success: false, error: result.error.message }
 
+    // Always sync with Brevo if email is present
+    if (result.data?.email) {
+        try {
+            const { syncContactWithBrevo } = await import("@/lib/brevo")
+            // Background sync to keep admin UI fast
+            void syncContactWithBrevo(result.data.email, result.data.name)
+        } catch (e) {
+            console.error("Failed to sync with Brevo in upsertLeadAction:", e)
+        }
+    }
+
     revalidatePath("/leads")
     return { success: true, lead: result.data }
 }
@@ -173,4 +184,44 @@ export async function bulkDeleteLeads(ids: string[]) {
 
     revalidatePath("/leads")
     return { success: true }
+}
+
+export async function syncLeadsWithBrevoAction(ids: string[]) {
+    const supabase = await createClient()
+    const { data: leads, error } = await supabase
+        .from("leads")
+        .select("id, name, email")
+        .in("id", ids)
+
+    if (error) {
+        console.error("Error fetching leads for Brevo sync:", error)
+        return { success: false, error: error.message }
+    }
+
+    if (!leads || leads.length === 0) {
+        return { success: false, error: "No leads found." }
+    }
+
+    const { syncContactWithBrevo } = await import("@/lib/brevo")
+
+    const results = await Promise.allSettled(
+        leads.map(async (lead) => {
+            if (!lead.email) throw new Error("No email")
+            const success = await syncContactWithBrevo(lead.email, lead.name)
+            if (!success) throw new Error("Sync failed")
+            return lead.id
+        })
+    )
+
+    const succeeded = results.filter(r => r.status === 'fulfilled').length
+    const failed = results.filter(r => r.status === 'rejected').length
+
+    return {
+        success: succeeded > 0,
+        summary: {
+            total: leads.length,
+            succeeded,
+            failed
+        }
+    }
 }

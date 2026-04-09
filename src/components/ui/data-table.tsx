@@ -620,14 +620,14 @@ export function DataTable<TData, TValue>({
                         initial={{ opacity: 0, y: 20, x: "-50%" }}
                         animate={{ opacity: 1, y: 0, x: "-50%" }}
                         exit={{ opacity: 0, y: 20, x: "-50%" }}
-                        className="fixed bottom-10 left-1/2 z-50 flex items-center gap-6 px-6 py-3 bg-white/95 dark:bg-slate-900/95 text-foreground dark:text-white rounded-lg shadow-none border border-border/40 backdrop-blur-xl min-w-[400px]"
+                        className="fixed bottom-10 left-1/2 z-50 flex items-center gap-6 px-6 py-3 bg-emerald-600 dark:bg-emerald-500 text-white rounded-lg shadow-2xl border border-white/20 backdrop-blur-xl min-w-[400px]"
                     >
-                        <div className="flex items-center gap-3 border-r border-slate-200 dark:border-white/10 pr-6">
+                        <div className="flex items-center gap-3 border-r border-white/20 pr-6">
                             <Button
                                 variant="ghost"
                                 size="icon"
                                 onClick={() => table.resetRowSelection()}
-                                className="h-8 w-8 rounded-lg hover:bg-slate-100 dark:hover:bg-white/10 text-muted-foreground hover:text-foreground dark:text-white/70 dark:hover:text-white transition-colors"
+                                className="h-8 w-8 rounded-lg hover:bg-white/10 text-white/70 hover:text-white transition-colors"
                             >
                                 <X className="h-4 w-4" />
                             </Button>
@@ -635,7 +635,7 @@ export function DataTable<TData, TValue>({
                                 <span className="text-sm font-semibold tracking-tight">
                                     {Object.keys(rowSelection).length} {Object.keys(rowSelection).length === 1 ? t("item") : t("items")} {t("selected")}
                                 </span>
-                                <span className="text-[11px] text-muted-foreground dark:text-white/40 font-semibold">{t("bulkActions")}</span>
+                                <span className="text-[11px] text-white/60 font-semibold">{t("bulkActions")}</span>
                             </div>
                         </div>
 
@@ -646,14 +646,14 @@ export function DataTable<TData, TValue>({
                                 <>
                                     <Button
                                         variant="ghost"
-                                        className="h-9 px-4 text-xs font-semibold hover:bg-slate-100 dark:hover:bg-white/5 text-muted-foreground hover:text-foreground dark:text-white/80 dark:hover:text-white transition-all"
+                                        className="h-9 px-4 text-xs font-semibold hover:bg-white/10 text-white/90 hover:text-white transition-all"
                                         onClick={() => console.log("Exporting:", selectedRowsData)}
                                     >
                                         {t("exportData")}
                                     </Button>
                                     <Button
                                         variant="ghost"
-                                        className="h-9 px-4 text-xs font-semibold hover:bg-slate-100 dark:hover:bg-white/5 text-muted-foreground hover:text-foreground dark:text-white/80 dark:hover:text-white transition-all ml-auto"
+                                        className="h-9 px-4 text-xs font-semibold hover:bg-white/10 text-white/90 hover:text-white transition-all ml-auto"
                                         onClick={() => console.log("Deleting:", selectedRowsData)}
                                     >
                                         <Trash2 className="h-4 w-4 mr-2" />
