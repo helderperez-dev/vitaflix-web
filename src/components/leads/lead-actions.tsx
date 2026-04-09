@@ -21,10 +21,11 @@ import {
     AlertDialogHeader,
     AlertDialogTitle,
 } from "@/components/ui/alert-dialog"
-import { deleteLeadAction } from "@/app/actions/leads"
+import { deleteLeadAction, syncLeadsWithBrevoAction } from "@/app/actions/leads"
 import { useTranslations } from "next-intl"
 import { Database } from "@/types/database.types"
 import { usePostHog } from "@posthog/next"
+import { RefreshCw } from "lucide-react"
 
 type Lead = Database['public']['Tables']['leads']['Row']
 
@@ -37,8 +38,10 @@ interface LeadActionsProps {
 export function LeadActions({ lead, onEdit, onDelete }: LeadActionsProps) {
     const posthog = usePostHog()
     const [isDeleting, setIsDeleting] = React.useState(false)
+    const [isSyncing, setIsSyncing] = React.useState(false)
     const [showDeleteConfirm, setShowDeleteConfirm] = React.useState(false)
     const commonT = useTranslations("Common")
+    const tLeads = useTranslations("Leads")
 
     async function handleDelete() {
         if (!lead.id) return
@@ -60,6 +63,23 @@ export function LeadActions({ lead, onEdit, onDelete }: LeadActionsProps) {
         }
     }
 
+    async function handleSyncBrevo() {
+        if (!lead.id) return
+        setIsSyncing(true)
+        try {
+            const result = await syncLeadsWithBrevoAction([lead.id])
+            if (result.success) {
+                toast.success(tLeads("syncBrevoSuccess"))
+            } else {
+                toast.error(result.error || tLeads("syncBrevoError"))
+            }
+        } catch (error) {
+            toast.error(tLeads("syncBrevoError"))
+        } finally {
+            setIsSyncing(false)
+        }
+    }
+
     return (
         <>
             <DropdownMenu>
@@ -67,7 +87,7 @@ export function LeadActions({ lead, onEdit, onDelete }: LeadActionsProps) {
                     <Button
                         variant="ghost"
                         className="h-9 w-9 p-0 rounded-lg hover:bg-primary/5 hover:text-primary transition-all active:scale-95 group"
-                        disabled={isDeleting}
+                        disabled={isDeleting || isSyncing}
                     >
                         <span className="sr-only">Open menu</span>
                         <MoreHorizontal className="h-4 w-4 text-muted-foreground/40 group-hover:text-primary transition-colors" />
@@ -82,6 +102,14 @@ export function LeadActions({ lead, onEdit, onDelete }: LeadActionsProps) {
                         className="rounded-lg text-[10px] font-bold capitalize tracking-wider py-2.5 px-3 cursor-pointer"
                     >
                         {commonT("editDetails")}
+                    </DropdownMenuItem>
+                    <DropdownMenuItem
+                        onSelect={handleSyncBrevo}
+                        disabled={isSyncing}
+                        className="rounded-lg text-[10px] font-bold capitalize tracking-wider py-2.5 px-3 cursor-pointer"
+                    >
+                        <RefreshCw className={`h-3 w-3 mr-2 ${isSyncing ? "animate-spin" : ""}`} />
+                        {tLeads("syncBrevo")}
                     </DropdownMenuItem>
                     <DropdownMenuItem
                         onSelect={() => setShowDeleteConfirm(true)}
