@@ -140,6 +140,24 @@ export async function deleteLeadAction(leadId: string) {
 export async function upsertLeadAction(lead: Database['public']['Tables']['leads']['Insert'] | Database['public']['Tables']['leads']['Update']) {
     const supabase = await createClient()
 
+    // If it's a new lead (no id) and no funnel/step is provided, try to assign defaults
+    if (!('id' in lead && lead.id) && !lead.funnel_id && !lead.step_id) {
+        const { data: defaultFunnel } = await supabase
+            .from("lead_funnels")
+            .select(`id, lead_funnel_steps ( id )`)
+            .order("created_at", { ascending: true })
+            .limit(1)
+            .maybeSingle()
+
+        if (defaultFunnel) {
+            lead.funnel_id = defaultFunnel.id
+            const firstStep = (defaultFunnel.lead_funnel_steps as any[])?.sort((a, b) => (a.order || 0) - (b.order || 0))[0]
+            if (firstStep) {
+                lead.step_id = firstStep.id
+            }
+        }
+    }
+
     let result;
     if ('id' in lead && lead.id) {
         result = await supabase
@@ -224,4 +242,76 @@ export async function syncLeadsWithBrevoAction(ids: string[]) {
             failed
         }
     }
+}
+
+export async function bulkUpsertLeadsAction(leadsData: Array<{ name: string, email?: string | null, phone?: string | null }>) {
+    const supabase = await createClient()
+
+    // Fetch default funnel and step for the whole batch
+    const { data: defaultFunnel } = await supabase
+        .from("lead_funnels")
+        .select(`id, lead_funnel_steps ( id, "order" )`)
+        .order("created_at", { ascending: true })
+        .limit(1)
+        .maybeSingle()
+    
+    const defaultFid = defaultFunnel?.id || null
+    const defaultSid = (defaultFunnel?.lead_funnel_steps as any[])?.sort((a, b) => (a.order || 0) - (b.order || 0))[0]?.id || null
+
+    let succeeded = 0;
+    let failed = 0;
+
+    for (const lead of leadsData) {
+        try {
+            if (!lead.email) {
+                // If it doesn't have an email, we just insert it.
+                await supabase.from("leads").insert({
+                    name: lead.name,
+                    phone: lead.phone || null,
+                    source: "Imported",
+                    funnel_id: defaultFid,
+                    step_id: defaultSid
+                });
+                succeeded++;
+                continue;
+            }
+
+            // Check if email already exists
+            const { data: existing } = await supabase
+                .from("leads")
+                .select("id")
+                .eq("email", lead.email)
+                .maybeSingle();
+
+            if (existing) {
+                // Update existing record, keeping funnel unchanged
+                await supabase.from("leads").update({
+                    name: lead.name,
+                    phone: lead.phone || null,
+                }).eq("id", existing.id);
+            } else {
+                // Insert new record with defaults
+                await supabase.from("leads").insert({
+                    name: lead.name,
+                    email: lead.email,
+                    phone: lead.phone || null,
+                    source: "Imported",
+                    funnel_id: defaultFid,
+                    step_id: defaultSid
+                });
+            }
+            succeeded++;
+
+            // Background brevo sync
+            const { syncContactWithBrevo } = await import("@/lib/brevo")
+            void syncContactWithBrevo(lead.email, lead.name)
+
+        } catch (error) {
+            console.error("Failed to process bulk lead:", lead, error);
+            failed++;
+        }
+    }
+
+    revalidatePath("/leads")
+    return { success: true, summary: { succeeded, failed, total: leadsData.length } }
 }

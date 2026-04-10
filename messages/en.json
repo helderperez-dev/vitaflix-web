@@ -988,6 +988,14 @@
         "syncingBrevo": "Syncing...",
         "syncBrevoSuccess": "Synced with Brevo successfully!",
         "syncBrevoError": "Error syncing with Brevo.",
-        "syncBrevoBulkSuccess": "{count} leads synced!"
+        "syncBrevoBulkSuccess": "{count} leads synced!",
+        "importCsv": "Import CSV",
+        "importCsvDescription": "Upload a CSV file. We will automatically extract Name, Email, and Phone.",
+        "preview": "Data Preview",
+        "confirmImport": "Confirm Import",
+        "importing": "Importing...",
+        "importSuccess": "Leads successfully imported/updated!",
+        "importError": "Error importing some leads.",
+        "exportCsv": "Export CSV"
     }
 }

@@ -988,6 +988,14 @@
         "syncingBrevo": "A sincronizar...",
         "syncBrevoSuccess": "Sincronizado com Brevo com sucesso!",
         "syncBrevoError": "Erro ao sincronizar com Brevo.",
-        "syncBrevoBulkSuccess": "{count} leads sincronizados!"
+        "syncBrevoBulkSuccess": "{count} leads sincronizados!",
+        "importCsv": "Importar CSV",
+        "importCsvDescription": "Carregue um ficheiro CSV. Extrairemos automaticamente Nome, Email e Telefone.",
+        "preview": "Pré-visualização",
+        "confirmImport": "Confirmar Importação",
+        "importing": "A importar...",
+        "importSuccess": "Leads importados/atualizados com sucesso!",
+        "importError": "Erro ao importar alguns leads.",
+        "exportCsv": "Exportar CSV"
     }
 }
