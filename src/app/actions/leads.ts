@@ -206,10 +206,14 @@ export async function bulkDeleteLeads(ids: string[]) {
 
 export async function syncLeadsWithBrevoAction(ids: string[]) {
     const supabase = await createClient()
+    
+    // Explicitly set a high limit to ensure all selected IDs are fetched correctly
+    // avoiding any potential default server-side query limits.
     const { data: leads, error } = await supabase
         .from("leads")
         .select("id, name, email")
         .in("id", ids)
+        .limit(500)
 
     if (error) {
         console.error("Error fetching leads for Brevo sync:", error)
@@ -222,14 +226,28 @@ export async function syncLeadsWithBrevoAction(ids: string[]) {
 
     const { syncContactWithBrevo } = await import("@/lib/brevo")
 
-    const results = await Promise.allSettled(
-        leads.map(async (lead) => {
+    // We process in small batches to avoid Brevo rate limits (10 requests per second)
+    // and to ensure stability when syncing large numbers of leads.
+    const results: Array<PromiseSettledResult<string>> = []
+    const batchSize = 5
+    
+    for (let i = 0; i < leads.length; i += batchSize) {
+        const batch = leads.slice(i, i + batchSize)
+        const batchPromises = batch.map(async (lead) => {
             if (!lead.email) throw new Error("No email")
             const success = await syncContactWithBrevo(lead.email, lead.name)
             if (!success) throw new Error("Sync failed")
             return lead.id
         })
-    )
+        
+        const batchResults = await Promise.allSettled(batchPromises)
+        results.push(...batchResults)
+        
+        // Minor delay between batches to respect rate limits
+        if (i + batchSize < leads.length) {
+            await new Promise(resolve => setTimeout(resolve, 200))
+        }
+    }
 
     const succeeded = results.filter(r => r.status === 'fulfilled').length
     const failed = results.filter(r => r.status === 'rejected').length
@@ -260,6 +278,7 @@ export async function bulkUpsertLeadsAction(leadsData: Array<{ name: string, ema
 
     let succeeded = 0;
     let failed = 0;
+    const leadsToSync: Array<{ email: string, name: string }> = [];
 
     for (const lead of leadsData) {
         try {
@@ -301,14 +320,31 @@ export async function bulkUpsertLeadsAction(leadsData: Array<{ name: string, ema
                 });
             }
             succeeded++;
-
-            // Background brevo sync
-            const { syncContactWithBrevo } = await import("@/lib/brevo")
-            void syncContactWithBrevo(lead.email, lead.name)
+            
+            // Queue for Brevo sync
+            leadsToSync.push({ email: lead.email, name: lead.name });
 
         } catch (error) {
             console.error("Failed to process bulk lead:", lead, error);
             failed++;
+        }
+    }
+
+    // Process queued Brevo syncs in controlled batches to avoid rate limits
+    if (leadsToSync.length > 0) {
+        const { syncContactWithBrevo } = await import("@/lib/brevo")
+        const batchSize = 5
+        
+        for (let i = 0; i < leadsToSync.length; i += batchSize) {
+            const batch = leadsToSync.slice(i, i + batchSize)
+            await Promise.allSettled(
+                batch.map(lead => syncContactWithBrevo(lead.email, lead.name))
+            )
+            
+            // Minor delay between batches to respect rate limits
+            if (i + batchSize < leadsToSync.length) {
+                await new Promise(resolve => setTimeout(resolve, 200))
+            }
         }
     }
 
