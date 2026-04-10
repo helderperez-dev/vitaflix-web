@@ -27,12 +27,19 @@ export const mealOptionSchema = z.object({
 
 export type MealOption = z.infer<typeof mealOptionSchema>;
 
+export const preparationStepSchema = z.object({
+    text: localizedStringSchema,
+    duration_seconds: z.number().int().min(0).optional().nullable(),
+});
+
+export type PreparationStep = z.infer<typeof preparationStepSchema>;
+
 export const mealSchema = z.object({
     id: z.string().uuid().optional(),
     name: localizedStringSchema,
     mealTypes: z.array(z.string().uuid()).min(1, "Meals.atLeastOneCategory"),
     cookTime: z.number().int().min(0, "Products.errorKcalPositive").optional(),
-    preparationMode: z.array(localizedStringSchema).default([]),
+    preparationMode: z.array(z.union([preparationStepSchema, localizedStringSchema])).default([]),
     satiety: z.number().min(0).max(10).optional(),
     restrictions: z.array(z.string().uuid()).optional(),
     countryIds: z.array(z.string().uuid()).default([]),

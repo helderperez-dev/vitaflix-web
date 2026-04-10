@@ -768,6 +768,7 @@
         "emptyStep": "Passo vazio",
         "noPrepSteps": "Ainda não há passos de preparação",
         "stepInstructions": "Instruções do passo",
+        "stepDuration": "Tempo",
         "stepPlaceholder": "ex: Ferva a água e adicione a massa...",
         "addPrepStep": "Adicionar Passo de Preparação",
         "visibilityControl": "Controlo de Visibilidade",

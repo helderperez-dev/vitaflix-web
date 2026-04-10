@@ -1,7 +1,7 @@
 "use client"
 
 import * as React from "react"
-import { Trash2, Plus, GripVertical, Pencil, MoreHorizontal, Sparkles, Loader2 } from "lucide-react"
+import { Trash2, Plus, GripVertical, Pencil, MoreHorizontal, Sparkles, Loader2, Clock } from "lucide-react"
 import { useTranslations, useLocale } from "next-intl"
 import { useFieldArray } from "react-hook-form"
 import { toast } from "sonner"
@@ -33,6 +33,53 @@ import {
     DropdownMenuItem,
     DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu"
+import { FormItem, FormLabel, FormControl } from "@/components/ui/form"
+
+function TimeDurationInput({ value, onChange }: { value: number | null | undefined, onChange: (val: number | null) => void }) {
+    const hasValue = typeof value === 'number' && value > 0;
+    const minutes = hasValue ? Math.floor(value / 60) : "";
+    const seconds = hasValue ? value % 60 : "";
+
+    const handleMinChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+        const val = e.target.value;
+        const m = val === "" ? 0 : parseInt(val) || 0;
+        const s = hasValue ? value % 60 : 0;
+        if (m === 0 && s === 0) onChange(null);
+        else onChange(m * 60 + s);
+    };
+
+    const handleSecChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+        const val = e.target.value;
+        const s = val === "" ? 0 : parseInt(val) || 0;
+        const m = hasValue ? Math.floor(value / 60) : 0;
+        if (m === 0 && s === 0) onChange(null);
+        else onChange(m * 60 + s);
+    };
+
+    return (
+        <div className="flex items-center bg-white dark:bg-slate-900/80 border border-border/40 rounded-lg px-2.5 py-1.5 shadow-sm focus-within:ring-2 focus-within:ring-primary/20 focus-within:border-primary/40 transition-all mr-2 group/time">
+            <Clock className="h-3.5 w-3.5 text-muted-foreground/40 mr-2 group-focus-within/time:text-primary/60 transition-colors" />
+            <input
+                type="number"
+                min="0"
+                placeholder="00"
+                value={minutes !== "" ? String(minutes).padStart(2, '0') : ""}
+                onChange={handleMinChange}
+                className="w-5 text-xs text-center bg-transparent border-none p-0 focus:outline-none focus:ring-0 text-secondary dark:text-foreground font-semibold placeholder:text-muted-foreground/30 [appearance:textfield] [&::-webkit-outer-spin-button]:appearance-none [&::-webkit-inner-spin-button]:appearance-none"
+            />
+            <span className="text-xs font-bold text-muted-foreground/40 mx-0.5">:</span>
+            <input
+                type="number"
+                min="0"
+                max="59"
+                placeholder="00"
+                value={seconds !== "" ? String(seconds).padStart(2, '0') : ""}
+                onChange={handleSecChange}
+                className="w-5 text-xs text-center bg-transparent border-none p-0 focus:outline-none focus:ring-0 text-secondary dark:text-foreground font-semibold placeholder:text-muted-foreground/30 [appearance:textfield] [&::-webkit-outer-spin-button]:appearance-none [&::-webkit-inner-spin-button]:appearance-none"
+            />
+        </div>
+    )
+}
 
 interface PreparationStepsProps {
     form: any
@@ -45,6 +92,7 @@ interface SortableStepItemProps {
     index: number
     isEditing: boolean
     displayText: string
+    durationSeconds?: number | null
     locale: string
     commonT: any
     t: any
@@ -61,6 +109,7 @@ function SortableStepItem({
     index,
     isEditing,
     displayText,
+    durationSeconds,
     locale,
     commonT,
     t,
@@ -91,11 +140,22 @@ function SortableStepItem({
             <div ref={setNodeRef} style={style} className="p-8 rounded-3xl border border-border/60 bg-muted/5 space-y-8 animate-in fade-in zoom-in-95 duration-300">
                 <TranslationFields
                     form={form}
-                    namePrefix={`${namePrefix}.${index}`}
+                    namePrefix={`${namePrefix}.${index}.text`}
                     label={`${t("step")} ${index + 1}`}
                     type="textarea"
                     placeholder={t("stepPlaceholder")}
                     isRichText={true}
+                    headerActions={
+                        <div className="flex items-center gap-2">
+                            <span className="text-[10px] font-bold text-muted-foreground/60 uppercase tracking-wider">
+                                {t("stepDuration")}
+                            </span>
+                            <TimeDurationInput
+                                value={form.watch(`${namePrefix}.${index}.duration_seconds`)}
+                                onChange={(val) => form.setValue(`${namePrefix}.${index}.duration_seconds`, val, { shouldDirty: true })}
+                            />
+                        </div>
+                    }
                 />
                 <div className="flex justify-end gap-3 pt-6 border-t border-border/40">
                     <Button
@@ -178,8 +238,18 @@ function SortableStepItem({
                 </DropdownMenu>
             </div>
 
-            <div className="flex-shrink-0 flex items-center justify-center w-8 h-8 rounded-lg bg-muted/40 text-muted-foreground font-semibold text-xs mt-0.5">
-                {index + 1}
+            <div className="flex-shrink-0 flex flex-col items-center gap-2">
+                <div className="flex items-center justify-center w-8 h-8 rounded-lg bg-muted/40 text-muted-foreground font-semibold text-xs mt-0.5">
+                    {index + 1}
+                </div>
+                {durationSeconds && durationSeconds > 0 && (
+                    <div className="px-2 py-1 rounded-md bg-muted/10 border border-border/40 text-muted-foreground text-[10px] font-bold flex items-center gap-1.5 shadow-sm">
+                        <Clock className="h-3 w-3 opacity-50" />
+                        <span>
+                            {Math.floor(durationSeconds / 60)}:{String(durationSeconds % 60).padStart(2, '0')}
+                        </span>
+                    </div>
+                )}
             </div>
             <div className="flex-1 min-w-0 flex flex-col pt-0.5">
                 <div
@@ -224,25 +294,33 @@ export function PreparationSteps({ form, namePrefix, label }: PreparationStepsPr
 
     // Temporary watch for the new step being added
     const newStepValues = form.watch("newPrepStep") || {}
-    const hasNewStepData = Object.values(newStepValues).some((val: any) =>
+    const hasNewStepData = Object.values(newStepValues.text || {}).some((val: any) =>
         typeof val === 'string' && val.replace(/<[^>]*>/g, '').trim().length > 0
     )
 
     const handleAddStep = () => {
         if (hasNewStepData) {
             append(newStepValues)
-            form.setValue("newPrepStep", {})
+            form.setValue("newPrepStep", { text: {}, duration_seconds: 0 })
             setIsAdding(false)
         }
     }
 
     const cancelAdding = () => {
-        form.setValue("newPrepStep", {})
+        form.setValue("newPrepStep", { text: {}, duration_seconds: 0 })
         setIsAdding(false)
     }
 
     const startEditing = (index: number) => {
-        setOriginalStepValues(form.getValues(`${namePrefix}.${index}`))
+        const stepData = form.getValues(`${namePrefix}.${index}`)
+        // Ensure data is normalized before editing
+        if (stepData && !stepData.text) {
+            const normalized = { text: stepData, duration_seconds: null }
+            update(index, normalized)
+            setOriginalStepValues(normalized)
+        } else {
+            setOriginalStepValues(stepData)
+        }
         setEditingIndex(index)
         setIsAdding(false)
     }
@@ -292,7 +370,10 @@ export function PreparationSteps({ form, namePrefix, label }: PreparationStepsPr
         }
 
         const existingStepTexts = (form.getValues(namePrefix) || [])
-            .map((step: any) => step?.[locale] || step?.en || Object.values(step || {})[0])
+            .map((step: any) => {
+                const text = step?.text || step;
+                return text?.[locale] || text?.en || Object.values(text || {})[0];
+            })
             .filter((step: any) => typeof step === "string" && step.trim().length > 0)
 
         setIsGeneratingWithAI(true)
@@ -310,7 +391,10 @@ export function PreparationSteps({ form, namePrefix, label }: PreparationStepsPr
             return
         }
 
-        const generatedSteps = result.steps.map((step: string) => ({ [locale]: step }))
+        const generatedSteps = result.steps.map((step: string) => ({ 
+            text: { [locale]: step },
+            duration_seconds: null 
+        }))
         form.setValue(namePrefix, generatedSteps, { shouldDirty: true })
         setIsAdding(false)
         setEditingIndex(null)
@@ -363,7 +447,9 @@ export function PreparationSteps({ form, namePrefix, label }: PreparationStepsPr
                         {fields.map((field, index) => {
                             const isEditing = editingIndex === index
                             const stepData = form.watch(`${namePrefix}.${index}`) || {}
-                            const displayText = stepData[locale] || stepData['en'] || Object.values(stepData)[0] || t("emptyStep")
+                            const textData = stepData.text || stepData
+                            const displayText = textData[locale] || textData['en'] || Object.values(textData)[0] || t("emptyStep")
+                            const durationSeconds = stepData.duration_seconds
 
                             return (
                                 <SortableStepItem
@@ -372,6 +458,7 @@ export function PreparationSteps({ form, namePrefix, label }: PreparationStepsPr
                                     index={index}
                                     isEditing={isEditing}
                                     displayText={displayText as string}
+                                    durationSeconds={durationSeconds}
                                     locale={locale}
                                     commonT={commonT}
                                     t={t}
@@ -400,11 +487,22 @@ export function PreparationSteps({ form, namePrefix, label }: PreparationStepsPr
                 <div className="p-8 rounded-3xl border border-border/60 bg-muted/5 space-y-8 animate-in fade-in zoom-in-95 duration-300">
                     <TranslationFields
                         form={form}
-                        namePrefix="newPrepStep"
-                        label={t("stepInstructions")}
+                        namePrefix="newPrepStep.text"
+                        label={`${t("step")} ${fields.length + 1}`}
                         type="textarea"
                         placeholder={t("stepPlaceholder")}
                         isRichText={true}
+                        headerActions={
+                            <div className="flex items-center gap-2">
+                                <span className="text-[10px] font-bold text-muted-foreground/60 uppercase tracking-wider">
+                                    {t("stepDuration")}
+                                </span>
+                                <TimeDurationInput
+                                    value={form.watch("newPrepStep.duration_seconds")}
+                                    onChange={(val) => form.setValue("newPrepStep.duration_seconds", val, { shouldDirty: true })}
+                                />
+                            </div>
+                        }
                     />
                     <div className="flex justify-end gap-3 pt-6 border-t border-border/40">
                         <Button
