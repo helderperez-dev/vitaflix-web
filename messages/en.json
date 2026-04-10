@@ -983,6 +983,11 @@
         "newLead": "New Lead",
         "dropLeadsHere": "Drop leads here",
         "pipelineFilter": "Pipeline Filter",
-        "activeFunnels": "Active Funnels"
+        "activeFunnels": "Active Funnels",
+        "syncBrevo": "Sync with Brevo",
+        "syncingBrevo": "Syncing...",
+        "syncBrevoSuccess": "Synced with Brevo successfully!",
+        "syncBrevoError": "Error syncing with Brevo.",
+        "syncBrevoBulkSuccess": "{count} leads synced!"
     }
 }
