@@ -78,8 +78,8 @@ export function LeadDrawer({ open, onOpenChange, lead, funnels, onSuccess }: Lea
                     email: lead.email || "",
                     phone: lead.phone || "",
                     source: lead.source || "",
-                    funnel_id: lead.funnel_id || null,
-                    step_id: lead.step_id || null,
+                    funnel_id: lead.funnel_id || funnels[0]?.id || null,
+                    step_id: lead.step_id || (lead.funnel_id ? null : (funnels[0]?.lead_funnel_steps?.[0]?.id || null)),
                 })
             } else {
                 form.reset({
@@ -87,7 +87,7 @@ export function LeadDrawer({ open, onOpenChange, lead, funnels, onSuccess }: Lea
                     email: "",
                     phone: "",
                     funnel_id: funnels[0]?.id || null,
-                    step_id: null,
+                    step_id: funnels[0]?.lead_funnel_steps?.[0]?.id || null,
                     source: "",
                     is_archived: false,
                 })

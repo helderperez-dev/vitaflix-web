@@ -4,15 +4,17 @@ import * as React from "react"
 import { useLocale, useTranslations } from "next-intl"
 import { Button } from "@/components/ui/button"
 import { Input } from "@/components/ui/input"
-import { Plus, LayoutGrid, Kanban, Search, Filter, Settings2, Loader2, ChevronRight } from "lucide-react"
+import { Plus, LayoutGrid, Kanban, Search, Filter, Settings2, Loader2, ChevronRight, Download } from "lucide-react"
 import { Link } from "@/i18n/routing"
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select"
 import { Database } from "@/types/database.types"
 import { getLeadsAction } from "@/app/actions/leads"
 import { toast } from "sonner"
+import Papa from "papaparse"
 import { KanbanBoard } from "@/components/leads/kanban-board"
 import { LeadsDatagrid } from "@/components/leads/leads-datagrid"
 import { LeadDrawer } from "@/components/leads/lead-drawer"
+import { CsvImportDialog } from "@/components/leads/csv-import-dialog"
 import { motion } from "framer-motion"
 import {
     DropdownMenu,
@@ -54,6 +56,7 @@ export function LeadsManager({ initialFunnels, initialLeads, userProfile }: Lead
 
     // Drawer state
     const [isDrawerOpen, setIsDrawerOpen] = React.useState(false)
+    const [isImportCsvOpen, setIsImportCsvOpen] = React.useState(false)
     const [selectedLead, setSelectedLead] = React.useState<Lead | null>(null)
 
     const activeFunnel = funnels.find(f => f.id === activeFunnelId)
@@ -127,6 +130,35 @@ export function LeadsManager({ initialFunnels, initialLeads, userProfile }: Lead
                 return [savedLead, ...prev]
             }
         })
+    }
+
+    const handleExportCsv = () => {
+        if (leads.length === 0) {
+            toast.error(isPt ? "Não há leads para exportar" : "No leads to export")
+            return
+        }
+
+        // Prepare data for export, focusing on main fields
+        const exportData = leads.map(l => ({
+            Name: l.name,
+            Email: l.email || "",
+            Phone: l.phone || "",
+            Source: l.source || "",
+            Created: l.created_at ? new Date(l.created_at).toLocaleDateString() : ""
+        }))
+
+        const csv = Papa.unparse(exportData)
+        const blob = new Blob([csv], { type: 'text/csv;charset=utf-8;' })
+        const url = URL.createObjectURL(blob)
+        const link = document.createElement("a")
+        link.setAttribute("href", url)
+        link.setAttribute("download", `vitaflix-leads-${new Date().toISOString().split('T')[0]}.csv`)
+        link.style.visibility = 'hidden'
+        document.body.appendChild(link)
+        link.click()
+        document.body.removeChild(link)
+        
+        toast.success(isPt ? "Exportação concluída" : "Export completed")
     }
 
     // Only show empty state when there are no funnels at all
@@ -260,10 +292,27 @@ export function LeadsManager({ initialFunnels, initialLeads, userProfile }: Lead
                         </DropdownMenu>
                     </div>
 
-                    <Button className="h-10 bg-primary hover:bg-primary/95 text-white font-semibold text-xs transition-all active:scale-95 shadow-none px-6 flex items-center gap-2.5" onClick={handleAddLead}>
-                        <Plus className="h-4 w-4" />
-                        {tLeads("addLead")}
-                    </Button>
+                    <div className="flex items-center gap-2">
+                        <Button 
+                            variant="outline"
+                            className="h-10 text-xs font-semibold px-4 transition-all shadow-sm border-border/50 hover:bg-muted/30 flex items-center gap-2" 
+                            onClick={handleExportCsv}
+                        >
+                            <Download className="size-3.5" />
+                            {tLeads("exportCsv") || "Export CSV"}
+                        </Button>
+                        <Button 
+                            variant="outline"
+                            className="h-10 text-xs font-semibold px-4 transition-all shadow-sm border-border/50 hover:bg-muted/30" 
+                            onClick={() => setIsImportCsvOpen(true)}
+                        >
+                            {tLeads("importCsv") || "Import CSV"}
+                        </Button>
+                        <Button className="h-10 bg-primary hover:bg-primary/95 text-white font-semibold text-xs transition-all active:scale-95 shadow-none px-6 flex items-center gap-2.5" onClick={handleAddLead}>
+                            <Plus className="h-4 w-4" />
+                            {tLeads("addLead")}
+                        </Button>
+                    </div>
                 </div>
             </div>
 
@@ -301,6 +350,16 @@ export function LeadsManager({ initialFunnels, initialLeads, userProfile }: Lead
                 lead={selectedLead}
                 funnels={funnels}
                 onSuccess={handleSaveSuccess}
+            />
+
+            {/* Import CSV Dialog */}
+            <CsvImportDialog
+                open={isImportCsvOpen}
+                onOpenChange={setIsImportCsvOpen}
+                onSuccess={() => {
+                    // Force re-fetch of all leads
+                    window.location.reload(); 
+                }}
             />
         </div>
     )

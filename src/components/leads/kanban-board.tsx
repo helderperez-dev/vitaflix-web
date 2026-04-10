@@ -361,13 +361,15 @@ export function KanbanBoard({ funnel, leads: initialLeads, onLeadStepChange, onL
                     isDraggingScroll ? "cursor-grabbing" : "cursor-default"
                 )}
             >
-                <KanbanColumn
-                    id="unassigned"
-                    title={tLeads("newLead")}
-                    leads={leads.filter(l => !l.step_id)}
-                    onLeadClick={onLeadClick}
-                    onDeleteLead={onDeleteLead}
-                />
+                {leads.filter(l => !l.step_id).length > 0 && (
+                    <KanbanColumn
+                        id="unassigned"
+                        title={tLeads("unassigned")}
+                        leads={leads.filter(l => !l.step_id)}
+                        onLeadClick={onLeadClick}
+                        onDeleteLead={onDeleteLead}
+                    />
+                )}
 
                 {funnel.lead_funnel_steps.map((step: Database['public']['Tables']['lead_funnel_steps']['Row']) => (
                     <KanbanColumn
