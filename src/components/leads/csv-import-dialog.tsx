@@ -178,7 +178,7 @@ export function CsvImportDialog({ open, onOpenChange, onSuccess }: CsvImportDial
                     setMappedData(processed)
                     setIsParsing(false)
                 },
-                error: (err) => {
+                error: (err: any) => {
                     console.error("PapaParse error:", err)
                     toast.error(commonT("errorSaving") || "Error parsing CSV.")
                     setIsParsing(false)
