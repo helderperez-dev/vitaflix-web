@@ -112,16 +112,34 @@ export function MealDrawer({ open, onOpenChange, meal }: MealDrawerProps) {
                 const mealData = meal as Meal & {
                     cook_time?: number
                     meal_types?: string[]
-                    preparation_mode?: Record<string, string>[]
+                    preparation_mode?: (Record<string, string> | { text: Record<string, string>, duration_seconds?: number | null })[]
                     country_ids?: string[]
                     is_public?: boolean
                 }
+
+                const normalizePreparationMode = (val: any) => {
+                    if (!Array.isArray(val)) return [];
+                    return val.map((step: any) => {
+                        if (typeof step === 'string') {
+                            return { text: { [locale]: step }, duration_seconds: null };
+                        }
+                        if (step && !step.text) {
+                            // Check if it's already a localized string object
+                            const isLocalizedString = Object.values(step).every(v => typeof v === 'string');
+                            if (isLocalizedString) {
+                                return { text: step, duration_seconds: null };
+                            }
+                        }
+                        return step;
+                    });
+                };
+
                 form.reset({
                     ...meal,
                     name: meal.name || {},
                     cookTime: Number(mealData.cook_time ?? mealData.cookTime ?? 0),
                     mealTypes: ensureArray(mealData.meal_types || mealData.mealTypes),
-                    preparationMode: ensureArray(mealData.preparation_mode || mealData.preparationMode),
+                    preparationMode: normalizePreparationMode(mealData.preparation_mode || mealData.preparationMode),
                     restrictions: ensureArray(mealData.restrictions || mealData.restrictions),
                     countryIds: ensureArray(mealData.country_ids || mealData.countryIds),
                     isPublic: mealData.is_public ?? mealData.isPublic ?? false,
@@ -227,7 +245,11 @@ export function MealDrawer({ open, onOpenChange, meal }: MealDrawerProps) {
     }))
 
     const preparationModeTexts = watchedPreparationMode
-        .map(step => step?.[locale] || Object.values(step || {}).find(value => typeof value === "string" && value.trim().length > 0))
+        .map(step => {
+            const textData = (step as any)?.text || step;
+            if (typeof textData === 'string') return textData;
+            return (textData as Record<string, string>)?.[locale] || Object.values(textData || {}).find(value => typeof value === "string" && value.trim().length > 0);
+        })
         .filter((value): value is string => typeof value === "string" && value.trim().length > 0)
 
     const handleCancel = () => {
