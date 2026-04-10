@@ -115,7 +115,7 @@ export function LeadsDatagrid({ funnels, activeFunnelId, leads, onRowClick, onDe
                 if (!lead.funnel_id) {
                     return (
                         <Badge variant="secondary" className="text-[10px] font-medium rounded-md bg-slate-100 dark:bg-white/5 text-slate-400 border-none px-2 py-0.5">
-                            {tLeads("newLead")}
+                            {tLeads("unassigned")}
                         </Badge>
                     )
                 }
