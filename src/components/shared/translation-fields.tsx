@@ -12,6 +12,7 @@ import { Command, CommandEmpty, CommandGroup, CommandInput, CommandItem, Command
 import { getSupportedLanguages } from "@/app/actions/settings"
 import { useWatch } from "react-hook-form"
 import { AITextActions } from "./ai-text-actions"
+import { cn } from "@/lib/utils"
 
 interface TranslationFieldsProps {
     form: any
@@ -22,6 +23,7 @@ interface TranslationFieldsProps {
     isRichText?: boolean
     aiContext?: string
     aiRuntimeContext?: Record<string, unknown>
+    headerActions?: React.ReactNode
 }
 
 import { RichText } from "@/components/ui/rich-text"
@@ -34,7 +36,8 @@ export function TranslationFields({
     placeholder,
     isRichText = false,
     aiContext,
-    aiRuntimeContext
+    aiRuntimeContext,
+    headerActions
 }: TranslationFieldsProps) {
     const locale = useLocale()
     const commonT = useTranslations("Common")
@@ -112,52 +115,58 @@ export function TranslationFields({
 
     return (
         <div className="space-y-6">
-            <div className="flex items-center justify-between gap-4">
-                <div className="flex items-center gap-3 flex-1">
-                    <h3 className="font-semibold text-xs text-secondary dark:text-white whitespace-nowrap">{label}</h3>
-                    <div className="h-px w-full bg-border/60 min-w-4" />
-                </div>
-
-                {remainingLanguages.length > 0 && (
-                    <Popover open={open} onOpenChange={setOpen}>
-                        <PopoverTrigger asChild>
-                            <Button
-                                variant="outline"
-                                className="h-8 w-auto min-w-[80px] justify-center px-4 text-xs font-semibold border-border/50 bg-transparent text-muted-foreground hover:bg-muted/10 rounded-lg transition-all gap-2"
-                            >
-                                <Plus className="h-3.5 w-3.5 opacity-50" />
-                                {commonT("add")}
-                            </Button>
-                        </PopoverTrigger>
-                        <PopoverContent className="w-[220px] p-1.5 shadow-2xl border-border/40 rounded-lg backdrop-blur-xl bg-background/90" align="end">
-                            <Command className="bg-transparent border-none">
-                                <CommandInput placeholder={`${commonT("search")}...`} className="h-9 text-xs" />
-                                <CommandList
-                                    className="max-h-[240px] overflow-y-auto custom-scrollbar"
-                                    onWheel={(e) => e.stopPropagation()}
-                                    onTouchMove={(e) => e.stopPropagation()}
-                                >
-                                    <CommandEmpty className="py-4 text-xs font-semibold text-center text-muted-foreground/40">{commonT("noResults")}</CommandEmpty>
-                                    <CommandGroup>
-                                        {remainingLanguages.map((lang) => (
-                                            <CommandItem
-                                                key={lang}
-                                                value={lang}
-                                                onSelect={() => addLanguage(lang)}
-                                                className="text-xs py-2 px-3 cursor-pointer font-semibold rounded-lg hover:bg-muted mb-1 last:mb-0 transition-colors"
-                                            >
-                                                <span className="flex items-center gap-2">
-                                                    <span className="opacity-60 text-[10px]">{lang.split('-')[0].toUpperCase()}</span>
-                                                    {LANGUAGE_NAMES[lang] || lang}
-                                                </span>
-                                            </CommandItem>
-                                        ))}
-                                    </CommandGroup>
-                                </CommandList>
-                            </Command>
-                        </PopoverContent>
-                    </Popover>
+            <div className={cn("flex items-center justify-between gap-4", !label && "justify-end")}>
+                {label && (
+                    <div className="flex items-center gap-3 flex-1">
+                        <h3 className="font-semibold text-xs text-secondary dark:text-white whitespace-nowrap">{label}</h3>
+                        <div className="h-px w-full bg-border/60 min-w-4" />
+                    </div>
                 )}
+
+                <div className="flex items-center gap-2">
+                    {headerActions}
+                    
+                    {remainingLanguages.length > 0 && (
+                        <Popover open={open} onOpenChange={setOpen}>
+                            <PopoverTrigger asChild>
+                                <Button
+                                    variant="outline"
+                                    className="h-8 w-auto min-w-[80px] justify-center px-4 text-xs font-semibold border-border/50 bg-transparent text-muted-foreground hover:bg-muted/10 rounded-lg transition-all gap-2"
+                                >
+                                    <Plus className="h-3.5 w-3.5 opacity-50" />
+                                    {commonT("add")}
+                                </Button>
+                            </PopoverTrigger>
+                            <PopoverContent className="w-[220px] p-1.5 shadow-2xl border-border/40 rounded-lg backdrop-blur-xl bg-background/90" align="end">
+                                <Command className="bg-transparent border-none">
+                                    <CommandInput placeholder={`${commonT("search")}...`} className="h-9 text-xs" />
+                                    <CommandList
+                                        className="max-h-[240px] overflow-y-auto custom-scrollbar"
+                                        onWheel={(e) => e.stopPropagation()}
+                                        onTouchMove={(e) => e.stopPropagation()}
+                                    >
+                                        <CommandEmpty className="py-4 text-xs font-semibold text-center text-muted-foreground/40">{commonT("noResults")}</CommandEmpty>
+                                        <CommandGroup>
+                                            {remainingLanguages.map((lang) => (
+                                                <CommandItem
+                                                    key={lang}
+                                                    value={lang}
+                                                    onSelect={() => addLanguage(lang)}
+                                                    className="text-xs py-2 px-3 cursor-pointer font-semibold rounded-lg hover:bg-muted mb-1 last:mb-0 transition-colors"
+                                                >
+                                                    <span className="flex items-center gap-2">
+                                                        <span className="opacity-60 text-[10px]">{lang.split('-')[0].toUpperCase()}</span>
+                                                        {LANGUAGE_NAMES[lang] || lang}
+                                                    </span>
+                                                </CommandItem>
+                                            ))}
+                                        </CommandGroup>
+                                    </CommandList>
+                                </Command>
+                            </PopoverContent>
+                        </Popover>
+                    )}
+                </div>
             </div>
 
             <div className="space-y-6">

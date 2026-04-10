@@ -63,6 +63,7 @@ const DICTIONARY_META: { id: TagTable | 'plans_logic'; icon: React.ComponentType
     { id: 'meal_plan_sizes', icon: CalendarRange },
     { id: 'user_roles', icon: ShieldCheck },
     { id: 'wellness_objectives', icon: Target },
+    { id: 'wellness_paces', icon: Target },
 ]
 
 export function DictionaryManager() {
@@ -130,6 +131,10 @@ export function DictionaryManager() {
             wellness_objectives: {
                 label: isPt ? "Objetivos" : "Goals",
                 description: isPt ? "Objetivos de saúde e bem-estar por utilizador." : "User-specific health and wellness targets.",
+            },
+            wellness_paces: {
+                label: isPt ? "Ritmos" : "Paces",
+                description: isPt ? "Ritmos de progressão dos objetivos." : "Progression paces for objectives.",
             },
         }
         return DICTIONARY_META.map((item) => ({ ...item, ...labels[item.id] }))

@@ -768,6 +768,7 @@
         "emptyStep": "Empty step",
         "noPrepSteps": "No preparation steps yet",
         "stepInstructions": "Step Instructions",
+        "stepDuration": "Time",
         "stepPlaceholder": "e.g. Boil the water and add the pasta...",
         "addPrepStep": "Add Preparation Step",
         "visibilityControl": "Visibility Control",
