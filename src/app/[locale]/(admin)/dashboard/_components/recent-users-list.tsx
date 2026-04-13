@@ -4,7 +4,7 @@ import { Mail, CheckCircle2, Clock } from "lucide-react"
 
 interface UserItem {
     id: string
-    full_name: string | null
+    display_name: string | null
     email: string
     created_at: string
 }
@@ -38,7 +38,7 @@ export function RecentUsersList({ users, locale, emptyText }: RecentUsersListPro
                             </div>
                             <div className="flex flex-col">
                                 <span className="text-[11px] font-bold text-foreground/80 leading-tight truncate max-w-[120px]">
-                                    {user.full_name || user.email.split('@')[0]}
+                                    {user.display_name || user.email.split('@')[0]}
                                 </span>
                                 <span className="text-[9px] text-muted-foreground/60 leading-tight">
                                     {user.email}

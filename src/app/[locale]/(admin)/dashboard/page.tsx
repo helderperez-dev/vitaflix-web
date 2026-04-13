@@ -33,7 +33,7 @@ export default async function DashboardPage({ params }: { params: { locale: stri
         supabase.from('lead_funnels').select('id, name'),
         supabase.from('leads').select('funnel_id'),
         supabase.from('meals').select('is_public'),
-        supabase.from('users').select('id, full_name, email, created_at').order('created_at', { ascending: false }).limit(5),
+        supabase.from('users').select('id, display_name, email, created_at').order('created_at', { ascending: false }).limit(5),
         supabase.from('leads').select('id, name, created_at, source').order('created_at', { ascending: false }).limit(5)
     ])
 

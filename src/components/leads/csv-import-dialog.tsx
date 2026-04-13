@@ -391,7 +391,7 @@ export function CsvImportDialog({ open, onOpenChange, onSuccess }: CsvImportDial
                                     </div>
                                     <h3 className="text-xl font-bold text-amber-700 tracking-tight">Parser Mismatch</h3>
                                     <p className="text-sm font-medium text-amber-900/40 mt-2 max-w-[320px] leading-relaxed">
-                                        We couldn't identify Name or Email headers. Please check your Wix CSV formatting.
+                                        We could not identify Name or Email headers. Please check your Wix CSV formatting.
                                     </p>
                                 </div>
                             )}
