@@ -3,6 +3,7 @@
 import { createClient } from "@/lib/supabase/server"
 import { revalidatePath } from "next/cache"
 import { Database } from "@/types/database.types"
+import { getSystemConfig } from "./settings"
 
 export async function getFunnelsAction() {
     const supabase = await createClient()
@@ -179,9 +180,14 @@ export async function upsertLeadAction(lead: Database['public']['Tables']['leads
     // Always sync with Brevo if email is present
     if (result.data?.email) {
         try {
-            const { syncContactWithBrevo } = await import("@/lib/brevo")
-            // Background sync to keep admin UI fast
-            void syncContactWithBrevo(result.data.email, result.data.name)
+            const brevoConfig = await getSystemConfig('brevo_config');
+            const config = brevoConfig?.addLead || { enabled: true, listId: 2 };
+
+            if (config.enabled) {
+                const { syncContactWithBrevo } = await import("@/lib/brevo")
+                // Background sync to keep admin UI fast
+                void syncContactWithBrevo(result.data.email, result.data.name, [config.listId])
+            }
         } catch (e) {
             console.error("Failed to sync with Brevo in upsertLeadAction:", e)
         }
@@ -204,11 +210,18 @@ export async function bulkDeleteLeads(ids: string[]) {
     return { success: true }
 }
 
-export async function syncLeadsWithBrevoAction(ids: string[]) {
+export async function syncLeadsWithBrevoAction(ids: string[], syncSource: 'kanbanSync' | 'dataGridSync' = 'kanbanSync') {
     const supabase = await createClient()
     
-    // Explicitly set a high limit to ensure all selected IDs are fetched correctly
-    // avoiding any potential default server-side query limits.
+    // Check config first
+    const brevoConfig = await getSystemConfig('brevo_config');
+    const config = brevoConfig?.[syncSource] || { enabled: true, listId: 2 };
+
+    if (!config.enabled) {
+        return { success: false, error: "Brevo integration is disabled for this process." }
+    }
+
+    // Explicitly set a high limit ...
     const { data: leads, error } = await supabase
         .from("leads")
         .select("id, name, email")
@@ -235,7 +248,7 @@ export async function syncLeadsWithBrevoAction(ids: string[]) {
         const batch = leads.slice(i, i + batchSize)
         const batchPromises = batch.map(async (lead) => {
             if (!lead.email) throw new Error("No email")
-            const success = await syncContactWithBrevo(lead.email, lead.name)
+            const success = await syncContactWithBrevo(lead.email, lead.name, [config.listId])
             if (!success) throw new Error("Sync failed")
             return lead.id
         })
@@ -332,18 +345,23 @@ export async function bulkUpsertLeadsAction(leadsData: Array<{ name: string, ema
 
     // Process queued Brevo syncs in controlled batches to avoid rate limits
     if (leadsToSync.length > 0) {
-        const { syncContactWithBrevo } = await import("@/lib/brevo")
-        const batchSize = 5
-        
-        for (let i = 0; i < leadsToSync.length; i += batchSize) {
-            const batch = leadsToSync.slice(i, i + batchSize)
-            await Promise.allSettled(
-                batch.map(lead => syncContactWithBrevo(lead.email, lead.name))
-            )
+        const brevoConfig = await getSystemConfig('brevo_config');
+        const config = brevoConfig?.importCsv || { enabled: true, listId: 2 };
+
+        if (config.enabled) {
+            const { syncContactWithBrevo } = await import("@/lib/brevo")
+            const batchSize = 2 // Safely under 10 req/sec limit
             
-            // Minor delay between batches to respect rate limits
-            if (i + batchSize < leadsToSync.length) {
-                await new Promise(resolve => setTimeout(resolve, 200))
+            for (let i = 0; i < leadsToSync.length; i += batchSize) {
+                const batch = leadsToSync.slice(i, i + batchSize)
+                await Promise.allSettled(
+                    batch.map(lead => syncContactWithBrevo(lead.email, lead.name, [config.listId]))
+                )
+                
+                // Delay to respect Brevo's 10 requests per second limit
+                if (i + batchSize < leadsToSync.length) {
+                    await new Promise(resolve => setTimeout(resolve, 250))
+                }
             }
         }
     }

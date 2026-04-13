@@ -7,7 +7,8 @@ import {
     Boxes,
     Settings2,
     BellRing,
-    Sparkles
+    Sparkles,
+    Mail
 } from "lucide-react"
 import { Card, CardHeader, CardTitle, CardDescription } from "@/components/ui/card"
 import { Link } from "@/i18n/routing"
@@ -53,6 +54,15 @@ export default function SettingsHubPage_Client() {
                 : "Prompts for generating, improving, and translating text and images.",
             icon: Sparkles,
             href: '/settings/ai',
+        },
+        {
+            id: 'brevo',
+            label: "Brevo API",
+            description: isPt
+                ? "Configurar automação de marketing e listas de contactos."
+                : "Configure marketing automation and contact lists.",
+            icon: Mail,
+            href: '/settings/brevo',
         }
     ]), [isPt, navigationT])
 

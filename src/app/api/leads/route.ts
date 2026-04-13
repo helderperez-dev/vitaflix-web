@@ -104,8 +104,8 @@ export async function POST(req: Request) {
             responseError = error
         }
 
-        if (responseError) {
-            console.error("Lead submission error:", responseError)
+        if (responseError || !responseData) {
+            console.error("Lead submission error:", responseError || "No data returned")
             return NextResponse.json(
                 { error: "Failed to process lead." },
                 { status: 500, headers: corsHeaders }
@@ -129,7 +129,21 @@ export async function POST(req: Request) {
 
         // Sync with Brevo marketing list if an email is provided
         if (email) {
-            await syncContactWithBrevo(email, name);
+            try {
+                const { data: brevoSetting } = await supabase
+                    .from('system_settings')
+                    .select('value')
+                    .eq('key', 'brevo_config')
+                    .maybeSingle();
+
+                const config = (brevoSetting?.value as any)?.landingPage || { enabled: true, listId: 2 };
+                
+                if (config.enabled) {
+                    await syncContactWithBrevo(email, name, [config.listId]);
+                }
+            } catch (error) {
+                console.error("Brevo sync error in landing page API:", error);
+            }
         }
 
         return NextResponse.json(
