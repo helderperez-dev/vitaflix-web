@@ -348,6 +348,10 @@ export async function bulkUpsertLeadsAction(leadsData: Array<{ name: string, ema
         const brevoConfig = await getSystemConfig('brevo_config');
         const config = brevoConfig?.importCsv || { enabled: true, listId: 2 };
 
+        console.log(`[CSV Import Debug] Total leads to sync: ${leadsToSync.length}`);
+        console.log(`[CSV Import Debug] Full brevoConfig:`, JSON.stringify(brevoConfig, null, 2));
+        console.log(`[CSV Import Debug] Using config for importCsv:`, JSON.stringify(config, null, 2));
+
         if (config.enabled) {
             const { syncContactWithBrevo } = await import("@/lib/brevo")
             const batchSize = 2 // Safely under 10 req/sec limit

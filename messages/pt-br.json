@@ -955,6 +955,15 @@
         "selectTemplate": "Selecionar da biblioteca..."
     },
     "Leads": {
+        "status_ready": "Pronto",
+        "status_missing_email": "Sem Email",
+        "status_invalid": "Inválido",
+        "summary_ready": "{count} leads prontos",
+        "summary_warning": "{count} avisos",
+        "summary_error": "{count} erros",
+        "importing_leads": "Importando leads...",
+        "processed_of": "{count} de {total} leads processados",
+        "keep_window_open": "Por favor, mantenha esta janela aberta. Você pode abrir uma nova aba para continuar trabalhando em outro lugar.",
         "title": "Leads",
         "description": "Gerencie e acompanhe seus leads através do funil de vendas.",
         "addLead": "Adicionar Lead",

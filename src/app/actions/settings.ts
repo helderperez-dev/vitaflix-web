@@ -64,7 +64,12 @@ export async function getSystemConfig(key: string, defaultValue: unknown = null)
         .eq('key', key)
         .single()
 
-    if (error || !data) {
+    if (error) {
+        console.error(`Error fetching system config for key "${key}":`, error)
+        return defaultValue
+    }
+
+    if (!data) {
         return defaultValue
     }
 

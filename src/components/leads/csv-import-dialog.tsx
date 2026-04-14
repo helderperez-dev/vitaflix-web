@@ -558,9 +558,10 @@ export function CsvImportDialog({ open, onOpenChange, onSuccess }: CsvImportDial
                                     />
                                 </div>
                                 
-                                <p className="text-[9px] font-medium text-muted-foreground/60 text-center animate-pulse italic">
-                                    {t("keep_window_open") || "Please keep this tab open. You can open a new tab to continue working elsewhere."}
-                                </p>
+                                <div className="flex items-center justify-center gap-2 text-[10px] font-semibold text-amber-600/90 dark:text-amber-400/90 animate-pulse mt-1">
+                                    <AlertCircle className="size-3 shrink-0" />
+                                    <span>{t("keep_window_open") || "Please keep this window open. You can open a new tab to continue working elsewhere."}</span>
+                                </div>
                             </div>
                         )}
                     </div>
