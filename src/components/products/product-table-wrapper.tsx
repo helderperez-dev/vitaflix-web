@@ -53,6 +53,8 @@ type ProductTableData = {
     images?: { url: string; isDefault?: boolean }[]
     is_public?: boolean | null
     measurement_unit?: { slug?: string | null; name?: LocalizedText } | null
+    supermarket_section_id?: string | null
+    supermarket_section?: { slug?: string | null; name?: LocalizedText } | null
     product_tags?: { tag_id: string; tags?: { name?: LocalizedText } | { name?: LocalizedText }[] }[]
     product_brands?: { brand_id: string; brands?: { name?: LocalizedText; logo_url?: string } | { name?: LocalizedText; logo_url?: string }[] }[]
     product_group_links?: { group_id: string }[]
@@ -169,6 +171,7 @@ export function ProductTableWrapper({ initialProducts, userProfile }: ProductTab
                 groupIds: p.product_group_links?.map((pg) => pg.group_id) || [],
                 countryIds: p.product_countries?.map((pc) => pc.country_id) || [],
                 unitId: p.unit_id || null,
+                supermarketSectionId: p.supermarket_section_id || null,
                 referenceAmount: p.reference_amount || 100,
                 images: p.images || [],
                 isPublic: p.is_public,
@@ -225,6 +228,25 @@ export function ProductTableWrapper({ initialProducts, userProfile }: ProductTab
             },
             size: 260,
             enableHiding: false,
+        },
+        {
+            accessorKey: "supermarketSectionId",
+            header: ({ column }) => <SortableHeader column={column} title={commonT("supermarketSection")} />,
+            sortingFn: (rowA, rowB) => {
+                const sA = rowA.original.supermarket_section?.name?.[locale] || rowA.original.supermarket_section?.name?.en || "";
+                const sB = rowB.original.supermarket_section?.name?.[locale] || rowB.original.supermarket_section?.name?.en || "";
+                return sA.localeCompare(sB);
+            },
+            cell: ({ row }) => {
+                const section = row.original.supermarket_section;
+                if (!section) return <span className="text-xs text-muted-foreground/40">—</span>;
+                return (
+                    <Badge variant="secondary" className="text-[10px] font-semibold">
+                        {section.name?.[locale] || section.name?.en}
+                    </Badge>
+                );
+            },
+            size: 150,
         },
         {
             id: "brand",

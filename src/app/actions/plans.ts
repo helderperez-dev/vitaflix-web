@@ -91,6 +91,7 @@ export async function getMealDayConfigs(count?: number) {
         dailyMealsCount: row.daily_meals_count,
         slotIndex: row.slot_index,
         categoryId: row.category_id,
+        time: row.time,
         category: row.category,
     }))
 }
@@ -108,6 +109,7 @@ export async function upsertMealDayConfig(configs: MealDayConfig[]) {
         daily_meals_count: c.dailyMealsCount,
         slot_index: c.slotIndex,
         category_id: c.categoryId,
+        time: c.time || '12:00:00',
         updated_at: new Date().toISOString()
     }))
 

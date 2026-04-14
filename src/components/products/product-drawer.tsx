@@ -66,6 +66,7 @@ export function ProductDrawer({ open, onOpenChange, product }: ProductDrawerProp
             carbs: 0,
             fat: 0,
             unitId: null,
+            supermarketSectionId: null,
             referenceAmount: 100,
             tagIds: [],
             brandIds: [],
@@ -92,6 +93,7 @@ export function ProductDrawer({ open, onOpenChange, product }: ProductDrawerProp
                 carbs: 0,
                 fat: 0,
                 unitId: null,
+                supermarketSectionId: null,
                 referenceAmount: 100,
                 tagIds: [],
                 brandIds: [],
@@ -334,6 +336,20 @@ export function ProductDrawer({ open, onOpenChange, product }: ProductDrawerProp
                                                 title={t("tags")}
                                                 selectedTagIds={form.watch("tagIds") || []}
                                                 onTagsChange={(tagIds) => form.setValue("tagIds", tagIds, { shouldDirty: true })}
+                                            />
+                                        </div>
+
+                                        <div className="space-y-4">
+                                            <FormLabel className="text-xs font-semibold text-muted-foreground/70">
+                                                {t("supermarketSection")}
+                                            </FormLabel>
+                                            <DictionarySelector
+                                                table="supermarket_sections"
+                                                value={form.watch("supermarketSectionId") || ""}
+                                                onChange={(id) => form.setValue("supermarketSectionId", id, { shouldDirty: true })}
+                                                placeholder={t("selectSupermarketSection")}
+                                                returnIdOnly
+                                                className="w-full"
                                             />
                                         </div>
 

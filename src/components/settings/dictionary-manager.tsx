@@ -57,6 +57,7 @@ const DICTIONARY_META: { id: TagTable | 'plans_logic'; icon: React.ComponentType
     { id: 'product_groups', icon: Boxes },
     { id: 'measurement_units', icon: Ruler },
     { id: 'countries', icon: Globe },
+    { id: 'supermarket_sections', icon: Store },
     { id: 'tags', icon: TagIcon },
     { id: 'plans_logic', icon: BrainCircuit },
     { id: 'meal_categories', icon: Utensils },
@@ -91,6 +92,10 @@ export function DictionaryManager() {
             store_markets: {
                 label: isPt ? "Lojas / supermercados" : "Stores / supermarkets",
                 description: isPt ? "Canais de disponibilidade para marcas e produtos." : "Availability channels for brands and products.",
+            },
+            supermarket_sections: {
+                label: isPt ? "Secções de Supermercado" : "Supermarket Sections",
+                description: isPt ? "Classificação de produtos nas áreas da loja (ex: Laticínios, Mercearia)." : "Product classification in store areas (e.g., Dairy, Grocery).",
             },
             dietary_tags: {
                 label: isPt ? "Etiquetas dietéticas" : "Dietary tags",

@@ -23,6 +23,7 @@ export async function upsertProduct(data: Product) {
             carbs: data.carbs,
             fat: data.fat,
             unit_id: data.unitId || null,
+            supermarket_section_id: data.supermarketSectionId || null,
             reference_amount: data.referenceAmount,
             is_public: data.isPublic,
             images: data.images || []

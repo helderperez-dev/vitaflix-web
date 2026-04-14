@@ -9,6 +9,8 @@ import { getMealDayConfigs, upsertMealDayConfig } from "@/app/actions/plans"
 import { type MealDayConfig } from "@/shared-schemas/plan"
 import { toast } from "sonner"
 import { DictionarySelector } from "@/components/shared/dictionary-selector"
+import { Input } from "@/components/ui/input"
+import { Clock } from "lucide-react"
 
 export function DayConfigManager() {
     const locale = useLocale()
@@ -48,6 +50,12 @@ export function DayConfigManager() {
     const handleUpdateSlot = (index: number, categoryId: string) => {
         const newConfigs = [...configs]
         newConfigs[index].categoryId = categoryId
+        setConfigs(newConfigs)
+    }
+
+    const handleUpdateSlotTime = (index: number, time: string) => {
+        const newConfigs = [...configs]
+        newConfigs[index].time = time
         setConfigs(newConfigs)
     }
 
@@ -119,6 +127,16 @@ export function DayConfigManager() {
                                         placeholder={isPt ? "Selecionar categoria" : "Select category"}
                                         returnIdOnly={true}
                                         className="h-10 bg-transparent border-transparent group-hover:border-border/40 transition-all font-medium text-xs"
+                                    />
+                                </div>
+                                <div className="w-[140px] relative">
+                                    <Clock className="absolute left-3 top-1/2 -translate-y-1/2 size-4 text-muted-foreground/50 pointer-events-none" />
+                                    <Input
+                                        type="time"
+                                        value={config.time?.substring(0, 5) || "12:00"}
+                                        onChange={(e) => handleUpdateSlotTime(idx, e.target.value + ":00")}
+                                        className="h-10 pl-9 bg-transparent border-transparent group-hover:border-border/40 transition-all font-medium text-xs text-center"
+                                        aria-label={isPt ? "Hora" : "Time"}
                                     />
                                 </div>
                                 <div className="flex-1" />

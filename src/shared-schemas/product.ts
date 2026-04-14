@@ -24,6 +24,7 @@ export const productSchema = z.object({
   carbs: z.number().min(0).optional(),
   fat: z.number().min(0).optional(),
   unitId: z.string().uuid().optional().nullable(),
+  supermarketSectionId: z.string().uuid().optional().nullable(),
   referenceAmount: z.number().positive("Products.errorKcalPositive").default(100),
   tagIds: z.array(z.string().uuid()).default([]),
   brandIds: z.array(z.string().uuid()).default([]),
