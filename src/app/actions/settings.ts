@@ -1,6 +1,7 @@
 'use server'
 
 import { createClient } from "@/lib/supabase/server"
+import { createAdminClient } from "@/lib/supabase/admin"
 import { revalidatePath } from "next/cache"
 
 export async function getDefaultLocale() {
@@ -73,7 +74,28 @@ export async function getSystemConfig(key: string, defaultValue: unknown = null)
 export async function updateSystemConfig(key: string, value: unknown) {
     const supabase = await createClient()
 
-    const { error } = await supabase
+    const { data: { user } } = await supabase.auth.getUser()
+    
+    if (!user) {
+        return { error: "Authentication required" }
+    }
+
+    // Verify admin role in the database
+    const { data: userData, error: userError } = await supabase
+        .from('users')
+        .select('role')
+        .eq('id', user.id)
+        .single()
+
+    if (userError || userData?.role !== 'admin') {
+        console.error(`Permission denied for user ${user.email} attempting to update ${key}`)
+        return { error: "Permission denied. Admin role required." }
+    }
+
+    // Use admin client to bypass RLS since policies on system_settings might be restrictive
+    const adminSupabase = createAdminClient()
+
+    const { error } = await adminSupabase
         .from('system_settings')
         .upsert({
             key,

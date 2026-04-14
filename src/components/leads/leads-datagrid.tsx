@@ -207,7 +207,7 @@ export function LeadsDatagrid({ funnels, activeFunnelId, leads, onRowClick, onDe
                                 setIsBulkSyncing(true)
                                 try {
                                     const ids = selectedRows.map(r => r.id)
-                                    const result = await syncLeadsWithBrevoAction(ids)
+                                    const result = await syncLeadsWithBrevoAction(ids, 'dataGridSync')
                                     if (result.success) {
                                         toast.success(tLeads("syncBrevoBulkSuccess", { count: result.summary?.succeeded || 0 }))
                                         clearSelection()

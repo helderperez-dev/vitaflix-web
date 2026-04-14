@@ -953,6 +953,13 @@
         "addFirst": "Create First Plan"
     },
     "Leads": {
+        "status_ready": "Ready",
+        "status_missing_email": "No Email",
+        "status_invalid": "Invalid",
+        "summary_ready": "{count} leads ready",
+        "summary_warning": "{count} warnings",
+        "summary_error": "{count} errors",
+        "importing_leads": "Importing leads...",
         "title": "Leads",
         "description": "Manage and track your leads through the sales pipeline.",
         "addLead": "Add Lead",

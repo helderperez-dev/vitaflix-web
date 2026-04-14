@@ -31,12 +31,12 @@ export function parseName(fullName: string | undefined): ParsedName {
 }
 
 /**
- * Synchronizes a contact with Brevo, adding them to the Waiting List.
  * @param email The contact's email address.
  * @param name The contact's full name.
+ * @param listIds The list IDs to add the contact to. Defaults to [2].
  * @returns A boolean indicating success or failure.
  */
-export async function syncContactWithBrevo(email: string, name?: string): Promise<boolean> {
+export async function syncContactWithBrevo(email: string, name?: string, listIds: number[] = [2]): Promise<boolean> {
     if (!email) return false;
 
     const apiKey = process.env.BREVO_API_KEY;
@@ -61,7 +61,7 @@ export async function syncContactWithBrevo(email: string, name?: string): Promis
                     FIRSTNAME: firstName,
                     LASTNAME: lastName
                 },
-                listIds: [2],
+                listIds,
                 updateEnabled: true
             })
         });

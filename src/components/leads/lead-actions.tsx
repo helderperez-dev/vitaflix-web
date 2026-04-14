@@ -67,7 +67,7 @@ export function LeadActions({ lead, onEdit, onDelete }: LeadActionsProps) {
         if (!lead.id) return
         setIsSyncing(true)
         try {
-            const result = await syncLeadsWithBrevoAction([lead.id])
+            const result = await syncLeadsWithBrevoAction([lead.id], 'kanbanSync')
             if (result.success) {
                 toast.success(tLeads("syncBrevoSuccess"))
             } else {
