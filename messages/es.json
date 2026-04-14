@@ -951,6 +951,15 @@
         "selectTemplate": "Seleccionar de la biblioteca..."
     },
     "Leads": {
+        "status_ready": "Listo",
+        "status_missing_email": "Sin Email",
+        "status_invalid": "Inválido",
+        "summary_ready": "{count} leads listos",
+        "summary_warning": "{count} avisos",
+        "summary_error": "{count} errores",
+        "importing_leads": "Importando leads...",
+        "processed_of": "{count} de {total} leads procesados",
+        "keep_window_open": "Por favor, mantenga esta ventana abierta. Puede abrir una nueva pestaña para seguir trabajando en otro lugar.",
         "title": "Leads",
         "description": "Gestione y realice un seguimiento de sus clientes potenciales a través del embudo de ventas.",
         "addLead": "Agregar Lead",

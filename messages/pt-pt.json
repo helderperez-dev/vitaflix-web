@@ -961,6 +961,8 @@
         "summary_warning": "{count} avisos",
         "summary_error": "{count} erros",
         "importing_leads": "A importar leads...",
+        "processed_of": "{count} de {total} leads processados",
+        "keep_window_open": "Por favor, mantém esta janela aberta. Podes abrir um novo separador para continuares a trabalhar noutro lugar.",
         "title": "Leads",
         "description": "Gerir e acompanhar os seus leads através do funil de vendas.",
         "addLead": "Adicionar Lead",

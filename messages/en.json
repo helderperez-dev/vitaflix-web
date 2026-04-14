@@ -960,6 +960,8 @@
         "summary_warning": "{count} warnings",
         "summary_error": "{count} errors",
         "importing_leads": "Importing leads...",
+        "processed_of": "{count} of {total} leads processed",
+        "keep_window_open": "Please keep this window open. You can open a new tab to continue working elsewhere.",
         "title": "Leads",
         "description": "Manage and track your leads through the sales pipeline.",
         "addLead": "Add Lead",
