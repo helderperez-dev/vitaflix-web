@@ -40,14 +40,14 @@ export function LeadsFunnelChart({ data, title, description }: LeadsFunnelChartP
                                     <stop offset="100%" stopColor="var(--color-count)" stopOpacity={1} />
                                 </linearGradient>
                             </defs>
-                            <CartesianGrid horizontal={false} stroke="hsl(var(--muted-foreground)/0.1)" strokeDasharray="4 4" />
+                            <CartesianGrid horizontal={false} stroke="var(--muted-foreground)" strokeOpacity={0.1} strokeDasharray="4 4" />
                             <YAxis
                                 dataKey="funnel"
                                 type="category"
                                 tickLine={false}
                                 tickMargin={12}
                                 axisLine={false}
-                                style={{ fontSize: '10px', fontWeight: 600, fill: 'hsl(var(--foreground)/0.85)' }}
+                                style={{ fontSize: '10px', fontWeight: 600, fill: 'var(--foreground)', fillOpacity: 0.85 }}
                                 width={128}
                             />
                             <XAxis dataKey="count" type="number" hide />

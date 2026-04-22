@@ -90,7 +90,7 @@ export function LeadActions({ lead, onEdit, onDelete }: LeadActionsProps) {
                         disabled={isDeleting || isSyncing}
                     >
                         <span className="sr-only">Open menu</span>
-                        <MoreHorizontal className="h-4 w-4 text-muted-foreground/40 group-hover:text-primary transition-colors" />
+                        <MoreHorizontal className="h-4 w-4 text-muted-foreground/60 group-hover:text-primary transition-colors" />
                     </Button>
                 </DropdownMenuTrigger>
                 <DropdownMenuContent

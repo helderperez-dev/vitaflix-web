@@ -12,6 +12,7 @@ import { routing } from '@/i18n/routing';
 import { NuqsAdapter } from 'nuqs/adapters/next/app';
 import { PostHogProvider, PostHogPageView } from "@posthog/next";
 import { MetaPixel } from "@/components/tracking/meta-pixel";
+import { getSystemConfig } from "@/app/actions/settings";
 
 const geistMono = Geist_Mono({
   variable: "--font-geist-mono",
@@ -34,15 +35,25 @@ const poppins = Poppins({
   variable: '--font-poppins',
 });
 
-export const metadata: Metadata = {
-  title: "Vitaflix",
-  description: "Vitaflix - Your nutrition, finally simple",
-  verification: {
-    other: {
-      "facebook-domain-verification": ["qm1fgzdqa4xk9nom1bm4lyqrpoupb7"],
+export async function generateMetadata(): Promise<Metadata> {
+  const platformName = await getSystemConfig('platform_name', 'Vitaflix')
+  const faviconUrl = await getSystemConfig('favicon_url', '/favicon.png')
+  
+  return {
+    title: platformName,
+    description: "Vitaflix - Your nutrition, finally simple",
+    icons: {
+      icon: faviconUrl,
+      shortcut: faviconUrl,
+      apple: faviconUrl,
     },
-  },
-};
+    verification: {
+      other: {
+        "facebook-domain-verification": ["qm1fgzdqa4xk9nom1bm4lyqrpoupb7"],
+      },
+    },
+  };
+}
 
 export function generateStaticParams() {
   return routing.locales.map((locale) => ({ locale }));

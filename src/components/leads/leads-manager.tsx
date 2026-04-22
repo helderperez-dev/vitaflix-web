@@ -245,7 +245,7 @@ export function LeadsManager({ initialFunnels, initialLeads, userProfile }: Lead
                                 <Button
                                     variant="ghost"
                                     size="icon"
-                                    className="size-8 hover:bg-slate-100 dark:hover:bg-white/5 transition-all text-muted-foreground/40 hover:text-primary active:scale-95"
+                                    className="size-8 hover:bg-slate-100 dark:hover:bg-white/5 transition-all text-muted-foreground/60 hover:text-primary active:scale-95"
                                 >
                                     <Filter className="size-4" />
                                 </Button>
@@ -295,7 +295,7 @@ export function LeadsManager({ initialFunnels, initialLeads, userProfile }: Lead
                     <div className="flex items-center gap-2">
                         <Button 
                             variant="outline"
-                            className="h-10 text-xs font-semibold px-4 transition-all shadow-sm border-border/50 hover:bg-muted/30 flex items-center gap-2" 
+                            className="h-10 text-xs font-semibold px-4 transition-all shadow-sm border-border/50 hover:bg-muted/30 flex items-center gap-2 dark:text-white" 
                             onClick={handleExportCsv}
                         >
                             <Download className="size-3.5" />
@@ -303,7 +303,7 @@ export function LeadsManager({ initialFunnels, initialLeads, userProfile }: Lead
                         </Button>
                         <Button 
                             variant="outline"
-                            className="h-10 text-xs font-semibold px-4 transition-all shadow-sm border-border/50 hover:bg-muted/30" 
+                            className="h-10 text-xs font-semibold px-4 transition-all shadow-sm border-border/50 hover:bg-muted/30 dark:text-white" 
                             onClick={() => setIsImportCsvOpen(true)}
                         >
                             {tLeads("importCsv") || "Import CSV"}
