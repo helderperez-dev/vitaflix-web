@@ -90,7 +90,7 @@ export async function updateSystemConfig(key: string, value: unknown) {
         .from('users')
         .select('role')
         .eq('id', user.id)
-        .single()
+        .maybeSingle()
 
     if (userError || userData?.role !== 'admin') {
         console.error(`Permission denied for user ${user.email} attempting to update ${key}`)
