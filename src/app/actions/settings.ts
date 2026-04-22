@@ -11,7 +11,7 @@ export async function getDefaultLocale() {
         .from('system_settings')
         .select('value')
         .eq('key', 'default_locale')
-        .single()
+        .maybeSingle()
 
     if (error || !data) {
         return 'en'
@@ -46,7 +46,7 @@ export async function getSupportedLanguages() {
         .from('system_settings')
         .select('value')
         .eq('key', 'supported_languages')
-        .single()
+        .maybeSingle()
 
     if (error || !data) {
         return ["en", "es", "pt-pt", "pt-br"] // Fallback if not configured
@@ -62,7 +62,7 @@ export async function getSystemConfig(key: string, defaultValue: unknown = null)
         .from('system_settings')
         .select('value')
         .eq('key', key)
-        .single()
+        .maybeSingle()
 
     if (error) {
         console.error(`Error fetching system config for key "${key}":`, error)

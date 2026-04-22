@@ -38,7 +38,7 @@ export function MealsDistributionChart({ data, title, description }: MealsDistri
                             innerRadius={45}
                             outerRadius={65}
                             strokeWidth={4}
-                            stroke="hsl(var(--background))"
+                            stroke="var(--background)"
                             animationBegin={0}
                             animationDuration={1500}
                         >
@@ -55,7 +55,8 @@ export function MealsDistributionChart({ data, title, description }: MealsDistri
                                 fontSize: '9px',
                                 fontWeight: 600,
                                 paddingTop: '10px',
-                                opacity: 1
+                                opacity: 1,
+                                color: 'var(--foreground)'
                             }}
                         />
                     </PieChart>

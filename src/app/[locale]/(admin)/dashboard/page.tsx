@@ -115,7 +115,7 @@ export default async function DashboardPage({ params }: { params: { locale: stri
 
     const mealsData: MealsData[] = [
         { category: t("publicItems"), count: allMeals?.filter(m => m.is_public).length || 0, fill: "oklch(0.61 0.13 168)" },
-        { category: t("draftItems"), count: allMeals?.filter(m => !m.is_public).length || 0, fill: "oklch(0.24 0.05 240)" }
+        { category: t("draftItems"), count: allMeals?.filter(m => !m.is_public).length || 0, fill: "oklch(0.45 0.03 240)" }
     ]
 
     return (
@@ -169,7 +169,7 @@ export default async function DashboardPage({ params }: { params: { locale: stri
                             </CardTitle>
                         </CardHeader>
                         <CardContent className="p-4 pt-6">
-                            <GrowthChart id="lead-volume" data={leadGrowthData} color="oklch(0.24 0.05 240)" locale={locale} />
+                            <GrowthChart id="lead-volume" data={leadGrowthData} color="oklch(0.45 0.03 240)" locale={locale} />
                         </CardContent>
                     </Card>
                 </div>
