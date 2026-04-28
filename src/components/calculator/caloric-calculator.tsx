@@ -393,20 +393,37 @@ export function CaloricCalculator() {
                                     </span>
                                 </div>
                                 <span className="text-xl font-bold text-muted-foreground uppercase tracking-widest">{t("Results.unit")}</span>
+                                
+                                {(results.isLoss || results.isGain) && (
+                                    <div className="mt-6 flex flex-wrap justify-center gap-3">
+                                        <div className="flex flex-col items-center rounded-2xl bg-primary/5 px-6 py-3 border border-primary/10">
+                                            <span className="text-[10px] font-black uppercase tracking-[0.2em] text-muted-foreground/60 mb-1">{t("Results.weekly")}</span>
+                                            <span className="text-xl font-black text-primary">
+                                                {results.isLoss ? "-" : "+"}{parseFloat(results.weeklyChange).toFixed(3)} <span className="text-xs">kg</span>
+                                            </span>
+                                        </div>
+                                        <div className="flex flex-col items-center rounded-2xl bg-primary/5 px-6 py-3 border border-primary/10">
+                                            <span className="text-[10px] font-black uppercase tracking-[0.2em] text-muted-foreground/60 mb-1">{t("Results.monthly")}</span>
+                                            <span className="text-xl font-black text-primary">
+                                                {results.isLoss ? "-" : "+"}{parseFloat(results.monthlyChange).toFixed(3)} <span className="text-xs">kg</span>
+                                            </span>
+                                        </div>
+                                    </div>
+                                )}
                             </div>
                             
-                            <p className="mt-10 max-w-xl text-lg font-semibold leading-relaxed text-muted-foreground/90 md:text-xl">
+                            <p className="mt-10 max-w-xl text-lg font-medium leading-relaxed text-secondary/70 md:text-xl">
                                 {results.isLoss ? (
                                     <>{t.rich("Results.loss", { 
                                         weekly: results.weeklyChange, 
                                         monthly: results.monthlyChange,
-                                        bold: (chunks) => <strong className="text-primary font-black">{chunks}</strong>
+                                        bold: (chunks) => <strong className="text-secondary font-bold">{chunks}</strong>
                                     })}</>
                                 ) : results.isGain ? (
                                     <>{t.rich("Results.gain", { 
                                         weekly: results.weeklyChange, 
                                         monthly: results.monthlyChange,
-                                        bold: (chunks) => <strong className="text-primary font-black">{chunks}</strong>
+                                        bold: (chunks) => <strong className="text-secondary font-bold">{chunks}</strong>
                                     })}</>
                                 ) : (
                                     <>{t("Results.maintenance")}</>
@@ -414,24 +431,29 @@ export function CaloricCalculator() {
                             </p>
 
                             {/* VitaFlix Premium CTA Card */}
-                            <motion.div 
+                             <motion.div 
                                 initial={{ opacity: 0, y: 20 }}
                                 animate={{ opacity: 1, y: 0 }}
                                 transition={{ delay: 0.6 }}
                                 className="mt-16 w-full max-w-2xl overflow-hidden rounded-[2rem] bg-gradient-to-br from-primary via-primary to-[#0e8263] p-1 shadow-2xl"
                             >
-                                <div className="relative h-full w-full rounded-[1.8rem] bg-background/5 p-8 py-12 backdrop-blur-xl md:p-12">
-                                    <div className="flex flex-col items-center gap-10 md:flex-row md:text-left">
+                                <div className="relative h-full w-full rounded-[1.8rem] bg-background/5 px-10 py-12 backdrop-blur-xl md:p-10">
+                                    <div className="flex flex-col items-center gap-6 md:flex-row md:gap-8 md:text-left">
                                         <div className="flex h-16 w-16 shrink-0 items-center justify-center rounded-2xl bg-white/20 text-white shadow-inner backdrop-blur-md">
                                             <ChefHat className="h-8 w-8" />
                                         </div>
-                                        <div className="flex-1 space-y-6">
-                                            <h4 className="text-xl font-bold text-white leading-tight md:text-2xl">
+                                        <div className="space-y-6">
+                                            <h4 className="text-lg font-semibold text-white md:text-2xl leading-relaxed tracking-tight">
                                                 {t("CTA.text")}{" "}
-                                                <span className="inline-flex items-center gap-1.5 font-black text-white decoration-white/30 underline-offset-4 hover:underline">
+                                                <a 
+                                                    href="https://vitaflix.app" 
+                                                    target="_blank" 
+                                                    rel="noopener noreferrer"
+                                                    className="inline-flex items-center gap-1.5 font-black text-white decoration-white/30 underline-offset-4 hover:underline transition-all active:scale-95"
+                                                >
                                                     <Sparkles className="h-5 w-5 animate-pulse" />
                                                     {t("CTA.brand")}
-                                                </span>
+                                                </a>
                                             </h4>
                                             <Button 
                                                 asChild 

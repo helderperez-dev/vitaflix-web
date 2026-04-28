@@ -1043,6 +1043,8 @@
         "Results": {
             "title": "Tu objetivo calórico diário:",
             "unit": "kcal/día",
+            "weekly": "Por Semana",
+            "monthly": "Al Mes",
             "loss": "Según tu perfil, deberías perder aproximadamente <bold>{weekly}kg por semana</bold> (<bold>{monthly}kg al mes</bold>).",
             "gain": "Según tu perfil, deberías ganar aproximadamente <bold>{weekly}kg por semana</bold> (<bold>{monthly}kg al mes</bold>).",
             "maintenance": "Este es tu nivel de mantenimiento. Mantendrás tu peso actual.",

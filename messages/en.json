@@ -1058,6 +1058,8 @@
         "Results": {
             "title": "Your daily calorie target:",
             "unit": "kcal/day",
+            "weekly": "Per Week",
+            "monthly": "Per Month",
             "loss": "Based on your profile, you should lose approximately <bold>{weekly}kg per week</bold> (<bold>{monthly}kg per month</bold>).",
             "gain": "Based on your profile, you should gain approximately <bold>{weekly}kg per week</bold> (<bold>{monthly}kg per month</bold>).",
             "maintenance": "This is your maintenance level. You will keep your current weight.",
