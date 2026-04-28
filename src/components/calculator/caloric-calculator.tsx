@@ -331,7 +331,7 @@ export function CaloricCalculator() {
                                         <div className="relative">
                                             <User className="absolute left-3.5 top-3.5 h-4 w-4 text-muted-foreground" />
                                             <Input 
-                                                placeholder="John Doe" 
+                                                placeholder={t("Form.placeholder_name")} 
                                                 className="h-12 pl-11 bg-muted/5 font-medium transition-all focus:bg-background"
                                                 value={name}
                                                 onChange={(e) => setName(e.target.value)}
@@ -345,7 +345,7 @@ export function CaloricCalculator() {
                                             <Mail className="absolute left-3.5 top-3.5 h-4 w-4 text-muted-foreground" />
                                             <Input 
                                                 type="email" 
-                                                placeholder="john@example.com" 
+                                                placeholder={t("Form.placeholder_email")} 
                                                 className="h-12 pl-11 bg-muted/5 font-medium transition-all focus:bg-background"
                                                 value={email}
                                                 onChange={(e) => setEmail(e.target.value)}
