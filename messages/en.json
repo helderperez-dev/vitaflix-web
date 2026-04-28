@@ -1008,5 +1008,76 @@
         "importSuccess": "Leads successfully imported/updated!",
         "importError": "Error importing some leads.",
         "exportCsv": "Export CSV"
+    },
+    "Calculator": {
+        "Meta": {
+            "title": "Caloric Calculator | VitaFlix",
+            "description": "Calculate your daily calorie needs and weight change estimates with our advanced tool."
+        },
+        "Page": {
+            "title": "Caloric",
+            "titleHighlight": "Calculator",
+            "subtitle": "Discover exactly how many calories you need to consume based on your physical profile, activity level, and goals."
+        },
+        "Sections": {
+            "personal": "Personal Details",
+            "personalSub": "Basic info for BMR calculation.",
+            "activity": "Activity Level",
+            "activityTooltip": "Do not consider walking here; steps are tracked in the next section.",
+            "steps": "Daily Steps",
+            "goal": "Your Goal"
+        },
+        "Inputs": {
+            "male": "Male",
+            "female": "Female",
+            "weight": "Weight (kg)",
+            "height": "Height (cm)",
+            "age": "Age"
+        },
+        "ActivityLevels": {
+            "sedentary": { "title": "Sedentary", "desc": "Office job, little to no exercise" },
+            "lightly": { "title": "Lightly Active", "desc": "Light exercise 1-3 days/week" },
+            "moderately": { "title": "Moderately Active", "desc": "Moderate exercise 3-5 days/week" },
+            "very": { "title": "Very Active", "desc": "Hard exercise 6-7 days/week" },
+            "extra": { "title": "Extra Active", "desc": "Very hard exercise, physical job" }
+        },
+        "StepOptions": {
+            "low": { "title": "0 - 5k", "desc": "Low activity" },
+            "moderate": { "title": "5k - 8k", "desc": "Moderate" },
+            "active": { "title": "8k - 12k", "desc": "Active" },
+            "high": { "title": "12k - 15k", "desc": "Highly Active" },
+            "athlete": { "title": "15k+", "desc": "Athlete level" }
+        },
+        "Goals": {
+            "lose_sustainable": { "title": "Lose (Sustainable)", "desc": "Slow & steady progress" },
+            "lose_balanced": { "title": "Lose (Balanced)", "desc": "Standard weight loss" },
+            "lose_faster": { "title": "Lose (Faster)", "desc": "Aggressive weight loss" },
+            "maintenance": { "title": "Maintain Weight", "desc": "Keep current weight" },
+            "gain_mass": { "title": "Gain Mass", "desc": "Build muscle surplus" }
+        },
+        "Results": {
+            "title": "Your daily calorie target:",
+            "unit": "kcal/day",
+            "loss": "Based on your profile, you should lose approximately <bold>{weekly}kg per week</bold> (<bold>{monthly}kg per month</bold>).",
+            "gain": "Based on your profile, you should gain approximately <bold>{weekly}kg per week</bold> (<bold>{monthly}kg per month</bold>).",
+            "maintenance": "This is your maintenance level. You will keep your current weight.",
+            "empty": "Fill in your physical data to see results."
+        },
+        "Form": {
+            "title": "See your results now",
+            "description": "Enter your details below to unlock your personalized caloric target immediately.",
+            "name": "Full Name",
+            "email": "Email Address",
+            "button": "See My Results",
+            "loading": "Loading...",
+            "success": "Results unlocked!"
+        },
+        "CTA": {
+            "text": "Need help hitting this calorie target with delicious recipes that make your life easier? Discover the full potential of",
+            "brand": "VitaFlix"
+        },
+        "Footer": {
+            "disclaimer": "Disclaimer: This tool is for informational purposes only. Consult a healthcare professional before making significant changes to your diet or exercise routine."
+        }
     }
 }

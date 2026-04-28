@@ -993,5 +993,76 @@
         "allFunnels": "Todos los Embudos",
         "pipelineFilter": "Filtro de Embudo",
         "activeFunnels": "Embudos Activos"
+    },
+    "Calculator": {
+        "Meta": {
+            "title": "Calculadora de Calorias | VitaFlix",
+            "description": "Calcula tus necesidades calóricas diarias y estimativas de cambio de peso con nuestra herramienta avanzada."
+        },
+        "Page": {
+            "title": "Calculadora",
+            "titleHighlight": "de Calorías",
+            "subtitle": "Descubre exactamente cuántas calorías necesitas consumir según tu perfil físico, nivel de actividad y objetivos."
+        },
+        "Sections": {
+            "personal": "Datos Personales",
+            "personalSub": "Información básica para el cálculo de la TMB.",
+            "activity": "Nivel de Actividad",
+            "activityTooltip": "No consideres caminar aquí; los pasos se registran en la siguiente sección.",
+            "steps": "Pasos Diarios",
+            "goal": "Tu Objetivo"
+        },
+        "Inputs": {
+            "male": "Masculino",
+            "female": "Femenino",
+            "weight": "Peso (kg)",
+            "height": "Altura (cm)",
+            "age": "Edad"
+        },
+        "ActivityLevels": {
+            "sedentary": { "title": "Sedentario", "desc": "Trabajo de oficina, poco o ningún ejercicio" },
+            "lightly": { "title": "Ligeramente Activo", "desc": "Ejercicio ligero 1-3 días/semana" },
+            "moderately": { "title": "Moderadamente Activo", "desc": "Ejercicio moderado 3-5 dias/semana" },
+            "very": { "title": "Muy Activo", "desc": "Ejercicio intenso 6-7 días/semana" },
+            "extra": { "title": "Extra Activo", "desc": "Ejercicio muy intenso, trabajo físico" }
+        },
+        "StepOptions": {
+            "low": { "title": "0 - 5k", "desc": "Actividad baja" },
+            "moderate": { "title": "5k - 8k", "desc": "Moderado" },
+            "active": { "title": "8k - 12k", "desc": "Activo" },
+            "high": { "title": "12k - 15k", "desc": "Muy Activo" },
+            "athlete": { "title": "15k+", "desc": "Nivel atleta" }
+        },
+        "Goals": {
+            "lose_sustainable": { "title": "Perder (Sostenible)", "desc": "Progreso lento y constante" },
+            "lose_balanced": { "title": "Perder (Equilibrado)", "desc": "Pérdida de peso estándar" },
+            "lose_faster": { "title": "Perder (Rápido)", "desc": "Pérdida de peso agresiva" },
+            "maintenance": { "title": "Mantener Peso", "desc": "Mantener el peso actual" },
+            "gain_mass": { "title": "Ganar Masa", "desc": "Construir excedente muscular" }
+        },
+        "Results": {
+            "title": "Tu objetivo calórico diário:",
+            "unit": "kcal/día",
+            "loss": "Según tu perfil, deberías perder aproximadamente <bold>{weekly}kg por semana</bold> (<bold>{monthly}kg al mes</bold>).",
+            "gain": "Según tu perfil, deberías ganar aproximadamente <bold>{weekly}kg por semana</bold> (<bold>{monthly}kg al mes</bold>).",
+            "maintenance": "Este es tu nivel de mantenimiento. Mantendrás tu peso actual.",
+            "empty": "Completa tus datos físicos para ver los resultados."
+        },
+        "Form": {
+            "title": "Ver mis resultados ahora",
+            "description": "Introduce tus datos a continuación para desbloquear tu plan calórico personalizado ahora mismo.",
+            "name": "Nombre Completo",
+            "email": "Correo Electrónico",
+            "button": "Ver mis Resultados",
+            "loading": "Cargando...",
+            "success": "¡Resultados desbloqueados!"
+        },
+        "CTA": {
+            "text": "¿Necesitas ayuda para alcanzar este objetivo calórico con recetas deliciosas que te facilitan la vida? Descubre todo el potencial de",
+            "brand": "VitaFlix"
+        },
+        "Footer": {
+            "disclaimer": "Aviso: Esta herramienta tiene fines meramente informativos. Consulte a un profesional de la salud antes de realizar cambios significativos en su dieta o rutina de ejercicios."
+        }
     }
 }
