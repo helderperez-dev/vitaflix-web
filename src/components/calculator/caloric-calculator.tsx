@@ -9,6 +9,7 @@ import { Button } from "@/components/ui/button"
 import { Card, CardContent, CardHeader, CardTitle, CardDescription } from "@/components/ui/card"
 import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from "@/components/ui/tooltip"
 import { Separator } from "@/components/ui/separator"
+import { cn } from "@/lib/utils"
 import { 
     Info, 
     Loader2, 
@@ -195,7 +196,10 @@ export function CaloricCalculator() {
                             <Button 
                                 type="button"
                                 variant={gender === "male" ? "default" : "outline"}
-                                className="h-12 text-base font-semibold"
+                                className={cn(
+                                    "h-12 text-base font-bold transition-all",
+                                    gender !== "male" && "border-2 border-muted-foreground/10 text-muted-foreground hover:border-primary/30"
+                                )}
                                 onClick={() => setGender("male")}
                             >
                                 {t("Inputs.male")}
@@ -203,7 +207,10 @@ export function CaloricCalculator() {
                             <Button 
                                 type="button"
                                 variant={gender === "female" ? "default" : "outline"}
-                                className="h-12 text-base font-semibold"
+                                className={cn(
+                                    "h-12 text-base font-bold transition-all",
+                                    gender !== "female" && "border-2 border-muted-foreground/10 text-muted-foreground hover:border-primary/30"
+                                )}
                                 onClick={() => setGender("female")}
                             >
                                 {t("Inputs.female")}
@@ -217,7 +224,7 @@ export function CaloricCalculator() {
                                     type="number" 
                                     value={weight} 
                                     onChange={(e) => setWeight(e.target.value)}
-                                    className="h-11 bg-muted/5 font-medium"
+                                    className="h-11 bg-muted/15 border-transparent text-foreground font-bold focus:bg-background focus:border-primary/30 transition-all"
                                 />
                             </div>
                             <div className="space-y-2">
@@ -226,7 +233,7 @@ export function CaloricCalculator() {
                                     type="number" 
                                     value={height} 
                                     onChange={(e) => setHeight(e.target.value)}
-                                    className="h-11 bg-muted/5 font-medium"
+                                    className="h-11 bg-muted/15 border-transparent text-foreground font-bold focus:bg-background focus:border-primary/30 transition-all"
                                 />
                             </div>
                             <div className="space-y-2">
@@ -235,7 +242,7 @@ export function CaloricCalculator() {
                                     type="number" 
                                     value={age} 
                                     onChange={(e) => setAge(e.target.value)}
-                                    className="h-11 bg-muted/5 font-medium"
+                                    className="h-11 bg-muted/15 border-transparent text-foreground font-bold focus:bg-background focus:border-primary/30 transition-all"
                                 />
                             </div>
                         </div>
