@@ -1009,5 +1009,79 @@
         "importSuccess": "Leads importados/atualizados com sucesso!",
         "importError": "Erro ao importar alguns leads.",
         "exportCsv": "Exportar CSV"
+    },
+    "Calculator": {
+        "Meta": {
+            "title": "Calculadora de Calorias | VitaFlix",
+            "description": "Calcula as tuas necessidades calóricas diárias e estimativas de mudança de peso com a nossa ferramenta avançada."
+        },
+        "Page": {
+            "title": "Calculadora",
+            "titleHighlight": "de Calorias",
+            "subtitle": "Descobre exatamente quantas calorias precisas de consumir com base no teu perfil físico, nível de atividade e objetivos."
+        },
+        "Sections": {
+            "personal": "Dados Pessoais",
+            "personalSub": "Informações básicas para o cálculo da TMB.",
+            "activity": "Nível de Atividade",
+            "activityTooltip": "Não consideres caminhar aqui; os passos são registados na secção seguinte.",
+            "steps": "Passos Diários",
+            "goal": "O Teu Objetivo"
+        },
+        "Inputs": {
+            "male": "Masculino",
+            "female": "Feminino",
+            "weight": "Peso (kg)",
+            "height": "Altura (cm)",
+            "age": "Idade"
+        },
+        "ActivityLevels": {
+            "sedentary": { "title": "Sedentário", "desc": "Trabalho de escritório, pouco ou nenhum exercício" },
+            "lightly": { "title": "Levemente Ativo", "desc": "Exercício leve 1-3 dias/semana" },
+            "moderately": { "title": "Moderadamente Ativo", "desc": "Exercício moderado 3-5 dias/semana" },
+            "very": { "title": "Muito Ativo", "desc": "Exercício intenso 6-7 dias/semana" },
+            "extra": { "title": "Extremamente Ativo", "desc": "Exercício muito intenso, trabalho físico" }
+        },
+        "StepOptions": {
+            "low": { "title": "0 - 5k", "desc": "Atividade baixa" },
+            "moderate": { "title": "5k - 8k", "desc": "Moderado" },
+            "active": { "title": "8k - 12k", "desc": "Ativo" },
+            "high": { "title": "12k - 15k", "desc": "Muito Ativo" },
+            "athlete": { "title": "15k+", "desc": "Nível atleta" }
+        },
+        "Goals": {
+            "lose_sustainable": { "title": "Perder (Sustentável)", "desc": "Progresso lento e constante" },
+            "lose_balanced": { "title": "Perder (Equilibrado)", "desc": "Perda de peso padrão" },
+            "lose_faster": { "title": "Perder (Rápido)", "desc": "Perda de peso agressiva" },
+            "maintenance": { "title": "Manter Peso", "desc": "Manter o peso atual" },
+            "gain_mass": { "title": "Ganhar Massa", "desc": "Construir excedente muscular" }
+        },
+        "Results": {
+            "title": "O teu objetivo calórico diário:",
+            "unit": "kcal/dia",
+            "weekly": "Por Semana",
+            "monthly": "Por Mês",
+            "loss": "Com base no teu perfil, deverás perder aproximadamente <bold>{weekly}kg por semana</bold> (<bold>{monthly}kg por mês</bold>).",
+            "gain": "Com base no teu perfil, deverás ganhar aproximadamente <bold>{weekly}kg por semana</bold> (<bold>{monthly}kg por mês</bold>).",
+            "maintenance": "Este é o teu nível de manutenção. Irás manter o teu peso atual.",
+            "empty": "Preenche os teus dados físicos para veres os resultados."
+        },
+        "Form": {
+            "title": "Ver os meus resultados agora",
+            "description": "Introduz os teus dados abaixo para desbloqueares o teu plano calórico personalizado agora mesmo.",
+            "name": "Nome Completo",
+            "email": "Endereço de E-mail",
+            "button": "Ver Resultados Agora",
+            "loading": "A carregar...",
+            "success": "Resultados desbloqueados!"
+        },
+        "CTA": {
+            "text": "Precisas de ajuda para atingir este objetivo calórico com receitas deliciosas que facilitam a tua vida? Descobre todo o potencial do",
+            "brand": "VitaFlix",
+            "button": "Começar com VitaFlix"
+        },
+        "Footer": {
+            "disclaimer": "Aviso: Esta ferramenta tem fins meramente informativos. Consulte um profissional de saúde antes de fazer alterações significativas na sua dieta ou rotina de exercício."
+        }
     }
 }
