@@ -1065,7 +1065,8 @@
         },
         "CTA": {
             "text": "Precisa de ajuda para atingir este objetivo calórico com receitas deliciosas que facilitam a sua vida? Descubra todo o potencial do",
-            "brand": "VitaFlix"
+            "brand": "VitaFlix",
+            "button": "Começar com VitaFlix"
         },
         "Footer": {
             "disclaimer": "Aviso: Esta ferramenta tem fins meramente informativos. Consulte um profissional de salud antes de fazer alterações significativas em sua dieta ou rotina de exercícios."

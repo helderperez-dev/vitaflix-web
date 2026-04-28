@@ -439,13 +439,13 @@ export function CaloricCalculator() {
                                 transition={{ delay: 0.6 }}
                                 className="mt-16 w-full max-w-2xl overflow-hidden rounded-[2rem] bg-gradient-to-br from-primary via-primary to-[#0e8263] p-1 shadow-2xl"
                             >
-                                <div className="relative h-full w-full rounded-[1.8rem] bg-background/5 px-10 py-12 backdrop-blur-xl md:p-10">
-                                    <div className="flex flex-col items-center gap-6 md:flex-row md:gap-8 md:text-left">
+                                <div className="relative h-full w-full rounded-[1.8rem] bg-background/5 px-4 py-10 backdrop-blur-xl md:p-10">
+                                    <div className="flex flex-col items-center gap-6 text-center md:flex-row md:gap-8 md:text-left">
                                         <div className="flex h-16 w-16 shrink-0 items-center justify-center rounded-2xl bg-white/20 text-white shadow-inner backdrop-blur-md">
                                             <ChefHat className="h-8 w-8" />
                                         </div>
-                                        <div className="space-y-6">
-                                            <h4 className="text-lg font-semibold text-white md:text-2xl leading-relaxed tracking-tight">
+                                        <div className="space-y-6 w-full">
+                                            <h4 className="mx-auto max-w-[260px] text-sm font-semibold text-white md:max-w-none md:text-2xl leading-relaxed tracking-tight break-words">
                                                 {t("CTA.text")}{" "}
                                                 <a 
                                                     href="https://vitaflix.app" 
@@ -460,15 +460,15 @@ export function CaloricCalculator() {
                                             <Button 
                                                 asChild 
                                                 size="lg" 
-                                                className="group h-14 w-full bg-white px-8 text-lg font-semibold text-primary shadow-xl hover:bg-white/90 active:scale-95 md:w-auto"
+                                                className="group mx-auto h-14 w-full max-w-[240px] bg-white px-8 text-[15px] font-bold text-primary shadow-xl hover:bg-white/90 active:scale-95 md:max-w-auto md:w-auto"
                                             >
                                                 <a 
                                                     href="https://vitaflix.app" 
                                                     target="_blank" 
                                                     rel="noopener noreferrer"
                                                 >
-                                                    Get Started with VitaFlix
-                                                    <ArrowRight className="ml-2 h-5 w-5 transition-transform group-hover:translate-x-1" />
+                                                    {t("CTA.button")}
+                                                    <ArrowRight className="ml-2 h-4 w-4 transition-transform group-hover:translate-x-1" />
                                                 </a>
                                             </Button>
                                         </div>

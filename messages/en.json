@@ -1076,7 +1076,8 @@
         },
         "CTA": {
             "text": "Need help hitting this calorie target with delicious recipes that make your life easier? Discover the full potential of",
-            "brand": "VitaFlix"
+            "brand": "VitaFlix",
+            "button": "Get Started with VitaFlix"
         },
         "Footer": {
             "disclaimer": "Disclaimer: This tool is for informational purposes only. Consult a healthcare professional before making significant changes to your diet or exercise routine."
