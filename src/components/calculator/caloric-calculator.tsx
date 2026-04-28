@@ -193,56 +193,58 @@ export function CaloricCalculator() {
 
                     <div className="space-y-6">
                         <div className="grid grid-cols-2 gap-4">
-                            <Button 
+                            <button 
                                 type="button"
-                                variant={gender === "male" ? "default" : "outline"}
                                 className={cn(
-                                    "h-12 text-base font-bold transition-all",
-                                    gender !== "male" && "border-2 border-muted-foreground/10 text-muted-foreground hover:border-primary/30"
+                                    "h-12 rounded-xl text-base font-semibold transition-all",
+                                    gender === "male" 
+                                        ? "bg-primary border-2 border-primary text-white shadow-xl shadow-primary/20" 
+                                        : "bg-white border border-slate-200 text-slate-600 hover:border-primary/30"
                                 )}
                                 onClick={() => setGender("male")}
                             >
                                 {t("Inputs.male")}
-                            </Button>
-                            <Button 
+                            </button>
+                            <button 
                                 type="button"
-                                variant={gender === "female" ? "default" : "outline"}
                                 className={cn(
-                                    "h-12 text-base font-bold transition-all",
-                                    gender !== "female" && "border-2 border-muted-foreground/10 text-muted-foreground hover:border-primary/30"
+                                    "h-12 rounded-xl text-base font-semibold transition-all",
+                                    gender === "female" 
+                                        ? "bg-primary border-2 border-primary text-white shadow-xl shadow-primary/20" 
+                                        : "bg-white border border-slate-200 text-slate-600 hover:border-primary/30"
                                 )}
                                 onClick={() => setGender("female")}
                             >
                                 {t("Inputs.female")}
-                            </Button>
+                            </button>
                         </div>
 
                         <div className="grid grid-cols-3 gap-4">
                             <div className="space-y-2">
-                                <Label className="text-[10px] font-bold uppercase tracking-wider text-muted-foreground/70">{t("Inputs.weight")}</Label>
+                                <Label className="text-[10px] font-bold uppercase tracking-wider text-secondary/50">{t("Inputs.weight")}</Label>
                                 <Input 
                                     type="number" 
                                     value={weight} 
                                     onChange={(e) => setWeight(e.target.value)}
-                                    className="h-11 bg-muted/15 border-transparent text-foreground font-bold focus:bg-background focus:border-primary/30 transition-all"
+                                    className="h-11 border border-slate-200 bg-white text-secondary font-semibold focus:border-primary focus:ring-0 transition-all shadow-sm"
                                 />
                             </div>
                             <div className="space-y-2">
-                                <Label className="text-[10px] font-bold uppercase tracking-wider text-muted-foreground/70">{t("Inputs.height")}</Label>
+                                <Label className="text-[10px] font-bold uppercase tracking-wider text-secondary/50">{t("Inputs.height")}</Label>
                                 <Input 
                                     type="number" 
                                     value={height} 
                                     onChange={(e) => setHeight(e.target.value)}
-                                    className="h-11 bg-muted/15 border-transparent text-foreground font-bold focus:bg-background focus:border-primary/30 transition-all"
+                                    className="h-11 border border-slate-200 bg-white text-secondary font-semibold focus:border-primary focus:ring-0 transition-all shadow-sm"
                                 />
                             </div>
                             <div className="space-y-2">
-                                <Label className="text-[10px] font-bold uppercase tracking-wider text-muted-foreground/70">{t("Inputs.age")}</Label>
+                                <Label className="text-[10px] font-bold uppercase tracking-wider text-secondary/50">{t("Inputs.age")}</Label>
                                 <Input 
                                     type="number" 
                                     value={age} 
                                     onChange={(e) => setAge(e.target.value)}
-                                    className="h-11 bg-muted/15 border-transparent text-foreground font-bold focus:bg-background focus:border-primary/30 transition-all"
+                                    className="h-11 border border-slate-200 bg-white text-secondary font-semibold focus:border-primary focus:ring-0 transition-all shadow-sm"
                                 />
                             </div>
                         </div>
