@@ -395,7 +395,7 @@ export function CaloricCalculator() {
                                 <span className="text-xl font-bold text-muted-foreground uppercase tracking-widest">{t("Results.unit")}</span>
                                 
                                 {(results.isLoss || results.isGain) && (
-                                    <div className="mt-6 flex flex-wrap justify-center gap-3">
+                                    <div className="mt-6 flex md:hidden flex-wrap justify-center gap-3">
                                         <div className="flex flex-col items-center rounded-2xl bg-primary/5 px-6 py-3 border border-primary/10">
                                             <span className="text-[10px] font-black uppercase tracking-[0.2em] text-muted-foreground/60 mb-1">{t("Results.weekly")}</span>
                                             <span className="text-xl font-black text-primary">
@@ -412,7 +412,7 @@ export function CaloricCalculator() {
                                 )}
                             </div>
                             
-                            <p className="mt-10 max-w-xl text-lg font-medium leading-relaxed text-secondary/70 md:text-xl">
+                            <p className="hidden md:block mt-10 max-w-xl text-lg font-medium leading-relaxed text-secondary/70 md:text-xl">
                                 {results.isLoss ? (
                                     <>{t.rich("Results.loss", { 
                                         weekly: results.weeklyChange, 
