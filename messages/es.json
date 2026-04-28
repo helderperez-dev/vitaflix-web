@@ -1055,6 +1055,8 @@
             "description": "Introduce tus datos a continuación para desbloquear tu plan calórico personalizado ahora mismo.",
             "name": "Nombre Completo",
             "email": "Correo Electrónico",
+            "placeholder_name": "João Silva",
+            "placeholder_email": "joao.silva@gmail.com",
             "button": "Ver mis Resultados",
             "loading": "Cargando...",
             "success": "¡Resultados desbloqueados!"

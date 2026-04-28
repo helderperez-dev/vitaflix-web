@@ -1070,6 +1070,8 @@
             "description": "Enter your details below to unlock your personalized caloric target immediately.",
             "name": "Full Name",
             "email": "Email Address",
+            "placeholder_name": "João Silva",
+            "placeholder_email": "joao.silva@gmail.com",
             "button": "See My Results",
             "loading": "Loading...",
             "success": "Results unlocked!"
