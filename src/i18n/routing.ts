@@ -6,7 +6,7 @@ export const routing = defineRouting({
     locales: ['en', 'es', 'pt-pt', 'pt-br'],
 
     // Used when no locale matches
-    defaultLocale: 'en',
+    defaultLocale: 'pt-pt',
 
     // Enable locale detection from cookies and Accept-Language header
     localeDetection: true

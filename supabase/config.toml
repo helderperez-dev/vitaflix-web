@@ -1,0 +1,25 @@
+project_id = "vitaflix-web"
+
+[auth.email.template.confirmation]
+subject = "Confirme o seu registo na Vitaflix"
+content_path = "./supabase/templates/auth/confirmation.html"
+
+[auth.email.template.invite]
+subject = "O seu convite para aceder à Vitaflix"
+content_path = "./supabase/templates/auth/invite.html"
+
+[auth.email.template.magic_link]
+subject = "O seu link de acesso da Vitaflix"
+content_path = "./supabase/templates/auth/magic_link.html"
+
+[auth.email.template.email_change]
+subject = "Confirme a alteração do seu e-mail"
+content_path = "./supabase/templates/auth/email_change.html"
+
+[auth.email.template.recovery]
+subject = "Redefina a sua palavra-passe na Vitaflix"
+content_path = "./supabase/templates/auth/recovery.html"
+
+[auth.email.template.reauthentication]
+subject = "Confirme a sua identidade na Vitaflix"
+content_path = "./supabase/templates/auth/reauthentication.html"

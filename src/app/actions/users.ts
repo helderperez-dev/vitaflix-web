@@ -24,7 +24,7 @@ export async function upsertUser(data: UserProfile) {
             .select('value')
             .eq('key', 'default_locale')
             .single()
-        finalLocale = (settingData?.value as any) || 'en'
+        finalLocale = (settingData?.value as any) || 'pt-pt'
     }
 
     const { error } = await supabase

@@ -60,7 +60,7 @@ export function UserTableWrapper({ initialUsers, userProfile }: UserTableWrapper
             recommendedKcalIntake: u.recommended_kcal_intake,
             extraDataComplete: u.extra_data_complete || false,
             role: u.role || 'user',
-            locale: u.locale || 'en',
+            locale: u.locale || 'pt-pt',
             avatarUrl: u.avatar_url,
             countryId: u.country_id || null,
             createdAt: u.created_at,

@@ -43,7 +43,7 @@ export async function loginAction(data: { email: string; password: string; local
             .select('value')
             .eq('key', 'default_locale')
             .single()
-        targetLocale = settingData?.value || 'en'
+        targetLocale = settingData?.value || 'pt-pt'
     }
 
     // Redirect to dashboard on success, maintaining the user's persistent locale

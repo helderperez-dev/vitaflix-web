@@ -1,0 +1,139 @@
+{
+  "_meta": {
+    "template_version": 0,
+    "description": "Vitaflix billing catalog for Stripe CLI fixtures. Apply with: stripe fixtures stripe/fixtures/billing-catalog.json"
+  },
+  "fixtures": [
+    {
+      "name": "product_vitaflix_monthly",
+      "path": "/v1/products",
+      "method": "post",
+      "params": {
+        "name": "Vitaflix Mensal",
+        "description": "Vitaflix monthly subscription",
+        "metadata": {
+          "catalog_key": "vitaflix_monthly",
+          "app": "vitaflix",
+          "tier": "premium"
+        }
+      }
+    },
+    {
+      "name": "price_vitaflix_monthly_eur",
+      "path": "/v1/prices",
+      "method": "post",
+      "params": {
+        "product": "${product_vitaflix_monthly:id}",
+        "currency": "eur",
+        "unit_amount": 1299,
+        "lookup_key": "vitaflix_monthly_eur",
+        "recurring": {
+          "interval": "month",
+          "interval_count": 1
+        },
+        "metadata": {
+          "catalog_key": "vitaflix_monthly_eur",
+          "billing_family": "subscription"
+        }
+      }
+    },
+    {
+      "name": "product_vitaflix_quarterly",
+      "path": "/v1/products",
+      "method": "post",
+      "params": {
+        "name": "Vitaflix Trimestral",
+        "description": "Acesso ao Vitaflix: Receitas e organizacao da tua semana alimentar",
+        "metadata": {
+          "catalog_key": "vitaflix_quarterly",
+          "app": "vitaflix",
+          "tier": "premium"
+        }
+      }
+    },
+    {
+      "name": "price_vitaflix_quarterly_eur",
+      "path": "/v1/prices",
+      "method": "post",
+      "params": {
+        "product": "${product_vitaflix_quarterly:id}",
+        "currency": "eur",
+        "unit_amount": 2999,
+        "lookup_key": "vitaflix_quarterly_eur",
+        "recurring": {
+          "interval": "month",
+          "interval_count": 3
+        },
+        "metadata": {
+          "catalog_key": "vitaflix_quarterly_eur",
+          "billing_family": "subscription"
+        }
+      }
+    },
+    {
+      "name": "product_vitaflix_annual",
+      "path": "/v1/products",
+      "method": "post",
+      "params": {
+        "name": "Vitaflix Anual",
+        "description": "Vitaflix annual subscription",
+        "metadata": {
+          "catalog_key": "vitaflix_annual",
+          "app": "vitaflix",
+          "tier": "premium"
+        }
+      }
+    },
+    {
+      "name": "price_vitaflix_annual_eur",
+      "path": "/v1/prices",
+      "method": "post",
+      "params": {
+        "product": "${product_vitaflix_annual:id}",
+        "currency": "eur",
+        "unit_amount": 8999,
+        "lookup_key": "vitaflix_annual_eur",
+        "recurring": {
+          "interval": "year",
+          "interval_count": 1
+        },
+        "metadata": {
+          "catalog_key": "vitaflix_annual_eur",
+          "billing_family": "subscription"
+        }
+      }
+    },
+    {
+      "name": "coupon_vita_30_eur",
+      "path": "/v1/coupons",
+      "method": "post",
+      "params": {
+        "id": "vita_30_eur_forever",
+        "name": "Vita 30 EUR",
+        "amount_off": 3000,
+        "currency": "eur",
+        "duration": "forever",
+        "metadata": {
+          "catalog_key": "vita_30_eur_forever",
+          "app": "vitaflix"
+        }
+      }
+    },
+    {
+      "name": "coupon_vita_5_eur",
+      "path": "/v1/coupons",
+      "method": "post",
+      "params": {
+        "id": "vita_5_eur_forever",
+        "name": "Vita 5 EUR",
+        "amount_off": 500,
+        "currency": "eur",
+        "duration": "forever",
+        "metadata": {
+          "catalog_key": "vita_5_eur_forever",
+          "app": "vitaflix"
+        }
+      }
+    }
+  ]
+}

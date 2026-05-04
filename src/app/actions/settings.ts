@@ -14,7 +14,7 @@ export async function getDefaultLocale() {
         .maybeSingle()
 
     if (error || !data) {
-        return 'en'
+        return 'pt-pt'
     }
 
     return data.value as string
@@ -49,7 +49,7 @@ export async function getSupportedLanguages() {
         .maybeSingle()
 
     if (error || !data) {
-        return ["en", "es", "pt-pt", "pt-br"] // Fallback if not configured
+        return ["pt-pt", "pt-br", "en", "es"] // Fallback if not configured
     }
 
     return data.value as string[]
@@ -116,4 +116,3 @@ export async function updateSystemConfig(key: string, value: unknown) {
     revalidatePath("/", "layout")
     return { success: true }
 }
-
