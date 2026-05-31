@@ -43,6 +43,7 @@ async function getUserFromBearerToken(token: string) {
     const { data, error } = await supabase.auth.getUser()
 
     if (error) {
+        console.error("getUserFromBearerToken error:", error);
         return null
     }
 
@@ -55,10 +56,12 @@ export async function getAuthenticatedRequestUser(request: Request): Promise<Aut
 
     if (token) {
         authUser = await getUserFromBearerToken(token)
+        if (!authUser) console.error("getAuthenticatedRequestUser: authUser from token is null");
     } else {
         const supabase = await createServerClient()
         const { data } = await supabase.auth.getUser()
         authUser = data.user ?? null
+        if (!authUser) console.error("getAuthenticatedRequestUser: authUser from server client is null");
     }
 
     if (!authUser) {
@@ -66,13 +69,18 @@ export async function getAuthenticatedRequestUser(request: Request): Promise<Aut
     }
 
     const admin = createAdminClient()
-    const { data: profile } = await admin
+    const { data: profile, error: profileError } = await admin
         .from("users")
         .select("id, email, display_name, phone, stripe_customer_id")
         .eq("id", authUser.id)
         .maybeSingle()
 
+    if (profileError) {
+        console.error("getAuthenticatedRequestUser: profile lookup error", profileError);
+    }
+
     if (!profile) {
+        console.error("getAuthenticatedRequestUser: profile is null for authUser", authUser.id);
         return null
     }
 

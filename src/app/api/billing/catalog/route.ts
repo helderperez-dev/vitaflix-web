@@ -1,6 +1,8 @@
 import { NextResponse } from "next/server"
 import { listBillingCatalog } from "@/lib/stripe/billing"
 
+export const dynamic = "force-dynamic";
+
 export async function GET() {
     try {
         const catalog = await listBillingCatalog()

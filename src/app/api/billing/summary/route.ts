@@ -2,6 +2,8 @@ import { NextResponse } from "next/server"
 import { getBillingSummary } from "@/lib/stripe/billing"
 import { getAuthenticatedRequestUser } from "@/lib/supabase/request-auth"
 
+export const dynamic = "force-dynamic";
+
 export async function GET(request: Request) {
     const user = await getAuthenticatedRequestUser(request)
 
