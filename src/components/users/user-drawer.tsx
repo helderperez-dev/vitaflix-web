@@ -172,7 +172,7 @@ export function UserDrawer({ open, onOpenChange, user }: UserDrawerProps) {
         if (!user?.email) return
         setIsResettingPassword(true)
         try {
-            const result = await requestPasswordReset(user.email)
+            const result = await requestPasswordReset(user.email, locale)
             if (result.error) {
                 toast.error(result.error)
             } else {

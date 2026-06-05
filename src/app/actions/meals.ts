@@ -23,6 +23,7 @@ export async function upsertMeal(data: Meal) {
             satiety: data.satiety,
             meal_types: data.mealTypes,
             restrictions: data.restrictions,
+            visible_in_free_plan: data.visibleInFreePlan,
             is_public: data.isPublic,
             publish_on: data.publishOn,
             images: data.images,
@@ -266,6 +267,7 @@ export async function getMealsByCategory(categoryId: string, countryId?: string)
                 name, 
                 images, 
                 cook_time,
+                visible_in_free_plan,
                 options:meal_options(*)
             )
         `)
@@ -302,7 +304,7 @@ export async function getMealsByIds(ids: string[], countryId?: string) {
 
     const { data, error } = await supabase
         .from('meals')
-        .select('id, name, images, cook_time, options:meal_options(*), meal_countries(country_id)')
+        .select('id, name, images, cook_time, visible_in_free_plan, options:meal_options(*), meal_countries(country_id)')
         .in('id', ids)
 
     if (error) {
@@ -330,7 +332,7 @@ export async function getMealOptionsByIds(ids: string[], countryId?: string) {
 
     const { data: options, error } = await supabase
         .from('meal_options')
-        .select('*, meal:meals(id, name, images, cook_time, options:meal_options(*), meal_countries(country_id))')
+        .select('*, meal:meals(id, name, images, cook_time, visible_in_free_plan, options:meal_options(*), meal_countries(country_id))')
         .in('id', ids)
 
     if (error) {

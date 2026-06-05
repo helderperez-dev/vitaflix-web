@@ -88,6 +88,7 @@ export function MealDrawer({ open, onOpenChange, meal }: MealDrawerProps) {
             satiety: 5,
             restrictions: [],
             countryIds: [],
+            visibleInFreePlan: false,
             publishOn: null,
             images: [],
             isPublic: false,
@@ -114,6 +115,7 @@ export function MealDrawer({ open, onOpenChange, meal }: MealDrawerProps) {
                     meal_types?: string[]
                     preparation_mode?: (Record<string, string> | { text: Record<string, string>, duration_seconds?: number | null })[]
                     country_ids?: string[]
+                    visible_in_free_plan?: boolean
                     is_public?: boolean
                 }
 
@@ -142,6 +144,7 @@ export function MealDrawer({ open, onOpenChange, meal }: MealDrawerProps) {
                     preparationMode: normalizePreparationMode(mealData.preparation_mode || mealData.preparationMode),
                     restrictions: ensureArray(mealData.restrictions || mealData.restrictions),
                     countryIds: ensureArray(mealData.country_ids || mealData.countryIds),
+                    visibleInFreePlan: mealData.visible_in_free_plan ?? mealData.visibleInFreePlan ?? false,
                     isPublic: mealData.is_public ?? mealData.isPublic ?? false,
                     options: options || []
                 })
@@ -154,6 +157,7 @@ export function MealDrawer({ open, onOpenChange, meal }: MealDrawerProps) {
                     satiety: 5,
                     restrictions: [],
                     countryIds: [],
+                    visibleInFreePlan: false,
                     publishOn: null,
                     images: [],
                     isPublic: false,
@@ -546,6 +550,29 @@ export function MealDrawer({ open, onOpenChange, meal }: MealDrawerProps) {
                                                 <div className="h-px flex-1 bg-border/60 ml-4" />
                                             </div>
                                             <div className="p-4 rounded-lg bg-muted/20 border border-border/60 group transition-all duration-300 hover:bg-muted/30">
+                                                <FormField
+                                                    control={form.control}
+                                                    name="visibleInFreePlan"
+                                                    render={({ field }) => (
+                                                        <FormItem className="flex flex-row items-center justify-between space-y-0 border-b border-border/50 pb-4 mb-4">
+                                                            <div className="space-y-0.5 pr-4">
+                                                                <FormLabel className="text-xs font-semibold text-secondary dark:text-white">
+                                                                    {t("visibleInFreePlan")}
+                                                                </FormLabel>
+                                                                <p className="text-[10px] text-muted-foreground/60">
+                                                                    {t("visibleInFreePlanDescription")}
+                                                                </p>
+                                                            </div>
+                                                            <FormControl>
+                                                                <Switch
+                                                                    checked={field.value}
+                                                                    onCheckedChange={field.onChange}
+                                                                    className="data-[state=checked]:bg-primary"
+                                                                />
+                                                            </FormControl>
+                                                        </FormItem>
+                                                    )}
+                                                />
                                                 <FormField
                                                     control={form.control}
                                                     name="isPublic"

@@ -620,7 +620,49 @@
         "quote2": "O bem-estar não é um destino, é uma jornada contínua de autoaperfeiçoamento.",
         "quote3": "Transforme o seu estilo de vida através de escolhas conscientes e dedicação constante.",
         "quoteAuthor": "Conceito de Bem-Estar Vitaflix",
-        "quoteTitle": "A sua dose diária de vitalidade"
+        "quoteTitle": "A sua dose diária de vitalidade",
+        "forgotPasswordLink": "Esqueceu-se da palavra-passe?",
+        "forgotPasswordTitle": "Recuperar palavra-passe",
+        "forgotPasswordDescription": "Introduza o seu e-mail para receber uma ligação segura de redefinição.",
+        "sendResetLink": "Enviar ligação de redefinição",
+        "sendingResetLink": "A enviar ligação...",
+        "forgotPasswordEmailSentTitle": "Verifique o seu e-mail",
+        "forgotPasswordEmailSentDescription": "Se existir uma conta com este e-mail, enviámos uma ligação para redefinir a palavra-passe.",
+        "requestNewLink": "Pedir nova ligação",
+        "backToLogin": "Voltar ao login",
+        "resetPasswordTitle": "Definir nova palavra-passe",
+        "resetPasswordDescription": "Introduza uma nova palavra-passe para concluir a recuperação da sua conta.",
+        "confirmPassword": "Confirmar palavra-passe",
+        "updatePassword": "Atualizar palavra-passe",
+        "updatingPassword": "A atualizar palavra-passe...",
+        "resetPasswordSuccessTitle": "Palavra-passe atualizada",
+        "resetPasswordSuccessDescription": "A sua palavra-passe foi atualizada com sucesso. Já pode iniciar sessão com as novas credenciais.",
+        "invalidResetLinkTitle": "Ligação inválida ou expirada",
+        "invalidResetLinkDescription": "Esta ligação de recuperação já não é válida. Peça uma nova para continuar.",
+        "verifyingResetLink": "A validar ligação de recuperação...",
+        "passwordTooShort": "A palavra-passe deve ter pelo menos 6 caracteres.",
+        "passwordsDoNotMatch": "As palavras-passe não coincidem.",
+        "accountConfirmedEyebrow": "E-mail verificado",
+        "accountConfirmedTitle": "A sua conta está pronta. Bem-vindo à Vitaflix.",
+        "accountConfirmedDescription": "O seu e-mail foi confirmado com sucesso. O acesso já está ativo e pode continuar na app móvel ou terminar o login na web.",
+        "accountConfirmedPanelEyebrow": "Próximo passo",
+        "accountConfirmedPanelDescription": "Para a melhor experiência, abra a app móvel da Vitaflix e continue a partir daí. A sua conta já está associada a este e-mail.",
+        "openMobileApp": "Abrir a app móvel",
+        "openMobileAppHint": "Se a app não abrir automaticamente, confirme que está instalada no seu dispositivo e tente novamente.",
+        "continueOnWeb": "Continuar na web",
+        "goToHomepage": "Ir para a página inicial",
+        "accountConfirmationErrorEyebrow": "Problema na confirmação",
+        "accountConfirmationErrorTitle": "Esta ligação de confirmação já não é válida.",
+        "accountConfirmationErrorDescription": "A ligação de confirmação pode ter expirado ou já ter sido utilizada. Tente iniciar sessão ou peça um novo e-mail de confirmação.",
+        "accountConfirmedAsideEyebrow": "Tudo sincronizado",
+        "accountConfirmedAsideTitle": "Uma transição mais calorosa do e-mail para a app.",
+        "accountConfirmedAsideDescription": "Preparámos este ecrã para tornar o primeiro passo após o registo mais claro e acolhedor, especialmente para quem vem do e-mail no telemóvel.",
+        "accountConfirmedFeatureOneTitle": "O seu acesso está ativo",
+        "accountConfirmedFeatureOneDescription": "O e-mail verificado já está pronto a ser usado na sua conta Vitaflix.",
+        "accountConfirmedFeatureTwoTitle": "Abra a app diretamente",
+        "accountConfirmedFeatureTwoDescription": "Use o deep link acima para entrar diretamente na experiência móvel depois de confirmar a conta.",
+        "accountConfirmedFeatureThreeTitle": "Continue onde fizer mais sentido",
+        "accountConfirmedFeatureThreeDescription": "Pode abrir a app móvel agora ou continuar na web com as mesmas credenciais."
     },
     "Dashboard": {
         "title": "Painel de Controlo",
@@ -776,6 +818,8 @@
         "addPrepStep": "Adicionar Passo de Preparação",
         "visibilityControl": "Controlo de Visibilidade",
         "visibilityControlDescription": "Configure onde e como esta refeição é exibida.",
+        "visibleInFreePlan": "Visível no Plano Grátis",
+        "visibleInFreePlanDescription": "Permite que utilizadores do plano grátis vejam esta refeição na app sem fazer upgrade.",
         "visibility": "Visibilidade",
         "visibilityDescription": "Gerencie se esta refeição está visível para os utilizadores em toda a plataforma.",
         "applyChanges": "Aplicar alterações",
@@ -1036,25 +1080,70 @@
             "age": "Idade"
         },
         "ActivityLevels": {
-            "sedentary": { "title": "Sedentário", "desc": "Trabalho de escritório, pouco ou nenhum exercício" },
-            "lightly": { "title": "Levemente Ativo", "desc": "Exercício leve 1-3 dias/semana" },
-            "moderately": { "title": "Moderadamente Ativo", "desc": "Exercício moderado 3-5 dias/semana" },
-            "very": { "title": "Muito Ativo", "desc": "Exercício intenso 6-7 dias/semana" },
-            "extra": { "title": "Extremamente Ativo", "desc": "Exercício muito intenso, trabalho físico" }
+            "sedentary": {
+                "title": "Sedentário",
+                "desc": "Trabalho de escritório, pouco ou nenhum exercício"
+            },
+            "lightly": {
+                "title": "Levemente Ativo",
+                "desc": "Exercício leve 1-3 dias/semana"
+            },
+            "moderately": {
+                "title": "Moderadamente Ativo",
+                "desc": "Exercício moderado 3-5 dias/semana"
+            },
+            "very": {
+                "title": "Muito Ativo",
+                "desc": "Exercício intenso 6-7 dias/semana"
+            },
+            "extra": {
+                "title": "Extremamente Ativo",
+                "desc": "Exercício muito intenso, trabalho físico"
+            }
         },
         "StepOptions": {
-            "low": { "title": "0 - 5k", "desc": "Atividade baixa" },
-            "moderate": { "title": "5k - 8k", "desc": "Moderado" },
-            "active": { "title": "8k - 12k", "desc": "Ativo" },
-            "high": { "title": "12k - 15k", "desc": "Muito Ativo" },
-            "athlete": { "title": "15k+", "desc": "Nível atleta" }
+            "low": {
+                "title": "0 - 5k",
+                "desc": "Atividade baixa"
+            },
+            "moderate": {
+                "title": "5k - 8k",
+                "desc": "Moderado"
+            },
+            "active": {
+                "title": "8k - 12k",
+                "desc": "Ativo"
+            },
+            "high": {
+                "title": "12k - 15k",
+                "desc": "Muito Ativo"
+            },
+            "athlete": {
+                "title": "15k+",
+                "desc": "Nível atleta"
+            }
         },
         "Goals": {
-            "lose_sustainable": { "title": "Perder (Sustentável)", "desc": "Progresso lento e constante" },
-            "lose_balanced": { "title": "Perder (Equilibrado)", "desc": "Perda de peso padrão" },
-            "lose_faster": { "title": "Perder (Rápido)", "desc": "Perda de peso agressiva" },
-            "maintenance": { "title": "Manter Peso", "desc": "Manter o peso atual" },
-            "gain_mass": { "title": "Ganhar Massa", "desc": "Construir excedente muscular" }
+            "lose_sustainable": {
+                "title": "Perder (Sustentável)",
+                "desc": "Progresso lento e constante"
+            },
+            "lose_balanced": {
+                "title": "Perder (Equilibrado)",
+                "desc": "Perda de peso padrão"
+            },
+            "lose_faster": {
+                "title": "Perder (Rápido)",
+                "desc": "Perda de peso agressiva"
+            },
+            "maintenance": {
+                "title": "Manter Peso",
+                "desc": "Manter o peso atual"
+            },
+            "gain_mass": {
+                "title": "Ganhar Massa",
+                "desc": "Construir excedente muscular"
+            }
         },
         "Results": {
             "title": "O teu objetivo calórico diário:",

@@ -43,6 +43,7 @@ export const mealSchema = z.object({
     satiety: z.number().min(0).max(10).optional(),
     restrictions: z.array(z.string().uuid()).optional(),
     countryIds: z.array(z.string().uuid()).default([]),
+    visibleInFreePlan: z.boolean().default(false),
     isPublic: z.boolean().default(false),
     publishOn: z.string().datetime().optional().nullable(),
     images: z.array(productImageSchema).default([]),

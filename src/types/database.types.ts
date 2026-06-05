@@ -517,6 +517,7 @@ export type Database = {
           restrictions: string[] | null
           satiety: number | null
           updated_at: string
+          visible_in_free_plan: boolean
         }
         Insert: {
           cook_time?: number | null
@@ -531,6 +532,7 @@ export type Database = {
           restrictions?: string[] | null
           satiety?: number | null
           updated_at?: string
+          visible_in_free_plan?: boolean
         }
         Update: {
           cook_time?: number | null
@@ -545,6 +547,7 @@ export type Database = {
           restrictions?: string[] | null
           satiety?: number | null
           updated_at?: string
+          visible_in_free_plan?: boolean
         }
         Relationships: []
       }

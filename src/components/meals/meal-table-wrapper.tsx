@@ -52,6 +52,7 @@ type MealTableData = {
     publish_on?: string | null
     images?: { url?: string; isDefault?: boolean }[]
     is_public?: boolean | null
+    visible_in_free_plan?: boolean | null
     meal_options?: { id: string }[]
 }
 
@@ -191,6 +192,7 @@ export function MealTableWrapper({ initialMeals, userProfile }: MealTableWrapper
                 countryIds: m.country_ids || [],
                 publishOn: m.publish_on,
                 images: m.images || [],
+                visibleInFreePlan: m.visible_in_free_plan ?? false,
                 isPublic: m.is_public || false,
                 options: [], // Options are fetched on demand in the drawer
             } as Meal,

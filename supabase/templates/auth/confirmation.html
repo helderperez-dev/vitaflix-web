@@ -234,7 +234,7 @@
                   Recebemos um pedido de registo para este endereço de e-mail. Para concluir a criação da sua conta, confirme o acesso no botão abaixo.
                 </p>
                 <div class="panel">
-                  <a class="button" href="{{ .ConfirmationURL }}">Confirmar o meu e-mail</a>
+                  <a class="button" href="{{ .SiteURL }}/auth/confirm?token_hash={{ .TokenHash }}&type=email">Confirmar o meu e-mail</a>
                   <p class="helper">
                     Se não reconhece este pedido, pode ignorar esta mensagem com toda a tranquilidade.
                   </p>
@@ -243,8 +243,8 @@
                   Se o botão acima não funcionar, copie e cole esta ligação no navegador:
                 </p>
                 <p class="helper">
-                  <a href="{{ .ConfirmationURL }}" style="color:#13a57e;word-break:break-all;text-decoration:none;">
-                    {{ .ConfirmationURL }}
+                  <a href="{{ .SiteURL }}/auth/confirm?token_hash={{ .TokenHash }}&type=email" style="color:#13a57e;word-break:break-all;text-decoration:none;">
+                    {{ .SiteURL }}/auth/confirm?token_hash={{ .TokenHash }}&type=email
                   </a>
                 </p>
               </td>

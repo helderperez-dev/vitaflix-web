@@ -2,9 +2,17 @@
 
 import { createClient } from "@/lib/supabase/server"
 import { createAdminClient } from "@/lib/supabase/admin"
+import { routing } from "@/i18n/routing"
 import { revalidatePath } from "next/cache"
 import { userProfileSchema, type UserProfile } from "@/shared-schemas/user"
 import { triggerAppEvent } from "./notifications"
+
+function getAppUrl(pathname: string) {
+    const baseUrl = (process.env.NEXT_PUBLIC_APP_URL || "http://localhost:3000").replace(/\/$/, "")
+    const path = pathname.startsWith("/") ? pathname : `/${pathname}`
+
+    return `${baseUrl}${path}`
+}
 
 export async function upsertUser(data: UserProfile) {
     const supabase = await createClient()
@@ -117,11 +125,14 @@ export async function bulkDeleteUsers(ids: string[]) {
     return { success: true }
 }
 
-export async function requestPasswordReset(email: string) {
+export async function requestPasswordReset(email: string, locale?: string) {
     const supabase = await createClient()
+    const normalizedLocale = locale && routing.locales.includes(locale as any)
+        ? locale
+        : routing.defaultLocale
 
     const { error } = await supabase.auth.resetPasswordForEmail(email, {
-        redirectTo: `${process.env.NEXT_PUBLIC_APP_URL}/auth/reset-password`,
+        redirectTo: getAppUrl(`/${normalizedLocale}/auth/reset-password`),
     })
 
     if (error) {

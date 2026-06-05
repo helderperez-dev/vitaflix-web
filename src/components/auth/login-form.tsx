@@ -18,9 +18,10 @@ import { useState } from "react"
 import { loginAction } from "@/app/actions/auth"
 import { useLocale, useTranslations } from "next-intl"
 import { usePostHog } from "@posthog/next"
+import { Link } from "@/i18n/routing"
 
 const loginSchema = z.object({
-    email: z.string().email({ message: "Invalid email address." }),
+    email: z.email({ message: "Invalid email address." }),
     password: z.string().min(6, { message: "Password must be at least 6 characters." }),
 })
 
@@ -96,6 +97,14 @@ export function LoginForm() {
                     />
                 </div>
                 {error && <p className="text-sm text-destructive">{error}</p>}
+                <div className="flex justify-end">
+                    <Link
+                        href="/auth/forgot-password"
+                        className="text-sm font-medium text-primary transition-colors hover:text-primary/80"
+                    >
+                        {t("forgotPasswordLink")}
+                    </Link>
+                </div>
                 <Button type="submit" className="w-full h-12 text-base font-medium transition-all duration-300 hover:shadow-lg hover:shadow-primary/25 active:scale-[0.98]" disabled={isLoading}>
                     {isLoading ? (
                         <>
