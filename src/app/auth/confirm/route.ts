@@ -2,9 +2,12 @@ import type { EmailOtpType } from "@supabase/supabase-js"
 import { NextResponse } from "next/server"
 
 import { createClient } from "@/lib/supabase/server"
+import { routing } from "@/i18n/routing"
 
 function buildRedirectUrl(request: Request, status: "success" | "error", message?: string) {
-    const url = new URL("/auth/account-confirmed", request.url)
+    const requestUrl = new URL(request.url)
+    const locale = getLocaleFromPath(requestUrl.pathname)
+    const url = new URL(`/${locale}/auth/account-confirmed`, request.url)
     url.searchParams.set("status", status)
 
     if (message) {
@@ -12,6 +15,16 @@ function buildRedirectUrl(request: Request, status: "success" | "error", message
     }
 
     return url
+}
+
+function getLocaleFromPath(pathname: string) {
+    const [, maybeLocale] = pathname.split("/")
+
+    if (routing.locales.includes(maybeLocale as (typeof routing.locales)[number])) {
+        return maybeLocale
+    }
+
+    return routing.defaultLocale
 }
 
 export async function GET(request: Request) {
