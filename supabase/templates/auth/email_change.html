@@ -234,19 +234,11 @@
                   Recebemos um pedido para alterar o e-mail da sua conta Vitaflix para <strong>{{ .NewEmail }}</strong>. Para concluir a alteração com segurança, confirme o novo endereço abaixo.
                 </p>
                 <div class="panel">
-                  <a class="button" href="{{ .ConfirmationURL }}">Confirmar novo e-mail</a>
+                  <a class="button" href="{{ .SiteURL }}/auth/confirm?token_hash={{ .TokenHash }}&type=email_change">Confirmar novo e-mail</a>
                   <p class="helper">
                     Se este pedido não foi feito por si, ignore esta mensagem e reveja a segurança da sua conta.
                   </p>
                 </div>
-                <p class="copy">
-                  Se o botão acima não funcionar, copie e cole esta ligação no navegador:
-                </p>
-                <p class="helper">
-                  <a href="{{ .ConfirmationURL }}" style="color:#13a57e;word-break:break-all;text-decoration:none;">
-                    {{ .ConfirmationURL }}
-                  </a>
-                </p>
               </td>
             </tr>
             <tr>

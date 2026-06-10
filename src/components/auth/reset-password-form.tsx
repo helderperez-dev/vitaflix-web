@@ -93,7 +93,7 @@ export function ResetPasswordForm() {
             } catch (sessionError) {
                 if (!isMounted) return
 
-                setError(sessionError instanceof Error ? sessionError.message : t("invalidResetLinkDescription"))
+                setError(t("invalidResetLinkDescription"))
                 setStatus("error")
             }
         }

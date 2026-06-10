@@ -192,7 +192,7 @@
   </head>
   <body>
     <div style="display:none;max-height:0;overflow:hidden;opacity:0;">
-      Use esta ligação para aceder à sua conta Vitaflix.
+      Use este link para aceder à sua conta Vitaflix.
     </div>
     <table role="presentation" width="100%" class="wrapper">
       <tr>
@@ -220,10 +220,10 @@
             </tr>
             <tr>
               <td class="hero">
-                <p class="eyebrow">Ligação de acesso</p>
+                <p class="eyebrow">Acesso rápido</p>
                 <h1 class="hero-title">Entre na Vitaflix sem palavra-passe.</h1>
                 <p class="hero-copy">
-                  Recebemos um pedido de acesso rápido. A sua ligação segura está pronta a ser utilizada.
+                  Recebemos um pedido de acesso rápido. O seu link seguro está pronto a ser utilizado.
                 </p>
               </td>
             </tr>
@@ -231,22 +231,14 @@
               <td class="content">
                 <h2 class="title">Aceda agora à sua conta</h2>
                 <p class="copy">
-                  Recebemos um pedido para gerar uma ligação de acesso para este endereço de e-mail. Utilize o botão abaixo para entrar na sua conta Vitaflix.
+                  Recebemos um pedido para gerar um link de acesso para este endereço de e-mail. Utilize o botão abaixo para entrar na sua conta Vitaflix.
                 </p>
                 <div class="panel">
-                  <a class="button" href="{{ .ConfirmationURL }}">Aceder à minha conta</a>
+                  <a class="button" href="{{ .SiteURL }}/auth/confirm?token_hash={{ .TokenHash }}&type=magiclink">Aceder à minha conta</a>
                   <p class="helper">
-                    Por segurança, esta ligação é temporária e deve ser utilizada apenas por si.
+                    Por segurança, este link é temporário e deve ser utilizado apenas por si.
                   </p>
                 </div>
-                <p class="copy">
-                  Se o botão acima não funcionar, copie e cole esta ligação no navegador:
-                </p>
-                <p class="helper">
-                  <a href="{{ .ConfirmationURL }}" style="color:#13a57e;word-break:break-all;text-decoration:none;">
-                    {{ .ConfirmationURL }}
-                  </a>
-                </p>
               </td>
             </tr>
             <tr>
@@ -257,7 +249,7 @@
             <tr>
               <td class="footer">
                 <p class="footer-copy">
-                  Este e-mail foi enviado automaticamente pela Vitaflix para autenticação por ligação de acesso.
+                  Este e-mail foi enviado automaticamente pela Vitaflix para autenticação por link de acesso.
                 </p>
               </td>
             </tr>

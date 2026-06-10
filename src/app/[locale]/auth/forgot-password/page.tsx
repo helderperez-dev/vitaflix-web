@@ -41,7 +41,7 @@ export default async function ForgotPasswordPage() {
 
                 <div className="space-y-8">
                     <div className="space-y-2 text-left">
-                        <h1 className="text-3xl font-bold tracking-tight text-foreground">{t("forgotPasswordTitle")}</h1>
+                        <h1 className="text-2xl font-bold tracking-tight text-foreground">{t("forgotPasswordTitle")}</h1>
                         <p className="text-foreground/80 text-sm">
                             {t("forgotPasswordDescription")}
                         </p>

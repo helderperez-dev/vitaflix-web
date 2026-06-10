@@ -104,21 +104,15 @@ function getSubscriptionStatus(status: string) {
     return subscriptionStatuses.has(status) ? status : "incomplete"
 }
 
+function getDefaultPaymentMethodId(customer: Stripe.Customer) {
+    return typeof customer.invoice_settings.default_payment_method === "string"
+        ? customer.invoice_settings.default_payment_method
+        : customer.invoice_settings.default_payment_method?.id ?? null
+}
+
 async function persistCustomerReference(profile: BillingProfile, stripeCustomer: Stripe.Customer) {
     const supabase = createAdminClient()
-    const defaultPaymentMethodId =
-        typeof stripeCustomer.invoice_settings.default_payment_method === "string"
-            ? stripeCustomer.invoice_settings.default_payment_method
-            : stripeCustomer.invoice_settings.default_payment_method?.id ?? null
-
-    await supabase
-        .from("users")
-        .update({
-            stripe_customer_id: stripeCustomer.id,
-            stripe_customer_created_at: new Date(stripeCustomer.created * 1000).toISOString(),
-            updated_at: new Date().toISOString(),
-        })
-        .eq("id", profile.id)
+    const defaultPaymentMethodId = getDefaultPaymentMethodId(stripeCustomer)
 
     await supabase
         .from("billing_customers")
@@ -136,10 +130,59 @@ async function persistCustomerReference(profile: BillingProfile, stripeCustomer:
         }, { onConflict: "stripe_customer_id" })
 }
 
+async function upsertPaymentMethodReference(
+    profile: BillingProfile,
+    paymentMethod: Stripe.PaymentMethod,
+    defaultPaymentMethodId: string | null
+) {
+    const supabase = createAdminClient()
+    const stripeCustomerId = getIdFromExpandable(paymentMethod.customer)
+
+    await supabase
+        .from("billing_payment_methods")
+        .upsert({
+            user_id: profile.id,
+            stripe_customer_id: stripeCustomerId,
+            stripe_payment_method_id: paymentMethod.id,
+            type: paymentMethod.type,
+            is_default: defaultPaymentMethodId === paymentMethod.id,
+            allow_redisplay: paymentMethod.allow_redisplay ?? null,
+            brand: paymentMethod.card?.brand ?? null,
+            last4: paymentMethod.card?.last4 ?? null,
+            exp_month: paymentMethod.card?.exp_month ?? null,
+            exp_year: paymentMethod.card?.exp_year ?? null,
+            fingerprint: paymentMethod.card?.fingerprint ?? null,
+            country: paymentMethod.card?.country ?? null,
+            funding: paymentMethod.card?.funding ?? null,
+            wallet: paymentMethod.card?.wallet?.type ?? null,
+            billing_name: paymentMethod.billing_details?.name ?? null,
+            billing_email: paymentMethod.billing_details?.email ?? null,
+            billing_phone: paymentMethod.billing_details?.phone ?? null,
+            metadata: toJson(paymentMethod.metadata),
+            card: toJson(paymentMethod.card),
+            raw: toJson(paymentMethod),
+            detached_at: null,
+            updated_at: new Date().toISOString(),
+        }, { onConflict: "stripe_payment_method_id" })
+}
+
 export async function ensureStripeCustomer(profile: BillingProfile) {
-    if (profile.stripe_customer_id) {
+    let storedStripeCustomerId = profile.stripe_customer_id
+
+    if (!storedStripeCustomerId) {
+        const supabase = createAdminClient()
+        const { data: billingCustomer } = await supabase
+            .from("billing_customers")
+            .select("stripe_customer_id")
+            .eq("user_id", profile.id)
+            .maybeSingle()
+
+        storedStripeCustomerId = (billingCustomer?.stripe_customer_id as string | null | undefined) ?? null
+    }
+
+    if (storedStripeCustomerId) {
         try {
-            const existing = await stripe.customers.retrieve(profile.stripe_customer_id)
+            const existing = await stripe.customers.retrieve(storedStripeCustomerId)
             if (!("deleted" in existing && existing.deleted)) {
                 await persistCustomerReference(profile, existing as Stripe.Customer)
                 return existing as Stripe.Customer
@@ -187,6 +230,71 @@ export async function createMobileCustomerContext(profile: BillingProfile) {
         customerSessionExpiresAt: customerSession.expires_at,
         customerEphemeralKeySecret: ephemeralKey.secret,
         publishableKey: getPublishableKey(),
+    }
+}
+
+export async function createPaymentMethodSetupIntent(profile: BillingProfile) {
+    const customer = await ensureStripeCustomer(profile)
+    const setupIntent = await stripe.setupIntents.create({
+        customer: customer.id,
+        automatic_payment_methods: {
+            enabled: true,
+        },
+        usage: "off_session",
+        metadata: {
+            userId: profile.id,
+            app: "vitaflix",
+            checkoutType: "web_add_payment_method",
+        },
+    })
+
+    if (!setupIntent.client_secret) {
+        throw new BillingError("Stripe did not return a setup intent client secret.", 500)
+    }
+
+    return {
+        setupIntentId: setupIntent.id,
+        clientSecret: setupIntent.client_secret,
+        customerId: customer.id,
+        publishableKey: getPublishableKey(),
+    }
+}
+
+export async function syncSetupIntentPaymentMethod(profile: BillingProfile, setupIntentId: string) {
+    const customer = await ensureStripeCustomer(profile)
+    const setupIntent = await stripe.setupIntents.retrieve(setupIntentId, {
+        expand: ["payment_method"],
+    })
+
+    const setupIntentCustomerId = getIdFromExpandable(setupIntent.customer)
+    if (setupIntentCustomerId !== customer.id) {
+        throw new BillingError("Setup intent does not belong to this customer.", 403)
+    }
+
+    if (setupIntent.status !== "succeeded") {
+        throw new BillingError("Payment method setup has not finished yet.", 409)
+    }
+
+    const paymentMethod =
+        typeof setupIntent.payment_method === "string"
+            ? await stripe.paymentMethods.retrieve(setupIntent.payment_method)
+            : setupIntent.payment_method
+
+    if (!paymentMethod) {
+        throw new BillingError("Stripe did not return a payment method.", 500)
+    }
+
+    const refreshedCustomer = await stripe.customers.retrieve(customer.id)
+    if ("deleted" in refreshedCustomer && refreshedCustomer.deleted) {
+        throw new BillingError("Stripe customer could not be refreshed.", 500)
+    }
+
+    await persistCustomerReference(profile, refreshedCustomer)
+    await upsertPaymentMethodReference(profile, paymentMethod, getDefaultPaymentMethodId(refreshedCustomer))
+
+    return {
+        paymentMethodId: paymentMethod.id,
+        customerId: refreshedCustomer.id,
     }
 }
 
@@ -296,14 +404,6 @@ async function syncSubscriptionSnapshot(profile: BillingProfile, subscription: S
             metadata: toJson(subscription.metadata),
             updated_at: now,
         }, { onConflict: "stripe_subscription_id" })
-
-    await supabase
-        .from("users")
-        .update({
-            stripe_customer_id: getIdFromExpandable(subscription.customer),
-            updated_at: now,
-        })
-        .eq("id", profile.id)
 }
 
 function getInvoiceConfirmationSecret(invoiceLike: {
@@ -417,7 +517,6 @@ export async function updateSubscription(
         }
 
         subscription = await stripe.subscriptions.update(subscription.id, {
-            cancel_at_period_end: false,
             items: [
                 {
                     id: primaryItem.id,
@@ -426,13 +525,13 @@ export async function updateSubscription(
                 },
             ],
             discounts: discounts.length > 0 ? discounts : undefined,
-            payment_behavior: "default_incomplete",
+            payment_behavior: "pending_if_incomplete",
             proration_behavior: "always_invoice",
             expand: ["items.data.price", "latest_invoice.confirmation_secret"],
         })
 
         const latestInvoice = subscription.latest_invoice as Stripe.Invoice | null
-        const clientSecret = latestInvoice ? getInvoiceConfirmationSecret(latestInvoice) : null
+        const clientSecret = latestInvoice && latestInvoice.status !== "paid" ? getInvoiceConfirmationSecret(latestInvoice) : null
 
         if (clientSecret) {
             const mobileContext = await createPaymentSheetCustomerContext(profile)
@@ -629,41 +728,49 @@ export async function listBillingCatalog() {
 export async function getBillingSummary(profile: BillingProfile) {
     const supabase = createAdminClient()
 
-    const [
-        { data: customer },
-        { data: paymentMethods },
-        { data: subscriptions },
-        { data: invoices },
-        { data: transactions },
-    ] = await Promise.all([
-        supabase
-            .from("billing_customers")
-            .select("*")
-            .eq("user_id", profile.id)
-            .maybeSingle(),
-        supabase
-            .from("billing_payment_methods")
-            .select("*")
-            .eq("user_id", profile.id)
-            .order("is_default", { ascending: false })
-            .order("created_at", { ascending: false }),
-        supabase
-            .from("subscriptions")
-            .select("*")
-            .eq("user_id", profile.id)
-            .order("created_at", { ascending: false }),
-        supabase
-            .from("billing_invoices")
-            .select("*")
-            .eq("user_id", profile.id)
-            .order("created_at", { ascending: false }),
-        supabase
-            .from("transactions")
-            .select("*")
-            .eq("user_id", profile.id)
-            .not("stripe_payment_intent_id", "is", null)
-            .order("created_at", { ascending: false }),
-    ])
+    // Query 1: Customer
+    const { data: customer, error: customerError } = await supabase
+        .from("billing_customers")
+        .select("*")
+        .eq("user_id", profile.id)
+        .maybeSingle()
+
+    // Query 2: Payment Methods
+    const { data: paymentMethods, error: pmError } = await supabase
+        .from("billing_payment_methods")
+        .select("*")
+        .eq("user_id", profile.id)
+        .is("detached_at", null)
+        .order("is_default", { ascending: false })
+        .order("created_at", { ascending: false })
+
+    // Query 3: Subscriptions
+    const { data: subscriptions, error: subError } = await supabase
+        .from("subscriptions")
+        .select("*")
+        .eq("user_id", profile.id)
+        .order("created_at", { ascending: false })
+
+    // Query 4: Invoices
+    const { data: invoices, error: invError } = await supabase
+        .from("billing_invoices")
+        .select("*")
+        .eq("user_id", profile.id)
+        .order("created_at", { ascending: false })
+
+    // Query 5: Transactions
+    const { data: transactions, error: txnError } = await supabase
+        .from("transactions")
+        .select("*")
+        .eq("user_id", profile.id)
+        .not("stripe_payment_intent_id", "is", null)
+        .order("created_at", { ascending: false })
+
+    if (customerError) console.error("Billing customer fetch error:", customerError)
+    if (pmError) console.error("Billing PM fetch error:", pmError)
+    if (subError) console.error("Billing Sub fetch error:", subError)
+    if (invError) console.error("Billing Invoice fetch error:", invError)
+    if (txnError) console.error("Billing Txn fetch error:", txnError)
 
     return {
         customer,

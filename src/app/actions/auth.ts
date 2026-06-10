@@ -1,10 +1,19 @@
 "use server"
 
 import { createClient } from "@/lib/supabase/server"
-import { redirect } from "@/i18n/routing"
+import { redirect, routing } from "@/i18n/routing"
 import { getLocale } from 'next-intl/server'
 import posthogServer from "@/lib/posthog-server"
 
+type AppLocale = (typeof routing.locales)[number]
+
+function normalizeLocale(locale: string | null | undefined): AppLocale {
+    if (locale && routing.locales.includes(locale as AppLocale)) {
+        return locale as AppLocale
+    }
+
+    return routing.defaultLocale
+}
 
 export async function loginAction(data: { email: string; password: string; locale: string }) {
     const supabase = await createClient()
@@ -27,15 +36,15 @@ export async function loginAction(data: { email: string; password: string; local
         })
     }
 
-    // After successful login, fetch user profile to find their locale
+    // After successful login, fetch user profile to find their locale and role.
     const { data: userData } = await supabase
         .from('users')
-        .select('locale')
-        .eq('email', data.email)
-        .single()
+        .select('locale, role')
+        .eq('id', authData.user?.id ?? '')
+        .maybeSingle()
 
     // If no user locale, fall back to global default
-    let targetLocale = userData?.locale
+    let targetLocale = userData?.locale ? normalizeLocale(userData.locale) : null
 
     if (!targetLocale) {
         const { data: settingData } = await supabase
@@ -43,16 +52,17 @@ export async function loginAction(data: { email: string; password: string; local
             .select('value')
             .eq('key', 'default_locale')
             .single()
-        targetLocale = settingData?.value || 'pt-pt'
+        targetLocale = normalizeLocale(typeof settingData?.value === "string" ? settingData.value : undefined)
     }
 
-    // Redirect to dashboard on success, maintaining the user's persistent locale
-    redirect({ href: "/dashboard", locale: targetLocale as any })
+    const targetHref = userData?.role === "admin" ? "/dashboard" : "/account/billing"
+
+    redirect({ href: targetHref, locale: targetLocale })
 }
 
 export async function logoutAction() {
     const supabase = await createClient()
     await supabase.auth.signOut()
-    const locale = await getLocale()
-    redirect({ href: "/login", locale } as any)
+    const locale = normalizeLocale(await getLocale())
+    redirect({ href: "/login", locale })
 }

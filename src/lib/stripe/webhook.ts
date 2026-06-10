@@ -27,10 +27,6 @@ function toIsoFromUnix(value?: number | null) {
     return typeof value === "number" ? new Date(value * 1000).toISOString() : null
 }
 
-function toIsoFromUnixMaybe(value?: number | null) {
-    return typeof value === "number" ? new Date(value * 1000).toISOString() : undefined
-}
-
 function getIdFromExpandable(value: string | { id: string } | null | undefined) {
     if (!value) {
         return null
@@ -55,14 +51,7 @@ async function findUserByStripeCustomerId(stripeCustomerId: string) {
     if (billingCustomer?.user_id) {
         return billingCustomer.user_id as string
     }
-
-    const { data: user } = await supabase
-        .from("users")
-        .select("id")
-        .eq("stripe_customer_id", stripeCustomerId)
-        .maybeSingle()
-
-    return (user?.id as string | undefined) ?? null
+    return null
 }
 
 async function resolveUser({
@@ -145,15 +134,6 @@ async function upsertCustomer(customer: Stripe.Customer | Stripe.DeletedCustomer
             .eq("stripe_customer_id", customer.id)
 
         await supabase
-            .from("users")
-            .update({
-                stripe_customer_id: null,
-                stripe_customer_created_at: null,
-                updated_at: new Date().toISOString(),
-            })
-            .eq("stripe_customer_id", customer.id)
-
-        await supabase
             .from("billing_payment_methods")
             .update({
                 detached_at: new Date().toISOString(),
@@ -186,17 +166,6 @@ async function upsertCustomer(customer: Stripe.Customer | Stripe.DeletedCustomer
             raw: toJson(customer),
             updated_at: new Date().toISOString(),
         }, { onConflict: "stripe_customer_id" })
-
-    if (userId) {
-        await supabase
-            .from("users")
-            .update({
-                stripe_customer_id: customer.id,
-                stripe_customer_created_at: toIsoFromUnixMaybe(customer.created) ?? new Date().toISOString(),
-                updated_at: new Date().toISOString(),
-            })
-            .eq("id", userId)
-    }
 
     await syncDefaultPaymentMethod(customer.id, defaultPaymentMethodId)
 
@@ -308,16 +277,6 @@ async function upsertSubscription(subscription: Stripe.Subscription, eventType: 
             metadata: toJson(subscription.metadata),
             updated_at: new Date().toISOString(),
         }, { onConflict: "stripe_subscription_id" })
-
-    if (stripeCustomerId) {
-        await supabase
-            .from("users")
-            .update({
-                stripe_customer_id: stripeCustomerId,
-                updated_at: new Date().toISOString(),
-            })
-            .eq("id", finalUserId)
-    }
 
     const previousStatus = existingSubscription.data?.status as string | undefined
     const posthog = getPostHogClient()
@@ -512,14 +471,6 @@ async function handleCheckoutSessionCompleted(session: Stripe.Checkout.Session) 
     const userId = session.metadata?.userId ?? null
 
     if (stripeCustomerId && userId) {
-        await supabase
-            .from("users")
-            .update({
-                stripe_customer_id: stripeCustomerId,
-                updated_at: new Date().toISOString(),
-            })
-            .eq("id", userId)
-
         await supabase
             .from("billing_customers")
             .upsert({

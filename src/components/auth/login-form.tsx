@@ -20,17 +20,17 @@ import { useLocale, useTranslations } from "next-intl"
 import { usePostHog } from "@posthog/next"
 import { Link } from "@/i18n/routing"
 
-const loginSchema = z.object({
-    email: z.email({ message: "Invalid email address." }),
-    password: z.string().min(6, { message: "Password must be at least 6 characters." }),
-})
-
 export function LoginForm() {
     const [isLoading, setIsLoading] = useState(false)
     const [error, setError] = useState<string | null>(null)
     const locale = useLocale()
     const t = useTranslations("Auth")
     const posthog = usePostHog()
+
+    const loginSchema = z.object({
+        email: z.email({ message: t("invalidEmail") }),
+        password: z.string().min(6, { message: t("passwordTooShort") }),
+    })
 
     const form = useForm<z.infer<typeof loginSchema>>({
         resolver: zodResolver(loginSchema),
@@ -47,7 +47,12 @@ export function LoginForm() {
         const result = await loginAction({ ...values, locale })
 
         if (result?.error) {
-            setError(result.error)
+            // Check for common Supabase auth errors to translate them
+            if (result.error === "Invalid login credentials") {
+                setError(t("error"))
+            } else {
+                setError(result.error)
+            }
             setIsLoading(false)
             posthog.capture("login_failed", { error: result.error })
         } else {

@@ -13,6 +13,10 @@ type AuthenticatedRequestUser = {
     }
 }
 
+function isMissingSchemaCacheRelationError(error: { code?: string } | null | undefined) {
+    return error?.code === "PGRST205"
+}
+
 function getBearerToken(request: Request) {
     const authorization = request.headers.get("authorization")
 
@@ -71,7 +75,7 @@ export async function getAuthenticatedRequestUser(request: Request): Promise<Aut
     const admin = createAdminClient()
     const { data: profile, error: profileError } = await admin
         .from("users")
-        .select("id, email, display_name, phone, stripe_customer_id")
+        .select("id, email, display_name, phone")
         .eq("id", authUser.id)
         .maybeSingle()
 
@@ -84,6 +88,16 @@ export async function getAuthenticatedRequestUser(request: Request): Promise<Aut
         return null
     }
 
+    const { data: billingCustomer, error: billingCustomerError } = await admin
+        .from("billing_customers")
+        .select("stripe_customer_id")
+        .eq("user_id", authUser.id)
+        .maybeSingle()
+
+    if (billingCustomerError && !isMissingSchemaCacheRelationError(billingCustomerError)) {
+        console.error("getAuthenticatedRequestUser: billing customer lookup error", billingCustomerError);
+    }
+
     return {
         authUser,
         profile: {
@@ -91,7 +105,7 @@ export async function getAuthenticatedRequestUser(request: Request): Promise<Aut
             email: profile.email as string,
             display_name: (profile.display_name as string | null | undefined) ?? null,
             phone: (profile.phone as string | null | undefined) ?? null,
-            stripe_customer_id: (profile.stripe_customer_id as string | null | undefined) ?? null,
+            stripe_customer_id: (billingCustomer?.stripe_customer_id as string | null | undefined) ?? null,
         },
     }
 }

@@ -231,22 +231,14 @@
               <td class="content">
                 <h2 class="title">Crie uma nova palavra-passe</h2>
                 <p class="copy">
-                  Para redefinir a sua palavra-passe e recuperar o acesso à sua conta Vitaflix, utilize o botão abaixo. A ligação vai encaminhá-lo para a página de recuperação.
+                  Para redefinir a sua palavra-passe e recuperar o acesso à sua conta Vitaflix, utilize o botão abaixo.
                 </p>
                 <div class="panel">
-                  <a class="button" href="{{ .ConfirmationURL }}">Redefinir a minha palavra-passe</a>
+                  <a class="button" href="{{ .SiteURL }}/auth/reset-password?token_hash={{ .TokenHash }}&type=recovery">Redefinir a minha palavra-passe</a>
                   <p class="helper">
                     Se não solicitou esta alteração, basta ignorar esta mensagem. A sua palavra-passe atual mantém-se inalterada.
                   </p>
                 </div>
-                <p class="copy">
-                  Se o botão acima não funcionar, copie e cole esta ligação no navegador:
-                </p>
-                <p class="helper">
-                  <a href="{{ .ConfirmationURL }}" style="color:#13a57e;word-break:break-all;text-decoration:none;">
-                    {{ .ConfirmationURL }}
-                  </a>
-                </p>
               </td>
             </tr>
             <tr>

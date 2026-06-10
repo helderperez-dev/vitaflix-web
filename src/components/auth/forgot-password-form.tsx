@@ -20,16 +20,16 @@ import {
 } from "@/components/ui/form"
 import { Input } from "@/components/ui/input"
 
-const forgotPasswordSchema = z.object({
-    email: z.email({ message: "Invalid email address." }),
-})
-
 export function ForgotPasswordForm() {
     const [isLoading, setIsLoading] = useState(false)
     const [isSubmitted, setIsSubmitted] = useState(false)
     const [error, setError] = useState<string | null>(null)
     const locale = useLocale()
     const t = useTranslations("Auth")
+
+    const forgotPasswordSchema = z.object({
+        email: z.email({ message: t("invalidEmail") }),
+    })
 
     const form = useForm<z.infer<typeof forgotPasswordSchema>>({
         resolver: zodResolver(forgotPasswordSchema),
