@@ -65,6 +65,7 @@ interface CheckoutFormProps {
         clientSecret: string
         hostedInvoiceUrl?: string | null
     } | null
+    currentSubscriptionPriceId?: string | null
 }
 
 type PromotionPreviewState =
@@ -204,13 +205,14 @@ function translateCheckoutErrorMessage(message: string | undefined, t: ReturnTyp
     return translateStripeErrorMessage(message, t)
 }
 
-export function CheckoutForm({ plans, initialSession, userProfile, locale, preSelectedPriceId, initialCoupon, invoiceDetails }: CheckoutFormProps) {
+export function CheckoutForm({ plans, initialSession, userProfile, locale, preSelectedPriceId, initialCoupon, invoiceDetails, currentSubscriptionPriceId }: CheckoutFormProps) {
     const orderedPlanPrices = React.useMemo(
         () =>
             plans
                 .flatMap((plan) => plan.prices.map((price) => ({ ...price, productName: plan.name })))
+                .filter((price) => price.id !== currentSubscriptionPriceId)
                 .sort((a, b) => getPlanSortValue(a) - getPlanSortValue(b)),
-        [plans]
+        [plans, currentSubscriptionPriceId]
     )
 
     const isInvoicePayment = !!invoiceDetails

@@ -36,15 +36,30 @@ export default async function CheckoutPage({
     const { data: { session } } = await supabase.auth.getSession()
 
     let userProfile = null
+    let currentSubscriptionPriceId: string | null = null
     if (session?.user?.id) {
-        const { data: dbUser } = await supabase
-            .from("users")
-            .select("display_name, avatar_url")
-            .eq("id", session.user.id)
-            .maybeSingle()
+        const [userRes, subRes] = await Promise.all([
+            supabase
+                .from("users")
+                .select("display_name, avatar_url")
+                .eq("id", session.user.id)
+                .maybeSingle(),
+            supabase
+                .from("subscriptions")
+                .select("stripe_price_id")
+                .eq("user_id", session.user.id)
+                .in("status", ["active", "trialing", "past_due"])
+                .order("created_at", { ascending: false })
+                .limit(1)
+                .maybeSingle()
+        ])
         
-        if (dbUser) {
-            userProfile = dbUser
+        if (userRes.data) {
+            userProfile = userRes.data
+        }
+
+        if (subRes.data) {
+            currentSubscriptionPriceId = subRes.data.stripe_price_id
         }
     }
 
@@ -118,6 +133,7 @@ export default async function CheckoutPage({
                 preSelectedPriceId={preSelectedPriceId}
                 initialCoupon={initialCoupon}
                 invoiceDetails={invoiceDetails}
+                currentSubscriptionPriceId={currentSubscriptionPriceId}
             />
         </div>
     )
