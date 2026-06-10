@@ -388,7 +388,6 @@ function CheckoutFormContent({
                 billingDetails: {
                     name: "never" as const,
                     email: "never" as const,
-                    phone: "never" as const,
                     address: "if_required" as const,
                 },
             },
@@ -535,6 +534,7 @@ function CheckoutFormContent({
                         billing_details: {
                             email,
                             name: name || undefined,
+                            ...(sessionPhone ? { phone: sessionPhone } : {}),
                         }
                     }
                 },
