@@ -42,8 +42,8 @@ export default async function ContactPage({ params }: { params: Promise<{ locale
                                 <p className="text-slate-600 mb-2">
                                     Send us an email and we&apos;ll get back to you as soon as possible, usually within 24 hours.
                                 </p>
-                                <a href="mailto:support@vitaflix.app" className="text-primary font-medium hover:underline text-lg">
-                                    support@vitaflix.app
+                                <a href="mailto:bruno@vitaflix.app" className="text-primary font-medium hover:underline text-lg">
+                                    bruno@vitaflix.app
                                 </a>
                             </div>
                         </div>

@@ -507,7 +507,7 @@ export function AccountBillingManager() {
                                         .sort((a, b) => new Date(b.created_at).getTime() - new Date(a.created_at).getTime())
                                         .slice(0, 15)
                                         .map(invoice => (
-                                        <div key={invoice.id} className="rounded-xl border border-border/50 p-4 flex items-center justify-between gap-4 hover:bg-accent/30 transition-colors">
+                                        <div key={invoice.id} className="rounded-xl border border-border/50 p-4 flex flex-col sm:flex-row sm:items-center justify-between gap-4 hover:bg-accent/30 transition-colors">
                                             <div className="space-y-1">
                                                 <div className="flex items-center gap-2 font-medium text-foreground">
                                                     <ReceiptText className="size-4 text-muted-foreground" />
@@ -518,7 +518,7 @@ export function AccountBillingManager() {
                                                 </div>
                                             </div>
                                             
-                                            <div className="flex items-center gap-3">
+                                            <div className="flex flex-wrap items-center gap-2 sm:gap-3">
                                                 <Badge className="capitalize" variant={getSubscriptionBadgeVariant(invoice.status)}>
                                                     {translateStatus(invoice.status, t)}
                                                 </Badge>

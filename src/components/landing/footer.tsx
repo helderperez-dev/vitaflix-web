@@ -174,8 +174,8 @@ function LegalPolicyModalContent({
                     {contactLabel && (
                         <p className="leading-relaxed">
                             <span className="font-semibold text-slate-900">{contactLabel} </span>
-                            <a href="mailto:privacy@vitaflix.pt" className="text-primary hover:underline">
-                                privacy@vitaflix.pt
+                            <a href="mailto:bruno@vitaflix.app" className="text-primary hover:underline">
+                                bruno@vitaflix.app
                             </a>
                         </p>
                     )}

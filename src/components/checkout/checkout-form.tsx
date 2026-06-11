@@ -14,6 +14,7 @@ import { Input } from "@/components/ui/input"
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar"
 import { cn, getMediaUrl } from "@/lib/utils"
 import { checkoutRegisterAndSubscribe, previewPromotionCode } from "@/app/actions/checkout"
+import { usePostHog } from "posthog-js/react"
 
 const stripePromise = loadStripe(process.env.NEXT_PUBLIC_STRIPE_PUBLISHABLE_KEY!)
 
@@ -324,6 +325,7 @@ function CheckoutFormContent({
     const stripe = useStripe()
     const elements = useElements()
     const router = useRouter()
+    const posthog = usePostHog()
     const t = useTranslations("Checkout")
     const selectedPlanPresentation = selectedPrice ? getPlanPresentation(selectedPrice, t) : null
     const sessionEmail = initialSession?.user?.email || ""
@@ -362,6 +364,25 @@ function CheckoutFormContent({
             ? promotionPreview.discountAmount
             : 0
     const hasValidPromotion = promotionPreview.status === "valid" && effectiveDiscountAmount > 0
+
+    React.useEffect(() => {
+        if (selectedPrice) {
+            posthog?.capture("checkout_started", {
+                price_id: selectedPrice.id,
+                plan_name: selectedPrice.productName,
+                currency: selectedPrice.currency,
+                amount: selectedPrice.unitAmount,
+                is_invoice_payment: isInvoicePayment
+            })
+        } else if (isInvoicePayment && invoiceDetails) {
+            posthog?.capture("checkout_started", {
+                invoice_id: invoiceDetails.id,
+                currency: invoiceDetails.currency,
+                amount: invoiceDetails.amount,
+                is_invoice_payment: true
+            })
+        }
+    }, [posthog, selectedPrice?.id, selectedPrice?.productName, selectedPrice?.currency, selectedPrice?.unitAmount, isInvoicePayment, invoiceDetails?.id, invoiceDetails?.currency, invoiceDetails?.amount])
 
     const paymentElementOptions = React.useMemo(() => {
         if (isInvoicePayment) {
@@ -437,12 +458,22 @@ function CheckoutFormContent({
                         percentOff: result.percentOff,
                         amountOff: result.amountOff,
                     })
+                    posthog?.capture("promotion_applied", {
+                        code: result.code,
+                        discount_amount: result.discountAmount,
+                        percent_off: result.percentOff,
+                        amount_off: result.amountOff
+                    })
                     return
                 }
 
                 setPromotionPreview({
                     status: "invalid",
                     reason: result.reason,
+                })
+                posthog?.capture("promotion_invalid", {
+                    code: trimmedCode,
+                    reason: result.reason
                 })
             } catch (error) {
                 if (!isActive) return
@@ -491,12 +522,24 @@ function CheckoutFormContent({
         }
 
         setIsSubmitting(true)
+        posthog?.capture("payment_submitted", {
+            price_id: selectedPriceId,
+            amount: effectiveTotalAmount,
+            currency: checkoutCurrency,
+            has_promotion: hasValidPromotion,
+            is_invoice_payment: isInvoicePayment,
+            invoice_id: invoiceDetails?.id
+        })
 
         try {
             const { error: submitError } = await elements.submit()
             if (submitError) {
                 toast.error(translateStripeErrorMessage(submitError.message, t))
                 setIsSubmitting(false)
+                posthog?.capture("payment_failed", {
+                    reason: "elements_submit_error",
+                    error_message: submitError.message
+                })
                 return
             }
 
@@ -516,10 +559,20 @@ function CheckoutFormContent({
                 if (result.error) {
                     toast.error(translateCheckoutErrorMessage(result.error, t))
                     setIsSubmitting(false)
+                    posthog?.capture("payment_failed", {
+                        reason: "backend_checkout_error",
+                        error_message: result.error
+                    })
                     return
                 }
 
                 if (!result.clientSecret) {
+                    posthog?.capture("payment_success", {
+                        price_id: selectedPriceId,
+                        amount: effectiveTotalAmount,
+                        currency: checkoutCurrency,
+                        method: "free_or_100_percent_discount"
+                    })
                     router.push(`/${locale}/checkout/success`)
                     return
                 }
@@ -545,11 +598,20 @@ function CheckoutFormContent({
             if (confirmError) {
                 toast.error(translateStripeErrorMessage(confirmError.message, t))
                 setIsSubmitting(false)
+                posthog?.capture("payment_failed", {
+                    reason: "stripe_confirm_error",
+                    error_message: confirmError.message
+                })
             }
+            // If there's no confirmError, Stripe will redirect to return_url automatically.
         } catch (err: unknown) {
             console.error("Checkout error:", err)
             toast.error(t("unexpectedCheckoutError"))
             setIsSubmitting(false)
+            posthog?.capture("payment_failed", {
+                reason: "unexpected_error",
+                error_message: err instanceof Error ? err.message : String(err)
+            })
         }
     }
 

@@ -124,6 +124,14 @@ export default async function RootLayout({
               api_host: posthogHost,
               ui_host: "https://us.posthog.com",
               defaults: "2026-01-30",
+              capture_pageview: false, // Handled by PostHogPageView
+              capture_pageleave: true,
+              person_profiles: "identified_only",
+              disable_session_recording: false,
+              session_recording: {
+                maskAllInputs: false,
+                maskTextSelector: undefined,
+              },
             }}
           >
             <PostHogPageView />

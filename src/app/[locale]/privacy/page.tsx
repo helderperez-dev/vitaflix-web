@@ -68,7 +68,7 @@ export default async function PrivacyPage({ params }: { params: Promise<{ locale
                     
                     <h3>6. Contact us</h3>
                     <p>
-                        If you have any questions about this privacy policy or our privacy practices, please contact us at: <a href="mailto:support@vitaflix.app" className="text-primary hover:underline">support@vitaflix.app</a>.
+                        If you have any questions about this privacy policy or our privacy practices, please contact us at: <a href="mailto:bruno@vitaflix.app" className="text-primary hover:underline">bruno@vitaflix.app</a>.
                     </p>
                 </div>
             </div>

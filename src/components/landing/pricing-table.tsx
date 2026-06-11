@@ -4,6 +4,7 @@ import { motion } from "framer-motion"
 import { Check } from "lucide-react"
 import Link from "next/link"
 import { useTranslations } from "next-intl"
+import { usePostHog } from "posthog-js/react"
 
 const planKeys = ["monthly", "quarterly", "annual"]
 
@@ -30,9 +31,12 @@ const planDiscounts = {
 
 export function PricingTable() {
     const t = useTranslations("Landing.Pricing")
+    const posthog = usePostHog()
 
-    const handleStartNowClick = (e: React.MouseEvent<HTMLAnchorElement>) => {
+    const handleStartNowClick = (e: React.MouseEvent<HTMLAnchorElement>, planKey: string) => {
         e.preventDefault()
+        posthog?.capture("pricing_plan_clicked", { plan: planKey })
+        
         const input = document.getElementById("hero-waitlist-input")
         if (!input) return
         input.scrollIntoView({ behavior: "smooth", block: "center" })
@@ -107,7 +111,7 @@ export function PricingTable() {
                                 ))}
                             </div>
 
-                            <Link href="#waitlist" onClick={handleStartNowClick} className={`mt-8 inline-flex h-14 w-full items-center justify-center rounded-full px-6 text-sm font-bold transition-all
+                            <Link href="#waitlist" onClick={(e) => handleStartNowClick(e, key)} className={`mt-8 inline-flex h-14 w-full items-center justify-center rounded-full px-6 text-sm font-bold transition-all
                                 ${isHighlight
                                     ? 'bg-primary text-white hover:bg-primary/90'
                                     : 'bg-muted/60 text-foreground hover:bg-muted'

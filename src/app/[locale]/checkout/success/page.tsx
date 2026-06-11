@@ -3,6 +3,7 @@ import { CheckCircle2, ArrowRight } from "lucide-react"
 import Link from "next/link"
 
 import { Button } from "@/components/ui/button"
+import { CheckoutSuccessTracker } from "@/components/checkout/checkout-success-tracker"
 
 export default async function CheckoutSuccessPage() {
     const locale = await getLocale()
@@ -10,6 +11,7 @@ export default async function CheckoutSuccessPage() {
 
     return (
         <div className="min-h-dvh flex flex-col items-center justify-center bg-[#F4F4F5] p-4 font-sans">
+            <CheckoutSuccessTracker />
             <div className="max-w-md w-full p-10 rounded-2xl bg-white shadow-sm border border-slate-200 flex flex-col items-center text-center space-y-6">
                 <div className="size-16 rounded-full bg-green-50 text-green-600 flex items-center justify-center mb-2 animate-in zoom-in duration-500">
                     <CheckCircle2 className="size-8" />
