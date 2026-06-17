@@ -4,7 +4,7 @@ import { NextResponse } from "next/server"
 import { createClient } from "@/lib/supabase/server"
 import { routing } from "@/i18n/routing"
 
-function buildRedirectUrl(request: Request, status: "success" | "error", message?: string) {
+function buildRedirectUrl(request: Request, status: "success" | "error", message?: string, session?: { access_token: string; refresh_token: string } | null) {
     const requestUrl = new URL(request.url)
     const locale = getLocaleFromPath(requestUrl.pathname)
     const url = new URL(`/${locale}/auth/account-confirmed`, request.url)
@@ -12,6 +12,10 @@ function buildRedirectUrl(request: Request, status: "success" | "error", message
 
     if (message) {
         url.searchParams.set("message", message)
+    }
+
+    if (session) {
+        url.hash = `access_token=${session.access_token}&refresh_token=${session.refresh_token}`
     }
 
     return url
@@ -37,16 +41,16 @@ export async function GET(request: Request) {
         const supabase = await createClient()
 
         if (code) {
-            const { error } = await supabase.auth.exchangeCodeForSession(code)
+            const { data, error } = await supabase.auth.exchangeCodeForSession(code)
             if (error) {
                 return NextResponse.redirect(buildRedirectUrl(request, "error", error.message))
             }
 
-            return NextResponse.redirect(buildRedirectUrl(request, "success"))
+            return NextResponse.redirect(buildRedirectUrl(request, "success", undefined, data.session))
         }
 
         if (tokenHash && type) {
-            const { error } = await supabase.auth.verifyOtp({
+            const { data, error } = await supabase.auth.verifyOtp({
                 token_hash: tokenHash,
                 type: type as EmailOtpType,
             })
@@ -55,7 +59,7 @@ export async function GET(request: Request) {
                 return NextResponse.redirect(buildRedirectUrl(request, "error", error.message))
             }
 
-            return NextResponse.redirect(buildRedirectUrl(request, "success"))
+            return NextResponse.redirect(buildRedirectUrl(request, "success", undefined, data.session))
         }
 
         return NextResponse.redirect(buildRedirectUrl(request, "error"))

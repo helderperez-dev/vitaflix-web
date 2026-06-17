@@ -6,8 +6,7 @@ import { LoginThemeToggle } from "@/components/auth/login-theme-toggle"
 import { LanguageSwitcher } from "@/components/landing/language-switcher"
 import { Button } from "@/components/ui/button"
 import { ConfettiEffect } from "@/components/auth/confetti-effect"
-
-const DEFAULT_MOBILE_APP_DEEP_LINK = "vitaflix://open"
+import { DeepLinkButton } from "./deep-link-button"
 
 type ConfirmationPageProps = {
     searchParams?: Promise<{
@@ -20,7 +19,6 @@ export default async function AccountConfirmedPage({ searchParams }: Confirmatio
     const params = await searchParams
     const t = await getTranslations("Auth")
     const status = params?.status === "error" ? "error" : "success"
-    const appDeepLink = process.env.NEXT_PUBLIC_MOBILE_APP_DEEP_LINK || DEFAULT_MOBILE_APP_DEEP_LINK
 
     const title = status === "success"
         ? t("accountConfirmedTitle")
@@ -89,9 +87,7 @@ export default async function AccountConfirmedPage({ searchParams }: Confirmatio
                                         {t("accountConfirmedPanelDescription")}
                                     </p>
                                     <div className="mt-6">
-                                        <Button asChild size="lg" className="h-12 w-full sm:w-auto rounded-full px-8 text-sm font-semibold shadow-lg shadow-primary/20 hover:scale-105 transition-transform">
-                                            <a href={appDeepLink}>{t("openMobileApp")}</a>
-                                        </Button>
+                                        <DeepLinkButton text={t("openMobileApp")} />
                                     </div>
                                     <p className="mt-4 text-xs leading-6 text-slate-500 dark:text-slate-400">
                                         {t("openMobileAppHint")}
