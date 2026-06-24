@@ -20,6 +20,7 @@ const stripePromise = loadStripe(process.env.NEXT_PUBLIC_STRIPE_PUBLISHABLE_KEY!
 
 type CheckoutPrice = {
     id: string
+    productId: string
     currency: string
     unitAmount: number | null
     recurring?: {
@@ -85,6 +86,7 @@ type PromotionPreviewState =
     | {
         status: "invalid"
         reason: "required" | "invalid" | "expired" | "minimum_amount" | "currency_mismatch" | "not_applicable"
+        applicableProducts?: string[]
     }
 
 function formatPrice(amount?: number | null, currency?: string | null) {
@@ -470,6 +472,7 @@ function CheckoutFormContent({
                 setPromotionPreview({
                     status: "invalid",
                     reason: result.reason,
+                    applicableProducts: 'applicableProducts' in result ? result.applicableProducts : undefined,
                 })
                 posthog?.capture("promotion_invalid", {
                     code: trimmedCode,
@@ -814,17 +817,40 @@ function CheckoutFormContent({
                             </p>
                         ) : null}
                         {promotionPreview.status === "invalid" ? (
-                            <p className="text-xs font-medium text-red-500">
-                                {promotionPreview.reason === "expired"
-                                    ? t("promotionCodeExpired")
-                                    : promotionPreview.reason === "minimum_amount"
-                                        ? t("promotionCodeMinimumAmount")
-                                        : promotionPreview.reason === "currency_mismatch"
-                                            ? t("promotionCodeCurrencyMismatch")
-                                            : promotionPreview.reason === "not_applicable"
-                                                ? t("promotionCodeNotApplicable")
-                                                : t("promotionCodeInvalid")}
-                            </p>
+                            <div className="space-y-2">
+                                <p className="text-xs font-medium text-red-500">
+                                    {promotionPreview.reason === "expired"
+                                        ? t("promotionCodeExpired")
+                                        : promotionPreview.reason === "minimum_amount"
+                                            ? t("promotionCodeMinimumAmount")
+                                            : promotionPreview.reason === "currency_mismatch"
+                                                ? t("promotionCodeCurrencyMismatch")
+                                                : promotionPreview.reason === "not_applicable"
+                                                    ? t("promotionCodeNotApplicable")
+                                                    : t("promotionCodeInvalid")}
+                                </p>
+                                {promotionPreview.reason === "not_applicable" && promotionPreview.applicableProducts && promotionPreview.applicableProducts.length > 0 ? (
+                                    <div className="flex flex-wrap gap-2">
+                                        {orderedPlanPrices
+                                            .filter((p) => promotionPreview.applicableProducts!.includes(p.productId))
+                                            .map((p) => {
+                                                const presentation = getPlanPresentation(p, t)
+                                                return (
+                                                    <Button
+                                                        key={p.id}
+                                                        type="button"
+                                                        variant="outline"
+                                                        size="sm"
+                                                        className="h-8 text-xs text-primary border-primary/20 bg-primary/5 hover:bg-primary/10 hover:text-primary"
+                                                        onClick={() => setSelectedPriceId(p.id)}
+                                                    >
+                                                        {t("applyToPlan", { plan: presentation.badge })}
+                                                    </Button>
+                                                )
+                                            })}
+                                    </div>
+                                ) : null}
+                            </div>
                         ) : null}
                     </div>
 

@@ -192,7 +192,7 @@ export async function previewPromotionCode(data: {
 
     const coupon =
         typeof promotion.promotion.coupon === "string"
-            ? await stripe.coupons.retrieve(promotion.promotion.coupon)
+            ? await stripe.coupons.retrieve(promotion.promotion.coupon, { expand: ["applies_to"] })
             : promotion.promotion.coupon
 
     if (!coupon || !coupon.valid) {
@@ -207,7 +207,11 @@ export async function previewPromotionCode(data: {
             typeof price.product === "string" ? price.product : price.product.id
         )
     ) {
-        return { valid: false as const, reason: "not_applicable" as const }
+        return { 
+            valid: false as const, 
+            reason: "not_applicable" as const,
+            applicableProducts: coupon.applies_to.products
+        }
     }
 
     if (

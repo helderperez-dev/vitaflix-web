@@ -697,6 +697,7 @@
         "promotionCodeMinimumAmount": "Este código exige um valor mínimo para ser aplicado.",
         "promotionCodeCurrencyMismatch": "Este código não se aplica a esta moeda.",
         "promotionCodeNotApplicable": "Este código não é válido para o plano selecionado.",
+        "applyToPlan": "Aplicar ao plano {plan}",
         "plan": "Plano",
         "contact": "Contacto",
         "guestCheckoutDescription": "A sua conta é criada aqui durante o pagamento, para poder continuar na app logo após concluir a compra.",
