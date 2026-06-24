@@ -84,7 +84,7 @@ type PromotionPreviewState =
     }
     | {
         status: "invalid"
-        reason: "required" | "invalid" | "expired" | "minimum_amount" | "currency_mismatch"
+        reason: "required" | "invalid" | "expired" | "minimum_amount" | "currency_mismatch" | "not_applicable"
     }
 
 function formatPrice(amount?: number | null, currency?: string | null) {
@@ -553,7 +553,7 @@ function CheckoutFormContent({
                     password: initialSession ? undefined : password,
                     name,
                     priceId: selectedPriceId,
-                    promotionCode: couponCode ? couponCode : undefined,
+                    promotionCode: promotionPreview.status === "valid" ? promotionPreview.code : undefined,
                 })
 
                 if (result.error) {
@@ -821,7 +821,9 @@ function CheckoutFormContent({
                                         ? t("promotionCodeMinimumAmount")
                                         : promotionPreview.reason === "currency_mismatch"
                                             ? t("promotionCodeCurrencyMismatch")
-                                            : t("promotionCodeInvalid")}
+                                            : promotionPreview.reason === "not_applicable"
+                                                ? t("promotionCodeNotApplicable")
+                                                : t("promotionCodeInvalid")}
                             </p>
                         ) : null}
                     </div>

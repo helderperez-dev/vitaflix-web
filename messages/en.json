@@ -695,6 +695,7 @@
         "promotionCodeExpired": "This promotion code is no longer valid.",
         "promotionCodeMinimumAmount": "This promotion code requires a minimum amount.",
         "promotionCodeCurrencyMismatch": "This promotion code does not apply to this currency.",
+        "promotionCodeNotApplicable": "This promotion code is not valid for the selected plan.",
         "plan": "Plan",
         "contact": "Contact",
         "guestCheckoutDescription": "Your account is created here during payment, so you can continue in the app right after checkout.",

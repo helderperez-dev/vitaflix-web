@@ -202,6 +202,15 @@ export async function previewPromotionCode(data: {
     const subtotalAmount = price.unit_amount ?? 0
 
     if (
+        coupon.applies_to?.products &&
+        !coupon.applies_to.products.includes(
+            typeof price.product === "string" ? price.product : price.product.id
+        )
+    ) {
+        return { valid: false as const, reason: "not_applicable" as const }
+    }
+
+    if (
         promotion.restrictions.minimum_amount &&
         promotion.restrictions.minimum_amount_currency === price.currency &&
         subtotalAmount < promotion.restrictions.minimum_amount
