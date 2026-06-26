@@ -700,6 +700,12 @@
         "plan": "Plan",
         "contact": "Contact",
         "guestCheckoutDescription": "Your account is created here during payment, so you can continue in the app right after checkout.",
+        "loginCheckoutDescription": "Log in to your account to continue.",
+        "alreadyHaveAccount": "Already have an account?",
+        "logIn": "Log in",
+        "dontHaveAccount": "Don't have an account?",
+        "signUp": "Sign up",
+        "invalidCredentials": "Invalid email or password.",
         "payment": "Payment",
         "subscribe": "Subscribe",
         "payAmount": "Pay {amount}",
@@ -739,8 +745,12 @@
         "stripeErrorCardExpired": "This card expiration date is in the past.",
         "stripeErrorCardCvc": "Please check the card security code.",
         "stripeErrorCardNumber": "Please check the card number.",
-        "stripeErrorCardExpiry": "Please check the card expiration date.",
-        "stripeErrorCardDeclined": "This card was declined. Please try another payment method."
+        "stripeErrorCardExpiry": "Please check the card's expiration date.",
+        "stripeErrorCardDeclined": "This card was declined. Please try another payment method.",
+        "waitingForConfirmation": "Waiting for confirmation. Check your bank app if necessary.",
+        "tryAgain": "Try again",
+        "downloadOnThe": "Download on the",
+        "comingSoonDays": "Coming soon (in a few days)"
     },
     "Dashboard": {
         "title": "Dashboard",

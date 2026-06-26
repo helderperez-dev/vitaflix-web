@@ -3,7 +3,7 @@
 import * as React from "react"
 import { loadStripe, type StripeElementLocale, StripeElementsOptions } from "@stripe/stripe-js"
 import { Elements, PaymentElement, useStripe, useElements } from "@stripe/react-stripe-js"
-import { Loader2, Lock, ArrowLeft } from "lucide-react"
+import { Loader2, Lock, ArrowLeft, Eye, EyeOff } from "lucide-react"
 import Image from "next/image"
 import { useTranslations } from "next-intl"
 import { useRouter } from "next/navigation"
@@ -348,8 +348,10 @@ function CheckoutFormContent({
     
     const [email, setEmail] = React.useState(sessionEmail)
     const [password, setPassword] = React.useState("")
+    const [showPassword, setShowPassword] = React.useState(false)
     const [name, setName] = React.useState(sessionName)
     const [couponCode, setCouponCode] = React.useState(initialCoupon || "")
+    const [isLoginMode, setIsLoginMode] = React.useState(false)
     
     const [isSubmitting, setIsSubmitting] = React.useState(false)
     const [promotionPreview, setPromotionPreview] = React.useState<PromotionPreviewState>({ status: "idle" })
@@ -503,7 +505,7 @@ function CheckoutFormContent({
         }
 
         if (!initialSession) {
-            if (!name.trim()) {
+            if (!isLoginMode && !name.trim()) {
                 toast.error(t("nameRequired"))
                 return
             }
@@ -518,7 +520,7 @@ function CheckoutFormContent({
                 return
             }
 
-            if (password.trim().length < 6) {
+            if (!isLoginMode && password.trim().length < 6) {
                 toast.error(t("passwordTooShort"))
                 return
             }
@@ -554,9 +556,10 @@ function CheckoutFormContent({
                 const result = await checkoutRegisterAndSubscribe({
                     email,
                     password: initialSession ? undefined : password,
-                    name,
+                    name: isLoginMode ? undefined : name,
                     priceId: selectedPriceId,
                     promotionCode: promotionPreview.status === "valid" ? promotionPreview.code : undefined,
+                    mode: isLoginMode ? "login" : "register"
                 })
 
                 if (result.error) {
@@ -755,35 +758,58 @@ function CheckoutFormContent({
                     {!initialSession ? (
                         <div className="space-y-3">
                             <div className="space-y-1">
-                                <h3 className="text-lg font-bold tracking-tight text-slate-900">{t("contact")}</h3>
-                                <p className="text-sm font-medium text-slate-500">{t("guestCheckoutDescription")}</p>
+                                <div className="flex items-center justify-between">
+                                    <h3 className="text-lg font-bold tracking-tight text-slate-900">{t("contact")}</h3>
+                                    <button 
+                                        type="button" 
+                                        onClick={() => setIsLoginMode(!isLoginMode)}
+                                        className="text-sm font-medium text-primary hover:underline focus:outline-none"
+                                    >
+                                        {isLoginMode ? t("dontHaveAccount") + " " + t("signUp") : t("alreadyHaveAccount") + " " + t("logIn")}
+                                    </button>
+                                </div>
+                                <p className="text-sm font-medium text-slate-500">
+                                    {isLoginMode ? t("loginCheckoutDescription") : t("guestCheckoutDescription")}
+                                </p>
                             </div>
                             <div className="grid grid-cols-1 gap-2.5 md:grid-cols-2">
-                                <Input 
-                                    type="text" 
-                                    required
-                                    value={name} 
-                                    onChange={(e) => setName(e.target.value)} 
-                                    placeholder={t("namePlaceholder")}
-                                    className="h-11 border-slate-200 bg-white font-medium md:col-span-2"
-                                />
+                                {!isLoginMode && (
+                                    <Input 
+                                        type="text" 
+                                        required={!isLoginMode}
+                                        value={name} 
+                                        onChange={(e) => setName(e.target.value)} 
+                                        placeholder={t("namePlaceholder")}
+                                        className="h-11 border-slate-200 bg-white font-medium md:col-span-2"
+                                    />
+                                )}
                                 <Input 
                                     type="email" 
                                     required 
                                     value={email} 
                                     onChange={(e) => setEmail(e.target.value)} 
                                     placeholder={t("emailPlaceholder")}
-                                    className="h-11 border-slate-200 bg-white font-medium"
+                                    className={cn("h-11 border-slate-200 bg-white font-medium", isLoginMode && "md:col-span-2")}
                                 />
-                                <Input 
-                                    type="password" 
-                                    required 
-                                    value={password} 
-                                    onChange={(e) => setPassword(e.target.value)} 
-                                    placeholder={t("passwordPlaceholder")}
-                                    className="h-11 border-slate-200 bg-white font-medium"
-                                    minLength={6}
-                                />
+                                <div className={cn("relative", isLoginMode && "md:col-span-2")}>
+                                    <Input 
+                                        type={showPassword ? "text" : "password"} 
+                                        required 
+                                        value={password} 
+                                        onChange={(e) => setPassword(e.target.value)} 
+                                        placeholder={t("passwordPlaceholder")}
+                                        className="h-11 border-slate-200 bg-white font-medium pr-10"
+                                        minLength={6}
+                                    />
+                                    <button
+                                        type="button"
+                                        onClick={() => setShowPassword(!showPassword)}
+                                        className="absolute right-0 top-0 h-11 px-3 flex items-center justify-center text-slate-400 hover:text-slate-600 transition-colors focus:outline-none"
+                                        tabIndex={-1}
+                                    >
+                                        {showPassword ? <EyeOff className="size-4" /> : <Eye className="size-4" />}
+                                    </button>
+                                </div>
                             </div>
                         </div>
                     ) : null}
@@ -859,7 +885,12 @@ function CheckoutFormContent({
                         disabled={!stripe || isSubmitting} 
                         className="mt-1 h-11 w-full rounded-xl bg-primary text-sm font-bold text-white shadow-none hover:bg-primary/90"
                     >
-                        {isSubmitting ? <Loader2 className="size-5 animate-spin" /> : t("payAmount", { amount: formatPrice(effectiveTotalAmount, checkoutCurrency) })}
+                        {isSubmitting ? (
+                            <div className="flex items-center justify-center gap-2">
+                                <Loader2 className="size-5 animate-spin" />
+                                <span>{t("waitingForConfirmation")}</span>
+                            </div>
+                        ) : t("payAmount", { amount: formatPrice(effectiveTotalAmount, checkoutCurrency) })}
                     </Button>
                 </form>
             </div>

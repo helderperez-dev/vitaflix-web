@@ -699,7 +699,13 @@
         "applyToPlan": "Aplicar al plan {plan}",
         "plan": "Plan",
         "contact": "Contacto",
-        "guestCheckoutDescription": "Tu cuenta se crea aquí durante el pago, para que puedas continuar en la app justo después de completar la compra.",
+        "guestCheckoutDescription": "Su cuenta se crea aquí durante el pago, para que pueda continuar en la app justo después de finalizar la compra.",
+        "loginCheckoutDescription": "Inicia sesión en tu cuenta para continuar.",
+        "alreadyHaveAccount": "¿Ya tienes una cuenta?",
+        "logIn": "Iniciar sesión",
+        "dontHaveAccount": "¿No tienes cuenta?",
+        "signUp": "Regístrate",
+        "invalidCredentials": "Correo electrónico o contraseña inválidos.",
         "payment": "Pago",
         "subscribe": "Suscribirse",
         "payAmount": "Pagar {amount}",
@@ -740,7 +746,11 @@
         "stripeErrorCardCvc": "Revisa el código de seguridad de la tarjeta.",
         "stripeErrorCardNumber": "Revisa el número de la tarjeta.",
         "stripeErrorCardExpiry": "Revisa la fecha de vencimiento de la tarjeta.",
-        "stripeErrorCardDeclined": "La tarjeta fue rechazada. Prueba con otro método de pago."
+        "stripeErrorCardDeclined": "La tarjeta fue rechazada. Prueba con otro método de pago.",
+        "waitingForConfirmation": "Esperando confirmación. Verifique la App de su banco si es necesario.",
+        "tryAgain": "Intentar nuevamente",
+        "downloadOnThe": "Descargar en la",
+        "comingSoonDays": "Próximamente (en unos días)"
     },
     "Dashboard": {
         "title": "Panel de Control",

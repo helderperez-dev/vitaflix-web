@@ -334,7 +334,7 @@ async function assertNoConflictingActiveSubscription(userId: string) {
         .from("subscriptions")
         .select("id, status, stripe_subscription_id")
         .eq("user_id", userId)
-        .in("status", ["active", "trialing", "past_due", "incomplete"])
+        .in("status", ["active", "trialing", "past_due"])
 
     if (existing && existing.length > 0) {
         throw new BillingError("An active or pending subscription already exists for this user.", 409)
@@ -461,16 +461,17 @@ export async function createSubscriptionPaymentSheet(
     })
 
     const latestInvoice = subscription.latest_invoice as Stripe.Invoice | null
-    const clientSecret = latestInvoice ? getInvoiceConfirmationSecret(latestInvoice) : null
+    const clientSecret = latestInvoice && latestInvoice.status !== "paid" ? getInvoiceConfirmationSecret(latestInvoice) : null
 
-    if (!clientSecret) {
+    if (!clientSecret && subscription.status !== "active" && subscription.status !== "trialing") {
         throw new BillingError("Stripe did not return a subscription payment client secret.", 500)
     }
 
     return {
         ...mobileContext,
         subscriptionId: subscription.id,
-        clientSecret,
+        clientSecret: clientSecret || null,
+        status: subscription.status,
     }
 }
 
@@ -749,6 +750,7 @@ export async function getBillingSummary(profile: BillingProfile) {
         .from("subscriptions")
         .select("*")
         .eq("user_id", profile.id)
+        .neq("status", "incomplete")
         .order("created_at", { ascending: false })
 
     // Query 4: Invoices
@@ -853,7 +855,7 @@ export async function setDefaultPaymentMethod(profile: BillingProfile, paymentMe
             updated_at: now,
         })
         .eq("user_id", profile.id)
-        .in("status", ["active", "trialing", "past_due", "incomplete"])
+        .in("status", ["active", "trialing", "past_due"])
 
     return {
         customerId: customer.id,
@@ -877,7 +879,7 @@ export async function detachPaymentMethod(profile: BillingProfile, paymentMethod
             .from("subscriptions")
             .select("id")
             .eq("user_id", profile.id)
-            .in("status", ["active", "trialing", "past_due", "incomplete"])
+            .in("status", ["active", "trialing", "past_due"])
             .limit(1)
 
         if (activeSubscriptions && activeSubscriptions.length > 0) {

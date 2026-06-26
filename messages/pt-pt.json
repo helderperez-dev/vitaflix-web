@@ -701,6 +701,12 @@
         "plan": "Plano",
         "contact": "Contacto",
         "guestCheckoutDescription": "A sua conta é criada aqui durante o pagamento, para poder continuar na app logo após concluir a compra.",
+        "loginCheckoutDescription": "Inicie sessão na sua conta para continuar.",
+        "alreadyHaveAccount": "Já tem uma conta?",
+        "logIn": "Iniciar sessão",
+        "dontHaveAccount": "Não tem conta?",
+        "signUp": "Registar",
+        "invalidCredentials": "E-mail ou palavra-passe inválidos.",
         "payment": "Pagamento",
         "subscribe": "Subscrever",
         "payAmount": "Pagar {amount}",
@@ -741,7 +747,11 @@
         "stripeErrorCardCvc": "Verifique o código de segurança do cartão.",
         "stripeErrorCardNumber": "Verifique o número do cartão.",
         "stripeErrorCardExpiry": "Verifique a data de validade do cartão.",
-        "stripeErrorCardDeclined": "O cartão foi recusado. Tente outro método de pagamento."
+        "stripeErrorCardDeclined": "O cartão foi recusado. Tente outro método de pagamento.",
+        "waitingForConfirmation": "A aguardar confirmação. Verifique a App do seu banco se necessário.",
+        "tryAgain": "Tentar novamente",
+        "downloadOnThe": "Descarregar na",
+        "comingSoonDays": "Brevemente (em poucos dias)"
     },
     "Dashboard": {
         "title": "Painel de Controlo",

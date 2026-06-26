@@ -1,6 +1,7 @@
 "use server"
 
 import type { User } from "@supabase/supabase-js"
+import type { Stripe } from "stripe"
 import { createAdminClient } from "@/lib/supabase/admin"
 import { createClient } from "@/lib/supabase/server"
 import { createSubscriptionPaymentSheet, updateSubscription } from "@/lib/stripe/billing"
@@ -14,7 +15,7 @@ type CheckoutBillingProfile = {
     stripe_customer_id: string | null
 }
 
-const ACTIVE_SUBSCRIPTION_STATUSES = ["active", "trialing", "past_due", "incomplete"] as const
+const ACTIVE_SUBSCRIPTION_STATUSES = ["active", "trialing", "past_due"] as const
 
 function isMissingSchemaCacheRelationError(error: { code?: string } | null | undefined) {
     return error?.code === "PGRST205"
@@ -27,12 +28,14 @@ export async function checkoutRegisterAndSubscribe(data: {
     priceId: string
     couponId?: string
     promotionCode?: string
+    mode?: "login" | "register"
 }) {
     const supabase = await createClient()
     const admin = createAdminClient()
 
     let user: User | null = null
     let profile: CheckoutBillingProfile | null = null
+    const mode = data.mode || "register"
 
     // Check if user is logged in
     const { data: { session } } = await supabase.auth.getSession()
@@ -40,51 +43,64 @@ export async function checkoutRegisterAndSubscribe(data: {
     if (session?.user) {
         user = session.user
     } else {
-        if (!data.name?.trim()) {
-            return { error: "Checkout.nameRequired" }
-        }
-
         if (!data.password) {
             return { error: "Checkout.passwordRequired" }
         }
 
-        // Check if user exists
-        const { data: existingUsers } = await admin.auth.admin.listUsers()
-        const existingUser = existingUsers.users.find((u) => u.email === data.email)
+        if (mode === "login") {
+            const { data: signInData, error: signInError } = await supabase.auth.signInWithPassword({
+                email: data.email,
+                password: data.password,
+            })
 
-        if (existingUser) {
-            return { error: "Checkout.accountAlreadyExists" }
-        }
-
-        // Create new user, auto-confirming email
-        const { data: newUserData, error: createError } = await admin.auth.admin.createUser({
-            email: data.email,
-            password: data.password,
-            email_confirm: true,
-            user_metadata: {
-                name: data.name.trim(),
-                full_name: data.name.trim(),
-                display_name: data.name.trim(),
+            if (signInError) {
+                return { error: "Checkout.invalidCredentials" }
             }
-        })
 
-        if (createError) {
-            return { error: createError.message }
-        }
+            user = signInData.user
+        } else {
+            if (!data.name?.trim()) {
+                return { error: "Checkout.nameRequired" }
+            }
 
-        user = newUserData.user
+            // Check if user exists
+            const { data: existingUsers } = await admin.auth.admin.listUsers()
+            const existingUser = existingUsers.users.find((u) => u.email === data.email)
 
-        // Wait a bit for the trigger to create the public.users record
-        await new Promise(resolve => setTimeout(resolve, 500))
+            if (existingUser) {
+                return { error: "Checkout.accountAlreadyExists" }
+            }
 
-        // Sign in to establish session
-        const { error: signInError } = await supabase.auth.signInWithPassword({
-            email: data.email,
-            password: data.password,
-        })
+            // Create new user, auto-confirming email
+            const { data: newUserData, error: createError } = await admin.auth.admin.createUser({
+                email: data.email,
+                password: data.password,
+                email_confirm: true,
+                user_metadata: {
+                    name: data.name.trim(),
+                    full_name: data.name.trim(),
+                    display_name: data.name.trim(),
+                }
+            })
 
-        if (signInError) {
-            console.error("Auto sign-in failed:", signInError)
+            if (createError) {
+                return { error: createError.message }
+            }
+
+            user = newUserData.user
+
+            // Wait a bit for the trigger to create the public.users record
+            await new Promise(resolve => setTimeout(resolve, 500))
+
+            // Sign in to establish session
+            const { error: signInError } = await supabase.auth.signInWithPassword({
+                email: data.email,
+                password: data.password,
+            })
+
+            if (signInError) {
+                console.error("Auto sign-in failed:", signInError)
+            }
         }
     }
 
@@ -150,11 +166,68 @@ export async function checkoutRegisterAndSubscribe(data: {
             }
         }
 
+        const { data: incompleteSubscription } = await admin
+            .from("subscriptions")
+            .select("stripe_subscription_id, stripe_price_id")
+            .eq("user_id", profile.id)
+            .eq("status", "incomplete")
+            .order("created_at", { ascending: false })
+            .limit(1)
+            .maybeSingle()
+
+        if (incompleteSubscription?.stripe_subscription_id) {
+            try {
+                if (incompleteSubscription.stripe_price_id === data.priceId) {
+                    // Just return the existing client secret without updating to preserve any applied single-use promo codes
+                    const subscription = await stripe.subscriptions.retrieve(incompleteSubscription.stripe_subscription_id, {
+                        expand: ["latest_invoice.payment_intent", "latest_invoice.confirmation_secret"],
+                    })
+                    const latestInvoice = subscription.latest_invoice as Stripe.Invoice & {
+                        payment_intent?: Stripe.PaymentIntent | null;
+                        confirmation_secret?: { client_secret?: string } | null;
+                    } | null
+                    const clientSecret = latestInvoice?.payment_intent?.client_secret || latestInvoice?.confirmation_secret?.client_secret || null
+                    
+                    if (clientSecret) {
+                        return {
+                            success: true,
+                            clientSecret,
+                            subscriptionId: subscription.id,
+                        }
+                    }
+                } else {
+                    const result = await updateSubscription(profile, incompleteSubscription.stripe_subscription_id, {
+                        priceId: data.priceId,
+                        couponId: data.couponId,
+                        promotionCode: data.promotionCode,
+                    })
+
+                    if (result.paymentSheet?.clientSecret) {
+                        return {
+                            success: true,
+                            clientSecret: result.paymentSheet.clientSecret,
+                            subscriptionId: result.subscriptionId,
+                        }
+                    }
+                }
+            } catch (err) {
+                console.error("Failed to update incomplete subscription, creating a new one.", err)
+            }
+        }
+
         const result = await createSubscriptionPaymentSheet(profile, {
             priceId: data.priceId,
             couponId: data.couponId,
             promotionCode: data.promotionCode,
         })
+
+        if (!result.clientSecret && (result.status === "active" || result.status === "trialing")) {
+            return {
+                success: true,
+                clientSecret: null,
+                subscriptionId: result.subscriptionId,
+            }
+        }
 
         return { success: true, clientSecret: result.clientSecret, subscriptionId: result.subscriptionId }
     } catch (error) {
