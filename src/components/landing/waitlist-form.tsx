@@ -77,17 +77,17 @@ export function WaitlistForm({ inputId }: { inputId?: string }) {
     return (
         <Form {...form}>
             <form onSubmit={form.handleSubmit(onSubmit)} className="w-full relative z-10">
-                <div className="relative flex flex-col sm:flex-row sm:items-center gap-2 sm:gap-0 p-1.5 bg-white border border-slate-200 rounded-2xl sm:rounded-full shadow-lg shadow-slate-200/40 focus-within:ring-4 focus-within:ring-primary/10 transition-all hover:shadow-xl hover:shadow-slate-200/50 overflow-hidden">
+                <div className="relative flex flex-col sm:flex-row sm:items-center gap-2 sm:gap-0 p-1.5 bg-white border border-slate-200 rounded-2xl sm:rounded-[32px] shadow-lg shadow-slate-200/40 focus-within:ring-4 focus-within:ring-primary/10 transition-all hover:shadow-xl hover:shadow-slate-200/50">
                     <FormField
                         control={form.control}
                         name="name"
                         render={({ field }) => (
-                            <FormItem className="flex-1 mb-0 sm:border-r sm:border-slate-200 px-2">
+                            <FormItem className="w-full sm:flex-1 mb-0 sm:border-r sm:border-slate-200">
                                 <FormControl>
                                     <Input
                                         id={inputId}
                                         placeholder={t("placeholders.name")}
-                                        className="h-12 border-0 bg-transparent text-slate-900 placeholder:text-slate-500 focus-visible:ring-0 shadow-none px-3 font-medium text-sm"
+                                        className="h-12 border-0 bg-transparent text-slate-900 placeholder:text-slate-500 focus-visible:ring-0 shadow-none px-4 font-medium text-sm w-full truncate"
                                         onFocus={() => {
                                             if (!hasTrackedNameFocus.current) {
                                                 hasTrackedNameFocus.current = true
@@ -107,11 +107,11 @@ export function WaitlistForm({ inputId }: { inputId?: string }) {
                         control={form.control}
                         name="email"
                         render={({ field }) => (
-                            <FormItem className="flex-[2] mb-0 px-2">
+                            <FormItem className="w-full sm:flex-1 mb-0">
                                 <FormControl>
                                     <Input
                                         placeholder={t("placeholders.email")}
-                                        className="h-12 border-0 bg-transparent text-slate-900 placeholder:text-slate-500 focus-visible:ring-0 shadow-none px-3 font-medium text-sm"
+                                        className="h-12 border-0 bg-transparent text-slate-900 placeholder:text-slate-500 focus-visible:ring-0 shadow-none px-4 font-medium text-sm w-full truncate"
                                         onFocus={() => {
                                             if (!hasTrackedEmailFocus.current) {
                                                 hasTrackedEmailFocus.current = true
@@ -130,7 +130,7 @@ export function WaitlistForm({ inputId }: { inputId?: string }) {
                     <Button
                         type="submit"
                         disabled={isSubmitting}
-                        className="h-12 sm:h-[46px] rounded-xl sm:rounded-full bg-primary text-white font-bold text-sm px-6 sm:px-8 hover:bg-primary/90 active:scale-[0.98] transition-all shrink-0 relative overflow-hidden group w-full sm:w-auto mt-2 sm:mt-0 sm:ml-1"
+                        className="h-12 sm:h-[46px] rounded-xl sm:rounded-full bg-primary text-white font-bold text-sm px-5 hover:bg-primary/90 active:scale-[0.98] transition-all shrink-0 relative overflow-hidden group w-full sm:w-auto mt-2 sm:mt-0"
                     >
                         <div className="absolute inset-0 bg-white/20 translate-y-full group-hover:translate-y-0 transition-transform duration-300" />
                         <span className="relative flex items-center justify-center gap-2 whitespace-nowrap">

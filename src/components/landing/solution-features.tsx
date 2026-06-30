@@ -5,7 +5,7 @@ import { CheckCircle2, Gem, Zap } from "lucide-react"
 import { ImageCollage } from "@/components/landing/image-collage"
 import { useTranslations } from "next-intl"
 
-const featureKeys = ["recipes", "calories", "shopping", "planning", "filters"]
+const featureKeys = ["recipes", "planning", "shopping"]
 
 export function SolutionFeatures() {
     const t = useTranslations("Landing.SolutionFeatures")
@@ -37,26 +37,6 @@ export function SolutionFeatures() {
                     <div className="w-full lg:w-1/2 space-y-10">
                         <div>
                             <h2 className="mb-6 text-3xl font-bold tracking-tight text-slate-900 text-balance sm:text-4xl md:text-5xl">{t("title")}</h2>
-                            <p className="text-base leading-relaxed text-slate-600 text-balance md:text-lg">
-                                {t("subtitle")}
-                            </p>
-                        </div>
-
-                        <div className="grid sm:grid-cols-2 gap-4">
-                            <div className="rounded-2xl border border-border/60 bg-white p-4 shadow-sm transition-all duration-300 hover:-translate-y-0.5 hover:shadow-md">
-                                <div className="mb-2 inline-flex size-8 items-center justify-center rounded-full bg-primary/10 text-primary">
-                                    <Gem className="size-4" />
-                                </div>
-                                <p className="font-semibold text-slate-900">{t("premium.title")}</p>
-                                <p className="mt-1 text-sm text-slate-600">{t("premium.desc")}</p>
-                            </div>
-                            <div className="rounded-2xl border border-border/60 bg-white p-4 shadow-sm transition-all duration-300 hover:-translate-y-0.5 hover:shadow-md">
-                                <div className="mb-2 inline-flex size-8 items-center justify-center rounded-full bg-sky-100 text-sky-600">
-                                    <Zap className="size-4" />
-                                </div>
-                                <p className="font-semibold text-slate-900">{t("practical.title")}</p>
-                                <p className="mt-1 text-sm text-slate-600">{t("practical.desc")}</p>
-                            </div>
                         </div>
 
                         <div className="space-y-6">

@@ -7,12 +7,12 @@
         "Header": {
             "video": "Como Funciona",
             "benefits": "Benefícios",
-            "method": "Método",
+            "method": "Recursos",
             "testimonials": "Depoimentos",
             "pricing": "Preços",
             "faq": "FAQ",
             "language": "Idioma",
-            "cta": "Garantir acesso"
+            "cta": "Começar agora"
         },
         "WhatsApp": {
             "text": "Fala comigo! 👋",
@@ -26,13 +26,25 @@
             "confirm": "Entendi e concordo"
         },
         "Hero": {
-            "badge": "Vagas limitadas para acesso antecipado",
-            "titlePrefix": "Perca peso",
-            "titleSuffix": "sem contar calorias",
-            "subtitle": "Nunca mais perca tempo decidindo o que comer. O Vitaflix cria seu plano semanal, lista de compras e receitas em segundos.",
-            "waitlistCount": "+250 na lista de espera",
-            "noCard": "Sem cartão de crédito",
-            "cancelAnytime": "Cancele quando quiser",
+            "badge": "Já disponível para iOS",
+            "users": "+250 usuários ativos",
+            "titlePrefix": "Organiza a sua alimentação",
+            "titleSuffix": "e perca peso sem contar calorias",
+            "subtitle": "Mais de 300 receitas, quantidades ajustadas e lista de compras numa só app.",
+            "bullets": {
+                "1": "Sem calcular alimentos manualmente",
+                "2": "Sabes o que preparar e em que quantidade",
+                "3": "Lista de compras pronta em segundos"
+            },
+            "iphone": {
+                "title": "Já disponível para iPhone",
+                "button": "Começar agora no iPhone"
+            },
+            "android": {
+                "title": "Esperando pela versão Android?",
+                "modalTitle": "Android em breve",
+                "modalDesc": "A versão Android está na fase final de aprovação na Google Play. Deixe seu email para ser avisado assim que estiver disponível."
+            },
             "Cards": {
                 "Meal": {
                     "time": "Hoje, 12:30",
@@ -57,71 +69,56 @@
             }
         },
         "VideoIntro": {
-            "badge": "Mensagem do Bruno",
-            "title": "Bruno Cortez fala sobre a Vitaflix",
-            "subtitle": "Assista a este vídeo rápido para entender a visão por trás da Vitaflix e como ela simplifica sua rotina alimentar.",
+            "badge": "Demonstração",
+            "title": "Veja como funciona",
+            "subtitle": "Em poucos minutos consegue escolher refeições, alterar opções, consultar as quantidades e organizar os próximos dias.",
             "play": "Reproduzir vídeo de apresentação",
-            "urgency": "As primeiras vagas estão quase fechando. Garanta agora o seu lugar."
+            "cta": "Começar agora"
         },
         "PainPoints": {
-            "label": "No dia a dia",
-            "title": "O que costuma complicar seu planejamento",
-            "subtitle": "Com a Vitaflix, esses bloqueios deixam de travar sua rotina e o planejamento passa a ser leve e rápido.",
+            "label": "O problema",
+            "title": "Comer melhor não devia dar tanto trabalho",
+            "subtitle": "Sabes que precisas de organizar melhor a alimentação, mas acabas por:",
+            "conclusion": "O Vitaflix reúne as receitas, as quantidades, a organização das refeições e a lista de compras num único lugar.",
+            "highlight": "Menos contas. Menos confusão. Mais praticidade.",
             "items": {
-                "time": {
-                    "title": "Pouco Tempo",
-                    "desc": "Entre trabalho, família e rotina, planejar refeições equilibradas acaba sempre ficando para depois."
-                },
-                "flavor": {
-                    "title": "Refeições Sem Sabor",
-                    "desc": "Muitas opções parecem repetitivas e pouco apelativas, o que torna difícil manter a constância."
-                },
-                "doubt": {
-                    "title": "Dúvida Constante",
-                    "desc": "Decidir o que cozinhar todos os dias consome tempo e energia que você poderia usar em outras prioridades."
-                },
                 "variety": {
-                    "title": "Falta de Variedade",
-                    "desc": "Você acaba repetindo as mesmas refeições por não ter um sistema simples para variar."
+                    "title": "Repetir sempre as mesmas refeições",
+                    "desc": "Acabas por comer sempre o mesmo por falta de imaginação e organização."
                 },
                 "quantity": {
-                    "title": "Quantidades Incertas",
-                    "desc": "Sem orientação clara, é difícil ajustar porções ao seu objetivo e manter resultados consistentes."
+                    "title": "Não saber que quantidades preparar",
+                    "desc": "Sem saber o que preparar e em que quantidade para o teu objetivo."
+                },
+                "time": {
+                    "title": "Perder tempo a contar calorias",
+                    "desc": "Ter que usar aplicações complexas para calcular manualmente as calorias."
+                },
+                "doubt": {
+                    "title": "Comprar sem saber o que vais cozinhar",
+                    "desc": "Acabas por comprar alimentos sem um plano claro."
+                },
+                "flavor": {
+                    "title": "Improvisar",
+                    "desc": "Porque organizar tudo parece demasiado complicado."
                 }
             }
         },
         "SolutionFeatures": {
             "imageLabel": "Receitas reais para seu dia a dia",
-            "title": "Tudo num só lugar",
-            "subtitle": "Apresentamos a solução definitiva. Com a Vitaflix, você não perde tempo, apenas ganha saúde e controle sobre suas refeições.",
-            "premium": {
-                "title": "Experiência premium",
-                "desc": "Interface limpa, rápida e desenhada para uso diário."
-            },
-            "practical": {
-                "title": "Resultados práticos",
-                "desc": "Você decide em minutos o que cozinhar durante toda a semana."
-            },
+            "title": "Tudo o que precisas para descomplicar a tua alimentação",
             "list": {
                 "recipes": {
-                    "title": "+300 Receitas",
-                    "desc": "Variedade real para todos os gostos, sem monotonia."
-                },
-                "calories": {
-                    "title": "Variações Calóricas",
-                    "desc": "A mesma refeição adaptada a vários objetivos (perda, ganho, foco)."
-                },
-                "shopping": {
-                    "title": "Lista de Compras Automática",
-                    "desc": "Não perca tempo com idas desnecessárias ao supermercado."
+                    "title": "Refeições ajustadas ao teu objetivo",
+                    "desc": "Entre pequenos-almoços, lanches, almoços, jantares e opções doces o vitaflix, dá-te uma sugestão das quantidades com base na tua meta calórica e no número de refeições que queres fazer."
                 },
                 "planning": {
-                    "title": "Planejamento Semanal",
-                    "desc": "Ferramenta intuitiva para organizar a semana inteira num relance."
+                    "title": "Organiza as tuas refeições",
+                    "desc": "Podes escolher refeições, trocar opções de que não gostas e aplicar o plano que criaste a diferentes dias."
                 },
-                "filters": {
-                    "title": "Filtros Inteligentes",
-                    "desc": "Encontre o que você quer (carne, peixe, vegano, s/ lactose) num segundo."
+                "shopping": {
+                    "title": "Cria automaticamente a lista de compras",
+                    "desc": "Depois de organizares a semana podes, com apenas um clique criar uma lista de compras com todos os ingredientes e as respetivas quantidades."
                 }
             }
         },
@@ -138,8 +135,8 @@
                 "toast": "Ocorreu um erro. Tente novamente mais tarde."
             },
             "placeholders": {
-                "name": "Seu nome",
-                "email": "Seu melhor e-mail"
+                "name": "Nome",
+                "email": "Email"
             },
             "button": {
                 "loading": "Processando...",
@@ -147,24 +144,15 @@
             }
         },
         "Founder": {
-            "label": "Credibilidade do método",
-            "title": "Por trás da Vitaflix existe um método, não promessas",
-            "subtitle": "O app foi desenhado com base em experiência de campo e acompanhamento real para tornar o planejamento alimentar mais simples, consistente e sustentável.",
-            "pillars": {
-                "tech": {
-                    "title": "Base técnica sólida",
-                    "desc": "Metodologia construída com formação em Educação Física e prática real com alunos."
-                },
-                "progress": {
-                    "title": "Progressão sustentável",
-                    "desc": "Foco em consistência e evolução no tempo, sem atalhos extremos ou soluções de curto prazo."
-                },
-                "routine": {
-                    "title": "Rotina aplicável",
-                    "desc": "Planejamento alimentar que encaixa no dia a dia, com decisões simples e repetíveis."
-                }
+            "title": "O que encontras no Vitaflix",
+            "features": {
+                "recipes": "Mais de 300 receitas práticas e saborosas",
+                "quantities": "Quantidades ajustadas para o teu objetivo",
+                "planning": "Organização das refeições da semana",
+                "substitution": "Substituição rápida de refeições",
+                "shopping": "Lista de compras automática",
+                "new": "Novas receitas adicionadas regularmente"
             },
-            "box": "A metodologia foi desenvolvida por Bruno Cortez com foco em resultados sustentáveis e já ajudou centenas de alunos a perder peso, ganhar massa muscular e manter hábitos consistentes.",
             "button": "Quero ter acesso a estas receitas"
         },
         "Testimonials": {
@@ -214,87 +202,104 @@
             }
         },
         "Pricing": {
-            "label": "Preços claros",
-            "title": "Invista na sua rotina",
-            "subtitle": "Planos simples e transparentes. Sem letras miúdas ou contratos longos.",
+            "label": "Apenas para IOS",
+            "title": "Investe na tua rotina",
+            "subtitle": "Planos simples e transparentes. Sem letras pequenas ou contratos longos.",
             "button": "Começar agora",
+            "android": {
+                "title": "Tens Android?",
+                "desc": "Ainda não concluas a compra.",
+                "button": "Quero ser avisado quando abrir no Android"
+            },
             "plans": {
                 "monthly": {
-                    "name": "Plano Mensal",
-                    "desc": "Ideal para quem quer apenas testar.",
+                    "name": "Mensal",
+                    "desc": "Para quem prefere maior flexibilidade.",
                     "period": "/mês",
+                    "button": "Escolher mensal",
                     "features": {
-                        "recipes": "Acesso total a +300 receitas",
-                        "planning": "Planejamento semanal completo",
-                        "list": "Lista de compras automática",
-                        "filters": "Filtros e variações de macros",
-                        "price": "Equivale a 12,99€"
+                        "access": "Acesso completo",
+                        "renewal": "Renovação mensal automática",
+                        "cancel": "Podes cancelar a renovação quando quiseres"
                     }
                 },
                 "quarterly": {
-                    "name": "Plano Trimestral",
-                    "desc": "O favorito para resultados reais.",
+                    "name": "Trimestral — Mais escolhido",
+                    "desc": "Equivale a aproximadamente 10 € por mês.",
                     "period": "/3 meses",
                     "tag": "Mais Popular",
+                    "button": "Escolher trimestral",
                     "features": {
-                        "recipes": "Acesso total a +300 receitas",
-                        "planning": "Planejamento semanal completo",
-                        "list": "Lista de compras automática",
-                        "filters": "Filtros e variações de macros",
-                        "price": "Equivale a 9,99€/mês"
+                        "access": "Acesso completo",
+                        "value": "Melhor valor do que o plano mensal",
+                        "renewal": "Renovação trimestral automática",
+                        "cancel": "Podes cancelar a renovação quando quiseres"
                     }
                 },
                 "annual": {
-                    "name": "Plano Anual",
-                    "desc": "O melhor valor a longo prazo.",
+                    "name": "Anual — Melhor valor",
+                    "desc": "Equivale a aproximadamente 7,50 € por mês.",
                     "period": "/ano",
+                    "button": "Escolher anual",
                     "features": {
-                        "recipes": "Acesso total a +300 receitas",
-                        "planning": "Planejamento semanal completo",
-                        "list": "Lista de compras automática",
-                        "filters": "Filtros e variações de macros",
-                        "updates": "Acesso aos novos updates",
-                        "price": "Equivale a 7,49€/mês"
+                        "access": "Acesso completo",
+                        "savings": "Maior poupança",
+                        "renewal": "Renovação anual automática",
+                        "cancel": "Podes cancelar a renovação quando quiseres"
                     }
                 }
             }
         },
         "Faq": {
-            "label": "Sem complicações",
-            "title": "Perguntas Frequentes",
-            "subtitle": "Tudo o que você precisa saber sobre a Vitaflix.",
+            "title": "Perguntas frequentes",
             "items": {
-                "cancel": {
-                    "q": "Posso cancelar quando quiser?",
-                    "a": "Sim, absolutamente. Sua assinatura pode ser cancelada a qualquer momento, diretamente nas configurações da sua conta, sem perguntas ou truques."
+                "calories": {
+                    "q": "Preciso de contar calorias?",
+                    "a": "Não. As receitas já apresentam diferentes versões calóricas e as respetivas quantidades. Escolhes a opção mais adequada e segues os ingredientes apresentados. Não precisas de calcular manualmente as calorias de cada refeição."
                 },
-                "devices": {
-                    "q": "Está disponível para Android e iPhone?",
-                    "a": "Sim, a Vitaflix está disponível e otimizada tanto na App Store (iOS) como no Google Play (Android)."
+                "plan": {
+                    "q": "O Vitaflix cria um plano alimentar para mim?",
+                    "a": "O Vitaflix apresenta sugestões de organização alimentar de acordo com o número de refeições e a meta calórica diária. Depois podes substituir refeições, escolher outras opções e aplicar a organização aos dias que pretenderes."
                 },
                 "support": {
-                    "q": "O app inclui acompanhamento personalizado?",
-                    "a": "Não. A Vitaflix é uma ferramenta de organização criativa de refeições. Nosso foco é te dar total autonomia e enorme senso prático, não incluindo consultas ou chat de acompanhamento."
+                    "q": "O Vitaflix inclui acompanhamento personalizado?",
+                    "a": "A subscrição do Vitaflix não inclui acompanhamento individual, consultas ou contacto personalizado. A aplicação foi criada para te dar autonomia, através de receitas, quantidades, sugestões de organização e ferramentas que podes utilizar ao teu ritmo. Caso queiras um acompanhamento personalizado comigo, Bruno Cortez, personal trainer e especialista em perda de peso, podes falar diretamente comigo através do WhatsApp.",
+                    "cta": "Quero saber mais sobre o acompanhamento personalizado"
+                },
+                "custom": {
+                    "q": "Posso criar as minhas próprias receitas e adicionar os meus alimentos?",
+                    "a": "O Vitaflix não pretende ser mais uma aplicação onde precisas de registar todos os alimentos e contar calorias manualmente. O objetivo é precisamente descomplicar aquilo que muitas dessas aplicações tornam cansativo. Por isso, já tens acesso a mais de 300 receitas completas, com quantidades e diferentes versões calóricas. Serão também adicionadas novas receitas regularmente."
+                },
+                "restrictions": {
+                    "q": "Posso utilizar o Vitaflix se tiver restrições alimentares?",
+                    "a": "Existem diferentes tipos de receitas, filtros e alternativas de ingredientes. No entanto, o Vitaflix não cria planos clínicos personalizados para alergias, intolerâncias ou condições de saúde específicas. Deves verificar sempre os ingredientes e confirmar se cada opção é adequada às tuas necessidades."
                 },
                 "shopping": {
-                    "q": "O app cria lista de compras automática?",
-                    "a": "Sim! A Vitaflix gera automaticamente uma lista de compras organizada por seções do supermercado, baseada nas receitas que você escolher para sua semana."
+                    "q": "A lista de compras é criada automaticamente?",
+                    "a": "Sim. Podes adicionar os ingredientes das refeições escolhidas e reuni-los numa lista de compras organizada automaticamente."
                 },
-                "diet": {
-                    "q": "Existem opções vegetarianas ou veganas?",
-                    "a": "Sim, nossa base de dados inclui diversas opções vegetarianas, veganas e sem glúten, permitindo filtrar as receitas de acordo com suas preferências alimentares."
+                "android": {
+                    "q": "Quando estará disponível para Android?",
+                    "a": "A versão Android está na fase final obrigatória de testes da Google Play. Deixa o teu email e serás avisado assim que estiver disponível. Os utilizadores Android também terão acesso à respetiva condição especial de lançamento."
                 },
-                "payments": {
-                    "q": "Como funcionam os pagamentos?",
-                    "a": "Os pagamentos são processados de forma segura através da App Store (Apple) ou Google Play Store (Android), garantindo total proteção dos seus dados."
+                "cancel": {
+                    "q": "Posso cancelar quando quiser?",
+                    "a": "Podes cancelar a renovação automática quando quiseres. Depois de cancelares, continuas a ter acesso ao Vitaflix até ao final do período que já foi pago."
                 }
             }
         },
         "Cta": {
-            "title": "Pronto para transformar sua",
-            "highlight": "alimentação?",
-            "subtitle": "Junte-se à lista de espera e seja um dos primeiros a experimentar a Vitaflix. Simplifique seu planejamento e atinja seus objetivos.",
-            "footer": "Acesso exclusivo para os primeiros inscritos."
+            "title": "Deixa de começar todos os dias sem saber o que comer",
+            "subtitle": "Escolhe refeições, consulta as quantidades e organiza os próximos dias dentro da mesma aplicação.",
+            "iphone": {
+                "title": "Já disponível para iPhone",
+                "button": "Começar agora no iPhone"
+            },
+            "android": {
+                "title": "Esperando pela versão Android?",
+                "desc": "Android em fase final de aprovação na Google Play."
+            },
+            "footer": "Mais de 300 receitas. Menos contas. Mais organização."
         },
         "ThankYou": {
             "metaTitle": "Lugar Garantido! | Vitaflix",
@@ -741,6 +746,7 @@
         "goToDashboard": "Ir para o painel",
         "accountAlreadyExists": "Já existe uma conta com este e-mail. Faça login primeiro.",
         "failedToRetrieveProfile": "Não foi possível carregar seu perfil.",
+        "logout": "Sair da conta",
         "currentSubscriptionCheckError": "Não foi possível verificar sua assinatura atual.",
         "currentPlanAlreadyActive": "Este plano já está ativo na sua conta.",
         "stripeErrorCardExpired": "A data de validade do cartão já expirou.",

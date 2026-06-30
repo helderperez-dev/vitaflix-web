@@ -4,7 +4,7 @@ import { useEffect, useRef, useState } from "react"
 import { motion, useScroll, useSpring, useTransform } from "framer-motion"
 import { Play } from "lucide-react"
 import { useTranslations } from "next-intl"
-import { WaitlistForm } from "./waitlist-form"
+import { Link } from "@/i18n/routing"
 
 export function WelcomeVideoSection() {
     const t = useTranslations("Landing.VideoIntro")
@@ -175,14 +175,13 @@ export function WelcomeVideoSection() {
                         whileInView={{ opacity: 1, y: 0 }}
                         viewport={{ once: true, amount: 0.6 }}
                         transition={{ duration: 0.45, ease: "easeOut", delay: 0.1 }}
-                        className="mt-6 flex flex-col items-center justify-center"
+                        className="mt-10 flex flex-col items-center justify-center"
                     >
-                        <p className="mb-3 text-center text-sm sm:text-base font-semibold text-slate-700">
-                            {t("urgency")}
-                        </p>
-                        <div className="w-full max-w-[980px]">
-                            <WaitlistForm inputId="video-waitlist-input" />
-                        </div>
+                        <div className="flex flex-col sm:flex-row justify-center gap-4">
+                                <Link href="/checkout" className="inline-flex h-14 items-center justify-center rounded-xl bg-primary px-8 text-base font-bold text-primary-foreground shadow-lg shadow-primary/20 transition-all hover:scale-[1.02] active:scale-[0.98]">
+                                    {t("cta")}
+                                </Link>
+                            </div>
                     </motion.div>
                 </div>
             </div>

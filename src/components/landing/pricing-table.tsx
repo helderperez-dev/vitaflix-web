@@ -2,16 +2,16 @@
 
 import { motion } from "framer-motion"
 import { Check } from "lucide-react"
-import Link from "next/link"
+import { Link } from "@/i18n/routing"
 import { useTranslations } from "next-intl"
 import { usePostHog } from "posthog-js/react"
 
 const planKeys = ["monthly", "quarterly", "annual"]
 
 const planFeatureKeys = {
-    monthly: ["recipes", "planning", "list", "filters", "price"],
-    quarterly: ["recipes", "planning", "list", "filters", "price"],
-    annual: ["recipes", "planning", "list", "filters", "updates", "price"]
+    monthly: ["access", "renewal", "cancel"],
+    quarterly: ["access", "value", "renewal", "cancel"],
+    annual: ["access", "savings", "renewal", "cancel"]
 }
 
 const planHighlights = {
@@ -24,26 +24,21 @@ const planPrices = {
     annual: "89,99 €"
 }
 
+const planOldPrices = {
+    monthly: null,
+    quarterly: "35,99 €",
+    annual: "129,90 €"
+}
+
 const planDiscounts = {
-    quarterly: "23%",
-    annual: "42%"
+    quarterly: null,
+    annual: null
 }
 
 export function PricingTable() {
     const t = useTranslations("Landing.Pricing")
+    const tHero = useTranslations("Landing.Hero")
     const posthog = usePostHog()
-
-    const handleStartNowClick = (e: React.MouseEvent<HTMLAnchorElement>, planKey: string) => {
-        e.preventDefault()
-        posthog?.capture("pricing_plan_clicked", { plan: planKey })
-        
-        const input = document.getElementById("hero-waitlist-input")
-        if (!input) return
-        input.scrollIntoView({ behavior: "smooth", block: "center" })
-        setTimeout(() => {
-            ;(input as HTMLInputElement).focus()
-        }, 500)
-    }
 
     return (
         <section className="relative overflow-hidden bg-gradient-to-b from-white to-[#f7fcfa] py-24 md:py-32">
@@ -89,9 +84,16 @@ export function PricingTable() {
                             </div>
 
                             <div className="mb-8 min-h-24">
-                                <div className="flex items-baseline gap-1">
-                                    <span className="text-4xl md:text-5xl font-black tracking-tight">{planPrices[key as keyof typeof planPrices]}</span>
-                                    <span className="text-muted-foreground font-medium">{t(`plans.${key}.period`)}</span>
+                                <div className="flex flex-col gap-1">
+                                    {planOldPrices[key as keyof typeof planOldPrices] && (
+                                        <span className="text-sm font-semibold text-muted-foreground line-through">
+                                            {planOldPrices[key as keyof typeof planOldPrices]}
+                                        </span>
+                                    )}
+                                    <div className="flex items-baseline gap-1">
+                                        <span className="text-4xl md:text-5xl font-black tracking-tight">{planPrices[key as keyof typeof planPrices]}</span>
+                                        <span className="text-muted-foreground font-medium">{t(`plans.${key}.period`)}</span>
+                                    </div>
                                 </div>
                                 {discount && (
                                     <span className="mt-3 inline-flex rounded-full bg-primary/10 px-3 py-1 text-xs font-bold uppercase tracking-[0.08em] text-primary">
@@ -111,13 +113,15 @@ export function PricingTable() {
                                 ))}
                             </div>
 
-                            <Link href="#waitlist" onClick={(e) => handleStartNowClick(e, key)} className={`mt-8 inline-flex h-14 w-full items-center justify-center rounded-full px-6 text-sm font-bold transition-all
+                            <Link href="/checkout" onClick={(e) => {
+                                posthog?.capture("pricing_plan_clicked", { plan: key })
+                            }} className={`mt-8 inline-flex h-14 w-full items-center justify-center rounded-full px-6 text-sm font-bold transition-all
                                 ${isHighlight
-                                    ? 'bg-primary text-white hover:bg-primary/90'
-                                    : 'bg-muted/60 text-foreground hover:bg-muted'
+                                    ? 'bg-primary text-white hover:bg-primary/90 shadow-lg shadow-primary/20 hover:-translate-y-1'
+                                    : 'bg-slate-100 text-slate-900 hover:bg-slate-200 hover:-translate-y-1'
                                 }
                             `}>
-                                {t("button")}
+                                {t(`plans.${key}.button`)}
                             </Link>
                         </motion.div>
                     )})}

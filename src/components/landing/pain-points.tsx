@@ -54,6 +54,17 @@ export function PainPoints() {
                     })}
                 </div>
 
+                <motion.div 
+                    initial={{ opacity: 0, y: 20 }}
+                    whileInView={{ opacity: 1, y: 0 }}
+                    viewport={{ once: true }}
+                    transition={{ duration: 0.6 }}
+                    className="mx-auto mt-16 max-w-3xl text-center"
+                >
+                    <p className="mb-6 text-lg text-slate-600">{t("conclusion")}</p>
+                    <h3 className="text-2xl font-bold tracking-tight text-slate-900 md:text-4xl">{t("highlight")}</h3>
+                </motion.div>
+
             </div>
         </section>
     )

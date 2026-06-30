@@ -3,6 +3,7 @@
 import { WaitlistForm } from "./waitlist-form"
 import { motion } from "framer-motion"
 import { useTranslations } from "next-intl"
+import { Link } from "@/i18n/routing"
 
 export function CtaSection() {
     const t = useTranslations("Landing.Cta")
@@ -24,18 +25,27 @@ export function CtaSection() {
                         transition={{ duration: 0.5 }}
                     >
                         <h2 className="mb-6 text-3xl font-bold tracking-tight text-slate-900 sm:text-4xl md:text-5xl">
-                            {t("title")} <br className="hidden sm:block" />
-                            <span className="text-transparent bg-clip-text bg-gradient-to-r from-primary via-emerald-500 to-teal-500">
-                                {t("highlight")}
-                            </span>
+                            {t("title")}
                         </h2>
                         <p className="mx-auto mb-10 max-w-2xl text-lg text-slate-600 md:text-xl leading-relaxed">
                             {t("subtitle")}
                         </p>
                         
-                        <div className="mx-auto max-w-3xl">
-                            <WaitlistForm />
-                            <p className="mt-4 text-sm text-slate-500 font-medium">
+                        <div className="mx-auto max-w-xl text-left">
+                            <div className="mb-8 text-center">
+                                <h3 className="text-sm font-bold text-slate-900 uppercase tracking-wider mb-3">{t("iphone.title")}</h3>
+                                <Link href="/checkout" className="inline-flex h-12 items-center justify-center rounded-xl bg-slate-900 hover:bg-slate-800 px-8 text-base font-bold text-white shadow-lg shadow-slate-900/10 transition-all hover:scale-[1.02] active:scale-[0.98] w-full sm:w-auto">
+                                    {t("iphone.button")}
+                                </Link>
+                            </div>
+                            
+                            <div className="bg-white/80 backdrop-blur-sm rounded-2xl p-6 border border-slate-200/60 shadow-sm text-center">
+                                <h3 className="text-sm font-bold text-slate-900 mb-2">{t("android.title")}</h3>
+                                <p className="text-xs text-slate-600 mb-4">{t("android.desc")}</p>
+                                <WaitlistForm />
+                            </div>
+                            
+                            <p className="mt-8 text-sm text-slate-500 font-medium text-center">
                                 {t("footer")}
                             </p>
                         </div>

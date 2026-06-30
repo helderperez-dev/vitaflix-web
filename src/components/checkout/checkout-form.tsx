@@ -3,7 +3,7 @@
 import * as React from "react"
 import { loadStripe, type StripeElementLocale, StripeElementsOptions } from "@stripe/stripe-js"
 import { Elements, PaymentElement, useStripe, useElements } from "@stripe/react-stripe-js"
-import { Loader2, Lock, ArrowLeft, Eye, EyeOff } from "lucide-react"
+import { Loader2, Lock, ArrowLeft, Eye, EyeOff, LogOut } from "lucide-react"
 import Image from "next/image"
 import { useTranslations } from "next-intl"
 import { useRouter } from "next/navigation"
@@ -15,6 +15,7 @@ import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar"
 import { cn, getMediaUrl } from "@/lib/utils"
 import { checkoutRegisterAndSubscribe, previewPromotionCode } from "@/app/actions/checkout"
 import { usePostHog } from "posthog-js/react"
+import { createClient } from "@/lib/supabase/client"
 
 const stripePromise = loadStripe(process.env.NEXT_PUBLIC_STRIPE_PUBLISHABLE_KEY!)
 
@@ -352,9 +353,22 @@ function CheckoutFormContent({
     const [name, setName] = React.useState(sessionName)
     const [couponCode, setCouponCode] = React.useState(initialCoupon || "")
     const [isLoginMode, setIsLoginMode] = React.useState(false)
+    const [isLoggingOut, setIsLoggingOut] = React.useState(false)
     
     const [isSubmitting, setIsSubmitting] = React.useState(false)
     const [promotionPreview, setPromotionPreview] = React.useState<PromotionPreviewState>({ status: "idle" })
+
+    const handleLogout = async () => {
+        setIsLoggingOut(true)
+        try {
+            const supabase = createClient()
+            await supabase.auth.signOut()
+            router.refresh()
+        } catch (error) {
+            console.error("Failed to log out", error)
+            setIsLoggingOut(false)
+        }
+    }
 
     const subtotalAmount = isInvoicePayment ? (invoiceDetails?.amount ?? 0) : (selectedPrice?.unitAmount ?? 0)
     const checkoutCurrency = isInvoicePayment ? (invoiceDetails?.currency ?? "usd") : (selectedPrice?.currency ?? "usd")
@@ -703,7 +717,7 @@ function CheckoutFormContent({
                         <div className="flex items-center justify-between gap-4">
                             <h3 className="text-lg font-bold tracking-tight text-slate-900">{t("plan")}</h3>
                             {initialSession?.user?.email ? (
-                                <div className="flex items-center gap-2.5 rounded-full border border-slate-200 bg-slate-50 px-2.5 py-1.5">
+                                <div className="flex items-center gap-2.5 rounded-full border border-slate-200 bg-slate-50 pl-2.5 pr-1.5 py-1.5">
                                     <Avatar size="sm" className="border border-primary/10 bg-white size-7">
                                         {sessionAvatar ? <AvatarImage src={getMediaUrl(sessionAvatar)} alt={identityName} /> : null}
                                         <AvatarFallback className="bg-primary/10 text-[11px] font-semibold text-primary">
@@ -714,6 +728,15 @@ function CheckoutFormContent({
                                         <p className="truncate text-xs font-semibold text-slate-900">{identityName}</p>
                                         <p className="mt-1 truncate text-[11px] font-medium text-slate-500">{sessionEmail}</p>
                                     </div>
+                                    <button
+                                        type="button"
+                                        onClick={handleLogout}
+                                        disabled={isLoggingOut}
+                                        className="ml-1 flex size-7 items-center justify-center rounded-full bg-white border border-slate-200 text-slate-500 hover:bg-slate-100 hover:text-slate-900 transition-colors focus:outline-none"
+                                        title={t("logout")}
+                                    >
+                                        {isLoggingOut ? <Loader2 className="size-3.5 animate-spin" /> : <LogOut className="size-3.5" />}
+                                    </button>
                                 </div>
                             ) : null}
                         </div>

@@ -9,7 +9,7 @@ import {
 import { motion } from "framer-motion"
 import { useTranslations } from "next-intl"
 
-const faqKeys = ["cancel", "devices", "support", "shopping", "diet", "payments"]
+const faqKeys = ["calories", "plan", "support", "custom", "restrictions", "shopping", "android", "cancel"]
 
 export function FaqSection() {
     const t = useTranslations("Landing.Faq")
@@ -20,9 +20,7 @@ export function FaqSection() {
             </div>
             <div className="container mx-auto max-w-3xl px-4">
                 <div className="mb-16 text-center">
-                    <p className="mb-4 text-xs font-semibold uppercase tracking-[0.2em] text-primary">{t("label")}</p>
                     <h2 className="mb-4 text-3xl font-bold tracking-tight md:text-5xl">{t("title")}</h2>
-                    <p className="text-lg text-muted-foreground">{t("subtitle")}</p>
                 </div>
 
                 <motion.div
@@ -37,8 +35,18 @@ export function FaqSection() {
                                 <AccordionTrigger className="py-6 text-left text-lg font-bold hover:text-primary hover:no-underline transition-colors">
                                     {t(`items.${key}.q`)}
                                 </AccordionTrigger>
-                                <AccordionContent className="pb-6 text-base leading-relaxed text-muted-foreground">
-                                    {t(`items.${key}.a`)}
+                                <AccordionContent className="pb-6 text-base leading-relaxed text-muted-foreground flex flex-col items-start gap-4">
+                                    <p>{t(`items.${key}.a`)}</p>
+                                    {key === "support" && (
+                                        <a 
+                                            href="https://wa.me/351915466286?text=Ol%C3%A1%2C%20gostaria%20de%20saber%20mais%20sobre%20o%20acompanhamento%20personalizado." 
+                                            target="_blank" 
+                                            rel="noopener noreferrer"
+                                            className="inline-flex h-10 items-center justify-center rounded-xl bg-emerald-500 hover:bg-emerald-600 px-6 text-sm font-bold text-white shadow-lg shadow-emerald-500/20 transition-all hover:scale-[1.02] active:scale-[0.98]"
+                                        >
+                                            {t("items.support.cta")}
+                                        </a>
+                                    )}
                                 </AccordionContent>
                             </AccordionItem>
                         ))}

@@ -6,6 +6,8 @@ import { useState, useEffect, useRef } from "react"
 import { Apple, Check, ChevronRight } from "lucide-react"
 import Image from "next/image"
 import { useLocale, useTranslations } from "next-intl"
+import { Link } from "@/i18n/routing"
+import { Dialog, DialogContent, DialogDescription, DialogHeader, DialogTitle, DialogTrigger } from "@/components/ui/dialog"
 
 const heroPersonas = [
     {
@@ -171,62 +173,100 @@ export function HeroSection() {
                             animate={{ opacity: 1, y: 0 }}
                             transition={{ duration: 0.6, ease: "easeOut" }}
                         >
-                            <div className="inline-flex items-center gap-2 rounded-full bg-white border border-slate-200/60 px-4 py-1.5 shadow-sm mb-6">
-                                <span className="relative flex h-2 w-2">
-                                    <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-primary opacity-75"></span>
-                                    <span className="relative inline-flex rounded-full h-2 w-2 bg-primary"></span>
-                                </span>
+                            <div className="inline-flex items-center gap-2 rounded-full bg-white border border-slate-200/60 px-3.5 py-1.5 shadow-sm mb-5">
+                                <svg viewBox="0 0 384 512" fill="currentColor" className="h-3.5 w-3.5 text-slate-900">
+                                    <path d="M318.7 268.7c-.2-36.7 16.4-64.4 50-84.8-18.8-26.9-47.2-41.7-84.7-44.6-35.5-2.8-74.3 20.7-88.5 20.7-15 0-49.4-19.7-76.4-19.7C63.3 141.2 4 184.8 4 273.5q0 39.3 14.4 81.2c12.8 36.7 59 126.7 107.2 125.2 25.2-.6 43-17.9 75.8-17.9 31.8 0 48.3 17.9 76.4 17.9 48.6-.7 90.4-82.5 102.6-119.3-65.2-30.7-61.7-90-61.7-91.9zm-56.6-164.2c27.3-32.4 24.8-61.9 24-72.5-24.1 1.4-52 16.4-67.9 34.9-17.5 19.8-27.8 44.3-25.6 71.9 26.1 2 49.9-11.4 69.5-34.3z"/>
+                                </svg>
                                 <span className="text-xs font-semibold tracking-normal text-slate-700">
                                     {t("badge")}
                                 </span>
                             </div>
 
-                            <h1 className={`
-                                ${isEnglish ? "text-4xl sm:text-5xl lg:text-[3.5rem] xl:text-[3.9rem]" : "text-4xl sm:text-5xl lg:text-6xl xl:text-[4.5rem]"}
-                                font-bold tracking-tight text-slate-900 leading-[1.05] mb-5 font-['Poppins',sans-serif]
-                            `}>
-                                {t("titlePrefix")} <br className="hidden lg:block" />
-                                <span className={`
-                                    text-transparent bg-clip-text bg-gradient-to-r from-primary via-emerald-500 to-teal-500 font-extrabold
-                                    ${isEnglish ? "" : "whitespace-nowrap"}
-                                `}>
+                            <h1
+                                className={`
+                                    ${isEnglish ? "text-3xl sm:text-4xl md:text-5xl lg:text-5xl xl:text-6xl" : "text-[1.8rem] sm:text-[2.2rem] md:text-[2.6rem] lg:text-[2rem] xl:text-[2.2rem] 2xl:text-[2.5rem]"}
+                                    w-full font-bold tracking-tight text-slate-900 leading-[1.1] mb-4 font-['Poppins',sans-serif]
+                                `}
+                            >
+                                <span className="block">{t("titlePrefix")}</span>
+                                <span className="mt-1 block text-transparent bg-clip-text bg-gradient-to-r from-primary via-emerald-500 to-teal-500 font-extrabold lg:whitespace-nowrap">
                                     {t("titleSuffix")}
                                 </span>
                             </h1>
 
-                            <p className="text-base text-slate-600 leading-relaxed mb-6 max-w-lg mx-auto lg:mx-0 font-medium">
+                            <p className="text-[15px] text-slate-600 leading-relaxed mb-5 max-w-lg mx-auto lg:mx-0 font-medium">
                                 {t("subtitle")}
                             </p>
 
-                            <div className="flex flex-col sm:flex-row items-center gap-3 justify-center lg:justify-start mb-6 text-sm font-semibold text-slate-600">
-                                <div className="flex items-center gap-2">
-                                    <div className="flex -space-x-2">
-                                        {heroPersonas.map((persona) => (
-                                            <div key={persona.name} className="h-8 w-8 rounded-full border-2 border-white bg-slate-100 flex items-center justify-center text-[10px] overflow-hidden shadow-sm">
-                                                <Image src={persona.avatar} alt={persona.name} width={32} height={32} className="h-full w-full object-cover" />
+                            <div className="mb-8 flex items-center justify-center lg:justify-start gap-3 text-sm text-slate-600">
+                                <div className="flex -space-x-2">
+                                    {heroPersonas.map((persona) => (
+                                        <div
+                                            key={persona.name}
+                                            className="h-8 w-8 overflow-hidden rounded-full border-2 border-white bg-slate-100 shadow-sm"
+                                        >
+                                            <Image
+                                                src={persona.avatar}
+                                                alt={persona.name}
+                                                width={32}
+                                                height={32}
+                                                className="h-full w-full object-cover"
+                                            />
+                                        </div>
+                                    ))}
+                                </div>
+                                <span className="text-xs font-semibold text-slate-500">
+                                    {t("users")}
+                                </span>
+                            </div>
+
+                            <div className="mt-10 w-full mx-auto lg:mx-0 text-left">
+                                <div className="flex flex-col sm:flex-row items-center justify-start gap-4 mb-6">
+                                    <Link href="/checkout" className="inline-flex whitespace-nowrap h-14 items-center justify-center rounded-full bg-slate-900 hover:bg-slate-800 px-8 text-base font-bold text-white shadow-xl shadow-slate-900/10 transition-all hover:-translate-y-1 active:translate-y-0 w-full sm:w-auto gap-3">
+                                        <svg viewBox="0 0 384 512" fill="currentColor" className="h-[20px] w-[20px] pb-0.5">
+                                            <path d="M318.7 268.7c-.2-36.7 16.4-64.4 50-84.8-18.8-26.9-47.2-41.7-84.7-44.6-35.5-2.8-74.3 20.7-88.5 20.7-15 0-49.4-19.7-76.4-19.7C63.3 141.2 4 184.8 4 273.5q0 39.3 14.4 81.2c12.8 36.7 59 126.7 107.2 125.2 25.2-.6 43-17.9 75.8-17.9 31.8 0 48.3 17.9 76.4 17.9 48.6-.7 90.4-82.5 102.6-119.3-65.2-30.7-61.7-90-61.7-91.9zm-56.6-164.2c27.3-32.4 24.8-61.9 24-72.5-24.1 1.4-52 16.4-67.9 34.9-17.5 19.8-27.8 44.3-25.6 71.9 26.1 2 49.9-11.4 69.5-34.3z"/>
+                                        </svg>
+                                        {t("iphone.button")}
+                                    </Link>
+
+                                    <Dialog>
+                                        <DialogTrigger asChild>
+                                            <button className="lg:hidden inline-flex whitespace-nowrap h-14 items-center justify-center rounded-full bg-white border border-slate-200 hover:border-slate-300 hover:bg-slate-50 px-8 text-base font-semibold text-slate-700 shadow-sm transition-all hover:-translate-y-1 active:translate-y-0 w-full sm:w-auto">
+                                                {t("android.title")}
+                                            </button>
+                                        </DialogTrigger>
+                                        <DialogContent className="w-[90vw] max-w-[425px] sm:max-w-md p-6">
+                                            <DialogHeader className="text-left sm:text-center space-y-3">
+                                                <DialogTitle className="text-xl sm:text-2xl font-bold">{t("android.modalTitle")}</DialogTitle>
+                                                <DialogDescription className="text-sm sm:text-base">
+                                                    {t("android.modalDesc")}
+                                                </DialogDescription>
+                                            </DialogHeader>
+                                            <div className="py-4">
+                                                <WaitlistForm inputId="hero-waitlist-input-modal" />
                                             </div>
-                                        ))}
-                                    </div>
-                                    <span className="text-xs">{t("waitlistCount")}</span>
+                                        </DialogContent>
+                                    </Dialog>
                                 </div>
                             </div>
 
-                            <div className="mt-8 w-full max-w-[600px] mx-auto lg:mx-0">
-                                <WaitlistForm inputId="hero-waitlist-input" />
-                            </div>
-
-                            <div className="mt-4 flex items-center justify-center lg:justify-start gap-5 text-[11px] font-medium text-slate-500">
-                                <div className="flex items-center gap-1.5">
-                                    <div className="h-4 w-4 rounded-full bg-emerald-100 flex items-center justify-center">
-                                        <Check className="size-2.5 text-emerald-600" />
+                            {/* Inline Waitlist Form (visible only on desktop below the buttons) */}
+                            <div className="hidden lg:block w-full max-w-[440px] mx-auto lg:mx-0 text-left mt-6">
+                                <div className="bg-slate-50/80 backdrop-blur-md rounded-2xl p-4 border border-slate-200 shadow-sm relative overflow-hidden group">
+                                    <div className="absolute inset-0 bg-gradient-to-r from-primary/5 to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-500" />
+                                    <div className="relative z-10 flex items-center justify-between gap-4 mb-3">
+                                        <div className="flex items-center gap-2">
+                                            <div className="size-2 rounded-full bg-emerald-500 animate-pulse" />
+                                            <h3 className="text-sm font-bold text-slate-900">{t("android.modalTitle")}</h3>
+                                        </div>
+                                        <span className="text-[10px] font-semibold text-primary bg-primary/10 px-2 py-0.5 rounded-full">
+                                            Google Play
+                                        </span>
                                     </div>
-                                    <span>{t("noCard")}</span>
-                                </div>
-                                <div className="flex items-center gap-1.5">
-                                    <div className="h-4 w-4 rounded-full bg-emerald-100 flex items-center justify-center">
-                                        <Check className="size-2.5 text-emerald-600" />
+                                    <p className="text-[13px] text-slate-600 mb-4 leading-relaxed relative z-10">{t("android.modalDesc")}</p>
+                                    <div className="relative z-10">
+                                        <WaitlistForm inputId="hero-waitlist-input-inline" />
                                     </div>
-                                    <span>{t("cancelAnytime")}</span>
                                 </div>
                             </div>
                         </motion.div>

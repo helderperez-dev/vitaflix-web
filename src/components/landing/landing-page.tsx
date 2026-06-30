@@ -16,7 +16,7 @@ import { PrivacyConsentModal } from "@/components/landing/privacy-consent-modal"
 import { LanguageSwitcher } from "@/components/landing/language-switcher"
 import { Sheet, SheetContent, SheetTrigger, SheetHeader, SheetTitle } from "@/components/ui/sheet"
 import { Menu } from "lucide-react"
-import Link from "next/link"
+import { Link } from "@/i18n/routing"
 import Image from "next/image"
 import { cn } from "@/lib/utils"
 import { useTranslations } from "next-intl"
@@ -34,17 +34,6 @@ export function LandingPage() {
 
         return () => window.removeEventListener("scroll", handleScroll)
     }, [])
-
-    const handleCtaClick = (e: React.MouseEvent<HTMLAnchorElement>) => {
-        e.preventDefault()
-        const element = document.getElementById("hero-waitlist-input")
-        if (element) {
-            element.scrollIntoView({ behavior: "smooth", block: "center" })
-            setTimeout(() => {
-                element.focus()
-            }, 500)
-        }
-    }
 
     return (
         <div className="min-h-screen bg-gradient-to-b from-white via-[#f7fcfa] to-[#f5f8ff] text-foreground font-sans selection:bg-primary/30">
@@ -81,8 +70,7 @@ export function LandingPage() {
                             <LanguageSwitcher />
                         </div>
                         <Link 
-                            href="#waitlist" 
-                            onClick={handleCtaClick}
+                            href="/checkout" 
                             className="hidden sm:inline-flex h-11 items-center rounded-full bg-slate-900 hover:bg-slate-800 px-7 text-sm font-bold text-white shadow-xl shadow-slate-900/10 transition-all hover:scale-105 active:scale-95"
                         >
                             {t("cta")}
@@ -152,9 +140,8 @@ export function LandingPage() {
                                         <LanguageSwitcher />
                                     </div>
                                     <Link 
-                                        href="#waitlist" 
+                                        href="/checkout" 
                                         onClick={(e) => {
-                                            handleCtaClick(e);
                                             setIsMobileMenuOpen(false);
                                         }}
                                         className="inline-flex h-12 items-center justify-center rounded-xl bg-slate-900 hover:bg-slate-800 px-6 text-sm font-bold text-white shadow-lg shadow-slate-900/10 transition-all hover:scale-[1.02] active:scale-[0.98] w-full"
@@ -170,12 +157,12 @@ export function LandingPage() {
 
             <main className="flex flex-col min-h-screen overflow-hidden">
                 <HeroSection />
-                <div id="video">
-                    <WelcomeVideoSection />
-                </div>
                 <div id="beneficios">
                     <PainPoints />
                     <SolutionFeatures />
+                </div>
+                <div id="video">
+                    <WelcomeVideoSection />
                 </div>
                 <div id="sobre">
                     <FounderSection />

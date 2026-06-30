@@ -26,13 +26,25 @@
             "confirm": "I understand and agree"
         },
         "Hero": {
-            "badge": "Limited early access spots",
-            "titlePrefix": "Lose weight",
-            "titleSuffix": "without counting calories",
-            "subtitle": "Never waste time deciding what to eat again. Vitaflix creates your weekly plan, shopping list, and recipes in seconds.",
-            "waitlistCount": "+250 on the waitlist",
-            "noCard": "No credit card required",
-            "cancelAnytime": "Cancel anytime",
+            "badge": "Now available on the App Store",
+            "users": "+250 active users",
+            "titlePrefix": "Organize your meals",
+            "titleSuffix": "and lose weight without counting calories",
+            "subtitle": "300+ recipes, adjusted portions, and your shopping list in one app.",
+            "bullets": {
+                "1": "No manual food tracking",
+                "2": "Know what to cook and how much",
+                "3": "Shopping list ready in seconds"
+            },
+            "iphone": {
+                "title": "Now on iPhone",
+                "button": "Start on iPhone"
+            },
+            "android": {
+                "title": "Waiting for Android?",
+                "modalTitle": "Android coming soon",
+                "modalDesc": "Android is in final Google Play review. Leave your email to be notified as soon as it's available."
+            },
             "Cards": {
                 "Meal": {
                     "time": "Today, 12:30",
@@ -61,7 +73,8 @@
             "title": "Bruno Cortez talks about Vitaflix",
             "subtitle": "Watch this quick video to see the vision behind Vitaflix and how it helps you simplify your nutrition routine.",
             "play": "Play welcome video",
-            "urgency": "Early access spots are almost gone. Secure your place now."
+            "urgency": "Early access spots are almost gone. Secure your place now.",
+            "cta": "Start now"
         },
         "PainPoints": {
             "label": "Day to day",
@@ -138,8 +151,8 @@
                 "toast": "An error occurred. Please try again later."
             },
             "placeholders": {
-                "name": "Your name",
-                "email": "Your best email"
+                "name": "Name",
+                "email": "Email"
             },
             "button": {
                 "loading": "Processing...",
@@ -740,6 +753,7 @@
         "goToDashboard": "Go to Dashboard",
         "accountAlreadyExists": "An account already exists with this email. Please sign in first.",
         "failedToRetrieveProfile": "Failed to load your profile.",
+        "logout": "Log out",
         "currentSubscriptionCheckError": "Failed to check your current subscription.",
         "currentPlanAlreadyActive": "This plan is already active on your account.",
         "stripeErrorCardExpired": "This card expiration date is in the past.",

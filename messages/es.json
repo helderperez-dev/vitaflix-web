@@ -61,7 +61,8 @@
             "title": "Bruno Cortez habla sobre Vitaflix",
             "subtitle": "Mira este vídeo rápido para conocer la visión detrás de Vitaflix y cómo te ayuda a simplificar tu rutina nutricional.",
             "play": "Reproducir vídeo de bienvenida",
-            "urgency": "Las plazas de acceso anticipado casi se agotan. Asegura tu lugar ahora."
+            "urgency": "Las plazas de acceso anticipado casi se agotan. Asegura tu lugar ahora.",
+            "cta": "Empezar ahora"
         },
         "PainPoints": {
             "label": "En el día a día",
@@ -138,8 +139,8 @@
                 "toast": "Ocurrió un error. Intenta nuevamente más tarde."
             },
             "placeholders": {
-                "name": "Tu nombre",
-                "email": "Tu mejor email"
+                "name": "Nombre",
+                "email": "Email"
             },
             "button": {
                 "loading": "Procesando...",
@@ -740,6 +741,7 @@
         "goToDashboard": "Ir al panel",
         "accountAlreadyExists": "Ya existe una cuenta con este correo. Inicia sesión primero.",
         "failedToRetrieveProfile": "No se pudo cargar tu perfil.",
+        "logout": "Cerrar sesión",
         "currentSubscriptionCheckError": "No se pudo verificar tu suscripción actual.",
         "currentPlanAlreadyActive": "Este plan ya está activo en tu cuenta.",
         "stripeErrorCardExpired": "La fecha de vencimiento de la tarjeta ya pasó.",
