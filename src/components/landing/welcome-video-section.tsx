@@ -178,10 +178,13 @@ export function WelcomeVideoSection() {
                         className="mt-10 flex flex-col items-center justify-center"
                     >
                         <div className="flex flex-col sm:flex-row justify-center gap-4">
-                                <Link href="/checkout" className="inline-flex h-14 items-center justify-center rounded-xl bg-primary px-8 text-base font-bold text-primary-foreground shadow-lg shadow-primary/20 transition-all hover:scale-[1.02] active:scale-[0.98]">
-                                    {t("cta")}
-                                </Link>
-                            </div>
+                            <Link href="/checkout" className="inline-flex h-14 items-center justify-center rounded-full bg-slate-900 hover:bg-slate-800 px-10 text-base font-bold text-white shadow-lg shadow-slate-900/10 transition-all hover:-translate-y-1 active:translate-y-0 w-full sm:w-auto gap-2">
+                                {t("cta")}
+                                <svg viewBox="0 0 20 20" fill="currentColor" className="w-5 h-5">
+                                    <path fillRule="evenodd" d="M7.21 14.77a.75.75 0 01.02-1.06L11.168 10 7.23 6.29a.75.75 0 111.04-1.08l4.5 4.25a.75.75 0 010 1.08l-4.5 4.25a.75.75 0 01-1.06-.02z" clipRule="evenodd" />
+                                </svg>
+                            </Link>
+                        </div>
                     </motion.div>
                 </div>
             </div>

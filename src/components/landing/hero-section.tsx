@@ -1,13 +1,11 @@
 "use client"
 
-import { WaitlistForm } from "./waitlist-form"
 import { motion, useScroll, useTransform, useSpring } from "framer-motion"
 import { useState, useEffect, useRef } from "react"
 import { Apple, Check, ChevronRight } from "lucide-react"
 import Image from "next/image"
 import { useLocale, useTranslations } from "next-intl"
 import { Link } from "@/i18n/routing"
-import { Dialog, DialogContent, DialogDescription, DialogHeader, DialogTitle, DialogTrigger } from "@/components/ui/dialog"
 
 const heroPersonas = [
     {
@@ -173,10 +171,15 @@ export function HeroSection() {
                             animate={{ opacity: 1, y: 0 }}
                             transition={{ duration: 0.6, ease: "easeOut" }}
                         >
-                            <div className="inline-flex items-center gap-2 rounded-full bg-white border border-slate-200/60 px-3.5 py-1.5 shadow-sm mb-5">
-                                <svg viewBox="0 0 384 512" fill="currentColor" className="h-3.5 w-3.5 text-slate-900">
-                                    <path d="M318.7 268.7c-.2-36.7 16.4-64.4 50-84.8-18.8-26.9-47.2-41.7-84.7-44.6-35.5-2.8-74.3 20.7-88.5 20.7-15 0-49.4-19.7-76.4-19.7C63.3 141.2 4 184.8 4 273.5q0 39.3 14.4 81.2c12.8 36.7 59 126.7 107.2 125.2 25.2-.6 43-17.9 75.8-17.9 31.8 0 48.3 17.9 76.4 17.9 48.6-.7 90.4-82.5 102.6-119.3-65.2-30.7-61.7-90-61.7-91.9zm-56.6-164.2c27.3-32.4 24.8-61.9 24-72.5-24.1 1.4-52 16.4-67.9 34.9-17.5 19.8-27.8 44.3-25.6 71.9 26.1 2 49.9-11.4 69.5-34.3z"/>
-                                </svg>
+                            <div className="inline-flex items-center gap-2.5 rounded-full bg-white border border-slate-200/60 px-3.5 py-1.5 shadow-sm mb-8">
+                                <div className="flex items-center gap-1.5 text-slate-900">
+                                    <svg viewBox="0 0 384 512" fill="currentColor" className="h-3.5 w-3.5">
+                                        <path d="M318.7 268.7c-.2-36.7 16.4-64.4 50-84.8-18.8-26.9-47.2-41.7-84.7-44.6-35.5-2.8-74.3 20.7-88.5 20.7-15 0-49.4-19.7-76.4-19.7C63.3 141.2 4 184.8 4 273.5q0 39.3 14.4 81.2c12.8 36.7 59 126.7 107.2 125.2 25.2-.6 43-17.9 75.8-17.9 31.8 0 48.3 17.9 76.4 17.9 48.6-.7 90.4-82.5 102.6-119.3-65.2-30.7-61.7-90-61.7-91.9zm-56.6-164.2c27.3-32.4 24.8-61.9 24-72.5-24.1 1.4-52 16.4-67.9 34.9-17.5 19.8-27.8 44.3-25.6 71.9 26.1 2 49.9-11.4 69.5-34.3z"/>
+                                    </svg>
+                                    <svg viewBox="0 0 512 512" fill="currentColor" className="h-[13px] w-[13px]">
+                                        <path d="M325.3 234.3L104.6 13l280.8 161.2-60.1 60.1zM47 0C34 6.8 25.3 19.2 25.3 35.3v441.3c0 16.1 8.7 28.5 21.7 35.3l256.6-256L47 0zm425.2 225.6l-58.9-34.1-65.7 64.5 65.7 64.5 60.1-34.1c18-14.3 18-46.5-1.2-60.8zM104.6 499l280.8-161.2-60.1-60.1L104.6 499z"/>
+                                    </svg>
+                                </div>
                                 <span className="text-xs font-semibold tracking-normal text-slate-700">
                                     {t("badge")}
                                 </span>
@@ -184,88 +187,77 @@ export function HeroSection() {
 
                             <h1
                                 className={`
-                                    ${isEnglish ? "text-3xl sm:text-4xl md:text-5xl lg:text-5xl xl:text-6xl" : "text-[1.8rem] sm:text-[2.2rem] md:text-[2.6rem] lg:text-[2rem] xl:text-[2.2rem] 2xl:text-[2.5rem]"}
-                                    w-full font-bold tracking-tight text-slate-900 leading-[1.1] mb-4 font-['Poppins',sans-serif]
+                                    ${isEnglish ? "text-5xl sm:text-6xl md:text-7xl lg:text-[64px] xl:text-[72px]" : "text-[2.5rem] sm:text-[3rem] md:text-[3.5rem] lg:text-[4rem] xl:text-[4.5rem]"}
+                                    w-full font-black tracking-tighter text-slate-950 leading-[1.1] mb-8 font-['Poppins',sans-serif]
                                 `}
                             >
-                                <span className="block">{t("titlePrefix")}</span>
-                                <span className="mt-1 block text-transparent bg-clip-text bg-gradient-to-r from-primary via-emerald-500 to-teal-500 font-extrabold lg:whitespace-nowrap">
+                                <span className="block text-slate-950">{t("titlePrefix")}</span>
+                                <span className="block text-emerald-500 mt-2 xl:mt-3">
                                     {t("titleSuffix")}
                                 </span>
                             </h1>
 
-                            <p className="text-[15px] text-slate-600 leading-relaxed mb-5 max-w-lg mx-auto lg:mx-0 font-medium">
+                            <p className="text-lg sm:text-xl text-slate-500 leading-[1.7] mb-10 max-w-[480px] mx-auto lg:mx-0 font-normal">
                                 {t("subtitle")}
                             </p>
 
-                            <div className="mb-8 flex items-center justify-center lg:justify-start gap-3 text-sm text-slate-600">
-                                <div className="flex -space-x-2">
-                                    {heroPersonas.map((persona) => (
-                                        <div
-                                            key={persona.name}
-                                            className="h-8 w-8 overflow-hidden rounded-full border-2 border-white bg-slate-100 shadow-sm"
-                                        >
-                                            <Image
-                                                src={persona.avatar}
-                                                alt={persona.name}
-                                                width={32}
-                                                height={32}
-                                                className="h-full w-full object-cover"
-                                            />
-                                        </div>
-                                    ))}
-                                </div>
-                                <span className="text-xs font-semibold text-slate-500">
-                                    {t("users")}
-                                </span>
-                            </div>
-
-                            <div className="mt-10 w-full mx-auto lg:mx-0 text-left">
-                                <div className="flex flex-col sm:flex-row items-center justify-start gap-4 mb-6">
-                                    <Link href="/checkout" className="inline-flex whitespace-nowrap h-14 items-center justify-center rounded-full bg-slate-900 hover:bg-slate-800 px-8 text-base font-bold text-white shadow-xl shadow-slate-900/10 transition-all hover:-translate-y-1 active:translate-y-0 w-full sm:w-auto gap-3">
-                                        <svg viewBox="0 0 384 512" fill="currentColor" className="h-[20px] w-[20px] pb-0.5">
-                                            <path d="M318.7 268.7c-.2-36.7 16.4-64.4 50-84.8-18.8-26.9-47.2-41.7-84.7-44.6-35.5-2.8-74.3 20.7-88.5 20.7-15 0-49.4-19.7-76.4-19.7C63.3 141.2 4 184.8 4 273.5q0 39.3 14.4 81.2c12.8 36.7 59 126.7 107.2 125.2 25.2-.6 43-17.9 75.8-17.9 31.8 0 48.3 17.9 76.4 17.9 48.6-.7 90.4-82.5 102.6-119.3-65.2-30.7-61.7-90-61.7-91.9zm-56.6-164.2c27.3-32.4 24.8-61.9 24-72.5-24.1 1.4-52 16.4-67.9 34.9-17.5 19.8-27.8 44.3-25.6 71.9 26.1 2 49.9-11.4 69.5-34.3z"/>
+                            <div className="w-full mx-auto lg:mx-0 text-left">
+                                <div className="flex flex-col items-center lg:items-start gap-6">
+                                    <Link href="/checkout" className="inline-flex whitespace-nowrap h-16 sm:h-[72px] items-center justify-center rounded-full bg-slate-900 hover:bg-slate-800 px-12 sm:px-14 text-lg sm:text-xl font-bold text-white shadow-lg shadow-slate-900/10 transition-all hover:-translate-y-1 active:translate-y-0 w-full sm:w-auto gap-3">
+                                        {t("button")}
+                                        <svg viewBox="0 0 20 20" fill="currentColor" className="w-5 h-5 sm:w-6 sm:h-6">
+                                            <path fillRule="evenodd" d="M7.21 14.77a.75.75 0 01.02-1.06L11.168 10 7.23 6.29a.75.75 0 111.04-1.08l4.5 4.25a.75.75 0 010 1.08l-4.5 4.25a.75.75 0 01-1.06-.02z" clipRule="evenodd" />
                                         </svg>
-                                        {t("iphone.button")}
                                     </Link>
-
-                                    <Dialog>
-                                        <DialogTrigger asChild>
-                                            <button className="lg:hidden inline-flex whitespace-nowrap h-14 items-center justify-center rounded-full bg-white border border-slate-200 hover:border-slate-300 hover:bg-slate-50 px-8 text-base font-semibold text-slate-700 shadow-sm transition-all hover:-translate-y-1 active:translate-y-0 w-full sm:w-auto">
-                                                {t("android.title")}
-                                            </button>
-                                        </DialogTrigger>
-                                        <DialogContent className="w-[90vw] max-w-[425px] sm:max-w-md p-6">
-                                            <DialogHeader className="text-left sm:text-center space-y-3">
-                                                <DialogTitle className="text-xl sm:text-2xl font-bold">{t("android.modalTitle")}</DialogTitle>
-                                                <DialogDescription className="text-sm sm:text-base">
-                                                    {t("android.modalDesc")}
-                                                </DialogDescription>
-                                            </DialogHeader>
-                                            <div className="py-4">
-                                                <WaitlistForm inputId="hero-waitlist-input-modal" />
-                                            </div>
-                                        </DialogContent>
-                                    </Dialog>
-                                </div>
-                            </div>
-
-                            {/* Inline Waitlist Form (visible only on desktop below the buttons) */}
-                            <div className="hidden lg:block w-full max-w-[440px] mx-auto lg:mx-0 text-left mt-6">
-                                <div className="bg-slate-50/80 backdrop-blur-md rounded-2xl p-4 border border-slate-200 shadow-sm relative overflow-hidden group">
-                                    <div className="absolute inset-0 bg-gradient-to-r from-primary/5 to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-500" />
-                                    <div className="relative z-10 flex items-center justify-between gap-4 mb-3">
+                                    
+                                    <div className="flex items-center gap-4 text-[15px] font-semibold text-slate-500 ml-1">
                                         <div className="flex items-center gap-2">
-                                            <div className="size-2 rounded-full bg-emerald-500 animate-pulse" />
-                                            <h3 className="text-sm font-bold text-slate-900">{t("android.modalTitle")}</h3>
+                                            <svg viewBox="0 0 384 512" fill="currentColor" className="h-[15px] w-[15px] text-slate-700">
+                                                <path d="M318.7 268.7c-.2-36.7 16.4-64.4 50-84.8-18.8-26.9-47.2-41.7-84.7-44.6-35.5-2.8-74.3 20.7-88.5 20.7-15 0-49.4-19.7-76.4-19.7C63.3 141.2 4 184.8 4 273.5q0 39.3 14.4 81.2c12.8 36.7 59 126.7 107.2 125.2 25.2-.6 43-17.9 75.8-17.9 31.8 0 48.3 17.9 76.4 17.9 48.6-.7 90.4-82.5 102.6-119.3-65.2-30.7-61.7-90-61.7-91.9zm-56.6-164.2c27.3-32.4 24.8-61.9 24-72.5-24.1 1.4-52 16.4-67.9 34.9-17.5 19.8-27.8 44.3-25.6 71.9 26.1 2 49.9-11.4 69.5-34.3z"/>
+                                            </svg>
+                                            iOS
                                         </div>
-                                        <span className="text-[10px] font-semibold text-primary bg-primary/10 px-2 py-0.5 rounded-full">
-                                            Google Play
-                                        </span>
+                                        <div className="w-1.5 h-1.5 rounded-full bg-slate-300" />
+                                        <div className="flex items-center gap-2">
+                                            <svg viewBox="0 0 512 512" fill="currentColor" className="h-[15px] w-[15px] text-slate-700">
+                                                <path d="M325.3 234.3L104.6 13l280.8 161.2-60.1 60.1zM47 0C34 6.8 25.3 19.2 25.3 35.3v441.3c0 16.1 8.7 28.5 21.7 35.3l256.6-256L47 0zm425.2 225.6l-58.9-34.1-65.7 64.5 65.7 64.5 60.1-34.1c18-14.3 18-46.5-1.2-60.8zM104.6 499l280.8-161.2-60.1-60.1L104.6 499z"/>
+                                            </svg>
+                                            Android
+                                        </div>
                                     </div>
-                                    <p className="text-[13px] text-slate-600 mb-4 leading-relaxed relative z-10">{t("android.modalDesc")}</p>
-                                    <div className="relative z-10">
-                                        <WaitlistForm inputId="hero-waitlist-input-inline" />
+
+                                    <div className="flex items-center gap-3 text-sm text-slate-600 ml-1">
+                                        <div className="flex -space-x-2">
+                                            {heroPersonas.map((persona) => (
+                                                <div
+                                                    key={persona.name}
+                                                    className="h-8 w-8 overflow-hidden rounded-full border-2 border-white bg-slate-100 shadow-sm"
+                                                >
+                                                    <Image
+                                                        src={persona.avatar}
+                                                        alt={persona.name}
+                                                        width={32}
+                                                        height={32}
+                                                        className="h-full w-full object-cover"
+                                                    />
+                                                </div>
+                                            ))}
+                                        </div>
+                                        <div className="flex flex-col">
+                                            <div className="flex items-center gap-1">
+                                                <div className="flex text-amber-400">
+                                                    {[...Array(5)].map((_, i) => (
+                                                        <svg key={i} viewBox="0 0 20 20" fill="currentColor" className="w-3.5 h-3.5">
+                                                            <path fillRule="evenodd" d="M10.868 2.884c-.321-.772-1.415-.772-1.736 0l-1.83 4.401-4.753.381c-.833.067-1.171 1.107-.536 1.651l3.62 3.102-1.106 4.637c-.194.813.691 1.456 1.405 1.02L10 15.591l4.069 2.485c.713.436 1.598-.207 1.404-1.02l-1.106-4.637 3.62-3.102c.635-.544.297-1.584-.536-1.65l-4.752-.382-1.831-4.401z" clipRule="evenodd" />
+                                                        </svg>
+                                                    ))}
+                                                </div>
+                                                <span className="text-xs font-bold text-slate-700 ml-1">4.9/5</span>
+                                            </div>
+                                            <span className="text-xs font-medium text-slate-500">
+                                                {t("users")}
+                                            </span>
+                                        </div>
                                     </div>
                                 </div>
                             </div>
@@ -273,7 +265,7 @@ export function HeroSection() {
                     </div>
 
                     {/* Right Column: Floating Cards Composition */}
-                    <div className="relative h-[560px] sm:h-[600px] lg:h-[700px] w-full mt-12 lg:mt-0 perspective-[1000px] flex items-center justify-center">
+                    <div className="relative h-[560px] sm:h-[600px] lg:h-[700px] w-full mt-12 lg:mt-0 perspective-[1000px] flex items-center justify-center lg:-ml-20 xl:-ml-28">
                         <motion.div style={{ y: 0, opacity: 1 }} className="absolute inset-0 flex items-center justify-center">
                             
                             {/* Central High-Def iPhone Mockup */}
@@ -282,7 +274,7 @@ export function HeroSection() {
                                     initial={{ opacity: 0, scale: 0.9, y: 20 }}
                                     animate={{ opacity: 1, scale: 1, y: 0 }}
                                     transition={{ duration: 0.8, type: "spring", bounce: 0.3 }}
-                                    className="w-full h-full rounded-[40px] sm:rounded-[45px] border-[6px] sm:border-[8px] border-[#1f2937] bg-black shadow-[0_0_0_2px_rgba(255,255,255,0.1),0_20px_60px_-15px_rgba(0,0,0,0.4)] sm:shadow-[0_0_0_2px_rgba(255,255,255,0.1),0_40px_80px_-20px_rgba(0,0,0,0.4)] overflow-hidden"
+                                    className="w-full h-full rounded-[40px] sm:rounded-[45px] border-[6px] sm:border-[8px] border-[#1f2937] bg-black shadow-[0_0_0_2px_rgba(255,255,255,0.1),0_20px_40px_-10px_rgba(0,0,0,0.2)] sm:shadow-[0_0_0_2px_rgba(255,255,255,0.1),0_30px_60px_-15px_rgba(0,0,0,0.2)] overflow-hidden"
                                 >
                                     {/* Dynamic Island / Notch Area */}
                                     <div className="absolute top-2 inset-x-0 h-6 sm:h-7 flex justify-center z-30">
@@ -324,23 +316,23 @@ export function HeroSection() {
                             </motion.div>
 
                             {/* Main Card (Center Right) - Meal Card */}
-                            <motion.div style={{ y: isReducedMotion ? 0 : yCard1 }} className={`absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[260px] sm:w-[300px] lg:!translate-x-[calc(-50%+80px)] ${activeCard === 0 ? 'z-30' : 'z-10'}`}>
+                            <motion.div style={{ y: isReducedMotion ? 0 : yCard1 }} className={`absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[260px] sm:w-[300px] lg:!translate-x-[calc(-50%+80px)] ${activeCard === 0 ? 'z-40' : 'z-30'}`}>
                                 <motion.div
                                     animate={{ 
-                                        scale: activeCard === 0 ? 1 : 0.85,
+                                        scale: activeCard === 0 ? 1 : 0.9,
                                         opacity: activeCard === 0 ? 1 : 0.95,
-                                        x: activeCard === 0 ? 100 : 120,
-                                        y: activeCard === 0 ? -40 : -20,
+                                        x: activeCard === 0 ? 140 : 160,
+                                        y: activeCard === 0 ? -20 : 0,
                                         rotate: activeCard === 0 ? 4 : 8
                                     }}
                                     transition={{ duration: 0.8, type: "spring", bounce: 0.4 }}
                                     className="w-full"
                                 >
                                 <motion.div
-                                    animate={{ y: [0, -15, 0] }}
+                                    animate={{ y: [0, -8, 0] }}
                                     transition={{ duration: 6, repeat: Infinity, ease: "easeInOut" }}
                                 >
-                                    <div className="rounded-[2rem] bg-white/95 border border-white/60 shadow-2xl p-4 ring-1 ring-black/5 backdrop-blur-md transition-transform hover:scale-105 duration-500">
+                                    <div className="rounded-[2rem] bg-white/95 border border-white/60 shadow-xl shadow-black/5 p-4 ring-1 ring-black/5 backdrop-blur-md transition-transform hover:scale-105 duration-500">
                                         <div className="rounded-[1.5rem] bg-slate-50/80 p-5 space-y-4">
                                             <div className="flex items-center justify-between">
                                                 <span className="text-xs font-bold text-slate-400 uppercase tracking-wider">{t("Cards.Meal.time")}</span>
@@ -380,23 +372,23 @@ export function HeroSection() {
                             </motion.div>
 
                             {/* Back Card 1 (Top Left) - Shopping List */}
-                            <motion.div style={{ y: isReducedMotion ? 0 : yCard2 }} className={`absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[240px] sm:w-[260px] lg:!translate-x-[calc(-50%-60px)] ${activeCard === 1 ? 'z-30' : 'z-10'}`}>
+                            <motion.div style={{ y: isReducedMotion ? 0 : yCard2 }} className={`absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[240px] sm:w-[260px] lg:!translate-x-[calc(-50%-60px)] ${activeCard === 1 ? 'z-40' : 'z-10'}`}>
                                 <motion.div
                                     animate={{ 
-                                        scale: activeCard === 1 ? 1 : 0.85,
+                                        scale: activeCard === 1 ? 1 : 0.9,
                                         opacity: activeCard === 1 ? 1 : 0.95,
-                                        x: activeCard === 1 ? -100 : -80,
-                                        y: activeCard === 1 ? -140 : -120,
+                                        x: activeCard === 1 ? -120 : -100,
+                                        y: activeCard === 1 ? -130 : -110,
                                         rotate: activeCard === 1 ? -6 : -10
                                     }}
                                     transition={{ duration: 0.8, type: "spring", bounce: 0.4 }}
                                     className="w-full"
                                 >
                                 <motion.div
-                                    animate={{ y: [0, -10, 0] }}
+                                    animate={{ y: [0, -6, 0] }}
                                     transition={{ duration: 5, repeat: Infinity, ease: "easeInOut", delay: 1 }}
                                 >
-                                    <div className="rounded-[1.5rem] bg-white/95 border border-white/60 shadow-xl p-4 ring-1 ring-black/5 backdrop-blur-md transition-transform duration-500 hover:scale-105">
+                                    <div className="rounded-[1.5rem] bg-white/95 border border-white/60 shadow-lg shadow-black/5 p-4 ring-1 ring-black/5 backdrop-blur-md transition-transform duration-500 hover:scale-105">
                                         <div className="flex items-center gap-3 mb-3">
                                             <div className="h-8 w-8 rounded-full bg-orange-100 flex items-center justify-center">
                                                 <Apple className="size-4 text-orange-500" />
@@ -421,23 +413,23 @@ export function HeroSection() {
                             </motion.div>
 
                             {/* Back Card 2 (Bottom Left) - Progress */}
-                            <motion.div style={{ y: isReducedMotion ? 0 : yCard3 }} className={`absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[220px] sm:w-[240px] lg:!translate-x-[calc(-50%-40px)] ${activeCard === 2 ? 'z-30' : 'z-10'}`}>
+                            <motion.div style={{ y: isReducedMotion ? 0 : yCard3 }} className={`absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[220px] sm:w-[240px] lg:!translate-x-[calc(-50%-40px)] ${activeCard === 2 ? 'z-50' : 'z-40'}`}>
                                 <motion.div
                                     animate={{ 
-                                        scale: activeCard === 2 ? 1.1 : 0.85,
+                                        scale: activeCard === 2 ? 1.05 : 0.9,
                                         opacity: activeCard === 2 ? 1 : 0.95,
-                                        x: activeCard === 2 ? -80 : -60,
-                                        y: activeCard === 2 ? 160 : 140,
+                                        x: activeCard === 2 ? -90 : -70,
+                                        y: activeCard === 2 ? 130 : 110,
                                         rotate: activeCard === 2 ? -2 : -6
                                     }}
                                     transition={{ duration: 0.8, type: "spring", bounce: 0.4 }}
                                     className="w-full"
                                 >
                                 <motion.div
-                                    animate={{ y: [0, -12, 0] }}
+                                    animate={{ y: [0, -6, 0] }}
                                     transition={{ duration: 5.5, repeat: Infinity, ease: "easeInOut", delay: 2 }}
                                 >
-                                    <div className="rounded-[1.5rem] bg-white/95 border border-white/60 shadow-xl p-4 ring-1 ring-black/5 backdrop-blur-md transition-transform duration-500 hover:scale-105">
+                                    <div className="rounded-[1.5rem] bg-white/95 border border-white/60 shadow-xl shadow-black/5 p-4 ring-1 ring-black/5 backdrop-blur-md transition-transform duration-500 hover:scale-105">
                                         <div className="mb-4 flex items-end">
                                             <div>
                                                 <p className="text-[10px] font-bold text-slate-400 uppercase">{t("Cards.Progress.title")}</p>

@@ -1,9 +1,10 @@
 "use client"
 
 import { motion } from "framer-motion"
-import { Clock3, Soup, CircleHelp, Repeat2, Target } from "lucide-react"
+import { Clock3, Soup, CircleHelp, Repeat2, Target, Calculator } from "lucide-react"
 import { cn } from "@/lib/utils"
 import { useTranslations } from "next-intl"
+import { Link } from "@/i18n/routing"
 
 const painIcons = {
     time: Clock3,
@@ -63,6 +64,19 @@ export function PainPoints() {
                 >
                     <p className="mb-6 text-lg text-slate-600">{t("conclusion")}</p>
                     <h3 className="text-2xl font-bold tracking-tight text-slate-900 md:text-4xl">{t("highlight")}</h3>
+                    
+                    <div className="mt-10 flex flex-col sm:flex-row items-center justify-center gap-4">
+                        <Link 
+                            href="/caloric-calculator" 
+                            className="group relative inline-flex h-14 items-center justify-center overflow-hidden rounded-full bg-slate-900 px-8 text-[15px] font-bold text-white shadow-xl shadow-slate-900/20 transition-all hover:scale-105 active:scale-95"
+                        >
+                            <span className="absolute inset-0 flex h-full w-full justify-center [transform:skew(-13deg)_translateX(-100%)] group-hover:duration-1000 group-hover:[transform:skew(-13deg)_translateX(100%)]">
+                                <div className="relative h-full w-8 bg-white/20" />
+                            </span>
+                            <Calculator className="mr-2.5 size-5 text-primary" />
+                            <span className="relative">{t("calculator_cta") || "Calcular calorias grátis"}</span>
+                        </Link>
+                    </div>
                 </motion.div>
 
             </div>

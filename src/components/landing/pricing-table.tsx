@@ -117,8 +117,8 @@ export function PricingTable() {
                                 posthog?.capture("pricing_plan_clicked", { plan: key })
                             }} className={`mt-8 inline-flex h-14 w-full items-center justify-center rounded-full px-6 text-sm font-bold transition-all
                                 ${isHighlight
-                                    ? 'bg-primary text-white hover:bg-primary/90 shadow-lg shadow-primary/20 hover:-translate-y-1'
-                                    : 'bg-slate-100 text-slate-900 hover:bg-slate-200 hover:-translate-y-1'
+                                    ? 'bg-slate-900 text-white hover:bg-slate-800 shadow-lg shadow-slate-900/10 hover:-translate-y-1 active:translate-y-0'
+                                    : 'bg-slate-100 text-slate-900 hover:bg-slate-200 hover:-translate-y-1 active:translate-y-0'
                                 }
                             `}>
                                 {t(`plans.${key}.button`)}

@@ -39,6 +39,9 @@ import { motion, AnimatePresence, useMotionValue, useSpring, useTransform } from
 import { syncCalculatorLeadAction } from "@/app/actions/calculator"
 import { toast } from "sonner"
 import { useTranslations } from "next-intl"
+import Image from "next/image"
+
+import { Link } from "@/i18n/routing"
 
 function AnimatedNumber({ value }: { value: number }) {
     const motionValue = useMotionValue(0)
@@ -442,35 +445,66 @@ export function CaloricCalculator() {
                                 <div className="relative h-full w-full rounded-[1.8rem] bg-background/5 px-4 py-10 backdrop-blur-xl md:p-10">
                                     <div className="flex flex-col items-center gap-6 text-center md:flex-row md:gap-8 md:text-left">
                                         <div className="flex h-16 w-16 shrink-0 items-center justify-center rounded-2xl bg-white/20 text-white shadow-inner backdrop-blur-md">
-                                            <ChefHat className="h-8 w-8" />
+                                            <Image 
+                                                src="/vitaflix_logo_light_mode.png" 
+                                                alt="Vitaflix" 
+                                                width={32} 
+                                                height={32} 
+                                                className="h-8 w-8 object-contain brightness-0 invert" 
+                                            />
                                         </div>
                                         <div className="space-y-6 w-full">
                                             <h4 className="mx-auto max-w-[260px] text-sm font-semibold text-white md:max-w-none md:text-2xl leading-relaxed tracking-tight break-words">
                                                 {t("CTA.text")}{" "}
-                                                <a 
-                                                    href="https://vitaflix.app" 
-                                                    target="_blank" 
-                                                    rel="noopener noreferrer"
-                                                    className="inline-flex items-center gap-1.5 font-black text-white decoration-white/30 underline-offset-4 hover:underline transition-all active:scale-95"
+                                                <Link 
+                                                    href="/checkout"
+                                                    className="inline-flex items-center font-black text-white decoration-white/30 underline-offset-4 hover:underline transition-all active:scale-95"
                                                 >
-                                                    <Sparkles className="h-5 w-5 animate-pulse" />
                                                     {t("CTA.brand")}
-                                                </a>
+                                                </Link>
                                             </h4>
                                             <Button 
                                                 asChild 
                                                 size="lg" 
                                                 className="group mx-auto h-14 w-full max-w-[240px] bg-white px-8 text-[15px] font-bold text-primary shadow-xl hover:bg-white/90 active:scale-95 md:max-w-auto md:w-auto"
                                             >
-                                                <a 
-                                                    href="https://vitaflix.app" 
-                                                    target="_blank" 
-                                                    rel="noopener noreferrer"
-                                                >
+                                                <Link href="/checkout">
                                                     {t("CTA.button")}
                                                     <ArrowRight className="ml-2 h-4 w-4 transition-transform group-hover:translate-x-1" />
-                                                </a>
+                                                </Link>
                                             </Button>
+                                            
+                                            <div className="flex flex-col sm:flex-row items-center justify-center md:justify-start gap-3 pt-2">
+                                                <a 
+                                                    href="https://apps.apple.com/br/app/vitaflix/id6762494302" 
+                                                    target="_blank" 
+                                                    rel="noopener noreferrer" 
+                                                    className="flex items-center justify-center gap-2.5 w-[160px] h-[46px] rounded-[10px] bg-black/40 hover:bg-black/60 backdrop-blur-sm border border-white/10 text-white transition-all shadow-sm"
+                                                >
+                                                    <svg viewBox="0 0 384 512" className="h-[20px] w-[20px] fill-current" xmlns="http://www.w3.org/2000/svg">
+                                                        <path d="M318.7 268.7c-.2-36.7 16.4-64.4 50-84.8-18.8-26.9-47.2-41.7-84.7-44.6-35.5-2.8-74.3 20.7-88.5 20.7-15 0-49.4-19.7-76.4-19.7C63.3 141.2 4 184.8 4 273.5q0 39.3 14.4 81.2c12.8 36.7 59 126.7 107.2 125.2 25.2-.6 43-17.9 75.8-17.9 31.8 0 48.3 17.9 76.4 17.9 48.6-.7 90.4-82.5 102.6-119.3-65.2-30.7-61.7-90-61.7-91.9zm-56.6-164.2c27.3-32.4 24.8-61.9 24-72.5-24.1 1.4-52 16.4-67.9 34.9-17.5 19.8-27.8 44.3-25.6 71.9 26.1 2 49.9-11.4 69.5-34.3z"/>
+                                                    </svg>
+                                                    <div className="flex flex-col items-start text-left">
+                                                        <span className="text-[9px] font-medium leading-none opacity-80 mb-0.5 whitespace-nowrap">{t("CTA.download")}</span>
+                                                        <span className="text-[14px] font-semibold leading-none whitespace-nowrap">App Store</span>
+                                                    </div>
+                                                </a>
+
+                                                <a 
+                                                    href="https://play.google.com/store/apps/details?id=com.vitaflix.app" 
+                                                    target="_blank" 
+                                                    rel="noopener noreferrer" 
+                                                    className="flex items-center justify-center gap-2.5 w-[160px] h-[46px] rounded-[10px] bg-black/40 hover:bg-black/60 backdrop-blur-sm border border-white/10 text-white transition-all shadow-sm"
+                                                >
+                                                    <svg viewBox="0 0 512 512" className="h-[20px] w-[20px] fill-current" xmlns="http://www.w3.org/2000/svg">
+                                                        <path d="M325.3 234.3L104.6 13l280.8 161.2-60.1 60.1zM47 0C34 6.8 25.3 19.2 25.3 35.3v441.3c0 16.1 8.7 28.5 21.7 35.3l256.6-256L47 0zm425.2 225.6l-58.9-34.1-65.7 64.5 65.7 64.5 60.1-34.1c18-14.3 18-46.5-1.2-60.8zM104.6 499l280.8-161.2-60.1-60.1L104.6 499z"/>
+                                                    </svg>
+                                                    <div className="flex flex-col items-start text-left">
+                                                        <span className="text-[9px] font-medium leading-none opacity-80 mb-0.5 whitespace-nowrap">{t("CTA.getItOn")}</span>
+                                                        <span className="text-[14px] font-semibold leading-none whitespace-nowrap">Google Play</span>
+                                                    </div>
+                                                </a>
+                                            </div>
                                         </div>
                                     </div>
                                     {/* Decorative circles */}
@@ -486,7 +520,7 @@ export function CaloricCalculator() {
                                     window.scrollTo({ top: 0, behavior: 'smooth' });
                                 }}
                             >
-                                Recalculate
+                                {t("Results.recalculate")}
                             </Button>
                         </div>
                     </motion.div>

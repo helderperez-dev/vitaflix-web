@@ -2,7 +2,7 @@
 
 import { useRef, useState, useEffect } from "react"
 import { motion } from "framer-motion"
-import { Play, ChevronLeft, ChevronRight } from "lucide-react"
+import { Play, ChevronLeft, ChevronRight, VolumeX, Volume2 } from "lucide-react"
 import { cn } from "@/lib/utils"
 import { useTranslations } from "next-intl"
 import Image from "next/image"
@@ -22,6 +22,7 @@ export function RecipeCarousel() {
     const cardRefs = useRef<Array<HTMLDivElement | null>>([])
     const [playingIndex, setPlayingIndex] = useState<number | null>(null)
     const [loadedIndexes, setLoadedIndexes] = useState<number[]>([0, 1])
+    const [isMuted, setIsMuted] = useState(true)
 
     useEffect(() => {
         const root = containerRef.current
@@ -85,10 +86,20 @@ export function RecipeCarousel() {
             setLoadedIndexes((prev) => [...prev, index])
         }
         if (playingIndex === index) {
-            setPlayingIndex(null)
+            if (isMuted) {
+                setIsMuted(false)
+            } else {
+                setPlayingIndex(null)
+            }
         } else {
             setPlayingIndex(index)
+            setIsMuted(false)
         }
+    }
+
+    const toggleMute = (e: React.MouseEvent) => {
+        e.stopPropagation()
+        setIsMuted(!isMuted)
     }
 
     return (
@@ -130,7 +141,7 @@ export function RecipeCarousel() {
                             }}
                             className={cn(
                                 "relative shrink-0 w-[240px] sm:w-[280px] aspect-[9/16] rounded-[2rem] overflow-hidden bg-slate-900 group cursor-pointer transition-all duration-500 snap-center",
-                                playingIndex === index ? "scale-105 z-20" : ""
+                                playingIndex === index ? "z-20" : ""
                             )}
                             onClick={() => togglePlay(index)}
                         >
@@ -145,13 +156,17 @@ export function RecipeCarousel() {
                             src={loadedIndexes.includes(index) ? recipe.video : undefined}
                             className="absolute inset-0 w-full h-full object-cover"
                             loop
-                            muted
+                            muted={isMuted}
                             playsInline
                             preload={playingIndex === index ? "auto" : "metadata"}
                             ref={(el) => {
                                 if (el) {
                                     if (playingIndex === index) {
-                                        el.play().catch(() => {})
+                                        el.play().catch(() => {
+                                            if (!isMuted) {
+                                                setIsMuted(true)
+                                            }
+                                        })
                                     } else {
                                         el.pause()
                                         el.currentTime = 0
@@ -172,6 +187,20 @@ export function RecipeCarousel() {
                                 <Play className="size-6 text-white fill-white ml-1" />
                             </div>
                         </div>
+
+                        {playingIndex === index && (
+                            <button 
+                                onClick={toggleMute}
+                                className="absolute top-4 right-4 w-8 h-8 rounded-full bg-black/50 backdrop-blur-md flex items-center justify-center border border-white/20 shadow-sm z-30 transition-all hover:bg-black/70 active:scale-95"
+                                aria-label={isMuted ? "Unmute video" : "Mute video"}
+                            >
+                                {isMuted ? (
+                                    <VolumeX className="size-4 text-white" />
+                                ) : (
+                                    <Volume2 className="size-4 text-white" />
+                                )}
+                            </button>
+                        )}
 
                         <div className="absolute bottom-0 left-0 right-0 p-6 transition-transform duration-300 transform translate-y-0 group-hover:-translate-y-1">
                             <div className="flex items-center gap-2 mb-2">

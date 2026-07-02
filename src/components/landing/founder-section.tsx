@@ -2,9 +2,8 @@
 
 import { useEffect, useRef, useState } from "react"
 import { motion } from "framer-motion"
-import { CheckCircle2, ArrowUp } from "lucide-react"
+import { CheckCircle2 } from "lucide-react"
 import dynamic from "next/dynamic"
-import { Button } from "@/components/ui/button"
 import { useTranslations } from "next-intl"
 import { Link } from "@/i18n/routing"
 
@@ -72,16 +71,15 @@ export function FounderSection() {
                         <div className="h-[34rem] rounded-[2rem] border border-slate-200/70 bg-gradient-to-b from-white to-slate-100/70" />
                     )}
                     <div className="mt-10 flex justify-center">
-                        <Button 
-                            size="lg" 
-                            asChild
-                            className="rounded-full px-8 h-12 text-base font-bold shadow-lg shadow-primary/20 hover:scale-105 active:scale-95 transition-all gap-2"
+                        <Link 
+                            href="/checkout"
+                            className="inline-flex h-14 items-center justify-center rounded-full bg-slate-900 hover:bg-slate-800 px-10 text-base font-bold text-white shadow-lg shadow-slate-900/10 transition-all hover:-translate-y-1 active:translate-y-0 w-full sm:w-auto gap-2"
                         >
-                            <Link href="/checkout">
-                                {t("button")}
-                                <ArrowUp className="size-4" />
-                            </Link>
-                        </Button>
+                            {t("button")}
+                            <svg viewBox="0 0 20 20" fill="currentColor" className="w-5 h-5">
+                                <path fillRule="evenodd" d="M7.21 14.77a.75.75 0 01.02-1.06L11.168 10 7.23 6.29a.75.75 0 111.04-1.08l4.5 4.25a.75.75 0 010 1.08l-4.5 4.25a.75.75 0 01-1.06-.02z" clipRule="evenodd" />
+                            </svg>
+                        </Link>
                     </div>
                 </div>
             </div>

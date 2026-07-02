@@ -92,6 +92,64 @@ export async function checkoutRegisterAndSubscribe(data: {
             // Wait a bit for the trigger to create the public.users record
             await new Promise(resolve => setTimeout(resolve, 500))
 
+            // Sync new user to leads table and Brevo
+            try {
+                // 1. Get default funnel/step
+                const { data: defaultFunnel } = await admin
+                    .from("lead_funnels")
+                    .select(`id, lead_funnel_steps ( id, "order", name )`)
+                    .order("created_at", { ascending: true })
+                    .limit(1)
+                    .maybeSingle()
+
+                const finalFunnelId = defaultFunnel?.id || null
+                let finalStepId = null
+                if (defaultFunnel && defaultFunnel.lead_funnel_steps) {
+                    const steps = (defaultFunnel.lead_funnel_steps as { id: string; order: number; name: string }[]) || []
+                    const newStep = steps.find((s) => s.name?.toLowerCase() === 'new')
+                    finalStepId = newStep?.id || steps.sort((a, b) => (a.order || 0) - (b.order || 0))[0]?.id || null
+                }
+
+                // 2. Check if lead already exists
+                const { data: existingLeads } = await admin
+                    .from("leads")
+                    .select("*")
+                    .eq("email", data.email)
+                    .limit(1)
+                
+                const existingLead = existingLeads && existingLeads.length > 0 ? existingLeads[0] : null
+
+                if (existingLead) {
+                    await admin
+                        .from("leads")
+                        .update({
+                            name: data.name.trim(),
+                            source: 'checkout_registration',
+                        })
+                        .eq("id", existingLead.id)
+                } else {
+                    await admin
+                        .from("leads")
+                        .insert([{
+                            name: data.name.trim(),
+                            email: data.email,
+                            source: 'checkout_registration',
+                            funnel_id: finalFunnelId,
+                            step_id: finalStepId,
+                            metadata: {},
+                        }])
+                }
+
+                // 3. Sync to Brevo (List ID 6 - same as caloric calculator, or we can use another list if needed)
+                // Using dynamic import to avoid issues if Brevo is not configured
+                const { syncContactWithBrevo } = await import("@/lib/brevo")
+                const listId = 6 // Using 6 for registered users/clients
+                await syncContactWithBrevo(data.email, data.name.trim(), [listId])
+            } catch (syncError) {
+                console.error("Failed to sync new user to leads/Brevo:", syncError)
+                // We don't return an error here so checkout isn't blocked by a marketing sync failure
+            }
+
             // Sign in to establish session
             const { error: signInError } = await supabase.auth.signInWithPassword({
                 email: data.email,

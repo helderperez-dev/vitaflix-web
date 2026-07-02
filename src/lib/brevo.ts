@@ -36,7 +36,12 @@ export function parseName(fullName: string | undefined): ParsedName {
  * @param listIds The list IDs to add the contact to. Defaults to [2].
  * @returns A boolean indicating success or failure.
  */
-export async function syncContactWithBrevo(email: string, name?: string, listIds: number[] = [2]): Promise<boolean> {
+export async function syncContactWithBrevo(
+    email: string, 
+    name?: string, 
+    listIds: number[] = [2],
+    customAttributes?: Record<string, any>
+): Promise<boolean> {
     if (!email) return false;
 
     const apiKey = process.env.BREVO_API_KEY;
@@ -59,7 +64,8 @@ export async function syncContactWithBrevo(email: string, name?: string, listIds
                 email,
                 attributes: {
                     FIRSTNAME: firstName,
-                    LASTNAME: lastName
+                    LASTNAME: lastName,
+                    ...customAttributes
                 },
                 listIds,
                 updateEnabled: true

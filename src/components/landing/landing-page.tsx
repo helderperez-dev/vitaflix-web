@@ -10,6 +10,7 @@ import { TestimonialsSection } from "@/components/landing/testimonials-section"
 import { PricingTable } from "@/components/landing/pricing-table"
 import { FaqSection } from "@/components/landing/faq-section"
 import { CtaSection } from "@/components/landing/cta-section"
+import { NewsletterSection } from "@/components/landing/newsletter-section"
 import { Footer } from "@/components/landing/footer"
 import { WhatsAppWidget } from "@/components/landing/whatsapp-widget"
 import { PrivacyConsentModal } from "@/components/landing/privacy-consent-modal"
@@ -62,6 +63,7 @@ export function LandingPage() {
                             <Link href="#testemunhos" className="hover:text-primary transition-all">{t("testimonials")}</Link>
                             <Link href="#pricing" className="hover:text-primary transition-all">{t("pricing")}</Link>
                             <Link href="#faq" className="hover:text-primary transition-all">{t("faq")}</Link>
+                            <Link href="/caloric-calculator" className="hover:text-primary font-bold text-primary transition-all">Calculadora</Link>
                         </nav>
                     </div>
 
@@ -132,6 +134,13 @@ export function LandingPage() {
                                     >
                                         {t("faq")}
                                     </Link>
+                                    <Link 
+                                        href="/caloric-calculator" 
+                                        onClick={() => setIsMobileMenuOpen(false)} 
+                                        className="flex items-center h-12 px-4 text-base font-bold text-primary hover:text-primary/80 hover:bg-slate-50 rounded-xl transition-all"
+                                    >
+                                        Calculadora
+                                    </Link>
                                 </nav>
 
                                 <div className="p-6 border-t border-slate-100 bg-slate-50/50 flex flex-col gap-4">
@@ -141,7 +150,7 @@ export function LandingPage() {
                                     </div>
                                     <Link 
                                         href="/checkout" 
-                                        onClick={(e) => {
+                                        onClick={() => {
                                             setIsMobileMenuOpen(false);
                                         }}
                                         className="inline-flex h-12 items-center justify-center rounded-xl bg-slate-900 hover:bg-slate-800 px-6 text-sm font-bold text-white shadow-lg shadow-slate-900/10 transition-all hover:scale-[1.02] active:scale-[0.98] w-full"
@@ -177,6 +186,7 @@ export function LandingPage() {
                     <FaqSection />
                 </div>
                 <CtaSection />
+                <NewsletterSection />
             </main>
 
             <WhatsAppWidget />

@@ -17,8 +17,8 @@ import { useTranslations } from "next-intl"
 import { usePostHog } from "@posthog/next"
 import { useRouter } from "@/i18n/routing"
 
-export function WaitlistForm({ inputId }: { inputId?: string }) {
-    const t = useTranslations("Landing.WaitlistForm")
+export function NewsletterForm({ inputId }: { inputId?: string }) {
+    const t = useTranslations("Landing.NewsletterForm")
     const posthog = usePostHog()
     const router = useRouter()
     const [isSubmitting, setIsSubmitting] = useState(false)
@@ -40,8 +40,8 @@ export function WaitlistForm({ inputId }: { inputId?: string }) {
 
     async function onSubmit(values: z.infer<typeof waitlistSchema>) {
         setIsSubmitting(true)
-        posthog.capture("landing_waitlist_submit_clicked", {
-            source: "landing_waitlist",
+        posthog.capture("landing_newsletter_submit_clicked", {
+            source: "landing_newsletter",
         })
 
         try {
@@ -50,22 +50,22 @@ export function WaitlistForm({ inputId }: { inputId?: string }) {
                 headers: { "Content-Type": "application/json" },
                 body: JSON.stringify({
                     ...values,
-                    source: "landing_waitlist",
+                    source: "landing_newsletter",
                 }),
             })
 
             if (!response.ok) throw new Error("Failed to submit")
 
-            posthog.capture("landing_waitlist_submitted", {
-                source: "landing_waitlist",
+            posthog.capture("landing_newsletter_submitted", {
+                source: "landing_newsletter",
             })
             // Success toast removed as we now redirect to a dedicated page
             
             // Redirect to thank you page
             router.push("/thank-you")
         } catch (error) {
-            posthog.capture("landing_waitlist_submit_failed", {
-                source: "landing_waitlist",
+            posthog.capture("landing_newsletter_submit_failed", {
+                source: "landing_newsletter",
             })
             console.error(error)
             toast.error(t("error.toast"))
@@ -91,8 +91,8 @@ export function WaitlistForm({ inputId }: { inputId?: string }) {
                                         onFocus={() => {
                                             if (!hasTrackedNameFocus.current) {
                                                 hasTrackedNameFocus.current = true
-                                                posthog.capture("landing_waitlist_name_input_focused", {
-                                                    source: "landing_waitlist",
+                                                posthog.capture("landing_newsletter_name_input_focused", {
+                                                    source: "landing_newsletter",
                                                 })
                                             }
                                         }}
@@ -115,8 +115,8 @@ export function WaitlistForm({ inputId }: { inputId?: string }) {
                                         onFocus={() => {
                                             if (!hasTrackedEmailFocus.current) {
                                                 hasTrackedEmailFocus.current = true
-                                                posthog.capture("landing_waitlist_email_input_focused", {
-                                                    source: "landing_waitlist",
+                                                posthog.capture("landing_newsletter_email_input_focused", {
+                                                    source: "landing_newsletter",
                                                     email: field.value
                                                 })
                                             }

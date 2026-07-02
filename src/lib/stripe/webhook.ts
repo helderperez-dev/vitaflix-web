@@ -293,6 +293,28 @@ async function upsertSubscription(subscription: Stripe.Subscription, eventType: 
                 product_id: primaryProductId,
             },
         })
+
+        // TODO: Sync with Brevo as an active client
+        // Temporarily disabled until the CLIENT attribute is created in Brevo
+        /*
+        try {
+            const { data: user } = await supabase
+                .from("users")
+                .select("email, display_name, full_name")
+                .eq("id", finalUserId)
+                .maybeSingle()
+
+            if (user?.email) {
+                const { syncContactWithBrevo } = await import("@/lib/brevo")
+                const name = user.display_name || user.full_name || ""
+                // Add the user to List 6 (registered users) and update their attributes
+                // We send CLIENT: true to distinguish them in Brevo without creating a new list
+                await syncContactWithBrevo(user.email, name, [6], { CLIENT: true })
+            }
+        } catch (syncError) {
+            console.error("Failed to sync active client to Brevo:", syncError)
+        }
+        */
     }
 
     if (subscription.status === "canceled" && previousStatus !== "canceled") {

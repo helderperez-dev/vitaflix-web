@@ -26,24 +26,24 @@
             "confirm": "Entendi e concordo"
         },
         "Hero": {
-            "badge": "Já disponível para iOS",
+            "badge": "Já disponível para iOS e Android",
             "users": "+250 usuários ativos",
-            "titlePrefix": "Organiza a sua alimentação",
-            "titleSuffix": "e perca peso sem contar calorias",
+            "titlePrefix": "Organiza a sua alimentação.",
+            "titleSuffix": "Perca peso sem contar calorias.",
             "subtitle": "Mais de 300 receitas, quantidades ajustadas e lista de compras numa só app.",
             "bullets": {
                 "1": "Sem calcular alimentos manualmente",
                 "2": "Sabes o que preparar e em que quantidade",
                 "3": "Lista de compras pronta em segundos"
             },
+            "button": "Começar agora",
             "iphone": {
                 "title": "Já disponível para iPhone",
                 "button": "Começar agora no iPhone"
             },
             "android": {
-                "title": "Esperando pela versão Android?",
-                "modalTitle": "Android em breve",
-                "modalDesc": "A versão Android está na fase final de aprovação na Google Play. Deixe seu email para ser avisado assim que estiver disponível."
+                "title": "Já disponível para Android",
+                "button": "Começar agora no Android"
             },
             "Cards": {
                 "Meal": {
@@ -81,6 +81,7 @@
             "subtitle": "Sabes que precisas de organizar melhor a alimentação, mas acabas por:",
             "conclusion": "O Vitaflix reúne as receitas, as quantidades, a organização das refeições e a lista de compras num único lugar.",
             "highlight": "Menos contas. Menos confusão. Mais praticidade.",
+            "calculator_cta": "Calcular calorias grátis",
             "items": {
                 "variety": {
                     "title": "Repetir sempre as mesmas refeições",
@@ -120,27 +121,6 @@
                     "title": "Cria automaticamente a lista de compras",
                     "desc": "Depois de organizares a semana podes, com apenas um clique criar uma lista de compras com todos os ingredientes e as respetivas quantidades."
                 }
-            }
-        },
-        "WaitlistForm": {
-            "validation": {
-                "nameRequired": "Nome é obrigatório.",
-                "emailInvalid": "E-mail inválido."
-            },
-            "success": {
-                "toast": "Obrigado por se juntar à lista de espera!",
-                "message": "Lugar garantido — você será um dos primeiros a saber quando lançarmos."
-            },
-            "error": {
-                "toast": "Ocorreu um erro. Tente novamente mais tarde."
-            },
-            "placeholders": {
-                "name": "Nome",
-                "email": "Email"
-            },
-            "button": {
-                "loading": "Processando...",
-                "submit": "Garantir meu lugar"
             }
         },
         "Founder": {
@@ -202,14 +182,14 @@
             }
         },
         "Pricing": {
-            "label": "Apenas para IOS",
+            "label": "Disponível para iOS e Android",
             "title": "Investe na tua rotina",
             "subtitle": "Planos simples e transparentes. Sem letras pequenas ou contratos longos.",
             "button": "Começar agora",
             "android": {
-                "title": "Tens Android?",
-                "desc": "Ainda não concluas a compra.",
-                "button": "Quero ser avisado quando abrir no Android"
+                "title": "Já disponível para Android",
+                "desc": "Comece agora a sua jornada.",
+                "button": "Começar agora no Android"
             },
             "plans": {
                 "monthly": {
@@ -291,13 +271,14 @@
         "Cta": {
             "title": "Deixa de começar todos os dias sem saber o que comer",
             "subtitle": "Escolhe refeições, consulta as quantidades e organiza os próximos dias dentro da mesma aplicação.",
+            "button": "Começar agora",
             "iphone": {
                 "title": "Já disponível para iPhone",
                 "button": "Começar agora no iPhone"
             },
             "android": {
-                "title": "Esperando pela versão Android?",
-                "desc": "Android em fase final de aprovação na Google Play."
+                "title": "Já disponível para Android",
+                "desc": "O aplicativo já está disponível para todos os dispositivos Android."
             },
             "footer": "Mais de 300 receitas. Menos contas. Mais organização."
         },
@@ -307,6 +288,70 @@
             "subtitle": "Obrigado por se juntar à nossa comunidade.",
             "description": "Fique atento ao seu e-mail — você será um dos primeiros a saber quando a Vitaflix estiver pronta para você. Estamos preparando tudo para simplificar sua nutrição.",
             "buttonHome": "Voltar ao Início"
+        },
+        "Calculator": {
+            "Sections": {
+                "personal": "Dados Físicos",
+                "activity": "Atividade",
+                "activityTooltip": "Seu nível de atividade diária, excluindo sua meta de passos (escolhida na etapa seguinte).",
+                "steps": "Passos Diários",
+                "goal": "Objetivo"
+            },
+            "Inputs": {
+                "male": "Homem",
+                "female": "Mulher",
+                "weight": "Peso (kg)",
+                "height": "Altura (cm)",
+                "age": "Idade"
+            },
+            "ActivityLevels": {
+                "sedentary": { "title": "Sedentário", "desc": "Trabalho de escritório, pouco ou nenhum exercício" },
+                "lightly": { "title": "Levemente Ativo", "desc": "Exercício leve ou esporte 1-3 dias/semana" },
+                "moderately": { "title": "Moderadamente Ativo", "desc": "Exercício moderado 3-5 dias/semana" },
+                "very": { "title": "Muito Ativo", "desc": "Exercício intenso 6-7 dias/semana" },
+                "extra": { "title": "Extra Ativo", "desc": "Exercício muito intenso e trabalho físico diário" }
+            },
+            "StepOptions": {
+                "low": { "title": "2.500 passos", "desc": "Mínimo" },
+                "moderate": { "title": "6.500 passos", "desc": "Saudável" },
+                "active": { "title": "10.000 passos", "desc": "Ativo" },
+                "high": { "title": "13.500 passos", "desc": "Muito Ativo" },
+                "athlete": { "title": "17.500 passos", "desc": "Atleta" }
+            },
+            "Goals": {
+                "lose_sustainable": { "title": "Perda Sustentável", "desc": "Foco em manter massa muscular" },
+                "lose_balanced": { "title": "Perda Equilibrada", "desc": "Ritmo moderado e constante" },
+                "lose_faster": { "title": "Perda Mais Rápida", "desc": "Déficit agressivo (apenas curto prazo)" },
+                "maintenance": { "title": "Manutenção", "desc": "Manter o peso atual" },
+                "gain_mass": { "title": "Ganho de Massa", "desc": "Superávit para construção muscular" }
+            },
+            "Form": {
+                "title": "Seus resultados estão prontos!",
+                "description": "Preencha seus dados abaixo para descobrir sua meta calórica e receber o resultado detalhado no email.",
+                "name": "Nome",
+                "placeholder_name": "Qual é o seu nome?",
+                "email": "Email",
+                "placeholder_email": "Seu melhor email",
+                "button": "Ver Resultados Agora",
+                "success": "Cálculo Concluído"
+            },
+            "Results": {
+                "title": "Sua meta diária:",
+                "unit": "kcal / dia",
+                "weekly": "Semana",
+                "monthly": "Mês",
+                "loss": "Com esse déficit calórico, sua estimativa de perda é de <bold>{weekly} kg por semana</bold> e <bold>{monthly} kg por mês</bold>.",
+                "gain": "Com esse superávit calórico, sua estimativa de ganho é de <bold>{weekly} kg por semana</bold> e <bold>{monthly} kg por mês</bold>.",
+                "maintenance": "Este é o valor calórico estimado para você manter o peso atual de forma estável.",
+                "recalculate": "Recalcular"
+            },
+            "CTA": {
+                "text": "Precisa de ajuda para atingir esse objetivo calórico com receitas deliciosas que facilitam sua vida? Descubra todo o potencial do",
+                "brand": "VitaFlix",
+                "button": "Começar com VitaFlix",
+                "download": "Baixar na",
+                "getItOn": "DISPONÍVEL NO"
+            }
         },
         "Footer": {
             "desc": "Planejamento alimentar simplificado para pessoas ocupadas. Ganhe tempo, coma melhor e atinja seus objetivos sem estresse.",
@@ -322,6 +367,10 @@
                 "inPortugal": "em Portugal"
             },
             "rights": "Todos os direitos reservados.",
+            "apps": {
+                "downloadOnThe": "Baixar na",
+                "getItOn": "DISPONÍVEL NO"
+            },
             "links": {
                 "privacy": "Privacidade",
                 "terms": "Termos",
@@ -504,6 +553,31 @@
                     }
                 ]
             }
+        },
+        "NewsletterForm": {
+            "validation": {
+                "nameRequired": "Nome é obrigatório.",
+                "emailInvalid": "E-mail inválido."
+            },
+            "success": {
+                "toast": "Subscrito com sucesso!",
+                "message": "Obrigado por subscrever a nossa newsletter."
+            },
+            "error": {
+                "toast": "Ocorreu um erro. Tente novamente mais tarde."
+            },
+            "placeholders": {
+                "name": "Nome",
+                "email": "Email"
+            },
+            "button": {
+                "loading": "Processando...",
+                "submit": "Subscrever Newsletter"
+            }
+        },
+        "Newsletter": {
+            "title": "Recebe dicas de nutrição todas as semanas",
+            "subtitle": "Junta-te à nossa newsletter para receberes as melhores receitas e dicas diretamente no teu email."
         }
     },
     "Common": {
@@ -757,6 +831,7 @@
         "waitingForConfirmation": "Aguardando confirmação. Verifique o App do seu banco se necessário.",
         "tryAgain": "Tentar novamente",
         "downloadOnThe": "Baixar na",
+        "getItOn": "DISPONÍVEL NO",
         "comingSoonDays": "Em breve (em alguns dias)"
     },
     "Dashboard": {
@@ -1235,7 +1310,8 @@
             "loss": "Com base no seu perfil, você deverá perder aproximadamente <bold>{weekly}kg por semana</bold> (<bold>{monthly}kg por mês</bold>).",
             "gain": "Com base no seu perfil, você deverá ganhar aproximadamente <bold>{weekly}kg por semana</bold> (<bold>{monthly}kg por mês</bold>).",
             "maintenance": "Este é o seu nível de manutenção. Você manterá seu peso atual.",
-            "empty": "Preencha seus dados físicos para ver os resultados."
+            "empty": "Preencha seus dados físicos para ver os resultados.",
+            "recalculate": "Recalcular"
         },
         "Form": {
             "title": "Ver meus resultados agora",
@@ -1251,7 +1327,9 @@
         "CTA": {
             "text": "Precisa de ajuda para atingir este objetivo calórico com receitas deliciosas que facilitam a sua vida? Descubra todo o potencial do",
             "brand": "VitaFlix",
-            "button": "Começar com VitaFlix"
+            "button": "Começar com VitaFlix",
+            "download": "Baixar na",
+            "getItOn": "DISPONÍVEL NO"
         },
         "Footer": {
             "disclaimer": "Aviso: Esta ferramenta tem fins meramente informativos. Consulte um profissional de salud antes de fazer alterações significativas em sua dieta ou rotina de exercícios."

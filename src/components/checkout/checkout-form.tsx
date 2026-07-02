@@ -7,6 +7,7 @@ import { Loader2, Lock, ArrowLeft, Eye, EyeOff, LogOut } from "lucide-react"
 import Image from "next/image"
 import { useTranslations } from "next-intl"
 import { useRouter } from "next/navigation"
+import { useTheme } from "next-themes"
 import { toast } from "sonner"
 
 import { Button } from "@/components/ui/button"
@@ -16,6 +17,8 @@ import { cn, getMediaUrl } from "@/lib/utils"
 import { checkoutRegisterAndSubscribe, previewPromotionCode } from "@/app/actions/checkout"
 import { usePostHog } from "posthog-js/react"
 import { createClient } from "@/lib/supabase/client"
+import { LanguageSwitcher } from "@/components/landing/language-switcher"
+import { LoginThemeToggle } from "@/components/auth/login-theme-toggle"
 
 const stripePromise = loadStripe(process.env.NEXT_PUBLIC_STRIPE_PUBLISHABLE_KEY!)
 
@@ -233,45 +236,39 @@ export function CheckoutForm({ plans, initialSession, userProfile, locale, preSe
     
     const selectedPrice = orderedPlanPrices.find((price) => price.id === selectedPriceId) || null
 
+    const { resolvedTheme } = useTheme()
+    
     const options = React.useMemo<StripeElementsOptions>(() => {
+        const isDark = resolvedTheme === "dark"
+        
+        const appearance = {
+            theme: isDark ? "night" as const : "stripe" as const,
+            variables: {
+                colorPrimary: "#13A57E",
+                colorBackground: isDark ? "#1e293b" : "#ffffff",
+                colorText: isDark ? "#f8fafc" : "#0f172a",
+                colorDanger: "#ef4444",
+                fontFamily: "system-ui, sans-serif",
+                borderRadius: "6px",
+            },
+        }
+
         if (isInvoicePayment && invoiceDetails?.clientSecret) {
             return {
                 clientSecret: invoiceDetails.clientSecret,
                 locale: getStripeLocale(locale),
-                appearance: {
-                    theme: "stripe",
-                    variables: {
-                        colorPrimary: "#13A57E",
-                        colorBackground: "#ffffff",
-                        colorText: "#0f172a",
-                        colorDanger: "#ef4444",
-                        fontFamily: "system-ui, sans-serif",
-                        borderRadius: "6px",
-                    },
-                },
+                appearance,
             }
         }
 
         return {
-            // Keep Elements mounted while the user switches plans; the actual price used
-            // for the subscription still comes from `selectedPriceId` on submit.
             mode: "subscription",
             amount: basePrice?.unitAmount || 1000,
             currency: basePrice?.currency || "usd",
             locale: getStripeLocale(locale),
-            appearance: {
-                theme: "stripe",
-                variables: {
-                    colorPrimary: "#13A57E",
-                    colorBackground: "#ffffff",
-                    colorText: "#0f172a",
-                    colorDanger: "#ef4444",
-                    fontFamily: "system-ui, sans-serif",
-                    borderRadius: "6px",
-                },
-            },
+            appearance,
         }
-    }, [basePrice?.currency, basePrice?.unitAmount, locale, isInvoicePayment, invoiceDetails])
+    }, [basePrice?.currency, basePrice?.unitAmount, locale, isInvoicePayment, invoiceDetails, resolvedTheme])
 
     if (orderedPlanPrices.length === 0 && !isInvoicePayment) {
         return <div className="p-8 text-center text-red-500">Nenhum plano configurado no Stripe.</div>
@@ -593,7 +590,7 @@ function CheckoutFormContent({
                         currency: checkoutCurrency,
                         method: "free_or_100_percent_discount"
                     })
-                    router.push(`/${locale}/checkout/success`)
+                    router.push(`/${locale}/checkout/success?amount=${effectiveTotalAmount}&currency=${checkoutCurrency}`)
                     return
                 }
                 
@@ -604,7 +601,7 @@ function CheckoutFormContent({
                 elements,
                 clientSecret: confirmClientSecret,
                 confirmParams: {
-                    return_url: `${window.location.origin}/${locale}/checkout/success`,
+                    return_url: `${window.location.origin}/${locale}/checkout/success?amount=${effectiveTotalAmount}&currency=${checkoutCurrency}`,
                     payment_method_data: {
                         billing_details: {
                             email,
@@ -636,35 +633,48 @@ function CheckoutFormContent({
     }
 
     return (
-        <div className="flex min-h-dvh w-full flex-col overflow-hidden md:h-dvh md:flex-row">
+        <div className="flex min-h-dvh w-full flex-col overflow-hidden md:h-dvh md:flex-row bg-white dark:bg-slate-950">
             
             {/* LEFT SIDE - SUMMARY (Gray) */}
-            <div className="flex w-full flex-col border-b border-slate-200 bg-[#F4F4F5] p-5 md:border-b-0 md:border-r md:sticky md:top-0 md:h-dvh md:w-[34%] md:self-start md:px-7 md:py-7 md:overflow-hidden lg:w-[31%] lg:px-8">
+            <div className="flex w-full flex-col border-b border-slate-200 dark:border-slate-800 bg-[#F4F4F5] dark:bg-slate-900 p-5 md:border-b-0 md:border-r md:sticky md:top-0 md:h-dvh md:w-[34%] md:self-start md:px-7 md:py-7 md:overflow-hidden lg:w-[31%] lg:px-8">
                 
                 {/* Logo and Back */}
-                <div className="mb-6 flex items-center gap-4 md:mb-10">
-                    <button type="button" onClick={() => router.back()} className="text-slate-500 hover:text-slate-900 transition-colors">
-                        <ArrowLeft className="size-5" />
-                    </button>
-                    <div className="relative w-28 h-8">
-                        <Image
-                            src="/vitaflix_logo_light_mode.png"
-                            alt="Vitaflix Logo"
-                            fill
-                            priority
-                            className="object-contain"
-                        />
+                <div className="mb-6 flex items-center justify-between md:mb-10">
+                    <div className="flex items-center gap-4">
+                        <button type="button" onClick={() => router.back()} className="text-slate-500 hover:text-slate-900 dark:text-slate-400 dark:hover:text-slate-100 transition-colors">
+                            <ArrowLeft className="size-5" />
+                        </button>
+                        <div className="relative w-28 h-8">
+                            <Image
+                                src="/vitaflix_logo_light_mode.png"
+                                alt="Vitaflix Logo"
+                                fill
+                                priority
+                                className="object-contain dark:hidden"
+                            />
+                            <Image
+                                src="/vitaflix_logo_dark_mode.png"
+                                alt="Vitaflix Logo"
+                                fill
+                                priority
+                                className="object-contain hidden dark:block"
+                            />
+                        </div>
+                    </div>
+                    <div className="flex items-center gap-1 text-slate-500 dark:text-slate-400">
+                        <LanguageSwitcher />
+                        <LoginThemeToggle />
                     </div>
                 </div>
 
                 {/* Invoice Payment Display */}
                 {isInvoicePayment && invoiceDetails ? (
                     <div className="flex flex-1 flex-col gap-3">
-                        <h2 className="text-xl font-semibold text-slate-900">{t("payInvoiceTitle", { number: invoiceDetails.number || invoiceDetails.id })}</h2>
-                        <p className="text-sm text-slate-500">{t("payInvoiceDescription")}</p>
-                        <div className="mt-4 rounded-xl border border-slate-200 bg-white p-5 shadow-sm">
-                            <div className="text-sm text-slate-500">{t("invoiceTotal")}</div>
-                            <div className="mt-1 text-2xl font-bold text-slate-900">
+                        <h2 className="text-xl font-semibold text-slate-900 dark:text-slate-100">{t("payInvoiceTitle", { number: invoiceDetails.number || invoiceDetails.id })}</h2>
+                        <p className="text-sm text-slate-500 dark:text-slate-400">{t("payInvoiceDescription")}</p>
+                        <div className="mt-4 rounded-xl border border-slate-200 dark:border-slate-700 bg-white dark:bg-slate-800 p-5 shadow-sm">
+                            <div className="text-sm text-slate-500 dark:text-slate-400">{t("invoiceTotal")}</div>
+                            <div className="mt-1 text-2xl font-bold text-slate-900 dark:text-slate-100">
                                 {formatPrice(invoiceDetails.amount, invoiceDetails.currency)}
                             </div>
                         </div>
@@ -672,22 +682,22 @@ function CheckoutFormContent({
                 ) : null}
 
                 <div className={cn("flex-1 space-y-5 md:space-y-4", isInvoicePayment && "hidden")}>
-                    <p className="text-slate-500 font-medium">{t("subscribeToVitaflix")}</p>
+                    <p className="text-slate-500 dark:text-slate-400 font-medium">{t("subscribeToVitaflix")}</p>
                     
                     <div className="flex items-end justify-between">
-                        <h2 className="text-4xl font-extrabold tracking-tight text-slate-900 lg:text-[2.7rem]">
+                        <h2 className="text-4xl font-extrabold tracking-tight text-slate-900 dark:text-slate-100 lg:text-[2.7rem]">
                             {formatPrice(effectiveTotalAmount, checkoutCurrency)}
                         </h2>
-                        <span className="mb-1 text-sm font-medium tracking-tight text-slate-500">{selectedPlanPresentation?.summary}</span>
+                        <span className="mb-1 text-sm font-medium tracking-tight text-slate-500 dark:text-slate-400">{selectedPlanPresentation?.summary}</span>
                     </div>
 
-                    <div className="space-y-2.5 border-t border-slate-200 pt-4">
+                    <div className="space-y-2.5 border-t border-slate-200 dark:border-slate-800 pt-4">
                         <div className="flex justify-between text-sm font-semibold">
                             <div>
-                                <span className="block text-slate-700">{selectedPrice?.productName}</span>
-                                <span className="mt-0.5 block text-xs font-medium text-slate-400">{selectedPlanPresentation?.description}</span>
+                                <span className="block text-slate-700 dark:text-slate-300">{selectedPrice?.productName}</span>
+                                <span className="mt-0.5 block text-xs font-medium text-slate-400 dark:text-slate-500">{selectedPlanPresentation?.description}</span>
                             </div>
-                            <span className="text-slate-900">{formatPrice(subtotalAmount, checkoutCurrency)}</span>
+                            <span className="text-slate-900 dark:text-slate-100">{formatPrice(subtotalAmount, checkoutCurrency)}</span>
                         </div>
 
                         {hasValidPromotion ? (
@@ -697,42 +707,42 @@ function CheckoutFormContent({
                             </div>
                         ) : null}
 
-                        <div className="flex justify-between border-t border-slate-200 pt-2 text-sm font-semibold">
-                            <span className="text-slate-500">{t("totalDueToday")}</span>
-                            <span className="text-slate-900">{formatPrice(effectiveTotalAmount, checkoutCurrency)}</span>
+                        <div className="flex justify-between border-t border-slate-200 dark:border-slate-800 pt-2 text-sm font-semibold">
+                            <span className="text-slate-500 dark:text-slate-400">{t("totalDueToday")}</span>
+                            <span className="text-slate-900 dark:text-slate-100">{formatPrice(effectiveTotalAmount, checkoutCurrency)}</span>
                         </div>
                     </div>
                 </div>
                 
-                <div className="mt-6 flex items-center gap-1.5 text-[11px] font-semibold tracking-tight uppercase text-slate-500 md:mt-10">
+                <div className="mt-6 flex items-center gap-1.5 text-[11px] font-semibold tracking-tight uppercase text-slate-500 dark:text-slate-400 md:mt-10">
                     <Lock className="size-3" />
                     {t("poweredByStripe")}
                 </div>
             </div>
 
             {/* RIGHT SIDE - FORM (White) */}
-            <div className="flex w-full flex-col bg-white p-5 overflow-y-auto [&::-webkit-scrollbar]:hidden [-ms-overflow-style:none] [scrollbar-width:none] md:h-dvh md:w-[66%] md:px-8 md:py-7 md:overflow-y-auto md:overflow-x-hidden lg:w-[69%] lg:px-10">
+            <div className="flex w-full flex-col bg-white dark:bg-slate-950 p-5 overflow-y-auto [&::-webkit-scrollbar]:hidden [-ms-overflow-style:none] [scrollbar-width:none] md:h-dvh md:w-[66%] md:px-8 md:py-7 md:overflow-y-auto md:overflow-x-hidden lg:w-[69%] lg:px-10">
                 <form noValidate onSubmit={handleSubmit} className="mx-auto mt-1 w-full max-w-2xl space-y-5 pb-8 md:mt-0 md:pb-6">
                     <div className={cn("space-y-2.5", isInvoicePayment && "hidden")}>
                         <div className="flex items-center justify-between gap-4">
-                            <h3 className="text-lg font-bold tracking-tight text-slate-900">{t("plan")}</h3>
+                            <h3 className="text-lg font-bold tracking-tight text-slate-900 dark:text-slate-100">{t("plan")}</h3>
                             {initialSession?.user?.email ? (
-                                <div className="flex items-center gap-2.5 rounded-full border border-slate-200 bg-slate-50 pl-2.5 pr-1.5 py-1.5">
-                                    <Avatar size="sm" className="border border-primary/10 bg-white size-7">
+                                <div className="flex items-center gap-2.5 rounded-full border border-slate-200 dark:border-slate-800 bg-slate-50 dark:bg-slate-900 pl-2.5 pr-1.5 py-1.5">
+                                    <Avatar size="sm" className="border border-primary/10 bg-white dark:bg-slate-800 size-7">
                                         {sessionAvatar ? <AvatarImage src={getMediaUrl(sessionAvatar)} alt={identityName} /> : null}
                                         <AvatarFallback className="bg-primary/10 text-[11px] font-semibold text-primary">
                                             {getUserInitials(sessionName, sessionEmail)}
                                         </AvatarFallback>
                                     </Avatar>
                                     <div className="min-w-0 leading-none">
-                                        <p className="truncate text-xs font-semibold text-slate-900">{identityName}</p>
-                                        <p className="mt-1 truncate text-[11px] font-medium text-slate-500">{sessionEmail}</p>
+                                        <p className="truncate text-xs font-semibold text-slate-900 dark:text-slate-100">{identityName}</p>
+                                        <p className="mt-1 truncate text-[11px] font-medium text-slate-500 dark:text-slate-400">{sessionEmail}</p>
                                     </div>
                                     <button
                                         type="button"
                                         onClick={handleLogout}
                                         disabled={isLoggingOut}
-                                        className="ml-1 flex size-7 items-center justify-center rounded-full bg-white border border-slate-200 text-slate-500 hover:bg-slate-100 hover:text-slate-900 transition-colors focus:outline-none"
+                                        className="ml-1 flex size-7 items-center justify-center rounded-full bg-white dark:bg-slate-800 border border-slate-200 dark:border-slate-700 text-slate-500 dark:text-slate-400 hover:bg-slate-100 dark:hover:bg-slate-700 hover:text-slate-900 dark:hover:text-slate-100 transition-colors focus:outline-none"
                                         title={t("logout")}
                                     >
                                         {isLoggingOut ? <Loader2 className="size-3.5 animate-spin" /> : <LogOut className="size-3.5" />}
@@ -749,7 +759,7 @@ function CheckoutFormContent({
                                         "cursor-pointer rounded-2xl border p-3.5 transition-all",
                                         selectedPriceId === price.id
                                             ? "border-primary bg-primary/5 ring-1 ring-primary"
-                                            : "border-slate-200 hover:border-slate-300"
+                                            : "border-slate-200 dark:border-slate-800 hover:border-slate-300 dark:hover:border-slate-700"
                                     )}
                                     onClick={() => setSelectedPriceId(price.id)}
                                 >
@@ -759,16 +769,16 @@ function CheckoutFormContent({
                                         return (
                                             <div className="flex h-full flex-col">
                                                 <div className="flex items-start justify-between gap-3">
-                                                    <div className={cn("mt-0.5 flex size-4 rounded-full border items-center justify-center", selectedPriceId === price.id ? "border-primary" : "border-slate-300")}>
+                                                    <div className={cn("mt-0.5 flex size-4 rounded-full border items-center justify-center", selectedPriceId === price.id ? "border-primary" : "border-slate-300 dark:border-slate-600")}>
                                             {selectedPriceId === price.id && <div className="size-2 rounded-full bg-primary" />}
                                                     </div>
-                                                    <span className="text-right text-sm font-semibold text-slate-900">
+                                                    <span className="text-right text-sm font-semibold text-slate-900 dark:text-slate-100">
                                                         {formatPrice(price.unitAmount, price.currency)}
                                                     </span>
                                                 </div>
                                                 <div className="mt-3">
-                                                    <p className="text-sm font-bold text-slate-900">{presentation.badge}</p>
-                                                    <p className="mt-1 text-xs leading-4 text-slate-500">{presentation.description}</p>
+                                                    <p className="text-sm font-bold text-slate-900 dark:text-slate-100">{presentation.badge}</p>
+                                                    <p className="mt-1 text-xs leading-4 text-slate-500 dark:text-slate-400">{presentation.description}</p>
                                                 </div>
                                             </div>
                                         )
@@ -782,7 +792,7 @@ function CheckoutFormContent({
                         <div className="space-y-3">
                             <div className="space-y-1">
                                 <div className="flex items-center justify-between">
-                                    <h3 className="text-lg font-bold tracking-tight text-slate-900">{t("contact")}</h3>
+                                    <h3 className="text-lg font-bold tracking-tight text-slate-900 dark:text-slate-100">{t("contact")}</h3>
                                     <button 
                                         type="button" 
                                         onClick={() => setIsLoginMode(!isLoginMode)}
@@ -791,7 +801,7 @@ function CheckoutFormContent({
                                         {isLoginMode ? t("dontHaveAccount") + " " + t("signUp") : t("alreadyHaveAccount") + " " + t("logIn")}
                                     </button>
                                 </div>
-                                <p className="text-sm font-medium text-slate-500">
+                                <p className="text-sm font-medium text-slate-500 dark:text-slate-400">
                                     {isLoginMode ? t("loginCheckoutDescription") : t("guestCheckoutDescription")}
                                 </p>
                             </div>
@@ -803,7 +813,7 @@ function CheckoutFormContent({
                                         value={name} 
                                         onChange={(e) => setName(e.target.value)} 
                                         placeholder={t("namePlaceholder")}
-                                        className="h-11 border-slate-200 bg-white font-medium md:col-span-2"
+                                        className="h-11 border-slate-200 dark:border-slate-800 bg-white dark:bg-slate-900 dark:text-slate-100 font-medium md:col-span-2"
                                     />
                                 )}
                                 <Input 
@@ -812,7 +822,7 @@ function CheckoutFormContent({
                                     value={email} 
                                     onChange={(e) => setEmail(e.target.value)} 
                                     placeholder={t("emailPlaceholder")}
-                                    className={cn("h-11 border-slate-200 bg-white font-medium", isLoginMode && "md:col-span-2")}
+                                    className={cn("h-11 border-slate-200 dark:border-slate-800 bg-white dark:bg-slate-900 dark:text-slate-100 font-medium", isLoginMode && "md:col-span-2")}
                                 />
                                 <div className={cn("relative", isLoginMode && "md:col-span-2")}>
                                     <Input 
@@ -821,13 +831,13 @@ function CheckoutFormContent({
                                         value={password} 
                                         onChange={(e) => setPassword(e.target.value)} 
                                         placeholder={t("passwordPlaceholder")}
-                                        className="h-11 border-slate-200 bg-white font-medium pr-10"
+                                        className="h-11 border-slate-200 dark:border-slate-800 bg-white dark:bg-slate-900 dark:text-slate-100 font-medium pr-10"
                                         minLength={6}
                                     />
                                     <button
                                         type="button"
                                         onClick={() => setShowPassword(!showPassword)}
-                                        className="absolute right-0 top-0 h-11 px-3 flex items-center justify-center text-slate-400 hover:text-slate-600 transition-colors focus:outline-none"
+                                        className="absolute right-0 top-0 h-11 px-3 flex items-center justify-center text-slate-400 hover:text-slate-600 dark:hover:text-slate-300 transition-colors focus:outline-none"
                                         tabIndex={-1}
                                     >
                                         {showPassword ? <EyeOff className="size-4" /> : <Eye className="size-4" />}
@@ -839,8 +849,8 @@ function CheckoutFormContent({
 
                     {/* Payment */}
                     <div className="space-y-2.5">
-                        <h3 className="text-lg font-bold tracking-tight text-slate-900">{t("payment")}</h3>
-                        <div className="rounded-2xl border border-slate-200 bg-white p-4 shadow-sm">
+                        <h3 className="text-lg font-bold tracking-tight text-slate-900 dark:text-slate-100">{t("payment")}</h3>
+                        <div className="rounded-2xl border border-slate-200 dark:border-slate-800 bg-white dark:bg-slate-900 p-4 shadow-sm">
                             <PaymentElement
                                 key={invoiceDetails?.id || selectedPriceId}
                                 options={paymentElementOptions}
@@ -853,7 +863,7 @@ function CheckoutFormContent({
                             value={couponCode}
                             onChange={(e) => setCouponCode(e.target.value)}
                             placeholder={t("addPromotionCode")}
-                            className="bg-white border-slate-200 shadow-sm h-11 text-sm font-medium"
+                            className="bg-white dark:bg-slate-900 border-slate-200 dark:border-slate-800 dark:text-slate-100 shadow-sm h-11 text-sm font-medium"
                         />
                         {promotionPreview.status === "loading" ? (
                             <p className="text-xs font-medium text-slate-400">{t("checkingPromotionCode")}</p>
