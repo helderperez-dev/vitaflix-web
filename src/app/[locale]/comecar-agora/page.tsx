@@ -3,20 +3,20 @@ import { setRequestLocale } from "next-intl/server"
 import { LandingPageV2 } from "@/components/landing-v2/landing-page-v2"
 
 export const metadata: Metadata = {
-    title: "Organiza a tua alimentação e perde peso sem contar calorias | Vitaflix",
+    title: "Para de improvisar o que comes | App Vitaflix",
     description:
-        "Mais de 300 receitas práticas, quantidades ajustadas ao teu objetivo, organização semanal e lista de compras automática numa só aplicação.",
+        "O Vitaflix dá-te mais de 300 receitas com quantidades já calculadas, organiza as tuas refeições da semana e cria a tua lista de compras com um clique — sem contar uma única caloria.",
     openGraph: {
-        title: "Organiza a tua alimentação e perde peso sem contar calorias | Vitaflix",
+        title: "Para de improvisar o que comes | App Vitaflix",
         description:
-            "Descobre a nova landing page do Vitaflix com receitas práticas, organização semanal e lista de compras automática.",
+            "O Vitaflix dá-te mais de 300 receitas com quantidades já calculadas, organiza as tuas refeições da semana e cria a tua lista de compras com um clique — sem contar uma única caloria.",
         type: "website",
     },
     twitter: {
         card: "summary_large_image",
-        title: "Organiza a tua alimentação e perde peso sem contar calorias | Vitaflix",
+        title: "Para de improvisar o que comes | App Vitaflix",
         description:
-            "Receitas práticas, quantidades ajustadas e lista de compras automática numa só app.",
+            "O Vitaflix dá-te mais de 300 receitas com quantidades já calculadas, organiza as tuas refeições da semana e cria a tua lista de compras com um clique — sem contar uma única caloria.",
     },
 }
 
