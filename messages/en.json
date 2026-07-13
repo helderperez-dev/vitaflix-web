@@ -297,7 +297,7 @@
             "metaTitle": "Spot Guaranteed! | Vitaflix",
             "title": "Spot guaranteed!",
             "subtitle": "Thank you for joining our community.",
-            "description": "Keep an eye on your email — you'll be the first to know when Vitaflix is ready for you. We're getting everything ready to simplify your nutrition.",
+            "description": "Keep an eye on your email - you'll be the first to know when Vitaflix is ready for you. We're getting everything ready to simplify your nutrition.",
             "buttonHome": "Back to Home"
         },
         "Calculator": {
@@ -316,25 +316,70 @@
                 "age": "Age"
             },
             "ActivityLevels": {
-                "sedentary": { "title": "Sedentary", "desc": "Desk job, little to no exercise" },
-                "lightly": { "title": "Lightly Active", "desc": "Light exercise/sports 1-3 days/week" },
-                "moderately": { "title": "Moderately Active", "desc": "Moderate exercise 3-5 days/week" },
-                "very": { "title": "Very Active", "desc": "Hard exercise 6-7 days/week" },
-                "extra": { "title": "Extra Active", "desc": "Very hard exercise & physical job" }
+                "sedentary": {
+                    "title": "Sedentary",
+                    "desc": "Desk job, little to no exercise"
+                },
+                "lightly": {
+                    "title": "Lightly Active",
+                    "desc": "Light exercise/sports 1-3 days/week"
+                },
+                "moderately": {
+                    "title": "Moderately Active",
+                    "desc": "Moderate exercise 3-5 days/week"
+                },
+                "very": {
+                    "title": "Very Active",
+                    "desc": "Hard exercise 6-7 days/week"
+                },
+                "extra": {
+                    "title": "Extra Active",
+                    "desc": "Very hard exercise & physical job"
+                }
             },
             "StepOptions": {
-                "low": { "title": "2,500 steps", "desc": "Minimum" },
-                "moderate": { "title": "6,500 steps", "desc": "Healthy" },
-                "active": { "title": "10,000 steps", "desc": "Active" },
-                "high": { "title": "13,500 steps", "desc": "Very Active" },
-                "athlete": { "title": "17,500 steps", "desc": "Athlete" }
+                "low": {
+                    "title": "2,500 steps",
+                    "desc": "Minimum"
+                },
+                "moderate": {
+                    "title": "6,500 steps",
+                    "desc": "Healthy"
+                },
+                "active": {
+                    "title": "10,000 steps",
+                    "desc": "Active"
+                },
+                "high": {
+                    "title": "13,500 steps",
+                    "desc": "Very Active"
+                },
+                "athlete": {
+                    "title": "17,500 steps",
+                    "desc": "Athlete"
+                }
             },
             "Goals": {
-                "lose_sustainable": { "title": "Sustainable Loss", "desc": "Focus on keeping muscle mass" },
-                "lose_balanced": { "title": "Balanced Loss", "desc": "Moderate and steady pace" },
-                "lose_faster": { "title": "Faster Loss", "desc": "Aggressive deficit (short term only)" },
-                "maintenance": { "title": "Maintenance", "desc": "Maintain current weight" },
-                "gain_mass": { "title": "Gain Mass", "desc": "Surplus for muscle building" }
+                "lose_sustainable": {
+                    "title": "Sustainable Loss",
+                    "desc": "Focus on keeping muscle mass"
+                },
+                "lose_balanced": {
+                    "title": "Balanced Loss",
+                    "desc": "Moderate and steady pace"
+                },
+                "lose_faster": {
+                    "title": "Faster Loss",
+                    "desc": "Aggressive deficit (short term only)"
+                },
+                "maintenance": {
+                    "title": "Maintenance",
+                    "desc": "Maintain current weight"
+                },
+                "gain_mass": {
+                    "title": "Gain Mass",
+                    "desc": "Surplus for muscle building"
+                }
             },
             "Form": {
                 "title": "Your results are ready!",
@@ -388,177 +433,68 @@
                 "contact": "Contact"
             },
             "privacyModal": {
-                "title": "VITAFLIX — PRIVACY POLICY",
-                "intro": "This policy explains how Vitaflix collects, uses, and protects your personal data.",
-                "contactLabel": "To exercise your rights, contact:",
+                "title": "Privacy",
+                "intro": "We believe your privacy should be as simple and transparent as our app. Here is exactly what we do with your data.",
+                "contactLabel": "Have questions or want to delete your data? Contact us:",
                 "sections": [
                     {
-                        "title": "1. Data Collected",
-                        "bullets": [
-                            "Identification: Name, email, age.",
-                            "Profile: Gender, weight, goals.",
-                            "Health and Habits: Data voluntarily entered about nutrition, exercise, and recorded habits.",
-                            "Technical Data: IP address, device type, access logs, and approximate geolocation."
-                        ]
-                    },
-                    {
-                        "title": "2. Sensitive Data (Health)",
+                        "title": "What we collect",
                         "paragraphs": [
-                            "Health-related data is considered a special category of data (Art. 9 GDPR). Vitaflix processes this data only with your explicit consent, provided when using the app's logging and planning features."
+                            "For Vitaflix to work perfectly and deliver tailored plans, we need to know a little about you. We store your basic account information (name and email) and the physical data you choose to share (like goals, weight, or dietary preferences)."
                         ]
                     },
                     {
-                        "title": "3. Purpose of Processing",
-                        "bullets": [
-                            "Personalize the user experience and generate plan suggestions.",
-                            "Process payments and subscriptions.",
-                            "Ensure platform security and prevent fraud or improper account sharing.",
-                            "Improve the app's technical and functional performance."
-                        ]
-                    },
-                    {
-                        "title": "4. Legal Basis",
+                        "title": "How we use your information",
                         "paragraphs": [
-                            "Processing is based on subscription contract execution, user consent, and compliance with legal and tax obligations."
+                            "Your data has a single purpose: to improve your experience. We use your information to generate your recipes, adapt portions to your goals, and ensure the app runs flawlessly. We do not sell, rent, or share your personal information with third parties."
                         ]
                     },
                     {
-                        "title": "5. Data Sharing",
+                        "title": "Secure payments",
                         "paragraphs": [
-                            "Payment data is shared exclusively with Stripe and PayPal platforms. Vitaflix does not sell or trade users' personal data with third parties."
+                            "When you subscribe, your payment is processed directly by secure global partners (Stripe or PayPal). We never have access to or store your credit card details."
                         ]
                     },
                     {
-                        "title": "6. Data Retention and Technical Security",
+                        "title": "You are in control",
                         "paragraphs": [
-                            "Data is retained while the account is active.",
-                            "Security note: Even after account deletion is requested, Vitaflix will retain transaction data, identification data, and access logs for the legal period of 10 years for tax purposes and defense of rights in financial disputes or chargebacks."
-                        ]
-                    },
-                    {
-                        "title": "7. User Rights",
-                        "paragraphs": [
-                            "Under GDPR, the user has the right to Access, Rectification, Erasure, Portability, and Objection."
-                        ]
-                    },
-                    {
-                        "title": "8. Visual Content Transparency",
-                        "paragraphs": [
-                            "Vitaflix uses original photographs of its recipes. We inform that images may undergo color and lighting editing to improve the visual experience on the platform, without affecting the truthfulness of the ingredients shown."
-                        ]
-                    },
-                    {
-                        "title": "9. Cookies and Tracking",
-                        "paragraphs": [
-                            "The platform uses technical cookies for session management and analytics tools to measure service efficiency and security. Users can manage cookie preferences on their device."
-                        ]
-                    },
-                    {
-                        "title": "10. Security",
-                        "paragraphs": [
-                            "We adopt technical and organizational measures to protect your data against unauthorized access, loss, or accidental destruction."
-                        ]
-                    },
-                    {
-                        "title": "11. Changes",
-                        "paragraphs": [
-                            "This policy may be updated periodically. Changes take effect after publication on the platform and notification to users."
+                            "You can request to view, change, or completely delete your account and data at any time. If you decide to delete your account, we remove your health and profile information from our active servers (keeping only technical and financial records required by law)."
                         ]
                     }
                 ]
             },
             "termsModal": {
-                "title": "VITAFLIX — TERMS & CONDITIONS",
-                "intro": "These terms define the rules for using Vitaflix and your subscription rights and obligations.",
+                "title": "Terms of Use",
+                "intro": "Simple and clear rules for using Vitaflix with no surprises.",
                 "sections": [
                     {
-                        "title": "1. Purpose and License of Use",
+                        "title": "Our promise",
                         "paragraphs": [
-                            "Vitaflix is a subscription-based digital platform that provides educational content, recipes, and planning tools for a healthy lifestyle. By subscribing, Vitaflix grants the user a temporary, personal, revocable, and non-exclusive license of use, strictly conditioned on maintaining an active subscription.",
-                            "Vitaflix does not provide personalized medical, nutritional, or therapeutic advice. The content is for informational purposes only and does not replace follow-up with qualified health professionals."
+                            "Vitaflix is a digital platform designed to simplify your nutrition. By subscribing, you gain full access to our plans, recipes, and tools, as long as your subscription remains active."
                         ]
                     },
                     {
-                        "title": "2. Eligibility",
+                        "title": "No lock-in, no complications",
                         "paragraphs": [
-                            "Use of the platform is only permitted for users aged 18 or older. The user declares that all information provided during registration is true, complete, and up to date."
+                            "We do not believe in locking anyone in. You can cancel your subscription at any time, just a click away, directly in your account. Canceling prevents the next charge, and you continue to have access until the end of the period you already paid for."
                         ]
                     },
                     {
-                        "title": "3. User Account and Security",
+                        "title": "Health disclaimer",
                         "paragraphs": [
-                            "The account is personal, individual, and non-transferable."
-                        ],
-                        "bullets": [
-                            "Security: The user is solely responsible for the confidentiality of their credentials.",
-                            "Device Limitation: Access is limited to use on personal devices.",
-                            "Monitoring: Vitaflix reserves the right to monitor access patterns (including IP addresses, geolocation, and device identification). Systematic access through incompatible geographic locations or distinct IPs within short time intervals will be flagged as abusive use, resulting in immediate account suspension without refund for breach of terms."
+                            "Our app is a planning and inspiration tool, it does not replace a doctor or nutritionist. The suggested calories and plans are estimates based on your goals. If you have medical conditions, allergies, or are pregnant, you should always consult a healthcare professional."
                         ]
                     },
                     {
-                        "title": "4. Subscriptions, Payments, and Renewal",
-                        "bullets": [
-                            "4.1 Subscription Types: Vitaflix offers quarterly and annual subscription plans.",
-                            "4.2 Payments: Processed securely via Stripe or PayPal. Vitaflix does not store bank or card data.",
-                            "4.3 Automatic Renewal: Subscriptions renew automatically at the end of each period unless canceled by the user before the renewal date.",
-                            "4.4 Cancellation and End of Access: Cancellation prevents future renewals, while access remains until the end of the already paid period. After the active subscription period ends, access to the platform, recipes, saved plans, and history is immediately revoked. There is no ownership right, download right, or offline access to the content."
+                        "title": "Immediate access and refunds",
+                        "paragraphs": [
+                            "Because Vitaflix is an immediate-access digital service, by subscribing you get instant access to all our premium content. For this reason, and in accordance with digital content laws, we do not issue refunds once access to the platform has begun."
                         ]
                     },
                     {
-                        "title": "5. Waiver of the Right of Withdrawal (Digital Content)",
+                        "title": "Your account is personal",
                         "paragraphs": [
-                            "By subscribing to Vitaflix, the user acknowledges and expressly accepts that:"
-                        ],
-                        "bullets": [
-                            "1. Access to digital content is made available immediately after payment confirmation.",
-                            "2. Under Article 17 of Decree-Law no. 24/2014, the user consents to the immediate execution of the service.",
-                            "3. The user acknowledges that they lose the right of withdrawal (14-day refund) as soon as access to the platform begins or the first login is performed.",
-                            "For this reason, refunds are not granted after use of the service has started."
-                        ]
-                    },
-                    {
-                        "title": "6. Chargebacks, Disputes, and Proof of Use",
-                        "paragraphs": [
-                            "In case of a payment dispute (chargeback) or claim with financial institutions:"
-                        ],
-                        "bullets": [
-                            "Vitaflix will provide technical access logs (IP, date, time, and usage history) as irrefutable proof of delivery and effective use of the digital service.",
-                            "Vitaflix reserves the right to suspend the account and block future subscriptions associated with the same user, email, or payment method in case of fraud or unjustified dispute."
-                        ]
-                    },
-                    {
-                        "title": "7. User Responsibility and Health",
-                        "paragraphs": [
-                            "The user assumes full responsibility for decisions made based on the content. Calorie suggestions and plans are for guidance only. Medical consultation is mandatory before following any plan, especially in case of allergies, chronic diseases, pregnancy, or breastfeeding. Vitaflix is not liable for adverse effects resulting from misinterpretation or improper application of recipes."
-                        ]
-                    },
-                    {
-                        "title": "8. Intellectual Property and Visual Content",
-                        "paragraphs": [
-                            "All content (texts, design, trademarks, and software) is the exclusive property of Vitaflix."
-                        ],
-                        "bullets": [
-                            "Real Images: The recipe photographs shown are real and original productions.",
-                            "Visual Editing: Visual content may undergo editing processes (color, brightness, and contrast optimization) for aesthetic and clarity purposes. Final results of recipes prepared by the user may vary, and images have an illustrative character of the potential outcome.",
-                            "Prohibition: Any reproduction, copying, distribution, or commercial use of content without prior written authorization is prohibited."
-                        ]
-                    },
-                    {
-                        "title": "9. Communications",
-                        "paragraphs": [
-                            "Vitaflix may send service-related notifications and promotional communications. The user may opt out of promotional communications at any time in account settings."
-                        ]
-                    },
-                    {
-                        "title": "10. Changes to the Terms",
-                        "paragraphs": [
-                            "Vitaflix reserves the right to update these Terms. Changes will be notified in the app or by email. Continued use of the service constitutes acceptance of the new terms."
-                        ]
-                    },
-                    {
-                        "title": "11. Applicable Law and Jurisdiction",
-                        "paragraphs": [
-                            "These terms are governed by Portuguese and European Union law. Any dispute will be submitted to the Portuguese courts in the district of the platform's headquarters."
+                            "Your subscription is individual. Sharing your account with other people harms the personalization of your plans and violates our terms. Automated detection systems may suspend accounts that show abusive access or improper sharing."
                         ]
                     }
                 ]
@@ -1004,7 +940,7 @@
         "visibilityDescription": "Manage if this meal is visible to users across the platform.",
         "applyChanges": "Apply Changes",
         "optionCount": "{count} {count, plural, one {Option} other {Options}}",
-        "none": "—",
+        "none": "-",
         "deleteSelected": "Delete ({count})",
         "deleteMealsTitle": "Are you absolutely sure?",
         "deleteMealsDescription": "This will permanently delete {count} {count, plural, one {meal} other {meals}}. This action cannot be undone and will remove all associated data.",

@@ -1354,7 +1354,7 @@ function FaqSection() {
             a: (
                 <span>
                     Claro! Podes falar connosco diretamente pelo WhatsApp.{" "}
-                    <a href="https://wa.me/351910000000" target="_blank" rel="noopener noreferrer" className="font-bold text-primary underline underline-offset-2 hover:text-primary/80">
+                    <a href="https://wa.me/351915466286" target="_blank" rel="noopener noreferrer" className="font-bold text-primary underline underline-offset-2 hover:text-primary/80">
                         Clica aqui para abrir o WhatsApp
                     </a>
                     {" "}e respondemos em menos de 24 horas.
@@ -1465,7 +1465,7 @@ function Footer() {
                         <Link href="/privacy" className="hover:text-slate-900 transition-colors">Privacidade</Link>
                         <Link href="/terms" className="hover:text-slate-900 transition-colors">Termos</Link>
                         <Link href="/contact" className="hover:text-slate-900 transition-colors">Contacto</Link>
-                        <a href="https://wa.me/351910000000" target="_blank" rel="noopener noreferrer" className="hover:text-slate-900 transition-colors">WhatsApp</a>
+                        <a href="https://wa.me/351915466286" target="_blank" rel="noopener noreferrer" className="hover:text-slate-900 transition-colors">WhatsApp</a>
                     </div>
                     <p className="text-sm font-semibold text-slate-400">© {new Date().getFullYear()} Vitaflix. Todos os direitos reservados.</p>
                 </div>

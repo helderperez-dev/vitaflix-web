@@ -1,6 +1,6 @@
 import { getTranslations, setRequestLocale } from "next-intl/server"
 import { Metadata } from "next"
-import Link from "next/link"
+import { Link } from "@/i18n/routing"
 import { ArrowLeft, Mail } from "lucide-react"
 
 export async function generateMetadata({ params }: { params: Promise<{ locale: string }> }): Promise<Metadata> {
@@ -20,7 +20,7 @@ export default async function ContactPage({ params }: { params: Promise<{ locale
             <div className="max-w-3xl mx-auto">
                 <Link href="/" className="inline-flex items-center text-sm font-medium text-slate-500 hover:text-slate-900 mb-8 transition-colors">
                     <ArrowLeft className="w-4 h-4 mr-2" />
-                    Back to Home
+                    Voltar / Back
                 </Link>
                 
                 <h1 className="text-4xl font-extrabold tracking-tight text-slate-900 sm:text-5xl mb-6">

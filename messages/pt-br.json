@@ -204,7 +204,7 @@
                     }
                 },
                 "quarterly": {
-                    "name": "Trimestral — Mais escolhido",
+                    "name": "Trimestral - Mais escolhido",
                     "desc": "Equivale a aproximadamente 10 € por mês.",
                     "period": "/3 meses",
                     "tag": "Mais Popular",
@@ -217,7 +217,7 @@
                     }
                 },
                 "annual": {
-                    "name": "Anual — Melhor valor",
+                    "name": "Anual - Melhor valor",
                     "desc": "Equivale a aproximadamente 7,50 € por mês.",
                     "period": "/ano",
                     "button": "Escolher anual",
@@ -286,7 +286,7 @@
             "metaTitle": "Lugar Garantido! | Vitaflix",
             "title": "Lugar garantido!",
             "subtitle": "Obrigado por se juntar à nossa comunidade.",
-            "description": "Fique atento ao seu e-mail — você será um dos primeiros a saber quando a Vitaflix estiver pronta para você. Estamos preparando tudo para simplificar sua nutrição.",
+            "description": "Fique atento ao seu e-mail - você será um dos primeiros a saber quando a Vitaflix estiver pronta para você. Estamos preparando tudo para simplificar sua nutrição.",
             "buttonHome": "Voltar ao Início"
         },
         "Calculator": {
@@ -377,7 +377,7 @@
                 "contact": "Contatos"
             },
             "privacyModal": {
-                "title": "VITAFLIX — POLÍTICA DE PRIVACIDADE",
+                "title": "Política de Privacidade",
                 "intro": "Esta política explica como a Vitaflix coleta, usa e protege seus dados pessoais.",
                 "contactLabel": "Para exercer seus direitos, entre em contato:",
                 "sections": [
@@ -457,7 +457,7 @@
                 ]
             },
             "termsModal": {
-                "title": "VITAFLIX — TERMOS & CONDIÇÕES",
+                "title": "Termos e Condições",
                 "intro": "Estes termos definem as regras de uso da Vitaflix e os direitos e deveres da assinatura.",
                 "sections": [
                     {
@@ -994,7 +994,7 @@
         "visibilityDescription": "Gerencie se esta refeição está visível para os usuários em toda a plataforma.",
         "applyChanges": "Aplicar alterações",
         "optionCount": "{count} {count, plural, one {Opção} other {Opções}}",
-        "none": "—",
+        "none": "-",
         "deleteSelected": "Excluir ({count})",
         "deleteMealsTitle": "Tem certeza absoluta?",
         "deleteMealsDescription": "Isso excluirá permanentemente {count} {count, plural, one {refeição} other {refeições}}. Esta ação não pode ser desfeita e removerá todos os dados associados.",

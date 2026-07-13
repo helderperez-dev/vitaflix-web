@@ -5,7 +5,7 @@ import { ArrowLeft } from "lucide-react"
 
 export async function generateMetadata({ params }: { params: Promise<{ locale: string }> }): Promise<Metadata> {
     const { locale } = await params
-    const t = await getTranslations({ locale, namespace: "Landing.Footer.privacyModal" })
+    const t = await getTranslations({ locale, namespace: "Landing.Footer.termsModal" })
     return {
         title: `${t("title")} | Vitaflix`,
         description: t("intro"),
@@ -18,11 +18,11 @@ type LegalSection = {
     bullets?: string[]
 }
 
-export default async function PrivacyPage({ params }: { params: Promise<{ locale: string }> }) {
+export default async function TermsPage({ params }: { params: Promise<{ locale: string }> }) {
     const { locale } = await params
     setRequestLocale(locale)
     
-    const t = await getTranslations("Landing.Footer.privacyModal")
+    const t = await getTranslations("Landing.Footer.termsModal")
     const tGlobal = await getTranslations("Landing")
     const sections = t.raw("sections") as LegalSection[]
     

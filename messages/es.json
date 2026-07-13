@@ -294,7 +294,7 @@
             "metaTitle": "¡Lugar Garantizado! | Vitaflix",
             "title": "¡Lugar garantizado!",
             "subtitle": "Gracias por unirte a nuestra comunidad.",
-            "description": "Mantente atento a tu correo — serás el primero en saber cuando Vitaflix esté lista para ti. Estamos preparando todo para simplificar tu nutrición.",
+            "description": "Mantente atento a tu correo - serás el primero en saber cuando Vitaflix esté lista para ti. Estamos preparando todo para simplificar tu nutrición.",
             "buttonHome": "Volver al Inicio"
         },
         "Calculator": {
@@ -385,7 +385,7 @@
                 "contact": "Contactos"
             },
             "privacyModal": {
-                "title": "VITAFLIX — POLÍTICA DE PRIVACIDAD",
+                "title": "Política de Privacidad",
                 "intro": "Esta política explica cómo Vitaflix recopila, usa y protege tus datos personales.",
                 "contactLabel": "Para ejercer tus derechos, contacta:",
                 "sections": [
@@ -465,7 +465,7 @@
                 ]
             },
             "termsModal": {
-                "title": "VITAFLIX — TÉRMINOS Y CONDICIONES",
+                "title": "Términos y Condiciones",
                 "intro": "Estos términos definen las reglas de uso de Vitaflix y los derechos y obligaciones de la suscripción.",
                 "sections": [
                     {
@@ -999,7 +999,7 @@
         "visibilityDescription": "Gestiona si esta comida es visible para los usuarios en toda la plataforma.",
         "applyChanges": "Aplicar cambios",
         "optionCount": "{count} {count, plural, one {Opción} other {Opciones}}",
-        "none": "—",
+        "none": "-",
         "deleteSelected": "Eliminar ({count})",
         "deleteMealsTitle": "¿Estás completamente seguro?",
         "deleteMealsDescription": "Esto eliminará permanentemente {count} {count, plural, one {comida} other {comidas}}. Esta acción no se puede deshacer y eliminará todos los datos asociados.",
