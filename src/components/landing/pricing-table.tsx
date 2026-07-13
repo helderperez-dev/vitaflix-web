@@ -25,9 +25,9 @@ const planPrices = {
 }
 
 const planOldPrices = {
-    monthly: null,
-    quarterly: "35,99 €",
-    annual: "129,90 €"
+    monthly: "17,99 €",
+    quarterly: "44,99 €",
+    annual: "155,99 €"
 }
 
 const planDiscounts = {

@@ -1090,9 +1090,9 @@ function FounderSection() {
                         </div>
                         <div className="mt-8 grid grid-cols-3 gap-4">
                             {[
-                                { n: "5 anos", label: "De experiência" },
+                                { n: "9+ anos", label: "De experiência" },
                                 { n: "10k+", label: "Utilizadores" },
-                                { n: "4.8★", label: "Avaliação média" },
+                                { n: "4.9★", label: "Avaliação média" },
                             ].map(({ n, label }) => (
                                 <div key={label} className="rounded-2xl bg-white p-4 text-center shadow-[0_8px_30px_rgb(0,0,0,0.04)] ring-1 ring-slate-200/60">
                                     <p className="text-2xl font-bold tracking-tighter text-slate-900">{n}</p>
