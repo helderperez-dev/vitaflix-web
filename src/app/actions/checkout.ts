@@ -63,15 +63,7 @@ export async function checkoutRegisterAndSubscribe(data: {
                 return { error: "Checkout.nameRequired" }
             }
 
-            // Check if user exists
-            const { data: existingUsers } = await admin.auth.admin.listUsers()
-            const existingUser = existingUsers.users.find((u) => u.email === data.email)
-
-            if (existingUser) {
-                return { error: "Checkout.accountAlreadyExists" }
-            }
-
-            // Create new user, auto-confirming email
+            // Try to create new user, auto-confirming email
             const { data: newUserData, error: createError } = await admin.auth.admin.createUser({
                 email: data.email,
                 password: data.password,
@@ -84,6 +76,14 @@ export async function checkoutRegisterAndSubscribe(data: {
             })
 
             if (createError) {
+                if (
+                    createError.status === 422 || 
+                    createError.code === "user_already_exists" || 
+                    createError.message.toLowerCase().includes("already registered") ||
+                    createError.message.toLowerCase().includes("already exists")
+                ) {
+                    return { error: "Checkout.accountAlreadyExists" }
+                }
                 return { error: createError.message }
             }
 
