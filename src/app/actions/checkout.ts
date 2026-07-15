@@ -290,8 +290,18 @@ export async function checkoutRegisterAndSubscribe(data: {
         return { success: true, clientSecret: result.clientSecret, subscriptionId: result.subscriptionId }
     } catch (error) {
         console.error("Subscription creation error:", error)
+        
+        let errorMessage = "Checkout.failedToCreateSubscription"
+        if (error instanceof Error && error.message) {
+            if (error.message.includes("promotion code") || error.message.includes("coupon")) {
+                errorMessage = "Checkout.invalidPromotionCode"
+            } else {
+                errorMessage = error.message
+            }
+        }
+        
         return {
-            error: error instanceof Error && error.message ? error.message : "Checkout.failedToCreateSubscription",
+            error: errorMessage,
         }
     }
 }

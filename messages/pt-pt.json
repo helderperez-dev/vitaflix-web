@@ -682,6 +682,7 @@
         "accountConfirmedFeatureThreeDescription": "Pode abrir a app móvel agora ou continuar na web com as mesmas credenciais."
     },
     "Checkout": {
+        "invalidPromotionCode": "Este código promocional é inválido ou já não pode ser utilizado.",
         "subscribeToVitaflix": "Subscreva a Vitaflix",
         "per": "por",
         "month": "mês",

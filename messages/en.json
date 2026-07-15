@@ -693,6 +693,7 @@
         "accountConfirmedFeatureThreeDescription": "You can open the mobile app now or continue on the web and sign in with the same credentials."
     },
     "Checkout": {
+        "invalidPromotionCode": "This promotion code is invalid or can no longer be used.",
         "subscribeToVitaflix": "Subscribe to Vitaflix",
         "per": "per",
         "month": "month",
