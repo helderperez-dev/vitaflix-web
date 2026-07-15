@@ -40,7 +40,8 @@ export async function syncContactWithBrevo(
     email: string, 
     name?: string, 
     listIds: number[] = [2],
-    customAttributes?: Record<string, any>
+    customAttributes?: Record<string, any>,
+    unlinkListIds?: number[]
 ): Promise<boolean> {
     if (!email) return false;
 
@@ -68,6 +69,7 @@ export async function syncContactWithBrevo(
                     ...customAttributes
                 },
                 listIds,
+                ...(unlinkListIds && unlinkListIds.length > 0 ? { unlinkListIds } : {}),
                 updateEnabled: true
             })
         });

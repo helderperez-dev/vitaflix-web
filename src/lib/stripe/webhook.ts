@@ -294,9 +294,7 @@ async function upsertSubscription(subscription: Stripe.Subscription, eventType: 
             },
         })
 
-        // TODO: Sync with Brevo as an active client
-        // Temporarily disabled until the CLIENT attribute is created in Brevo
-        /*
+        // Sync with Brevo as an active client
         try {
             const { data: user } = await supabase
                 .from("users")
@@ -307,14 +305,18 @@ async function upsertSubscription(subscription: Stripe.Subscription, eventType: 
             if (user?.email) {
                 const { syncContactWithBrevo } = await import("@/lib/brevo")
                 const name = user.display_name || user.full_name || ""
-                // Add the user to List 6 (registered users) and update their attributes
-                // We send CLIENT: true to distinguish them in Brevo without creating a new list
-                await syncContactWithBrevo(user.email, name, [6], { CLIENT: true })
+                // Add to List 9 (Paid) and remove from 10 (Free) and 13 (Canceled)
+                await syncContactWithBrevo(
+                    user.email, 
+                    name, 
+                    [9], 
+                    { CLIENT: true }, 
+                    [10, 13]
+                )
             }
         } catch (syncError) {
             console.error("Failed to sync active client to Brevo:", syncError)
         }
-        */
     }
 
     if (subscription.status === "canceled" && previousStatus !== "canceled") {
@@ -327,6 +329,30 @@ async function upsertSubscription(subscription: Stripe.Subscription, eventType: 
                 status: subscription.status,
             },
         })
+
+        // Sync with Brevo as a canceled client
+        try {
+            const { data: user } = await supabase
+                .from("users")
+                .select("email, display_name, full_name")
+                .eq("id", finalUserId)
+                .maybeSingle()
+
+            if (user?.email) {
+                const { syncContactWithBrevo } = await import("@/lib/brevo")
+                const name = user.display_name || user.full_name || ""
+                // Add to List 13 (Canceled) and remove from 9 (Paid) and 10 (Free)
+                await syncContactWithBrevo(
+                    user.email, 
+                    name, 
+                    [13], 
+                    { CLIENT: false }, 
+                    [9, 10]
+                )
+            }
+        } catch (syncError) {
+            console.error("Failed to sync canceled client to Brevo:", syncError)
+        }
     }
 }
 

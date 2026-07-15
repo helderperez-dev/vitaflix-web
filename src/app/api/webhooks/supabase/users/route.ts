@@ -4,14 +4,6 @@ import { syncContactWithBrevo } from "@/lib/brevo"
 
 export async function POST(req: Request) {
     try {
-        // Optional: Add a simple secret check to ensure the webhook comes from Supabase
-        const webhookSecret = req.headers.get("x-supabase-webhook-secret")
-        const expectedSecret = process.env.SUPABASE_WEBHOOK_SECRET
-
-        if (expectedSecret && webhookSecret !== expectedSecret) {
-            return NextResponse.json({ error: "Unauthorized" }, { status: 401 })
-        }
-
         const body = await req.json()
 
         // We only care about INSERT events on the users table
@@ -74,9 +66,14 @@ export async function POST(req: Request) {
                     }])
             }
 
-            // 3. Sync to Brevo (List ID 6 - registered users)
-            const listId = 6
-            await syncContactWithBrevo(email, name, [listId])
+            // 3. Sync to Brevo (List ID 10 - free users)
+            try {
+                const listId = 10
+                await syncContactWithBrevo(email, name, [listId])
+            } catch (syncError) {
+                console.error("Failed to sync new app user to Brevo:", syncError)
+                // We don't throw here to ensure the webhook still returns a success status to Supabase
+            }
 
             return NextResponse.json({ success: true, message: "User synced to leads and Brevo." })
         }

@@ -140,10 +140,10 @@ export async function checkoutRegisterAndSubscribe(data: {
                         }])
                 }
 
-                // 3. Sync to Brevo (List ID 6 - same as caloric calculator, or we can use another list if needed)
+                // 3. Sync to Brevo (List ID 10 - free users/registered without active sub)
                 // Using dynamic import to avoid issues if Brevo is not configured
                 const { syncContactWithBrevo } = await import("@/lib/brevo")
-                const listId = 6 // Using 6 for registered users/clients
+                const listId = 10 
                 await syncContactWithBrevo(data.email, data.name.trim(), [listId])
             } catch (syncError) {
                 console.error("Failed to sync new user to leads/Brevo:", syncError)
