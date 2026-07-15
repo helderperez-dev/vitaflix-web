@@ -1,6 +1,7 @@
 "use server"
 
 import { createClient } from "@/lib/supabase/server"
+import { createAdminClient } from "@/lib/supabase/admin"
 import { revalidatePath } from "next/cache"
 import { sendEmail, sendSms, sendPush } from "@/lib/notifications"
 import { getMediaUrl } from "@/lib/utils"
@@ -50,7 +51,7 @@ function buildPushData({
 }
 
 export async function sendBroadcastAction(formData: FormData) {
-    const supabase = await createClient()
+    const supabase = createAdminClient()
 
     const channel = formData.get("channel") as string
     const targetGroup = formData.get("targetGroup") as string
@@ -214,7 +215,7 @@ export async function sendBroadcastAction(formData: FormData) {
 // System Trigger Helper
 // Call this from anywhere in your backend (e.g. after user signs up: triggerAppEvent('user_signup', { userId: auth.user.id }))
 export async function triggerAppEvent(actionType: string, context: { userId: string, data?: Record<string, string> }) {
-    const supabase = await createClient()
+    const supabase = createAdminClient()
 
     try {
         const { data: trigger, error: triggerError } = await supabase
@@ -309,7 +310,7 @@ export async function triggerAppEvent(actionType: string, context: { userId: str
 }
 
 export async function saveGroupAction(formData: FormData) {
-    const supabase = await createClient()
+    const supabase = createAdminClient()
     const id = formData.get("id") as string | null
     const name = formData.get("name") as string
     const description = formData.get("description") as string
@@ -341,7 +342,7 @@ export async function saveGroupAction(formData: FormData) {
 }
 
 export async function getGroupMembersAction(groupId: string) {
-    const supabase = await createClient()
+    const supabase = createAdminClient()
     const { data, error } = await supabase
         .from("user_group_members")
         .select("user_id")
@@ -351,7 +352,7 @@ export async function getGroupMembersAction(groupId: string) {
 }
 
 export async function saveGroupMembersAction(groupId: string, userIds: string[]) {
-    const supabase = await createClient()
+    const supabase = createAdminClient()
 
     // Delete all existing members for this group
     const { error: deleteError } = await supabase
@@ -374,7 +375,7 @@ export async function saveGroupMembersAction(groupId: string, userIds: string[])
 }
 
 export async function saveTriggerAction(formData: FormData) {
-    const supabase = await createClient()
+    const supabase = createAdminClient()
     const name = formData.get("name") as string
     const action_type = formData.get("action_type") as string
     const channels = formData.getAll("channels") as string[]
@@ -403,7 +404,7 @@ export async function saveTriggerAction(formData: FormData) {
 }
 
 export async function retryNotificationAction(notificationId: string) {
-    const supabase = await createClient()
+    const supabase = createAdminClient()
 
     try {
         const { data: notification, error: fetchError } = await supabase
@@ -480,7 +481,7 @@ export async function retryNotificationAction(notificationId: string) {
 }
 
 export async function uploadNotificationImageAction(formData: FormData) {
-    const supabase = await createClient()
+    const supabase = createAdminClient()
     const file = formData.get("file") as File
 
     if (!file) {

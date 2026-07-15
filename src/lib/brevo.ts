@@ -39,7 +39,7 @@ export function parseName(fullName: string | undefined): ParsedName {
 export async function syncContactWithBrevo(
     email: string, 
     name?: string, 
-    listIds: number[] = [2],
+    listIds?: number[],
     customAttributes?: Record<string, any>,
     unlinkListIds?: number[]
 ): Promise<boolean> {
@@ -68,7 +68,7 @@ export async function syncContactWithBrevo(
                     LASTNAME: lastName,
                     ...customAttributes
                 },
-                listIds,
+                ...(listIds && listIds.length > 0 ? { listIds } : {}),
                 ...(unlinkListIds && unlinkListIds.length > 0 ? { unlinkListIds } : {}),
                 updateEnabled: true
             })

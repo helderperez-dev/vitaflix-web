@@ -57,7 +57,7 @@ export async function POST(req: Request) {
                 if (!lead.email) {
                     throw new Error(`Lead ${lead.id} has no email.`)
                 }
-                const success = await syncContactWithBrevo(lead.email, lead.name)
+                const success = await syncContactWithBrevo(lead.email, lead.name, [2])
                 if (!success) {
                     throw new Error(`Failed to sync lead ${lead.id} to Brevo.`)
                 }

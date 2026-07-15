@@ -6,11 +6,12 @@ export async function POST(req: Request) {
     try {
         const body = await req.json()
 
-        // We only care about INSERT events on the users table
-        if (body.type === "INSERT" && body.table === "users" && body.record) {
+        // We care about INSERT and UPDATE events on the users table
+        if ((body.type === "INSERT" || body.type === "UPDATE") && body.table === "users" && body.record) {
             const user = body.record
             const email = user.email
             const name = user.display_name || user.full_name || ""
+            const isUpdate = body.type === "UPDATE"
 
             if (!email) {
                 return NextResponse.json({ success: true, message: "No email provided, skipping." })
@@ -18,6 +19,34 @@ export async function POST(req: Request) {
 
             const admin = createAdminClient()
 
+            // Check if lead already exists
+            const { data: existingLeads } = await admin
+                .from("leads")
+                .select("*")
+                .eq("email", email)
+                .limit(1)
+
+            const existingLead = existingLeads && existingLeads.length > 0 ? existingLeads[0] : null
+
+            if (isUpdate) {
+                // Handle UPDATE
+                if (existingLead && name && name !== "App User") {
+                    await admin
+                        .from("leads")
+                        .update({ name: name })
+                        .eq("id", existingLead.id)
+                    
+                    // Sync updated name to Brevo (without changing list IDs)
+                    try {
+                        await syncContactWithBrevo(email, name)
+                    } catch (syncError) {
+                        console.error("Failed to sync updated user name to Brevo:", syncError)
+                    }
+                }
+                return NextResponse.json({ success: true, message: "User update synced." })
+            }
+
+            // Handle INSERT
             // 1. Get default funnel/step
             const { data: defaultFunnel } = await admin
                 .from("lead_funnels")
@@ -35,14 +64,6 @@ export async function POST(req: Request) {
             }
 
             // 2. Check if lead already exists
-            const { data: existingLeads } = await admin
-                .from("leads")
-                .select("*")
-                .eq("email", email)
-                .limit(1)
-
-            const existingLead = existingLeads && existingLeads.length > 0 ? existingLeads[0] : null
-
             if (existingLead) {
                 await admin
                     .from("leads")
